@@ -1,5 +1,6 @@
 import React from "react";
 import fondoImagen from "../assets/fondo.jpg";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   return (
@@ -56,9 +57,12 @@ const Login = () => {
             />
           </div>
 
-          <div className="text-right mb-8">
-            <a href="#" className="text-sm text-green-600 hover:underline">Olvidé mi contraseña</a>
-          </div>
+          <Link
+          to="/recuperar-cuenta"
+          className="text-green-600 hover:underline text-sm"
+          >
+            Olvidé mi contraseña
+          </Link>
 
           <button className="w-full bg-green-600 text-white py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:bg-green-700 shadow-md transition-all">
             Iniciar sesión
