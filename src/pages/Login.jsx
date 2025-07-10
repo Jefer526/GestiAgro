@@ -1,64 +1,69 @@
 import React from "react";
-import rocketImage from "../assets/rocket.png";
+import fondoImagen from "../assets/fondo.jpg";
 
 const Login = () => {
   return (
-    <div className="w-screen h-screen relative flex flex-col m-0 p-0">
-      
-      {/* Parte superior: verde oscuro */}
-      <div className="h-1/2 w-full bg-green-800 flex items-center">
-        <div className="flex w-full h-full px-20">
-          <div className="w-1/2 flex items-center">
-            <div className="max-w-xl">
-              <h2 className="text-white font-bold text-2xl mb-3">Software para la gestión agricola</h2>
-              <h1 className="text-white font-bold text-5xl mb-2">GESTIAGRO</h1>
-              <p className="text-white text-2xl mb-5">Pruebalo gratis</p>
-              <p className="text-white text-base">
-                Cultiva eficiencia, cosecha datos. Gestión agrícola inteligente al alcance de tu finca.
-              </p>
-            </div>
-            <img src={rocketImage} alt="Ilustración" className="w-52 h-52 object-contain ml-12" />
-          </div>
+    <div className="w-screen min-h-screen flex flex-col lg:flex-row m-0 p-0 overflow-hidden relative font-sans">
+      {/* Degradado vertical entre ambas mitades */}
+      <div
+        className="hidden lg:block absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2 w-24 z-10 pointer-events-none"
+        style={{ background: 'linear-gradient(to right, transparent, rgba(0,0,0,0.6), transparent)' }}
+      ></div>
+
+      {/* Zona izquierda: imagen con mensaje breve */}
+      <div
+        className="w-full lg:w-1/2 h-1/2 lg:h-auto bg-cover bg-center flex flex-col justify-center px-6 sm:px-10 md:px-16 lg:px-20 py-12 relative z-0"
+        style={{ backgroundImage: `url(${fondoImagen})` }}
+      >
+        <div className="max-w-xl bg-black bg-opacity-50 p-6 rounded-2xl backdrop-blur-md shadow-lg">
+          <h2 className="text-white font-semibold text-xl sm:text-2xl mb-2">LOR - Gestión Agrícola</h2>
+          <h1 className="text-white font-bold text-4xl sm:text-5xl md:text-6xl leading-tight mb-4">
+            Inteligencia para el campo
+          </h1>
+          <p className="text-white text-base sm:text-lg">
+            Soluciones digitales para una agricultura más eficiente.
+          </p>
         </div>
       </div>
 
-      {/* Parte inferior: blanca */}
-      <div className="h-1/2 w-full bg-white" />
-
-      {/* Formulario más ancho hacia la derecha */}
-      <div className="absolute top-1/2 right-[18%] transform -translate-y-1/2 w-[560px] h-[720px] bg-white p-14 rounded-3xl shadow-2xl flex flex-col justify-between">
-        <div>
-          <div className="flex justify-between items-center text-base text-gray-600 mb-6">
+      {/* Zona derecha: formulario moderno */}
+      <div className="w-full lg:w-1/2 h-1/2 lg:h-auto bg-gradient-to-b from-green-900 to-green-600 flex items-center justify-center py-10 px-4 sm:px-8">
+        <div className="w-full max-w-[560px] bg-white p-8 sm:p-12 md:p-16 rounded-3xl shadow-2xl z-20 transition-all duration-300">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center text-base text-gray-600 mb-6 gap-2">
             <span>
-              Bienvenido a <span className="text-green-800 font-semibold">Gestiagro</span>
+              Bienvenido a <span className="text-green-600 font-semibold">LOR</span>
             </span>
-            <a href="#" className="text-green-670 hover:underline">Prueba nuestro demo! Registrate</a>
+            <a href="#" className="text-green-600 hover:underline text-sm">¿Sin cuenta? Registrarse</a>
           </div>
 
-          <h2 className="text-5xl font-bold mb-10">Iniciar sesión</h2>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-10">Iniciar sesión</h2>
 
-          <label className="block text-sm text-gray-700 mb-2">Introduzca su nombre de usuario o correo electrónico</label>
-          <input
-            type="text"
-            className="w-full border border-gray-300 rounded-md px-5 py-4 mb-6 outline-none focus:ring-2 focus:ring-green-300"
-            placeholder="Correo o usuario"
-          />
-
-          <label className="block text-sm text-gray-700 mb-2">Introduzca su contraseña</label>
-          <input
-            type="password"
-            className="w-full border border-gray-300 rounded-md px-5 py-4 mb-4 outline-none focus:ring-2 focus:ring-green-300"
-            placeholder="Contraseña"
-          />
-
-          <div className="text-right mb-6">
-            <a href="#" className="text-sm text-green-800 hover:underline">Olvidé mi contraseña</a>
+          <div className="mb-6">
+            <label className="block text-sm text-gray-700 mb-2">Nombre de usuario o correo electrónico</label>
+            <input
+              type="text"
+              className="w-full border border-gray-300 rounded-lg px-5 py-3 sm:py-4 outline-none focus:ring-2 focus:ring-green-400 transition-all"
+              placeholder="Correo o usuario"
+            />
           </div>
+
+          <div className="mb-4">
+            <label className="block text-sm text-gray-700 mb-2">Contraseña</label>
+            <input
+              type="password"
+              className="w-full border border-gray-300 rounded-lg px-5 py-3 sm:py-4 outline-none focus:ring-2 focus:ring-green-400 transition-all"
+              placeholder="Contraseña"
+            />
+          </div>
+
+          <div className="text-right mb-8">
+            <a href="#" className="text-sm text-green-600 hover:underline">Olvidé mi contraseña</a>
+          </div>
+
+          <button className="w-full bg-green-600 text-white py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:bg-green-700 shadow-md transition-all">
+            Iniciar sesión
+          </button>
         </div>
-
-        <button className="w-full bg-green-700 text-white py-4 rounded-md text-lg font-semibold hover:bg-green-800 shadow-md transition-all">
-          Iniciar sesión
-        </button>
       </div>
     </div>
   );
