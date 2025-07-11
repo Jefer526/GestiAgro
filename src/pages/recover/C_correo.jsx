@@ -1,4 +1,3 @@
-// src/pages/recover/C_correo.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -30,7 +29,7 @@ const C_correo = () => {
         Antes de cambiar tu contraseña, necesitamos asegurarnos de que realmente eres tú.
       </p>
       <p className="text-lg text-center max-w-xl mb-4">
-        Empezaremos eligiendo dónde se enviará el código de confirmación
+        Empezaremos eligiendo dónde se enviará el código de confirmación.
       </p>
 
       <p className="text-lg font-bold mb-2">Enviar email a example@gmail.com</p>
@@ -40,7 +39,10 @@ const C_correo = () => {
       </p>
 
       {/* Botón Confirmar */}
-      <button className="bg-white text-black px-10 py-3 rounded-full hover:bg-gray-100 transition">
+      <button
+        onClick={() => navigate("/confirmar-codigo")} // Redirige a la página de "Confirmar código"
+        className="bg-white text-black px-10 py-3 rounded-full hover:bg-gray-100 transition"
+      >
         Confirmar
       </button>
     </div>
