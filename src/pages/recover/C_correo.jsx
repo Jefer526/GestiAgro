@@ -9,16 +9,16 @@ const C_correo = () => {
       {/* Botón de cierre */}
       <button
         onClick={() => navigate("/")}
-        className="absolute top-4 left-4 text-white text-3xl font-bold"
+        className="absolute top-4 right-4 text-white text-5xl font-bold"
       >
         ×
       </button>
 
       {/* Logo */}
       <img
-        src="/favicon-principal.png"
-        alt="Logo"
-        className="absolute top-4 right-4 w-10 h-10 object-contain"
+        src="./favicon-blanco.png"
+        alt="Logo GestiAgro"
+        className="absolute top-4 left-4 w-10 h-10 object-contain"
       />
 
       {/* Título */}
