@@ -32,15 +32,15 @@ const Login = () => {
         <div className="w-full max-w-[560px] bg-white p-8 sm:p-12 md:p-16 rounded-3xl shadow-2xl z-20 transition-all duration-300">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center text-base text-gray-600 mb-6 gap-2">
             <span>
-              Bienvenido a <span className="text-green-600 font-semibold">LOR</span>
+              Bienvenido a <span className="text-green-600 font-semibold">GESTIAGRO</span>
             </span>
-            <a href="#" className="text-green-600 hover:underline text-sm">¿Sin cuenta? Registrarse</a>
+            <a href="#" className="text-green-600 hover:underline text-base">¿Sin cuenta? Registrarse</a>
           </div>
 
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-10">Iniciar sesión</h2>
 
           <div className="mb-6">
-            <label className="block text-sm text-gray-700 mb-2">Nombre de usuario o correo electrónico</label>
+            <label className="block text-base text-gray-700 mb-2">Nombre de usuario o correo electrónico</label>
             <input
               type="text"
               className="w-full border border-gray-300 rounded-lg px-5 py-3 sm:py-4 outline-none focus:ring-2 focus:ring-green-400 transition-all"
@@ -49,7 +49,7 @@ const Login = () => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm text-gray-700 mb-2">Contraseña</label>
+            <label className="block text-base text-gray-700 mb-2">Contraseña</label>
             <input
               type="password"
               className="w-full border border-gray-300 rounded-lg px-5 py-3 sm:py-4 outline-none focus:ring-2 focus:ring-green-400 transition-all"
@@ -58,11 +58,12 @@ const Login = () => {
           </div>
 
           <Link
-          to="/recuperar-cuenta"
-          className="text-green-600 hover:underline text-sm"
+            to="/recuperar-cuenta"
+            className="text-green-600 hover:underline text-base block text-center mb-[1cm]"
           >
             Olvidé mi contraseña
           </Link>
+
 
           <button className="w-full bg-green-600 text-white py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:bg-green-700 shadow-md transition-all">
             Iniciar sesión
