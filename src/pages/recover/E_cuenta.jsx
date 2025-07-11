@@ -13,16 +13,19 @@ const E_cuenta = () => {
     <div className="min-h-screen bg-green-600 flex flex-col items-center justify-center p-4 relative">
       {/* Botón cerrar */}
       <button
-        className="absolute top-4 left-4 text-white text-3xl font-bold"
+        className="absolute top-4 right-4 text-white text-5xl font-bold"
         onClick={() => navigate("/")}
       >
         ×
       </button>
 
-      {/* Logo */}
-      <div className="absolute top-4 right-4 text-white font-semibold text-sm">
-        Your Logo
-      </div>
+    {/* Logo */}
+      <img
+        src="./favicon-blanco.png"
+        alt="Logo de GestiAgro"
+        className="absolute top-4 left-4 w-10 h-10 object-contain"
+      />
+
 
       {/* Título */}
       <div className="text-center">
