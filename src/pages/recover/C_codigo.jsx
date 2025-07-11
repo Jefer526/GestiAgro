@@ -13,27 +13,30 @@ const C_codigo = () => {
   };
 
   return (
-    <div className="min-h-screen bg-green-600 flex flex-col justify-center items-center p-6 relative">
-      {/* Botón de cierre */}
+    <div className="min-h-screen bg-green-600 flex flex-col items-center justify-center p-4 relative">
+      {/* Botón cerrar */}
       <button
-        onClick={() => navigate("/")} // Redirige a la página principal
-        className="absolute top-4 left-4 text-white text-3xl font-bold"
+        className="absolute top-4 right-4 text-white text-5xl font-bold"
+        onClick={() => navigate("/")}
       >
         ×
       </button>
 
-      {/* Logo */}
-      <div className="absolute top-4 right-4 font-semibold text-sm text-white">
-        Your Logo
-      </div>
-
-      {/* Título */}
-      <h1 className="text-3xl md:text-4xl font-bold text-white text-center mb-8">
-        Te enviamos un código
-      </h1>
+    {/* Logo */}
+      <img
+        src="./favicon-blanco.png"
+        alt="Logo de GestiAgro"
+        className="absolute top-4 left-4 w-10 h-10 object-contain"
+      />
+     {/* Título */}
+      <div className="text-center">
+        <h1 className="text-white text-3xl md:text-5xl">
+          Te enviamos un código
+        </h1>
+      </div><br></br>
 
       {/* Mensaje explicativo */}
-      <p className="text-lg text-center max-w-xl text-white mb-4">
+       <p className="text-white mt-8 mb-9 text-center text-xl max-w-md">
         Revisa tu email para obtener tu código de confirmación. Si necesitas solicitar un nuevo código, vuelve y selecciona un método de confirmación de nuevo.
       </p>
 
@@ -46,26 +49,25 @@ const C_codigo = () => {
         placeholder="Código"
         value={codigo}
         onChange={(e) => setCodigo(e.target.value)} // Actualiza el estado con el código ingresado
-      />
-
-      {/* Botones */}
-      <div className="w-full flex justify-between">
-        {/* Botón Confirmar */}
+      /><br></br>
+  
+     {/* Botones centrados con diseño tipo "Siguiente" */}
+      <div className="flex justify-center space-x-4">
         <button
           onClick={handleConfirm}
-          className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 w-1/2 mr-2"
+          className="bg-white text-black px-8 py-2 rounded-full font-semibold shadow hover:bg-gray-100"
         >
           Confirmar
         </button>
 
-        {/* Botón Volver */}
         <button
-          onClick={() => navigate("/recuperar-cuenta")} // Redirige a la página de recuperación de cuenta
-          className="bg-gray-200 text-green-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-300 w-1/2 ml-2"
+          onClick={() => navigate("/recuperar-cuenta")}
+          className="bg-white text-black px-8 py-2 rounded-full font-semibold shadow hover:bg-gray-100"
         >
           Volver
         </button>
       </div>
+
     </div>
   );
 };
