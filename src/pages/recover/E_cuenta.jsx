@@ -26,16 +26,16 @@ const E_cuenta = () => {
 
       {/* Título */}
       <div className="text-center">
-        <h1 className="text-white text-3xl md:text-4xl font-bold">
+        <h1 className="text-white text-3xl md:text-5xl">
           Encuentra tu cuenta de
         </h1>
-        <h2 className="text-white text-3xl md:text-4xl font-bold mt-2">
-          (proyecto name)
+        <h2 className="text-white text-3xl md:text-5xl font-bold mt-2 mb-20">
+          GestiAgro
         </h2>
       </div>
 
       {/* Instrucción */}
-      <p className="text-white mt-8 mb-4 text-center max-w-md">
+      <p className="text-white mt-8 mb-9 text-center text-xl max-w-md">
         Ingresa tu email asociado con tu cuenta para cambiar tu contraseña.
       </p>
 
@@ -43,7 +43,7 @@ const E_cuenta = () => {
       <form onSubmit={handleSubmit} className="w-full max-w-md flex flex-col items-center">
         <label
           htmlFor="email"
-          className="text-white text-left w-full mb-2 font-medium"
+          className="text-white text-left text-lg w-full mb-2 font-medium"
         >
           Correo electrónico
         </label>
@@ -51,7 +51,7 @@ const E_cuenta = () => {
           type="email"
           id="email"
           placeholder="Correo@gmail.com"
-          className="w-full p-3 rounded-md placeholder-gray-400 focus:outline-none"
+          className="w-full p-4 rounded-md placeholder-gray-400 text-lg focus:outline-none mb-7"
           required
         />
 
