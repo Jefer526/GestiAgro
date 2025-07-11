@@ -15,36 +15,43 @@ const C_correo = () => {
       </button>
 
       {/* Logo */}
-      <div className="absolute top-4 right-4 font-semibold text-sm">
-        Your Logo
-      </div>
+      <img
+        src="/favicon-principal.png"
+        alt="Logo"
+        className="absolute top-4 right-4 w-10 h-10 object-contain"
+      />
 
       {/* Título */}
-      <h1 className="text-3xl md:text-4xl font-bold text-center mb-8">
+      <h1 className="text-3xl md:text-5xl font-bold text-center mb-20">
         Confirmación de correo electrónico
       </h1>
 
-      {/* Mensaje */}
-      <p className="text-lg text-center max-w-xl mb-4">
-        Antes de cambiar tu contraseña, necesitamos asegurarnos de que realmente eres tú.
-      </p>
-      <p className="text-lg text-center max-w-xl mb-4">
-        Empezaremos eligiendo dónde se enviará el código de confirmación.
-      </p>
+      {/* Contenido alineado a la izquierda */}
+      <div className="w-full max-w-xl flex flex-col items-start">
+        <p className="text-xl text-center mb-7 font-semibold">
+          Antes de cambiar tu contraseña, necesitamos asegurarnos de que realmente eres tú.
+        </p>
 
-      <p className="text-lg font-bold mb-2">Enviar email a example@gmail.com</p>
+        <p className="text-xl text-left mb-4">
+          Empezaremos eligiendo dónde se enviará el código de confirmación.
+        </p>
 
-      <p className="text-center text-base mb-10">
-        Contacta <span className="text-blue-300 font-semibold underline">proyecto soporte</span> si no tienes acceso.
-      </p>
+        <p className="text-xl font-bold text-left mb-2">
+          Enviar email a: example@gmail.com
+        </p>
 
-      {/* Botón Confirmar */}
-      <button
-        onClick={() => navigate("/confirmar-codigo")} // Redirige a la página de "Confirmar código"
-        className="bg-white text-black px-10 py-3 rounded-full hover:bg-gray-100 transition"
-      >
-        Confirmar
-      </button>
+        <p className="text-left text-xl mb-10">
+          Contacta <span className="text-blue-300 font-semibold underline">proyecto soporte</span> si no tienes acceso.
+        </p>
+
+        {/* Botón Confirmar */}
+        <button
+          onClick={() => navigate("/confirmar-codigo")}
+          className="bg-white text-black px-10 py-3 rounded-full hover:bg-gray-100 transition self-center"
+        >
+          Confirmar
+        </button>
+      </div>
     </div>
   );
 };
