@@ -15,7 +15,7 @@ const C_codigo = () => {
     <div className="min-h-screen bg-green-600 flex flex-col justify-center items-center p-6 relative">
       {/* Botón cerrar */}
       <button
-        className="absolute top-4 left-4 text-white text-3xl font-bold"
+        className="absolute top-4 right-4 text-white text-5xl font-bold"
         onClick={() => navigate("/")}
       >
         ×
@@ -25,21 +25,21 @@ const C_codigo = () => {
       <img
         src="./favicon-blanco.png"
         alt="Logo"
-        className="absolute top-4 right-4 w-10 h-10 object-contain"
+        className="absolute top-4 left-4 w-10 h-10 object-contain"
       />
 
       {/* Título */}
-      <h1 className="text-white text-3xl md:text-4xl font-bold text-center mb-6">
+      <h1 className="text-white text-3xl md:text-5xl font-bold text-center mb-8">
         Te enviamos un código
       </h1>
 
       {/* Mensaje explicativo */}
-      <p className="text-white text-center max-w-xl mb-8 text-lg">
+      <p className="text-white text-center max-w-xl mb-8 text-xl">
         Revisa tu email para obtener tu código de confirmación. Si necesitas solicitar un nuevo código, vuelve y selecciona un método de confirmación de nuevo.
       </p>
 
       {/* Etiqueta e input */}
-      <label className="text-white mb-2 text-lg font-medium">
+      <label className="text-white mb-2 text-lg font-medium text-left w-full max-w-xs">
         Ingresa tu código
       </label>
       <input

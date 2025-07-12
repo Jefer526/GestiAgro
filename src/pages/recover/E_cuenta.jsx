@@ -1,12 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const E_cuenta = () => {
+  const [email, setEmail] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    navigate("/confirmar-correo"); // 👈 ruta nueva
+    navigate("/confirmar-correo", { state: { email } }); // 👈 Envía el email por state
   };
 
   return (
@@ -19,22 +20,17 @@ const E_cuenta = () => {
         ×
       </button>
 
-    {/* Logo */}
+      {/* Logo */}
       <img
         src="./favicon-blanco.png"
         alt="Logo de GestiAgro"
         className="absolute top-4 left-4 w-10 h-10 object-contain"
       />
 
-
       {/* Título */}
       <div className="text-center">
-        <h1 className="text-white text-3xl md:text-5xl">
-          Encuentra tu cuenta de
-        </h1>
-        <h2 className="text-white text-3xl md:text-5xl font-bold mt-2 mb-20">
-          GestiAgro
-        </h2>
+        <h1 className="text-white text-3xl md:text-5xl">Encuentra tu cuenta de</h1>
+        <h2 className="text-white text-3xl md:text-5xl font-bold mt-2 mb-15">GestiAgro</h2>
       </div>
 
       {/* Instrucción */}
@@ -55,12 +51,14 @@ const E_cuenta = () => {
           id="email"
           placeholder="Correo@gmail.com"
           className="w-full p-4 rounded-md placeholder-gray-400 text-lg focus:outline-none mb-7"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)} // 👈 Guarda en estado
           required
         />
 
         <button
           type="submit"
-          className="bg-white text-black font-medium px-10 py-3 mt-10 rounded-full hover:bg-gray-100 transition"
+          className="bg-white text-black font-medium px-10 py-3 mt-5 rounded-full hover:bg-gray-100 transition"
         >
           Siguiente
         </button>

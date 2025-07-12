@@ -1,8 +1,11 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const C_correo = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const email = location.state?.email || "correo@desconocido.com"; // 👈 Recupera el email
 
   return (
     <div className="min-h-screen bg-green-600 text-white flex flex-col justify-center items-center px-6 relative">
@@ -37,7 +40,7 @@ const C_correo = () => {
         </p>
 
         <p className="text-xl font-bold text-left mb-2">
-          Enviar email a: example@gmail.com
+          Enviar email a: {email}
         </p>
 
         <p className="text-left text-xl mb-10">
@@ -57,3 +60,4 @@ const C_correo = () => {
 };
 
 export default C_correo;
+
