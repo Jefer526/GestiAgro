@@ -17,7 +17,7 @@ const Login = () => {
         style={{ backgroundImage: `url(${fondoImagen})` }}
       >
         <div className="max-w-xl bg-black bg-opacity-50 p-6 rounded-2xl backdrop-blur-md shadow-lg">
-          <h2 className="text-white font-semibold text-xl sm:text-2xl mb-2">LOR - Gestión Agrícola</h2>
+          <h2 className="text-white font-semibold text-xl sm:text-2xl mb-2">GESTIAGRO - Gestión Agrícola</h2>
           <h1 className="text-white font-bold text-4xl sm:text-5xl md:text-6xl leading-tight mb-4">
             Inteligencia para el campo
           </h1>
@@ -34,13 +34,13 @@ const Login = () => {
             <span>
               Bienvenido a <span className="text-green-600 font-semibold">GESTIAGRO</span>
             </span>
-            <a href="#" className="text-green-600 hover:underline text-base">¿Sin cuenta? Registrarse</a>
+            <a href="/crear-cuenta" className="text-green-600 hover:underline text-base">¿Sin cuenta? Registrate</a>
           </div>
 
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-10">Iniciar sesión</h2>
 
           <div className="mb-6">
-            <label className="block text-base text-gray-700 mb-2">Nombre de usuario o correo electrónico</label>
+            <label className="block text-base text-gray-800 mb-2">Nombre de usuario o correo electrónico</label>
             <input
               type="text"
               className="w-full border border-gray-300 rounded-lg px-5 py-3 sm:py-4 outline-none focus:ring-2 focus:ring-green-400 transition-all"
@@ -49,7 +49,7 @@ const Login = () => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-base text-gray-700 mb-2">Contraseña</label>
+            <label className="block text-base text-gray-800 mb-2">Contraseña</label>
             <input
               type="password"
               className="w-full border border-gray-300 rounded-lg px-5 py-3 sm:py-4 outline-none focus:ring-2 focus:ring-green-400 transition-all"
@@ -59,7 +59,7 @@ const Login = () => {
 
           <Link
             to="/recuperar-cuenta"
-            className="text-green-600 hover:underline text-base block text-center mb-[1cm]"
+            className="text-green-600 hover:underline text-base block text-right mb-[1cm]"
           >
             Olvidé mi contraseña
           </Link>
