@@ -23,7 +23,7 @@ const Register = () => {
       />
 
       {/* Contenido encima del fondo */}
-      <div className="bg-white rounded-3xl shadow-lg w-full max-w-xl p-10 z-10 relative">
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-xl p-10 z-10 relative">
         {/* Encabezado */}
         <div className="flex justify-between items-center mb-4">
           <div className="mb-5">
@@ -50,7 +50,7 @@ const Register = () => {
             <input
               type="text"
               placeholder="Ingrese su nombre"
-              className="w-full border border-green-300 rounded-md px-4 py-3 placeholder-gray-400"
+              className="w-full border border-gray-300 rounded-md px-4 py-3 sm:py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all"
               required
             />
           </div>
@@ -59,7 +59,7 @@ const Register = () => {
             <input
               type="tel"
               placeholder="Ingrese su número de teléfono"
-              className="w-full border border-green-300 rounded-md px-4 py-3 placeholder-gray-400"
+              className="w-full border border-gray-300 rounded-md px-4 py-3 sm:py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all"
               required
             />
           </div>
@@ -68,7 +68,7 @@ const Register = () => {
             <input
               type="email"
               placeholder="Ingrese su correo electrónico"
-              className="w-full border border-green-300 rounded-md px-4 py-3 placeholder-gray-400"
+              className="w-full border border-gray-300 rounded-md px-4 py-3 sm:py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all"
               required
             />
           </div>
@@ -77,7 +77,7 @@ const Register = () => {
             <input
               type="password"
               placeholder="Ingrese su contraseña"
-              className="w-full border mb-5 border-green-300 rounded-md px-4 py-3 placeholder-gray-400"
+              className="w-full border border-gray-300 rounded-md px-4 py-3 sm:py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all"
               required
             />
           </div>
