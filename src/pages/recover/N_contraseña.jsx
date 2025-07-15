@@ -34,13 +34,13 @@ const N_contraseña = () => {
       />
 
       {/* Título */}
-      <h1 className="text-white text-3xl md:text-5xl mb-8 text-center">
+      <h1 className="text-white text-lg md:text-5xl mb-8 text-center">
         Ingresa tu nueva contraseña
       </h1>
 
       {/* Formulario */}
       <div className="w-full max-w-md">
-        <label className="text-white block mb-1">Ingresa tu contraseña</label>
+        <label className="text-white text-lg block mb-1">Ingresa tu contraseña</label>
         <input
           type="password"
           className="w-full px-4 py-2 border rounded-md mb-4"
@@ -48,10 +48,10 @@ const N_contraseña = () => {
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <label className="text-white block mb-1">Confirma contraseña</label>
+        <label className="text-white text-lg block mb-1">Confirma contraseña</label>
         <input
           type="password"
-          className="w-full px-4 py-2 border rounded-md mb-6"
+          className="w-full text-lg px-4 py-2 border rounded-md mb-6"
           value={confirmar}
           onChange={(e) => setConfirmar(e.target.value)}
         />
