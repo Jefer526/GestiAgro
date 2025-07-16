@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 const Login = () => {
   return (
     <div className="w-screen min-h-screen flex flex-col lg:flex-row m-0 p-0 overflow-hidden relative font-sans">
-      {/* Degradado vertical entre ambas mitades */}
+      {/* Degradado vertical entre ambas mitades dfsd */}
       <div
         className="hidden lg:block absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2 w-24 z-10 pointer-events-none"
         style={{ background: 'linear-gradient(to right, transparent, rgba(0,0,0,0.6), transparent)' }}
@@ -21,7 +21,7 @@ const Login = () => {
           <h1 className="text-white font-bold text-4xl sm:text-5xl md:text-6xl leading-tight mb-4">
             Inteligencia para el campo
           </h1>
-          <p className="text-white text-base sm:text-lg">
+          <p className="text-white text-base sm:text-xl">
             Soluciones digitales para una agricultura más eficiente.
           </p>
         </div>
