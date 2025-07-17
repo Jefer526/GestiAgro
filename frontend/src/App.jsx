@@ -1,10 +1,13 @@
 import { Routes, Route } from "react-router-dom";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import C_correo from "./pages/recover/C_correo";
-import E_cuenta from "./pages/recover/E_cuenta";
-import C_codigo from "./pages/recover/C_codigo";
-import N_contraseña from "./pages/recover/N_contraseña";
+
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+
+import C_correo from "./pages/auth/recover/C_correo";
+import E_cuenta from "./pages/auth/recover/E_cuenta";
+import C_codigo from "./pages/auth/recover/C_codigo";
+import N_contraseña from "./pages/auth/recover/N_contraseña";
+
 
 function App() {
   return (

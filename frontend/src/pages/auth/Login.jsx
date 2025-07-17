@@ -1,5 +1,5 @@
 import React from "react";
-import fondoImagen from "../assets/fondo.jpg";
+import fondoImagen from "../../assets/fondo.jpg";
 import { Link } from "react-router-dom";
 
 const Login = () => {
