@@ -17,10 +17,10 @@ const Home_adm = () => {
         <button><IconTool className="text-white w-6 h-6" /></button>
       </div>
 
-      {/* Contenido principal */}
+      {/* Contenido principal dsfs */}
       <div className="flex-1 p-10">
         <h1 className="text-2xl font-bold text-green-700 mb-4">Panel principal</h1>
-        <div className="bg-gray-200 p-4 rounded-lg w-fit mb-6 font-semibold text-green-700">
+        <div className="bg-gray-250 p-4 rounded-lg w-fit mb-6 font-semibold text-green-700">
           Bienvenido!
         </div>
 
