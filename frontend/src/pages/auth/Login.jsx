@@ -65,9 +65,12 @@ const Login = () => {
           </Link>
 
 
-          <button className="w-full bg-green-600 text-white py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:bg-green-700 shadow-md transition-all">
-            Iniciar sesión
-          </button>
+          <Link to="/homeadm">
+            <button className="w-full bg-green-600 text-white py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:bg-green-700 shadow-md transition-all">
+              Iniciar sesión
+            </button>
+          </Link>
+
         </div>
       </div>
     </div>
