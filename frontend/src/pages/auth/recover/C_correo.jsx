@@ -44,7 +44,13 @@ const C_correo = () => {
         </p>
 
         <p className="text-left text-xl mb-10">
-          Contacta <span className="text-blue-300 font-semibold underline">proyecto soporte</span> si no tienes acceso.
+          Contacta{" "}
+        <span
+          className="text-blue-300 font-semibold underline cursor-pointer"
+          onClick={() => navigate("/soporte")}
+        >
+          proyecto soporte
+        </span>
         </p>
 
         {/* Botón Confirmar */}
