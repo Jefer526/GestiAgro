@@ -29,29 +29,29 @@ const Soporte = () => {
         Your Logo
       </div>
 
-      <h1 className="text-4xl font-bold mb-8 mt-16">Soporte</h1>
+      <h1 className="text-3xl md:text-5xl font-bold mb-10 mt-16">Soporte</h1>
 
       <div className="max-w-xl w-full">
         <h2 className="text-2xl font-bold mb-2">¿No puedes acceder?</h2>
-        <p className="mb-6">
+        <p className="mb-6 text-xl">
           Por favor contacta a nuestro equipo si necesitas ayuda con el acceso a este software.
         </p>
 
-        <label className="block font-semibold mb-1">Asunto:</label>
+        <label className="block text-lg font-semibold mb-1">Asunto:</label>
         <input
           type="text"
           value={asunto}
           onChange={(e) => setAsunto(e.target.value)}
-          className="w-full p-3 mb-4 rounded-md text-black"
+          className="w-full text-lg p-3 mb-4 rounded-md text-black"
         />
 
-        <label className="block font-semibold mb-1">Descripción:</label>
+        <label className="block text-lg font-semibold mb-1">Descripción:</label>
         <textarea
           value={descripcion}
           onChange={(e) => setDescripcion(e.target.value)}
           placeholder="Observación..."
           rows={5}
-          className="w-full p-3 rounded-md text-black mb-8"
+          className="w-full text-lg p-3 rounded-md text-black mb-8"
         />
 
         <button

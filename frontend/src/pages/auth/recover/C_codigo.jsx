@@ -44,11 +44,12 @@ const C_codigo = () => {
       </label>
       <input
         type="text"
-        className="w-full max-w-xs px-4 py-2 rounded-md border text-lg outline-none focus:ring-2 focus:ring-green-300 mb-8"
+        className="w-full max-w-xs px-4 py-2 text-lg border rounded-md mb-4"
         placeholder="Código"
         value={codigo}
         onChange={(e) => setCodigo(e.target.value)}
       />
+
 
       {/* Botones */}
       <div className="flex flex-col space-y-4 w-full max-w-xs">

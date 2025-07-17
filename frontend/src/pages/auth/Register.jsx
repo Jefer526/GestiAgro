@@ -30,9 +30,9 @@ const Register = () => {
             <h2 className="text-lg font-medium">
               Bienvenido a <span className="text-green-500 font-semibold">GESTIAGRO</span>
             </h2>
-            <h1 className="text-3xl font-bold">Registro</h1>
+            <h1 className="text-4xl font-bold">Registro</h1>
           </div>
-          <div className="text-sm text-gray-500 text-right">
+          <div className="text-gray-500 text-right">
             <p>¿Ya tienes cuenta?</p>
             <Link
               to="/"
@@ -50,7 +50,7 @@ const Register = () => {
             <input
               type="text"
               placeholder="Ingrese su nombre"
-              className="w-full border border-gray-300 rounded-md px-4 py-3 sm:py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all"
+              className="w-full border text-lg border-gray-300 rounded-md px-4 py-3 sm:py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all"
               required
             />
           </div>
@@ -59,7 +59,7 @@ const Register = () => {
             <input
               type="tel"
               placeholder="Ingrese su número de teléfono"
-              className="w-full border border-gray-300 rounded-md px-4 py-3 sm:py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all"
+              className="w-full border text-lg border-gray-300 rounded-md px-4 py-3 sm:py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all"
               required
             />
           </div>
@@ -68,7 +68,7 @@ const Register = () => {
             <input
               type="email"
               placeholder="Ingrese su correo electrónico"
-              className="w-full border border-gray-300 rounded-md px-4 py-3 sm:py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all"
+              className="w-full border text-lg border-gray-300 rounded-md px-4 py-3 sm:py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all"
               required
             />
           </div>
@@ -77,7 +77,7 @@ const Register = () => {
             <input
               type="password"
               placeholder="Ingrese su contraseña"
-              className="w-full border border-gray-300 rounded-md px-4 py-3 sm:py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all"
+              className="w-full border text-lg border-gray-300 rounded-md px-4 py-3 sm:py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all mb-4"
               required
             />
           </div>

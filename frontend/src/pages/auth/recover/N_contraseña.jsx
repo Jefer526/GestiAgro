@@ -43,7 +43,7 @@ const N_contraseña = () => {
         <label className="text-white text-lg block mb-1">Ingresa tu contraseña</label>
         <input
           type="password"
-          className="w-full px-4 py-2 border rounded-md mb-4"
+          className="w-full px-4 py-2 text-lg border rounded-md mb-4"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
