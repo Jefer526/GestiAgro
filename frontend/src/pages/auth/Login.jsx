@@ -43,7 +43,7 @@ const Login = () => {
             <label className="block text-base text-gray-800 mb-2">Nombre de usuario o correo electrónico</label>
             <input
               type="text"
-              className="w-full border border-gray-300 rounded-lg px-5 py-3 sm:py-4 outline-none focus:ring-2 focus:ring-green-400 transition-all"
+              className="w-full border border-gray-300 text-lg rounded-lg px-5 py-3 sm:py-4 outline-none focus:ring-2 focus:ring-green-400 transition-all"
               placeholder="Correo o usuario"
             />
           </div>
@@ -52,7 +52,7 @@ const Login = () => {
             <label className="block text-base text-gray-800 mb-2">Contraseña</label>
             <input
               type="password"
-              className="w-full border border-gray-300 rounded-lg px-5 py-3 sm:py-4 outline-none focus:ring-2 focus:ring-green-400 transition-all"
+              className="w-full border border-gray-300 text-lg rounded-lg px-5 py-3 sm:py-4 outline-none focus:ring-2 focus:ring-green-400 transition-all"
               placeholder="Contraseña"
             />
           </div>
