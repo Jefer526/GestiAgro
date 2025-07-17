@@ -50,11 +50,12 @@ const E_cuenta = () => {
           type="email"
           id="email"
           placeholder="Correo@gmail.com"
-          className="w-full p-4 rounded-md placeholder-gray-400 text-lg focus:outline-none mb-7"
+          className="w-full p-4 px-4 py-2 text-lg border rounded-md mb-4"
           value={email}
-          onChange={(e) => setEmail(e.target.value)} // 👈 Guarda en estado
+          onChange={(e) => setEmail(e.target.value)}
           required
         />
+
 
         <button
           type="submit"
