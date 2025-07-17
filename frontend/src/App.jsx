@@ -22,7 +22,7 @@ function App() {
       <Route path="/confirmar-codigo" element={<C_codigo />} />
       <Route path="/nueva-contraseña" element={<N_contraseña />} />
       <Route path="/soporte" element={<Soporte />} />
-      <Route path="/homeadm" element={<Home_adm />} />
+      <Route path="/Homeadm" element={<Home_adm />} />
       
     </Routes>
   );
