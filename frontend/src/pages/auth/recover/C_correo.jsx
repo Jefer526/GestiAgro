@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import faviconBlanco from "../../../assets/favicon-blanco.png";
 
 const C_correo = () => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const C_correo = () => {
 
       {/* Logo */}
       <img
-        src="./favicon-blanco.png"
+        src={faviconBlanco}
         alt="Logo GestiAgro"
         className="absolute top-4 left-4 w-10 h-10 object-contain"
       />

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import faviconBlanco from "../../../assets/favicon-blanco.png";
 
 const N_contraseña = () => {
   const [password, setPassword] = useState("");
@@ -28,7 +29,7 @@ const N_contraseña = () => {
 
       {/* Logo */}
       <img
-        src="./favicon-blanco.png"
+        src={faviconBlanco}
         alt="Logo"
         className="absolute top-4 left-4 w-10 h-10 object-contain"
       />

@@ -2,6 +2,7 @@ import React from "react";
 import fondoImagen from "../../assets/fondo.jpg";
 import { Link } from "react-router-dom";
 
+
 const Login = () => {
   return (
     <div className="w-screen min-h-screen flex flex-col lg:flex-row m-0 p-0 overflow-hidden relative font-sans">

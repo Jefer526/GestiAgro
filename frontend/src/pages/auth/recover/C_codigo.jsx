@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import faviconBlanco from "../../../assets/favicon-blanco.png";
 
 const C_codigo = () => {
   const [codigo, setCodigo] = useState("");
   const navigate = useNavigate();
 
   const handleConfirm = () => {
-    // Aquí puedes validar el código si es necesario
     console.log("Código confirmado:", codigo);
     navigate("/nueva-contraseña");
   };
@@ -23,7 +23,7 @@ const C_codigo = () => {
 
       {/* Logo */}
       <img
-        src="./favicon-blanco.png"
+        src={faviconBlanco}
         alt="Logo"
         className="absolute top-4 left-4 w-10 h-10 object-contain"
       />
@@ -50,7 +50,6 @@ const C_codigo = () => {
         onChange={(e) => setCodigo(e.target.value)}
       />
 
-
       {/* Botones */}
       <div className="flex flex-col space-y-4 w-full max-w-xs">
         <button
@@ -71,4 +70,3 @@ const C_codigo = () => {
 };
 
 export default C_codigo;
-

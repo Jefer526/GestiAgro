@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import faviconBlanco from "../../../assets/favicon-blanco.png";
 
 const Soporte = () => {
   const [asunto, setAsunto] = useState("");
@@ -7,27 +8,28 @@ const Soporte = () => {
   const navigate = useNavigate();
 
   const handleEnviar = () => {
-    // Aquí puedes implementar el envío del formulario a un backend
     console.log("Asunto:", asunto);
     console.log("Descripción:", descripcion);
     alert("Mensaje enviado con éxito.");
-    navigate("/"); // Regresa a pantalla anterior
+    navigate("/");
   };
 
   return (
     <div className="min-h-screen bg-green-600 text-white p-6 relative flex flex-col items-center">
-      {/* Botón cerrar */}
+      {/* Logo arriba a la izquierda */}
+      <img
+        src={faviconBlanco}
+        alt="Logo de GestiAgro"
+        className="absolute top-4 left-4 w-10 h-10 object-contain"
+      />
+
+      {/* Botón cerrar arriba a la derecha */}
       <button
         onClick={() => navigate("/")}
-        className="absolute top-4 left-4 text-white text-3xl font-bold"
+        className="absolute top-4 right-4 text-white text-3xl font-bold"
       >
         ×
       </button>
-
-      {/* Logo */}
-      <div className="absolute top-4 right-4 font-semibold text-sm">
-        Your Logo
-      </div>
 
       <h1 className="text-3xl md:text-5xl font-bold mb-10 mt-16">Soporte</h1>
 
@@ -66,4 +68,3 @@ const Soporte = () => {
 };
 
 export default Soporte;
-
