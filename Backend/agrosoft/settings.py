@@ -37,10 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
-    'apps.finca',
-    'apps.cultivo',
     'apps.usuarios',
+    'apps.backups',
+    'apps.soporte',
 ]
 
 MIDDLEWARE = [
@@ -51,7 +50,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
 ]
+
+AUTH_USER_MODEL = 'usuarios.Usuario'
 
 ROOT_URLCONF = 'agrosoft.urls'
 
