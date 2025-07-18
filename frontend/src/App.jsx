@@ -8,7 +8,7 @@ import C_codigo from "./pages/auth/recover/C_codigo";
 import N_contraseña from "./pages/auth/recover/N_contraseña";
 import Soporte from "./pages/auth/recover/Soporte";
 import Home_adm from "./pages/administrador/Home_adm";
-
+import Admin_usuarios from "./pages/administrador/Admin_usuarios";
 
 
 
@@ -23,6 +23,7 @@ function App() {
       <Route path="/nueva-contraseña" element={<N_contraseña />} />
       <Route path="/soporte" element={<Soporte />} />
       <Route path="/Homeadm" element={<Home_adm />} />
+      <Route path="/Admuser" element={<Admin_usuarios />} />
       
     </Routes>
   );
