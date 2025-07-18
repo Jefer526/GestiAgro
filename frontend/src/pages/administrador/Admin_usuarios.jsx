@@ -29,6 +29,22 @@ const Admin_usuarios = () => {
       email: "jefferson@example.com",
       contraseña: "********",
     },
+    {
+      id: 2,
+      nombre: "María García",
+      telefono: "987654321",
+      rol: "Supervisor",
+      email: "maria@example.com",
+      contraseña: "********",
+    },
+    {
+      id: 3,
+      nombre: "Carlos Ruiz",
+      telefono: "555666777",
+      rol: "Empleado",
+      email: "carlos@example.com",
+      contraseña: "********",
+    },
   ];
 
   const handleMenuOpen = (id, event) => {
@@ -91,7 +107,10 @@ const Admin_usuarios = () => {
             <IconTool className="text-white w-11 h-11" />
           </button>
         </div>
-        <button className="mb-6 hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+        <button 
+          onClick={() => navigate("/ajustes")}
+          className="mb-6 hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+        >
           <IconSettings className="text-white w-11 h-11" />
         </button>
       </div>
@@ -122,12 +141,12 @@ const Admin_usuarios = () => {
           <table className="min-w-full bg-white text-sm text-left">
             <thead className="bg-green-600 text-white">
               <tr>
-                <th className="px-6 py-3">ID</th>
-                <th className="px-6 py-3">Nombre</th>
-                <th className="px-6 py-3">Teléfono</th>
-                <th className="px-6 py-3">Rol</th>
-                <th className="px-6 py-3">Email</th>
-                <th className="px-6 py-3">Contraseña</th>
+                <th className="px-6 py-3 border-r border-white">ID</th>
+                <th className="px-6 py-3 border-r border-white">Nombre</th>
+                <th className="px-6 py-3 border-r border-white">Teléfono</th>
+                <th className="px-6 py-3 border-r border-white">Rol</th>
+                <th className="px-6 py-3 border-r border-white">Email</th>
+                <th className="px-6 py-3 border-r border-white">Contraseña</th>
                 <th className="px-6 py-3">Opciones</th>
               </tr>
             </thead>
@@ -135,12 +154,12 @@ const Admin_usuarios = () => {
               {filtrados.length > 0 ? (
                 filtrados.map((u) => (
                   <tr key={u.id} className="border-t hover:bg-gray-50">
-                    <td className="px-6 py-4">{u.id}</td>
-                    <td className="px-6 py-4">{u.nombre}</td>
-                    <td className="px-6 py-4">{u.telefono}</td>
-                    <td className="px-6 py-4">{u.rol}</td>
-                    <td className="px-6 py-4">{u.email}</td>
-                    <td className="px-6 py-4">{u.contraseña}</td>
+                    <td className="px-6 py-4 border-r">{u.id}</td>
+                    <td className="px-6 py-4 border-r">{u.nombre}</td>
+                    <td className="px-6 py-4 border-r">{u.telefono}</td>
+                    <td className="px-6 py-4 border-r">{u.rol}</td>
+                    <td className="px-6 py-4 border-r">{u.email}</td>
+                    <td className="px-6 py-4 border-r">{u.contraseña}</td>
                     <td className="px-6 py-4">
                       <button
                         onClick={(e) => handleMenuOpen(u.id, e)}
@@ -162,11 +181,11 @@ const Admin_usuarios = () => {
           </table>
         </div>
 
-        {/* Menú flotante */}
+        {/* Menú flotante con ancho reducido */}
         {menuAbiertoId !== null && (
           <div
             id="floating-menu"
-            className="fixed bg-white border border-gray-200 rounded shadow-lg w-48 z-50"
+            className="fixed bg-white border border-gray-200 rounded shadow-lg w-40 z-50"
             style={{ top: menuPosition.y, left: menuPosition.x }}
           >
             <button className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100">
@@ -177,6 +196,7 @@ const Admin_usuarios = () => {
               <IconSettings2 className="w-4 h-4 text-gray-600" />
               Roles y permisos
             </button>
+
             <button className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50">
               <IconTrash className="w-4 h-4" />
               Eliminar
@@ -189,7 +209,3 @@ const Admin_usuarios = () => {
 };
 
 export default Admin_usuarios;
-
-
-
-
