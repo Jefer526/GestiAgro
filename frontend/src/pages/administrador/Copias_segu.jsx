@@ -85,28 +85,25 @@ const Copias_segu = () => {
 
       {/* Contenido principal */}
       <div className="flex-1 p-8 overflow-auto relative">
-        <h1 className="text-4xl font-bold text-green-600 mb-6">
-          Copias de seguridad
-        </h1>
+        <h1 className="text-4xl font-bold text-green-600 mb-6">Copias de seguridad</h1>
 
-        {/* Filtro y búsqueda */}
-        <div className="flex items-center bg-green-600 p-4 rounded-t-lg">
-          <button className="p-2 bg-white rounded hover:bg-gray-100 text-green-600">
+        {/* Filtro y búsqueda afuera de la tabla */}
+        <div className="mb-4 flex items-center gap-2">
+          <button className="p-2 rounded-md bg-green-600 hover:bg-green-700 transition text-white">
             <IconFilter className="w-5 h-5" />
           </button>
           <input
             type="text"
-            placeholder="Buscar..."
-            className="ml-2 px-4 py-2 rounded-md border border-gray-300 w-full max-w-sm"
+            placeholder="Buscar por fecha"
+            className="border border-gray-300 rounded-md px-4 py-2 w-full max-w-sm outline-none focus:ring-2 focus:ring-green-400 transition-all"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
 
-        {/* Tabla */}
-        <div className="overflow-x-auto shadow-md rounded-b-lg">
+        <div className="overflow-x-auto shadow-md rounded-lg">
           <table className="min-w-full text-base bg-white text-left">
-            <thead className="bg-green-100 text-gray-700">
+            <thead className="bg-green-600 text-white">
               <tr>
                 <th className="px-4 py-3">#</th>
                 <th className="px-4 py-3">FECHA DE CARGA</th>
@@ -140,14 +137,12 @@ const Copias_segu = () => {
           </table>
         </div>
 
-        {/* Botón restaurar */}
         <div className="flex justify-end mt-6">
           <button className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 shadow">
             Restaurar
           </button>
         </div>
 
-        {/* Menú flotante con posición fija */}
         {menuAbiertoId !== null && (
           <div
             id="floating-menu"
@@ -174,3 +169,4 @@ const Copias_segu = () => {
 };
 
 export default Copias_segu;
+
