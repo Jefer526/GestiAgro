@@ -48,7 +48,7 @@ const C_correo = () => {
           Contacta{" "}
         <span
           className="text-blue-300 font-semibold underline cursor-pointer"
-          onClick={() => navigate("/soporte")}
+          onClick={() => navigate("/soporte_user")}
         >
           proyecto soporte
         </span>

@@ -5,20 +5,30 @@ import faviconBlanco from "../../../assets/favicon-blanco.png";
 const N_contraseña = () => {
   const [password, setPassword] = useState("");
   const [confirmar, setConfirmar] = useState("");
+  const [mostrarAlerta, setMostrarAlerta] = useState(false);
   const navigate = useNavigate();
 
   const handleConfirm = () => {
     if (password === confirmar && password.trim() !== "") {
-      // Aquí iría la lógica para guardar la nueva contraseña
       console.log("Contraseña actualizada:", password);
-      navigate("/"); // Vuelve al login
+      navigate("/"); // Redirige al login
     } else {
-      alert("Las contraseñas no coinciden o están vacías.");
+      setMostrarAlerta(true);
+      setTimeout(() => setMostrarAlerta(false), 2000);
     }
   };
 
   return (
     <div className="min-h-screen bg-green-600 flex flex-col items-center justify-center p-4 relative">
+      {/* Alerta de error */}
+      {mostrarAlerta && (
+        <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
+          <div className="bg-white text-red-700 border border-red-400 px-6 py-4 rounded shadow font-medium">
+            ⚠️ Las contraseñas no coinciden o están vacías.
+          </div>
+        </div>
+      )}
+
       {/* Botón cerrar */}
       <button
         className="absolute top-4 right-4 text-white text-5xl font-bold"
@@ -59,7 +69,7 @@ const N_contraseña = () => {
 
         <button
           onClick={handleConfirm}
-          className="bg-white text-black px-8 py-2 rounded-full w-full font-semibold hover:bg-gray-100"
+          className="bg-white text-black px-8 py-2 rounded-full w-full font-semibold hover:bg-gray-100 transition"
         >
           Confirmar
         </button>

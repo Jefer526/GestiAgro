@@ -5,17 +5,32 @@ import faviconBlanco from "../../../assets/favicon-blanco.png";
 const Soporte = () => {
   const [asunto, setAsunto] = useState("");
   const [descripcion, setDescripcion] = useState("");
+  const [mostrarAlerta, setMostrarAlerta] = useState(false);
   const navigate = useNavigate();
 
   const handleEnviar = () => {
     console.log("Asunto:", asunto);
     console.log("Descripción:", descripcion);
-    alert("Mensaje enviado con éxito.");
-    navigate("/");
+    setMostrarAlerta(true);
+
+    // Cierra la alerta tras 3 segundos y redirige
+    setTimeout(() => {
+      setMostrarAlerta(false);
+      navigate("/");
+    }, 2000);
   };
 
   return (
     <div className="min-h-screen bg-green-600 text-white p-6 relative flex flex-col items-center">
+      {/* Alerta flotante */}
+      {mostrarAlerta && (
+        <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
+          <div className="bg-white text-green-700 border border-green-400 px-6 py-4 rounded shadow-md font-medium">
+            ✅ Mensaje enviado con éxito
+          </div>
+        </div>
+      )}
+
       {/* Logo arriba a la izquierda */}
       <img
         src={faviconBlanco}

@@ -1,18 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import faviconBlanco from '../../assets/favicon-blanco.png';
 
 const Register = () => {
   const navigate = useNavigate();
+  const [mostrarAlerta, setMostrarAlerta] = useState(false);
 
   const handleRegister = (e) => {
     e.preventDefault();
     console.log("Registro completado");
-    navigate("/");
+    setMostrarAlerta(true);
+    setTimeout(() => {
+      setMostrarAlerta(false);
+      navigate("/");
+    }, 2000);
   };
 
   return (
     <div className="min-h-screen relative flex items-center justify-center bg-green-600">
+      {/* Alerta flotante */}
+      {mostrarAlerta && (
+        <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
+          <div className="bg-white text-green-700 border border-green-400 px-6 py-4 rounded shadow-md font-medium">
+            ✅ Registro exitoso
+          </div>
+        </div>
+      )}
+
       {/* Fondo dividido */}
       <div className="absolute top-0 left-0 w-full h-1/2 bg-green-600 z-0" />
       <div className="absolute bottom-0 left-0 w-full h-1/2 bg-white z-0" />
@@ -23,9 +37,7 @@ const Register = () => {
         className="absolute top-4 left-4 w-10 h-10 object-contain"
       />
 
-      {/* Contenido encima del fondo */}
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-xl p-10 z-10 relative">
-        {/* Encabezado */}
         <div className="flex justify-between items-center mb-4">
           <div className="mb-5">
             <h2 className="text-lg font-medium">
@@ -35,23 +47,19 @@ const Register = () => {
           </div>
           <div className="text-gray-500 text-right">
             <p>¿Ya tienes cuenta?</p>
-            <Link
-              to="/"
-              className="text-green-600 hover:underline text-base block text-center"
-            >
-              Inicia Sesión
+            <Link to="/" className="text-green-600 hover:underline text-base block text-center">
+              Inicia sesión
             </Link>
           </div>
         </div>
 
-        {/* Formulario */}
         <form onSubmit={handleRegister} className="space-y-4">
           <div>
             <label className="block mb-1 font-medium text-gray-800">Nombre</label>
             <input
               type="text"
               placeholder="Ingrese su nombre"
-              className="w-full border text-lg border-gray-300 rounded-md px-4 py-3 sm:py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all"
+              className="w-full border text-lg border-gray-300 rounded-md px-4 py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all"
               required
             />
           </div>
@@ -60,7 +68,7 @@ const Register = () => {
             <input
               type="tel"
               placeholder="Ingrese su número de teléfono"
-              className="w-full border text-lg border-gray-300 rounded-md px-4 py-3 sm:py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all"
+              className="w-full border text-lg border-gray-300 rounded-md px-4 py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all"
               required
             />
           </div>
@@ -69,7 +77,7 @@ const Register = () => {
             <input
               type="email"
               placeholder="Ingrese su correo electrónico"
-              className="w-full border text-lg border-gray-300 rounded-md px-4 py-3 sm:py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all"
+              className="w-full border text-lg border-gray-300 rounded-md px-4 py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all"
               required
             />
           </div>
@@ -78,13 +86,13 @@ const Register = () => {
             <input
               type="password"
               placeholder="Ingrese su contraseña"
-              className="w-full border text-lg border-gray-300 rounded-md px-4 py-3 sm:py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all mb-4"
+              className="w-full border text-lg border-gray-300 rounded-md px-4 py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all mb-4"
               required
             />
           </div>
           <button
             type="submit"
-            className="w-full bg-green-600 text-white py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:bg-green-700 shadow-md transition-all"
+            className="w-full bg-green-600 text-white py-3 rounded-lg text-base font-semibold hover:bg-green-700 shadow-md transition-all"
           >
             Registrarse
           </button>
