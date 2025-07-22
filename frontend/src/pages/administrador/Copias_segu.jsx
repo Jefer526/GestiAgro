@@ -85,7 +85,7 @@ const Copias_segu = () => {
 
       {/* Contenido principal */}
       <div className="flex-1 p-8 overflow-auto relative">
-        <h1 className="text-3xl font-bold text-green-600 mb-6">
+        <h1 className="text-4xl font-bold text-green-600 mb-6">
           Copias de seguridad
         </h1>
 
@@ -105,7 +105,7 @@ const Copias_segu = () => {
 
         {/* Tabla */}
         <div className="overflow-x-auto shadow-md rounded-b-lg">
-          <table className="min-w-full text-sm bg-white text-left">
+          <table className="min-w-full text-base bg-white text-left">
             <thead className="bg-green-100 text-gray-700">
               <tr>
                 <th className="px-4 py-3">#</th>

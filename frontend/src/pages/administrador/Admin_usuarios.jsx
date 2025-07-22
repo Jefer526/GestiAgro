@@ -107,7 +107,7 @@ const Admin_usuarios = () => {
             <IconTool className="text-white w-11 h-11" />
           </button>
         </div>
-        <button 
+        <button
           onClick={() => navigate("/ajustes")}
           className="mb-6 hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
         >
@@ -117,7 +117,7 @@ const Admin_usuarios = () => {
 
       {/* Contenido principal */}
       <div className="flex-1 p-8 overflow-auto relative">
-        <h1 className="text-3xl font-bold text-green-600 mb-6">
+        <h1 className="text-4xl font-bold text-green-600 mb-6">
           Gestionar usuarios
         </h1>
 
@@ -131,14 +131,14 @@ const Admin_usuarios = () => {
           <input
             type="text"
             placeholder="Buscar por nombre, email o teléfono"
-            className="border border-gray-300 rounded-md px-4 py-2 w-full max-w-md"
+            className="border border-gray-300 rounded-md px-4 py-2 w-full max-w-sm outline-none focus:ring-2 focus:ring-green-400 transition-all"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
 
         <div className="overflow-x-auto shadow-md rounded-lg">
-          <table className="min-w-full bg-white text-sm text-left">
+          <table className="min-w-full bg-white text-base text-left">
             <thead className="bg-green-600 text-white">
               <tr>
                 <th className="px-6 py-3 border-r border-white">ID</th>
@@ -181,7 +181,7 @@ const Admin_usuarios = () => {
           </table>
         </div>
 
-        {/* Menú flotante con ancho reducido */}
+        {/* Menú flotante */}
         {menuAbiertoId !== null && (
           <div
             id="floating-menu"
@@ -189,14 +189,13 @@ const Admin_usuarios = () => {
             style={{ top: menuPosition.y, left: menuPosition.x }}
           >
             <button className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100">
-              <IconEye className="w-4 h-4 text-gray-600" />
+              <IconEye className="w-4 h-4 text-blue-600" />
               Ver
             </button>
             <button className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100">
-              <IconSettings2 className="w-4 h-4 text-gray-600" />
+              <IconSettings2 className="w-4 h-4 text-green-600" />
               Roles y permisos
             </button>
-
             <button className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50">
               <IconTrash className="w-4 h-4" />
               Eliminar
@@ -209,3 +208,4 @@ const Admin_usuarios = () => {
 };
 
 export default Admin_usuarios;
+

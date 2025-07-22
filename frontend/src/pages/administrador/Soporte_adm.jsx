@@ -19,7 +19,7 @@ const Soporte_adm = () => {
       rol: "Ing. Agrónomo",
       tiempo: "Hace 1 día",
       mensaje:
-        "fghnrthrthtrtttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt",
+        "Lorem ipsum dolor sit amet consectetur adipiscing, elit mauris curabitur nam nisi maecenas vulputate, metus nibh ultrices nisl consequat. Ridiculus tortor taciti eleifend facilisi commodo vulputate nullam metus purus porta quisque fames, mi risus phasellus leo consequat tincidunt nec mattis donec curae eu faucibus, torquent ac accumsan tempor sociis feugiat pharetra sed tempus integer gravida. Diam mollis interdum vestibulum placerat dignissim sem litora sociis, conubia pulvinar ac platea ut faucibus ornare magna egestas, cubilia tortor senectus tincidunt cursus dis turpis.",
       avatar: "https://randomuser.me/api/portraits/women/40.jpg",
       estado: ["Aceptar", "Hecho"],
     },
@@ -29,7 +29,7 @@ const Soporte_adm = () => {
       rol: "Mayordomo",
       tiempo: "Hace 2 días",
       mensaje:
-        "jaaaaaaaaaaaaaaaaaaaaaaajchsjdahcjahsjahhhhhhhhhhhhhhhhhhhhhh sdsasssssssssssssssssssssssssssssssssssss",
+        "Pellentesque leo tincidunt penatibus tempus suspendisse accumsan ullamcorper netus risus cras sociis a fames, non eros cubilia neque mattis natoque nec montes sagittis at maecenas habitasse. Feugiat aptent felis habitant cursus tempor leo iaculis, dictum torquent aenean et nulla tempus fermentum, magnis sollicitudin ac urna molestie morbi. Potenti sociosqu ridiculus vehicula montes nostra enim eu curabitur semper, lectus pulvinar sagittis nisi porttitor massa quis feugiat.",
       avatar: "https://randomuser.me/api/portraits/women/76.jpg",
       estado: ["En proceso", "Hecho"],
     },
@@ -76,7 +76,7 @@ const Soporte_adm = () => {
 
       {/* Contenido principal */}
       <div className="flex-1 p-8">
-        <h1 className="text-3xl font-bold text-green-600 mb-6">Soporte</h1>
+        <h1 className="text-4xl font-bold text-green-600 mb-6">Soporte</h1>
 
         <div className="space-y-6">
           {solicitudes.map((s) => (
