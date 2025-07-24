@@ -37,9 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'apps.usuarios',
-    'apps.backups',
-    'apps.soporte',
 ]
 
 MIDDLEWARE = [
@@ -53,7 +52,6 @@ MIDDLEWARE = [
     
 ]
 
-AUTH_USER_MODEL = 'usuarios.Usuario'
 
 ROOT_URLCONF = 'agrosoft.urls'
 
@@ -80,8 +78,12 @@ WSGI_APPLICATION = 'agrosoft.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'Gestiagro',       # nombre de tu base de datos
+        'USER': 'postgres',           # tu usuario de PostgreSQL
+        'PASSWORD': 'jefer9526',       # tu contraseña
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
