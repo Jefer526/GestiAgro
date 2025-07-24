@@ -66,7 +66,7 @@ const Login = () => {
           </Link>
 
 
-          <Link to="/homeadm">
+          <Link to="/seleccion-rol">
             <button className="w-full bg-green-600 text-white py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:bg-green-700 shadow-md transition-all">
               Iniciar sesión
             </button>

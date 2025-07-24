@@ -12,7 +12,10 @@ import Admin_usuarios from "./pages/administrador/Admin_usuarios";
 import Copias_segu from "./pages/administrador/Copias_segu";
 import Soporte_adm from "./pages/administrador/Soporte_adm";
 import Ajustes_adm from "./pages/administrador/Ajustes_adm";
-
+import EditarRolUser from "./pages/administrador/Editar_roluser";
+import Seleccion_rol from "./pages/Seleccion_rol";
+import Home_agro from "./pages/agronomo/Home_agro";
+import Labores_agro from "./pages/agronomo/Labores_agro";
 
 
 function App() {
@@ -25,11 +28,16 @@ function App() {
       <Route path="/confirmar-codigo" element={<C_codigo />} />
       <Route path="/nueva-contraseña" element={<N_contraseña />} />
       <Route path="/soporte_user" element={<Soporte />} />
+      <Route path="/Ajustesadm" element={<Ajustes_adm />} />
       <Route path="/Homeadm" element={<Home_adm />} />
       <Route path="/Admuser" element={<Admin_usuarios />} />
       <Route path="/copias" element={<Copias_segu />} />
       <Route path="/soporte" element={<Soporte_adm />} />
-      <Route path="/ajustes" element={<Ajustes_adm />} />
+      <Route path="/editar-roluser/:id" element={<EditarRolUser />} />
+      <Route path="/seleccion-rol" element={<Seleccion_rol />} />
+      <Route path="/Homeagro" element={<Home_agro />} />
+      <Route path="/Laboresagro" element={<Labores_agro />} />
+      
       
     </Routes>
   );

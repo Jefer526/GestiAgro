@@ -6,8 +6,7 @@ import {
   IconHome,
   IconSettings,
   IconFilter,
-  IconEye,
-  IconSettings2,
+  IconPencil,
   IconTrash,
   IconDotsVertical,
 } from "@tabler/icons-react";
@@ -33,7 +32,7 @@ const Admin_usuarios = () => {
       id: 2,
       nombre: "María García",
       telefono: "987654321",
-      rol: "Supervisor",
+      rol: "Gerente",
       email: "maria@example.com",
       contraseña: "********",
     },
@@ -41,7 +40,7 @@ const Admin_usuarios = () => {
       id: 3,
       nombre: "Carlos Ruiz",
       telefono: "555666777",
-      rol: "Empleado",
+      rol: "Mayordomo",
       email: "carlos@example.com",
       contraseña: "********",
     },
@@ -188,14 +187,14 @@ const Admin_usuarios = () => {
             className="fixed bg-white border border-gray-200 rounded shadow-lg w-40 z-50"
             style={{ top: menuPosition.y, left: menuPosition.x }}
           >
-            <button className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100">
-              <IconEye className="w-4 h-4 text-blue-600" />
-              Ver
+            <button
+              onClick={() => navigate(`/editar-roluser/${menuAbiertoId}`)}
+              className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100"
+            >
+              <IconPencil className="w-4 h-4 text-blue-600" />
+              Editar Rol y Permisos
             </button>
-            <button className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100">
-              <IconSettings2 className="w-4 h-4 text-green-600" />
-              Roles y permisos
-            </button>
+        
             <button className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50">
               <IconTrash className="w-4 h-4" />
               Eliminar
@@ -208,4 +207,5 @@ const Admin_usuarios = () => {
 };
 
 export default Admin_usuarios;
+
 
