@@ -8,29 +8,20 @@ import {
   IconCloudRain,
   IconTractor,
   IconSettings,
-  IconChevronLeft,
+  IconArrowLeft
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
 const Registrar_vclima = () => {
   const navigate = useNavigate();
-  const [fecha, setFecha] = useState("");
-  const [form, setForm] = useState({
-    precipitacion: "",
-    tempMin: "",
-    tempMax: "",
-    humedad: "",
-  });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Aquí podrías enviar los datos al backend
+    navigate("/variables_climaticasm");
   };
 
-  const handleSubmit = () => {
-    console.log("Datos registrados:", { fecha, ...form });
-  };
 
   return (
     <div className="flex h-screen">
@@ -67,79 +58,77 @@ const Registrar_vclima = () => {
         </div>
       </div>
 
-      {/* Contenido */}
-      <div className="flex-1 p-10 overflow-y-auto bg-gray-50">
-        <button onClick={() => navigate("/variables_climaticasm")} className="flex items-center text-green-600 font-semibold mb-6 text-lg hover:underline">
-          <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
+      {/* Contenido principal */}
+      <div className="flex-1 flex flex-col items-center pt-8 bg-[#f6f6f6]">
+        {/* Botón Volver */}
+        <button
+          type="button"
+          onClick={() => navigate("/variables_climaticasm")}
+          className="flex items-center text-green-600 text-lg mb-6 self-start ml-12 hover:underline"
+        >
+          <IconArrowLeft className="w-5 h-5 mr-1" /> Volver
         </button>
 
-        <h1 className="text-3xl font-bold text-green-700 mb-2">Registrar variables climáticas</h1>
-        <h2 className="text-xl text-gray-800 mb-8 font-semibold">Hacienda Las Palmas</h2>
+        {/* Formulario */}
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white border border-green-300 shadow-md p-10 rounded-xl w-full max-w-2xl space-y-6 text-black"
+        >
+          <h2 className="text-3xl font-bold text-green-700 text-center">Registrar variables climáticas</h2>
+          <p className="text-center text-green-700 font-semibold text-lg">Hacienda La Esmeralda</p>
 
-        <div className="bg-white rounded-xl shadow p-6 space-y-6 max-w-3xl mx-auto">
-          <div className="flex items-center gap-4">
-            <label className="font-semibold w-20">Fecha:</label>
+          <div>
+            <label className="block font-bold mb-1">Fecha</label>
             <input
               type="date"
-              value={fecha}
-              onChange={(e) => setFecha(e.target.value)}
-              className="border rounded px-3 py-2 w-60"
+              className="border px-4 py-2 rounded w-full text-lg"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block font-bold mb-1">Precipitación (mm)</label>
+            <input
+              type="text"
+              placeholder="Ej: 10"
+              className="border px-4 py-2 rounded w-full text-lg"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="flex items-center space-x-3">
-              <input type="checkbox" />
-              <label className="font-medium">Precipitación (mm):</label>
+            <div>
+              <label className="block font-bold mb-1">Temperatura mínima (°C)</label>
               <input
-                type="number"
-                name="precipitacion"
-                value={form.precipitacion}
-                onChange={handleChange}
-                className="border rounded px-3 py-1 w-24"
+                type="text"
+                placeholder="Ej: 16°"
+                className="border px-4 py-2 rounded w-full text-lg"
               />
             </div>
-            <div className="flex items-center space-x-3">
-              <input type="checkbox" />
-              <label className="font-medium">Temperatura Máxima:</label>
+            <div>
+              <label className="block font-bold mb-1">Temperatura máxima (°C)</label>
               <input
-                type="number"
-                name="tempMax"
-                value={form.tempMax}
-                onChange={handleChange}
-                className="border rounded px-3 py-1 w-24"
-              />
-            </div>
-            <div className="flex items-center space-x-3">
-              <input type="checkbox" />
-              <label className="font-medium">Temperatura Mínima:</label>
-              <input
-                type="number"
-                name="tempMin"
-                value={form.tempMin}
-                onChange={handleChange}
-                className="border rounded px-3 py-1 w-24"
-              />
-            </div>
-            <div className="flex items-center space-x-3">
-              <input type="checkbox" />
-              <label className="font-medium">Humedad relativa:</label>
-              <input
-                type="number"
-                name="humedad"
-                value={form.humedad}
-                onChange={handleChange}
-                className="border rounded px-3 py-1 w-24"
+                type="text"
+                placeholder="Ej: 29°"
+                className="border px-4 py-2 rounded w-full text-lg"
               />
             </div>
           </div>
 
-          <div className="pt-4">
-            <button onClick={handleSubmit} className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md font-semibold">
+          <div>
+            <label className="block font-bold mb-1">Humedad relativa (%)</label>
+            <input
+              type="text"
+              placeholder="Ej: 85%"
+              className="border px-4 py-2 rounded w-full text-lg"
+            />
+          </div>
+
+          <div className="text-center">
+            <button className="bg-green-600 text-white px-8 py-3 rounded hover:bg-green-700 text-lg">
               Registrar
             </button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );

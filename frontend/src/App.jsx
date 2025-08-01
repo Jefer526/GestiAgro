@@ -27,8 +27,10 @@ import Registrar_vclima from "./pages/mayordomo/Registrar_vclima";
 import Informes_mayor from "./pages/mayordomo/Informes_mayor";
 import Equipos_mayor from "./pages/mayordomo/Equipos_mayor";
 import Actualizar_estado_maquina from "./pages/mayordomo/Actualizar_estado_maquina";
+import Registrar_mante from "./pages/mayordomo/Registrar_mante";
 import Historial_trabajom from "./pages/mayordomo/Historial_trabajom";
 import Hoja_vidam from "./pages/mayordomo/Hoja_vidam";
+
 
 
 function App() {
@@ -61,6 +63,7 @@ function App() {
       <Route path="/informes_mayordomo" element={<Informes_mayor />} />
       <Route path="/equipos_mayordomo" element={<Equipos_mayor />} />
       <Route path="/actualizar_estado_maquina" element={<Actualizar_estado_maquina />} />
+      <Route path="/registrar_mantenimiento" element={<Registrar_mante />} />
       <Route path="/historial_trabajom" element={<Historial_trabajom />} />
       <Route path="/hoja_vidam" element={<Hoja_vidam />} />
 

@@ -33,17 +33,17 @@ const Home_mayo = () => {
     {
       icon: <IconCloudRain className="w-24 h-24 text-green-700" />,
       label: "Variables climáticas",
-      ruta: "#",
+      ruta: "/variables_climaticasm",
     },
     {
       icon: <IconChartBar className="w-24 h-24 text-green-700" />,
       label: "Informes",
-      ruta: "#",
+      ruta: "/informes_mayordomo",
     },
     {
       icon: <IconTractor className="w-24 h-24 text-green-700" />,
       label: "Maquinaria",
-      ruta: "#",
+      ruta: "/equipos_mayordomo",
     },
   ];
 
