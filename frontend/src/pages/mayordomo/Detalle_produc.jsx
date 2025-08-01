@@ -28,13 +28,21 @@ const Detalle_produc = () => {
   ];
 
   const toggleFiltro = (campo, event) => {
-    const icono = event.currentTarget.getBoundingClientRect();
-    setFiltroActivo(filtroActivo === campo ? null : campo);
-    setFiltroPosicion({
-      top: icono.bottom + window.scrollY + 4,
-      left: icono.left + window.scrollX,
-    });
-  };
+  const icono = event.currentTarget.getBoundingClientRect();
+  const cardWidth = 240; // ancho estimado del filtro
+  const margen = 12;
+
+  let left = icono.left + window.scrollX;
+  if (left + cardWidth + margen > window.innerWidth) {
+    left = window.innerWidth - cardWidth - margen;
+  }
+
+  setFiltroActivo(filtroActivo === campo ? null : campo);
+  setFiltroPosicion({
+    top: icono.bottom + window.scrollY + 4,
+    left,
+  });
+};
 
   const toggleValor = (campo, valor) => {
     const seleccionados = new Set(valoresSeleccionados[campo] || []);
@@ -70,7 +78,7 @@ const Detalle_produc = () => {
     return (
       <div
         ref={filtroRef}
-        className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60 text-left text-sm"
+        className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-48 text-left text-sm"
         style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
       >
         <div className="font-semibold mb-2">Filtrar por {campo.charAt(0).toUpperCase() + campo.slice(1)}</div>
@@ -154,8 +162,8 @@ const Detalle_produc = () => {
             <thead className="bg-green-600 text-white">
               <tr>
                 {["fecha", "lote", "cantidad", "um", "tipo"].map((campo) => (
-                  <th key={campo} className="px-4 py-3 border-r border-gray-300">
-                    <div className="flex justify-between items-center">
+                  <th key={campo} className="px-4 py-3 border-r border-gray-300 text-center">
+                    <div className="flex justify-center items-center gap-1">
                       {campo.toUpperCase()}
                       <button onClick={(e) => toggleFiltro(campo, e)}>
                         <IconFilter className="w-4 h-4" />
@@ -167,7 +175,7 @@ const Detalle_produc = () => {
             </thead>
             <tbody>
               {datosFiltrados.map((m, i) => (
-                <tr key={i} className="border-b border-gray-200">
+                <tr key={i} className="border-b border-gray-200 text-center">
                   <td className="px-4 py-2 border-r border-gray-200 text-center">{m.fecha}</td>
                   <td className="px-4 py-2 border-r border-gray-200 text-center">{m.lote}</td>
                   <td className="px-4 py-2 border-r border-gray-200 text-center">{m.cantidad}</td>
@@ -239,6 +247,8 @@ const Detalle_produc = () => {
 };
 
 export default Detalle_produc;
+
+
 
 
 

@@ -149,7 +149,7 @@ const Equipos_mayor = () => {
                   </th>
                 ))}
                 <th className="p-4 border text-center">HOJA DE VIDA</th>
-                <th className="p-4 border text-center">HISTORIAL</th>
+                <th className="p-4 border text-center">HISTORIAL DE TRABAJO</th>
               </tr>
             </thead>
             <tbody>
