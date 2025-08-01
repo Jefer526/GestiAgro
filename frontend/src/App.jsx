@@ -10,6 +10,7 @@ import Soporte from "./pages/auth/recover/Soporte";
 import Home_adm from "./pages/administrador/Home_adm";
 import Admin_usuarios from "./pages/administrador/Admin_usuarios";
 import Copias_segu from "./pages/administrador/Copias_segu";
+import Editar_copias from "./pages/administrador/Editar_copias";
 import Soporte_adm from "./pages/administrador/Soporte_adm";
 import Ajustes_adm from "./pages/administrador/Ajustes_adm";
 import EditarRolUser from "./pages/administrador/Editar_roluser";
@@ -44,6 +45,7 @@ function App() {
       <Route path="/Homeadm" element={<Home_adm />} />
       <Route path="/Admuser" element={<Admin_usuarios />} />
       <Route path="/copias" element={<Copias_segu />} />
+      <Route path="/editar_copias" element={<Editar_copias />} />
       <Route path="/soporte" element={<Soporte_adm />} />
       <Route path="/editar_roluser" element={<EditarRolUser />} />
       <Route path="/seleccion-rol" element={<Seleccion_rol />} />

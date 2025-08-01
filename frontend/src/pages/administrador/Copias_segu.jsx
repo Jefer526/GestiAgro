@@ -153,10 +153,14 @@ const Copias_segu = () => {
               <IconEye className="w-4 h-4 text-blue-600" />
               Ver
             </button>
-            <button className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100 justify-start">
+            <button
+              onClick={() => navigate("/editar_copias")}
+              className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100 justify-start"
+            >
               <IconPencil className="w-4 h-4 text-green-600" />
               Editar
             </button>
+
             <button className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 justify-start">
               <IconTrash className="w-4 h-4" />
               Eliminar
