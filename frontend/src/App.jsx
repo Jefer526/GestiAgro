@@ -80,7 +80,7 @@ function App() {
      <Route path="/editarcopiassegu" element={<Editar_copias_segu />} />
 
     </Routes>
-  );
+  );z
 }
 
 export default App;
