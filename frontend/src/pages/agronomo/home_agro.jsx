@@ -25,37 +25,38 @@ const Home_agro = () => {
     {
       icon: <IconChartBar className="w-24 h-24 text-green-700" />,
       label: "Informes",
-      ruta: "#",
+      ruta: "/Informesagro",
     },
     {
       icon: <IconBox className="w-24 h-24 text-green-700" />,
       label: "Bodega",
-      ruta: "#",
+      ruta: "/Bodegaagro",
     },
     {
       icon: <IconCloudRain className="w-24 h-24 text-green-700" />,
       label: "Variables climáticas",
-      ruta: "#",
+      ruta: "/variablesclimaticas", 
     },
+
     {
       icon: <IconTractor className="w-24 h-24 text-green-700" />,
       label: "Maquinaria y equipos",
-      ruta: "#",
+      ruta: "/maquinariaequipos",
     },
     {
       icon: <IconUsersGroup className="w-24 h-24 text-green-700" />,
       label: "Manejo personal",
-      ruta: "#",
+      ruta: "/manejopersonal",
     },
     {
       icon: <IconPlant className="w-24 h-24 text-green-700" />,
       label: "Gestión finca",
-      ruta: "#",
+      ruta: "/crearfinca",
     },
     {
       icon: <IconFrame className="w-24 h-24 text-green-700" />,
       label: "Gestión lote",
-      ruta: "#",
+      ruta: "/crearlote",
     },
   ];
 
@@ -63,10 +64,10 @@ const Home_agro = () => {
     <div className="flex">
       {/* Sidebar */}
       <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
-        {/* Scrollable icons */}
-        <div className="flex-1 flex flex-col items-center space-y-8 overflow-y-auto scrollbar-hide pr-1">
+        <div className="flex-1 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
 
+          {/* Icono activo */}
           <div className="relative">
             <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
             <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
@@ -74,43 +75,40 @@ const Home_agro = () => {
             </button>
           </div>
 
-          <button
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-            onClick={() => navigate("/Laboresagro")}
-          >
+          {/* Iconos con navegación */}
+          <button onClick={() => navigate("/Laboresagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconClipboardList className="text-white w-11 h-11" />
           </button>
 
-          <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button onClick={() => navigate("/Informesagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconChartBar className="text-white w-11 h-11" />
           </button>
 
-          <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button onClick={() => navigate("/Bodegaagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconBox className="text-white w-11 h-11" />
           </button>
 
-          <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button onClick={() => navigate("/variablesclimaticas")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconCloudRain className="text-white w-11 h-11" />
           </button>
 
-          <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button onClick={() => navigate("/maquinariaequipos")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconTractor className="text-white w-11 h-11" />
           </button>
 
-          <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button onClick={() => navigate("/manejopersonal")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconUsersGroup className="text-white w-11 h-11" />
           </button>
 
-          <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button onClick={() => navigate("/crearfinca")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconPlant className="text-white w-11 h-11" />
           </button>
 
-          <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button onClick={() => navigate("/crearlote")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconFrame className="text-white w-11 h-11" />
           </button>
         </div>
 
-        {/* Ajustes - fondo */}
         <div className="sticky bottom-6 bg-green-600">
           <button
             onClick={() => navigate("/ajustes")}
@@ -121,7 +119,7 @@ const Home_agro = () => {
         </div>
       </div>
 
-      {/* Contenido principal */}
+      {/* Contenido */}
       <div className="flex-1 p-10">
         <h1 className="text-3xl font-bold text-green-700 mb-6">Panel principal</h1>
 
@@ -129,7 +127,6 @@ const Home_agro = () => {
           ¡Bienvenido!
         </div>
 
-        {/* Recuadros funcionales */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 place-items-center">
           {opciones.map((op, i) => (
             <button
@@ -148,5 +145,3 @@ const Home_agro = () => {
 };
 
 export default Home_agro;
-
-

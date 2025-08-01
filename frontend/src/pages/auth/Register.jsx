@@ -37,25 +37,25 @@ const Register = () => {
         className="absolute top-4 left-4 w-10 h-10 object-contain"
       />
 
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-xl p-10 z-10 relative">
-        <div className="flex justify-between items-center mb-4">
-          <div className="mb-5">
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-xl px-12 py-16 z-10 relative">
+        <div className="flex justify-between items-start mb-10">
+          <div>
             <h2 className="text-lg font-medium">
               Bienvenido a <span className="text-green-500 font-semibold">GESTIAGRO</span>
             </h2>
-            <h1 className="text-4xl font-bold">Registro</h1>
+            <h1 className="text-3xl font-bold mt-1">Prueba nuestra DEMO</h1>
           </div>
-          <div className="text-gray-500 text-right">
-            <p>¿Ya tienes cuenta?</p>
-            <Link to="/" className="text-green-600 hover:underline text-base block text-center">
+          <div className="text-right text-sm text-gray-500">
+            <p className="mb-1">¿Ya tienes cuenta?</p>
+            <Link to="/" className="text-green-600 hover:underline font-medium">
               Inicia sesión
             </Link>
           </div>
         </div>
 
-        <form onSubmit={handleRegister} className="space-y-4">
+        <form onSubmit={handleRegister} className="space-y-6">
           <div>
-            <label className="block mb-1 font-medium text-gray-800">Nombre</label>
+            <label className="block mb-2 font-medium text-gray-800 text-base">Nombre</label>
             <input
               type="text"
               placeholder="Ingrese su nombre"
@@ -64,7 +64,7 @@ const Register = () => {
             />
           </div>
           <div>
-            <label className="block mb-1 font-medium text-gray-800">Teléfono</label>
+            <label className="block mb-2 font-medium text-gray-800 text-base">Teléfono</label>
             <input
               type="tel"
               placeholder="Ingrese su número de teléfono"
@@ -73,7 +73,7 @@ const Register = () => {
             />
           </div>
           <div>
-            <label className="block mb-1 font-medium text-gray-800">Correo electrónico</label>
+            <label className="block mb-2 font-medium text-gray-800 text-base">Correo electrónico</label>
             <input
               type="email"
               placeholder="Ingrese su correo electrónico"
@@ -81,18 +81,10 @@ const Register = () => {
               required
             />
           </div>
-          <div>
-            <label className="block mb-1 font-medium text-gray-800">Contraseña</label>
-            <input
-              type="password"
-              placeholder="Ingrese su contraseña"
-              className="w-full border text-lg border-gray-300 rounded-md px-4 py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all mb-4"
-              required
-            />
-          </div>
+
           <button
             type="submit"
-            className="w-full bg-green-600 text-white py-3 rounded-lg text-base font-semibold hover:bg-green-700 shadow-md transition-all"
+            className="w-full bg-green-600 text-white py-3 rounded-lg text-lg font-semibold hover:bg-green-700 shadow-md transition-all"
           >
             Registrarse
           </button>
@@ -103,3 +95,4 @@ const Register = () => {
 };
 
 export default Register;
+

@@ -2,14 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-/* index.css */
-.scrollbar-hide {
+/* Oculta visualmente el scrollbar sin afectar el posicionamiento */
+.scrollbar-hide-only::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+.scrollbar-hide-only {
+  scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none;  /* IE y Edge */
-  scrollbar-width: none;     /* Firefox */
 }
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;             /* Chrome, Safari y Opera */
-}
+
 
 html, body, #root {
  height: 100%;
