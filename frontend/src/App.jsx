@@ -35,6 +35,7 @@ import Crear_finca_agro from "./pages/agronomo/Crear_finca_agro";
 import Crear_lote_agro from "./pages/agronomo/Crear_lote_agro";
 import Editar_finca from "./pages/agronomo/Editar_finca";
 import Editar_lote from "./pages/agronomo/Editar_lote";
+import Editar_copias_segu from "./pages/administrador/Editar_copias_segu";
 
 
 function App() {
@@ -76,6 +77,7 @@ function App() {
       <Route path="/crearlote" element={<Crear_lote_agro />} />
       <Route path="/editarfinca" element={<Editar_finca />} />
       <Route path="/editarlote" element={<Editar_lote />} />
+     <Route path="/editarcopiassegu" element={<Editar_copias_segu />} />
 
     </Routes>
   );

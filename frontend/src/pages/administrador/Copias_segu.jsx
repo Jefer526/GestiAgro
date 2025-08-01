@@ -118,7 +118,7 @@ const Copias_segu = () => {
           <button onClick={() => navigate("/homeadm")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconHome className="text-white w-11 h-11" /></button>
           <button onClick={() => navigate("/admuser")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconUsers className="text-white w-11 h-11" /></button>
           <div className="relative">
-            <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            <div onClick={() => navigate("/copias")} className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
             <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconCloudUpload className="text-white w-11 h-11" /></button>
           </div>
           <button onClick={() => navigate("/soporte")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconTool className="text-white w-11 h-11" /></button>
@@ -191,10 +191,20 @@ const Copias_segu = () => {
 
           {/* Menú de acciones */}
           {menuAbiertoId !== null && (
-            <div id="floating-menu" className="fixed bg-white border border-gray-200 rounded shadow-lg w-40 z-[9999]" style={{ top: `${menuPosition.y}px`, left: `${menuPosition.x}px` }}>
-              <button className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100"><IconEye className="w-4 h-4 text-blue-600" /> Ver</button>
-              <button className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100"><IconPencil className="w-4 h-4 text-green-600" /> Editar</button>
-              <button className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"><IconTrash className="w-4 h-4" /> Eliminar</button>
+            <div
+              id="floating-menu"
+              className="fixed bg-white border border-gray-200 rounded shadow-lg w-40 z-[9999]"
+              style={{ top: `${menuPosition.y}px`, left: `${menuPosition.x}px` }}
+            >
+              <button
+                onClick={() => navigate("/editarcopiassegu")}
+                className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100"
+              >
+                <IconPencil className="w-4 h-4 text-green-600" /> Editar
+              </button>
+              <button className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                <IconTrash className="w-4 h-4" /> Eliminar
+              </button>
             </div>
           )}
         </div>
