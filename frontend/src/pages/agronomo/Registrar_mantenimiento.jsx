@@ -19,16 +19,16 @@ const Registrar_mantenimiento = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    idMaquina: "1",
-    maquina: "Tractor",
-    referencia: "JD 5055",
-    ubicacion: "Bodega",
-    estado: "En operación",
-    fecha: "2025-06-20",
-    tipo: "Mantenimiento preventivo",
-    descripcion: "",
-    realizadoPor: "Luis Gómez",
-  });
+  idMaquina: "",
+  maquina: "",
+  referencia: "",
+  ubicacion: "",
+  estado: "",
+  fecha: "",
+  tipo: "",
+  descripcion: "",
+  realizadoPor: "",
+});
 
   const handleChange = (e) => {
     setFormData({

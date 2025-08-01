@@ -78,12 +78,10 @@ const Hoja_vida = () => {
   if (campo === "fecha" || campo === "descripcion") return [];
   const search = (busquedas[campo] || "").toLowerCase();
   return [...new Set(historial.map((e) => {
-    const val = typeof e[campo] === "boolean" ? (e[campo] ? "✓" : "") : e[campo];
-    return val || "";
+    if (typeof e[campo] === "boolean") return e[campo] ? "Sí" : "No";
+    return e[campo] || "";
   }))].filter((v) => v.toLowerCase().includes(search));
 };
-
-
 
   const toggleFiltro = (campo, e) => {
   if (campo === "descripcion") return; 
@@ -124,7 +122,7 @@ const Hoja_vida = () => {
   const historialFiltrado = historial
     .filter((item) =>
       columnas.every(({ campo }) => {
-        const val = typeof item[campo] === "boolean" ? (item[campo] ? "✓" : "") : item[campo];
+        const val = typeof item[campo] === "boolean"? item[campo] ? "Sí" : "No" : item[campo];
         return !valoresSeleccionados[campo] || valoresSeleccionados[campo].length === 0
           ? true
           : valoresSeleccionados[campo].includes(val);
@@ -133,8 +131,8 @@ const Hoja_vida = () => {
     .sort((a, b) => {
       if (!ordenCampo) return 0;
       const { campo, orden } = ordenCampo;
-      const valA = typeof a[campo] === "boolean" ? (a[campo] ? "✓" : "") : a[campo];
-      const valB = typeof b[campo] === "boolean" ? (b[campo] ? "✓" : "") : b[campo];
+      const valA = typeof a[campo] === "boolean" ? (a[campo] ? "Sí" : "No") : a[campo];
+      const valB = typeof b[campo] === "boolean" ? (b[campo] ? "Sí" : "No") : b[campo];
       return orden === "asc" ? valA.localeCompare(valB) : valB.localeCompare(valA);
     });
 
@@ -260,8 +258,8 @@ const Hoja_vida = () => {
               {historialFiltrado.map((item, index) => (
                 <tr key={index} className="hover:bg-gray-50">
                   <td className="p-3 border">{item.fecha}</td>
-                  <td className="p-3 border">{item.prev ? "✓" : ""}</td>
-                  <td className="p-3 border">{item.correcc ? "✓" : ""}</td>
+                  <td className="p-3 border">{item.prev ? "Sí" : "No"}</td>
+                  <td className="p-3 border">{item.correcc ? "Sí" : "No"}</td>
                   <td className="p-3 border">{item.descripcion}</td>
                   <td className="p-3 border">{item.realizado}</td>
                 </tr>

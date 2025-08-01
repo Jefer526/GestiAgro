@@ -189,6 +189,42 @@ const Crear_finca_agro = () => {
               ))}
             </tbody>
           </table>
+
+          {filtroActivo && (
+            <div
+              ref={filtroRef}
+              className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60 text-left text-sm"
+              style={{ top: posicionTarjeta.top, left: posicionTarjeta.left }}
+            >
+              <div className="font-semibold mb-2 capitalize">Filtrar por {filtroActivo}</div>
+              <input
+                type="text"
+                placeholder="Buscar..."
+                value={busquedas[filtroActivo] || ""}
+                onChange={(e) => setBusquedas({ ...busquedas, [filtroActivo]: e.target.value })}
+                className="w-full px-2 py-1 border rounded mb-2 text-sm"
+              />
+              <div className="max-h-40 overflow-y-auto flex flex-col gap-1">
+                {getValoresUnicos(filtroActivo).map((val, idx) => (
+                  <label key={idx} className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      className="accent-green-600"
+                      checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
+                      onChange={() => toggleValor(filtroActivo, val)}
+                    />
+                    {val}
+                  </label>
+                ))}
+              </div>
+              <button
+                onClick={() => limpiarFiltro(filtroActivo)}
+                className="text-blue-600 hover:underline text-xs mt-2"
+              >
+                Borrar filtro
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Botón guardar cambios */}

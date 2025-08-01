@@ -27,13 +27,13 @@ const Copias_segu = () => {
   const [busquedas, setBusquedas] = useState({});
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
-
-  const columnas = ["id", "fecha"];
+  const columnas = ["id", "fecha", "hora"];
 
   const copias = [
     { id: 1, fecha: "2025-06-12", hora: "14:21" },
-    { id: 2, fecha: "2025-06-11", hora: "14:21" },
-    { id: 3, fecha: "2025-06-10", hora: "14:21" },
+    { id: 2, fecha: "2025-07-11", hora: "10:10" },
+    { id: 3, fecha: "2025-07-11", hora: "14:21" },
+    { id: 4, fecha: "2025-08-01", hora: "08:00" },
   ];
 
   const toggleFiltro = (campo, e) => {
@@ -43,10 +43,24 @@ const Copias_segu = () => {
     setFiltroPosicion({ top: icono.bottom + window.scrollY + 4, left: icono.left + window.scrollX });
   };
 
-  const getValoresUnicos = (campo) => {
-    const search = (busquedas[campo] || "").toLowerCase();
-    return [...new Set(copias.map(e => e[campo]?.toString()))].filter(v => v.toLowerCase().includes(search));
+  const mesesTexto = [
+    "enero", "febrero", "marzo", "abril", "mayo", "junio",
+    "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+  ];
+
+  const estructuraJerarquica = (datos) => {
+    const estructura = {};
+    datos.forEach(fecha => {
+      const [a, m, d] = fecha.split("-");
+      const mesTexto = mesesTexto[parseInt(m) - 1];
+      if (!estructura[a]) estructura[a] = {};
+      if (!estructura[a][mesTexto]) estructura[a][mesTexto] = new Set();
+      estructura[a][mesTexto].add(d);
+    });
+    return estructura;
   };
+
+  const estructuraFecha = estructuraJerarquica(copias.map(e => e.fecha));
 
   const toggleValor = (campo, valor) => {
     const seleccionados = new Set(valoresSeleccionados[campo] || []);
@@ -70,11 +84,10 @@ const Copias_segu = () => {
 
   const datosFiltrados = copias
     .filter(item =>
-      columnas.every(campo =>
-        !valoresSeleccionados[campo] || valoresSeleccionados[campo].length === 0
-          ? true
-          : valoresSeleccionados[campo].includes(item[campo]?.toString())
-      )
+      columnas.every(campo => {
+        if (!valoresSeleccionados[campo] || valoresSeleccionados[campo].length === 0) return true;
+        return valoresSeleccionados[campo].includes(item[campo]?.toString());
+      })
     )
     .sort((a, b) => {
       if (!ordenCampo) return 0;
@@ -129,7 +142,6 @@ const Copias_segu = () => {
       {/* Contenido principal */}
       <div className="flex-1 p-8 overflow-auto relative">
         <h1 className="text-4xl font-bold text-green-600 mb-6">Copias de seguridad</h1>
-
         <div className="overflow-x-auto shadow-md rounded-lg relative">
           <table className="min-w-full text-base bg-white text-center">
             <thead className="bg-green-600 text-white">
@@ -151,7 +163,8 @@ const Copias_segu = () => {
               {datosFiltrados.map((copia) => (
                 <tr key={copia.id} className="border-t hover:bg-gray-50">
                   <td className="p-4 border">{copia.id}</td>
-                  <td className="p-4 border">{`${copia.fecha} a las ${copia.hora}`}</td>
+                  <td className="p-4 border">{copia.fecha}</td>
+                  <td className="p-4 border">{copia.hora}</td>
                   <td className="p-4 border">
                     <button onClick={(e) => handleMenuOpen(copia.id, e)} className="menu-trigger p-1 rounded hover:bg-gray-200">
                       <IconDotsVertical className="w-5 h-5 text-gray-600" />
@@ -162,13 +175,38 @@ const Copias_segu = () => {
             </tbody>
           </table>
 
-          {/* Tarjeta de filtro */}
-          {filtroActivo && (
-            <div
-              ref={filtroRef}
-              className="fixed bg-white text-black shadow-md border rounded z-[9999] p-3 w-60 text-left text-sm"
-              style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
-            >
+          {/* Tarjeta de filtro jerárquico solo para FECHA */}
+          {filtroActivo === "fecha" && (
+            <div ref={filtroRef} className="fixed bg-white text-black shadow-md border rounded z-[9999] p-3 w-60 text-left text-sm" style={{ top: filtroPosicion.top, left: filtroPosicion.left }}>
+              <div className="font-semibold mb-2 capitalize">Filtrar por fecha</div>
+              <div className="space-y-2 max-h-64 overflow-y-auto">
+                {Object.entries(estructuraFecha).map(([anio, meses]) => (
+                  <div key={anio}>
+                    <div className="font-semibold capitalize text-green-700">{anio}</div>
+                    {Object.entries(meses).map(([mesTexto, dias]) => (
+                      <div key={mesTexto} className="ml-3">
+                        <div className="text-green-600 font-medium">{mesTexto}</div>
+                        {[...dias].map((dia) => {
+                          const fechaStr = `${anio}-${(mesesTexto.indexOf(mesTexto)+1).toString().padStart(2,'0')}-${dia}`;
+                          return (
+                            <label key={fechaStr} className="ml-5 flex items-center gap-2">
+                              <input type="checkbox" checked={(valoresSeleccionados.fecha || []).includes(fechaStr)} onChange={() => toggleValor("fecha", fechaStr)} className="accent-green-600" />
+                              {dia}
+                            </label>
+                          );
+                        })}
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+              <button onClick={() => limpiarFiltro("fecha")} className="text-blue-600 hover:underline text-xs mt-2 capitalize">Borrar filtro</button>
+            </div>
+          )}
+
+          {/* Tarjeta de filtro normal para ID y HORA */}
+          {filtroActivo && filtroActivo !== "fecha" && (
+            <div ref={filtroRef} className="fixed bg-white text-black shadow-md border rounded z-[9999] p-3 w-60 text-left text-sm" style={{ top: filtroPosicion.top, left: filtroPosicion.left }}>
               <div className="font-semibold mb-2">Filtrar por {filtroActivo.toUpperCase()}</div>
               <button onClick={() => ordenar(filtroActivo, "asc")} className="text-green-700 flex items-center gap-1 mb-1 capitalize">
                 <IconSortAscending2 className="w-4 h-4" /> Ordenar A → Z
@@ -178,11 +216,13 @@ const Copias_segu = () => {
               </button>
               <input type="text" placeholder="Buscar..." className="w-full border border-gray-300 px-2 py-1 rounded mb-2 text-sm" value={busquedas[filtroActivo] || ""} onChange={(e) => handleBusqueda(filtroActivo, e.target.value)} />
               <div className="flex flex-col max-h-40 overflow-y-auto">
-                {getValoresUnicos(filtroActivo).map((val, idx) => (
-                  <label key={idx} className="flex items-center gap-2 mb-1 capitalize">
-                    <input type="checkbox" checked={(valoresSeleccionados[filtroActivo] || []).includes(val)} onChange={() => toggleValor(filtroActivo, val)} className="accent-green-600" />
-                    {val.charAt(0).toUpperCase() + val.slice(1)}
-                  </label>
+                {[...new Set(copias.map(e => e[filtroActivo]?.toString()))]
+                  .filter(v => v.toLowerCase().includes((busquedas[filtroActivo] || "").toLowerCase()))
+                  .map((val, idx) => (
+                    <label key={idx} className="flex items-center gap-2 mb-1 capitalize">
+                      <input type="checkbox" checked={(valoresSeleccionados[filtroActivo] || []).includes(val)} onChange={() => toggleValor(filtroActivo, val)} className="accent-green-600" />
+                      {val.charAt(0).toUpperCase() + val.slice(1)}
+                    </label>
                 ))}
               </div>
               <button onClick={() => limpiarFiltro(filtroActivo)} className="text-blue-600 hover:underline text-xs capitalize mt-2">Borrar filtro</button>
@@ -191,15 +231,8 @@ const Copias_segu = () => {
 
           {/* Menú de acciones */}
           {menuAbiertoId !== null && (
-            <div
-              id="floating-menu"
-              className="fixed bg-white border border-gray-200 rounded shadow-lg w-40 z-[9999]"
-              style={{ top: `${menuPosition.y}px`, left: `${menuPosition.x}px` }}
-            >
-              <button
-                onClick={() => navigate("/editarcopiassegu")}
-                className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100"
-              >
+            <div id="floating-menu" className="fixed bg-white border border-gray-200 rounded shadow-lg w-40 z-[9999]" style={{ top: `${menuPosition.y}px`, left: `${menuPosition.x}px` }}>
+              <button onClick={() => navigate("/editarcopiassegu")} className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100">
                 <IconPencil className="w-4 h-4 text-green-600" /> Editar
               </button>
               <button className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50">
@@ -221,5 +254,8 @@ const Copias_segu = () => {
 };
 
 export default Copias_segu;
+
+
+
 
 
