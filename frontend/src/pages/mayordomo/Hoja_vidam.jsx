@@ -262,7 +262,7 @@ const Hoja_vidam = () => {
         </div>
 
         <div className="flex justify-center gap-10 mt-10">
-          <button onClick={() => navigate("/equipos_mayordomo")}
+          <button onClick={() => navigate("/registrar_mantenimiento")}
                   className="bg-green-600 hover:bg-green-700 text-white font-semibold text-lg px-6 py-3 rounded-lg">
             Registrar mantenimiento
           </button>
