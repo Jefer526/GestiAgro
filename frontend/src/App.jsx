@@ -37,6 +37,21 @@ import Editar_finca from "./pages/agronomo/Editar_finca";
 import Editar_lote from "./pages/agronomo/Editar_lote";
 import Editar_copias_segu from "./pages/administrador/Editar_copias_segu";
 
+import Home_mayo from "./pages/mayordomo/Home_mayo";
+import Regis_labores from "./pages/mayordomo/Regis_labores";
+import Historial_labor from "./pages/mayordomo/Historial_labor";
+import Bodega_insu from "./pages/mayordomo/Bodega_insu";
+import Detalle_produc from "./pages/mayordomo/Detalle_produc";
+import Variables_climam from "./pages/mayordomo/Variables_climam";
+import Registrar_vclima from "./pages/mayordomo/Registrar_vclima";
+import Informes_mayor from "./pages/mayordomo/Informes_mayor";
+import Equipos_mayor from "./pages/mayordomo/Equipos_mayor";
+import Actualizar_estado_maquina from "./pages/mayordomo/Actualizar_estado_maquina";
+import Registrar_mante from "./pages/mayordomo/Registrar_mante";
+import Historial_trabajom from "./pages/mayordomo/Historial_trabajom";
+import Hoja_vidam from "./pages/mayordomo/Hoja_vidam";
+
+
 
 function App() {
   return (
@@ -77,10 +92,24 @@ function App() {
       <Route path="/crearlote" element={<Crear_lote_agro />} />
       <Route path="/editarfinca" element={<Editar_finca />} />
       <Route path="/editarlote" element={<Editar_lote />} />
-     <Route path="/editarcopiassegu" element={<Editar_copias_segu />} />
+      <Route path="/editarcopiassegu" element={<Editar_copias_segu />} />
+
+      <Route path="/homemayordomo" element={<Home_mayo />} />
+      <Route path="/registrolabores" element={<Regis_labores />} />
+      <Route path="/historial_labores" element={<Historial_labor />} />
+      <Route path="/bodega_insumos" element={<Bodega_insu />} />
+      <Route path="/detalle_producto" element={<Detalle_produc />} />
+      <Route path="/variables_climaticasm" element={<Variables_climam />} />
+      <Route path="/registrar_climam" element={<Registrar_vclima />} />
+      <Route path="/informes_mayordomo" element={<Informes_mayor />} />
+      <Route path="/equipos_mayordomo" element={<Equipos_mayor />} />
+      <Route path="/actualizar_estado_maquina" element={<Actualizar_estado_maquina />} />
+      <Route path="/registrar_mantenimiento" element={<Registrar_mante />} />
+      <Route path="/historial_trabajom" element={<Historial_trabajom />} />
+      <Route path="/hoja_vidam" element={<Hoja_vidam />} />
 
     </Routes>
-  );
+  );z
 }
 
 export default App;
