@@ -45,7 +45,7 @@ function App() {
       <Route path="/Admuser" element={<Admin_usuarios />} />
       <Route path="/copias" element={<Copias_segu />} />
       <Route path="/soporte" element={<Soporte_adm />} />
-      <Route path="/editar-roluser/:id" element={<EditarRolUser />} />
+      <Route path="/editar_roluser" element={<EditarRolUser />} />
       <Route path="/seleccion-rol" element={<Seleccion_rol />} />
       <Route path="/Homeagro" element={<Home_agro />} />
       <Route path="/Laboresagro" element={<Labores_agro />} />
