@@ -41,13 +41,16 @@ const Registrar_vclima = () => {
           <button onClick={() => navigate("/bodega_insumos")} className="hover:bg-white/10 p-2 rounded-lg transition">
             <IconBox className="text-white w-11 h-11" />
           </button>
-          <button className="hover:bg-white/10 p-2 rounded-lg transition">
-            <IconCloudRain className="text-white w-11 h-11" />
-          </button>
-          <button className="hover:bg-white/10 p-2 rounded-lg transition">
+          <div className="relative w-full flex justify-center">
+            <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full z-10" />
+            <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              <IconCloudRain className="text-white w-11 h-11" />
+            </button>
+          </div>
+          <button onClick={() => navigate("/informes_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconChartBar className="text-white w-11 h-11" />
           </button>
-          <button className="hover:bg-white/10 p-2 rounded-lg transition">
+          <button onClick={() => navigate("/equipos_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconTractor className="text-white w-11 h-11" />
           </button>
         </div>
