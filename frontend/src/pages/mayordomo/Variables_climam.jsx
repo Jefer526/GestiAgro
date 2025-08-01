@@ -123,7 +123,7 @@ const Variables_climam = () => {
         {/* Botón Registrar */}
         <div className="mb-4">
           <button
-            onClick={() => navigate("/Registrarclima")}
+            onClick={() => navigate("/registrar_climam")}
             className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition font-semibold"
           >
             Registrar
