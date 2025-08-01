@@ -37,6 +37,21 @@ import Editar_finca from "./pages/agronomo/Editar_finca";
 import Editar_lote from "./pages/agronomo/Editar_lote";
 import Editar_copias_segu from "./pages/administrador/Editar_copias_segu";
 
+import Home_mayo from "./pages/mayordomo/Home_mayo";
+import Regis_labores from "./pages/mayordomo/Regis_labores";
+import Historial_labor from "./pages/mayordomo/Historial_labor";
+import Bodega_insu from "./pages/mayordomo/Bodega_insu";
+import Detalle_produc from "./pages/mayordomo/Detalle_produc";
+import Variables_climam from "./pages/mayordomo/Variables_climam";
+import Registrar_vclima from "./pages/mayordomo/Registrar_vclima";
+import Informes_mayor from "./pages/mayordomo/Informes_mayor";
+import Equipos_mayor from "./pages/mayordomo/Equipos_mayor";
+import Actualizar_estado_maquina from "./pages/mayordomo/Actualizar_estado_maquina";
+import Registrar_mante from "./pages/mayordomo/Registrar_mante";
+import Historial_trabajom from "./pages/mayordomo/Historial_trabajom";
+import Hoja_vidam from "./pages/mayordomo/Hoja_vidam";
+
+
 
 function App() {
   return (
