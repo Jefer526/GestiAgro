@@ -77,7 +77,21 @@ function App() {
       <Route path="/crearlote" element={<Crear_lote_agro />} />
       <Route path="/editarfinca" element={<Editar_finca />} />
       <Route path="/editarlote" element={<Editar_lote />} />
-     <Route path="/editarcopiassegu" element={<Editar_copias_segu />} />
+      <Route path="/editarcopiassegu" element={<Editar_copias_segu />} />
+
+      <Route path="/homemayordomo" element={<Home_mayo />} />
+      <Route path="/registrolabores" element={<Regis_labores />} />
+      <Route path="/historial_labores" element={<Historial_labor />} />
+      <Route path="/bodega_insumos" element={<Bodega_insu />} />
+      <Route path="/detalle_producto" element={<Detalle_produc />} />
+      <Route path="/variables_climaticasm" element={<Variables_climam />} />
+      <Route path="/registrar_climam" element={<Registrar_vclima />} />
+      <Route path="/informes_mayordomo" element={<Informes_mayor />} />
+      <Route path="/equipos_mayordomo" element={<Equipos_mayor />} />
+      <Route path="/actualizar_estado_maquina" element={<Actualizar_estado_maquina />} />
+      <Route path="/registrar_mantenimiento" element={<Registrar_mante />} />
+      <Route path="/historial_trabajom" element={<Historial_trabajom />} />
+      <Route path="/hoja_vidam" element={<Hoja_vidam />} />
 
     </Routes>
   );z
