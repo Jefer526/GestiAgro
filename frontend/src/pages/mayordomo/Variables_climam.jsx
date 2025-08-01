@@ -7,18 +7,50 @@ import {
   IconBox,
   IconCloudRain,
   IconTractor,
-  IconSettings,
-  IconDroplet,
-  IconTemperature,
+  IconSettings
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
+// ✅ Gráficos
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Tooltip,
+  Legend
+} from "chart.js";
+import { Bar } from "react-chartjs-2";
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
+
 const Variables_climam = () => {
   const navigate = useNavigate();
-  const [desde, setDesde] = useState("2025-06-18");
-  const [hasta, setHasta] = useState("2025-06-20");
   const [filtro, setFiltro] = useState("Día");
+
+  const data = {
+    labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio"],
+    datasets: [
+      {
+        label: "Precipitaciones",
+        data: [150, 300, 500, 320, 260, 40],
+        backgroundColor: "rgba(34,197,94,0.5)",
+        borderColor: "rgba(34,197,94,1)",
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const opcionesChart = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        beginAtZero: true,
+      },
+    },
+  };
 
   return (
     <div className="flex h-screen">
@@ -58,78 +90,73 @@ const Variables_climam = () => {
         </div>
       </div>
 
-      {/* Contenido */}
-      <div className="flex-1 p-10 overflow-y-auto">
-        <h1 className="text-3xl font-bold text-green-700 mb-2">Variables climáticas</h1>
-        <h2 className="text-xl text-green-800 mb-6 font-semibold">
-          Hacienda <span className="text-black">La esmeralda</span>
-        </h2>
+      {/* Contenido principal */}
+      <div className="flex-1 p-10 overflow-auto">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-green-700">Variables climáticas</h1>
+          <span className="text-2xl text-black font-bold">Hacienda La esmeralda</span>
+        </div>
 
-        <div className="flex items-center text-lg gap-4 mb-6">
-          <span className="font-medium">Filtrar por:</span>
-          <select value={filtro} onChange={(e) => setFiltro(e.target.value)} className="border rounded-md p-2">
+        {/* Filtros */}
+        <div className="mb-6">
+          <label className="text-black font-semibold mr-2">Filtrar por:</label>
+          <select
+            value={filtro}
+            onChange={(e) => setFiltro(e.target.value)}
+            className="border border-gray-300 rounded px-4 py-1"
+          >
             <option>Día</option>
             <option>Mes</option>
             <option>Año</option>
           </select>
         </div>
 
-        <div className="flex items-center text-lg gap-4 mb-6">
-          <span className="font-semibold">Fecha:</span>
-          <span>Desde</span>
-          <input type="date" value={desde} onChange={(e) => setDesde(e.target.value)} className="border rounded-md p-2" />
-          <span>Hasta</span>
-          <input type="date" value={hasta} onChange={(e) => setHasta(e.target.value)} className="border rounded-md p-2" />
+        {/* Fecha */}
+        <div className="mb-6 flex items-center gap-2">
+          <label className="text-black font-semibold">Fecha:</label>
+          <span className="mr-1">Desde</span>
+          <input type="date" className="border border-gray-300 px-3 py-1 rounded" />
+          <span className="mx-1">Hasta</span>
+          <input type="date" className="border border-gray-300 px-3 py-1 rounded" />
         </div>
 
-        {/* Botón registrar */}
-        <div className="mb-6">
-            <button
-                onClick={() => navigate("/registrar_climam")}
-                className="bg-green-600 text-white px-6 py-2 rounded-md font-semibold"
-            >
-                Registrar
-            </button>
+        {/* Botón Registrar */}
+        <div className="mb-4">
+          <button
+            onClick={() => navigate("/Registrarclima")}
+            className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition font-semibold"
+          >
+            Registrar
+          </button>
         </div>
 
-
-        {/* Tarjetas variables */}
-        <div className="grid grid-cols-4 gap-6 mb-6">
-          <div className="bg-white border shadow p-4 rounded-xl text-center space-y-2">
-            <IconCloudRain className="mx-auto text-green-700 w-8 h-8" />
-            <p className="text-3xl font-bold">5 mm</p>
-            <p>Precipitaciones</p>
+        {/* Tarjetas */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+          <div className="bg-white border shadow-md shadow-green-400/50 rounded-lg p-6 text-center">
+            <div className="text-2xl">🌧️</div>
+            <p className="text-lg font-semibold">5 mm</p>
+            <p className="text-sm">Precipitaciones</p>
           </div>
-          <div className="bg-white border shadow p-4 rounded-xl text-center space-y-2">
-            <IconTemperature className="mx-auto text-green-700 w-8 h-8" />
-            <p className="text-3xl font-bold">15 °C</p>
-            <p>Temperatura Mínima</p>
+          <div className="bg-white border shadow-md shadow-green-400/50 rounded-lg p-6 text-center">
+            <div className="text-2xl">🌡️</div>
+            <p className="text-lg font-semibold">15 C</p>
+            <p className="text-sm">Temperatura Mínima</p>
           </div>
-          <div className="bg-white border shadow p-4 rounded-xl text-center space-y-2">
-            <IconTemperature className="mx-auto text-green-700 w-8 h-8 rotate-180" />
-            <p className="text-3xl font-bold">30 °C</p>
-            <p>Temperatura Máxima</p>
+          <div className="bg-white border shadow-md shadow-green-400/50 rounded-lg p-6 text-center">
+            <div className="text-2xl">🌡️</div>
+            <p className="text-lg font-semibold">30 C</p>
+            <p className="text-sm">Temperatura Máxima</p>
           </div>
-          <div className="bg-white border shadow p-4 rounded-xl text-center space-y-2">
-            <IconDroplet className="mx-auto text-green-700 w-8 h-8" />
-            <p className="text-3xl font-bold">90 %</p>
-            <p>Humedad Relativa</p>
+          <div className="bg-white border shadow-md shadow-green-400/50 rounded-lg p-6 text-center">
+            <div className="text-2xl">💧</div>
+            <p className="text-lg font-semibold">90 %</p>
+            <p className="text-sm">Humedad Relativa</p>
           </div>
         </div>
 
-        {/* Gráfico */}
-        <div className="bg-white border shadow rounded-xl p-4">
-          <p className="text-lg font-semibold mb-4">Gráfico de datos</p>
-          <div className="h-64 bg-gray-100 flex items-end justify-between px-4 overflow-hidden">
-            {[150, 280, 380, 250, 180, 30].map((val, idx) => (
-              <div key={idx} className="w-8 bg-green-400 rounded-t" style={{ height: `${Math.min(val, 255)}px` }} />
-            ))}
-          </div>
-          <div className="flex justify-between text-sm mt-2 px-4">
-            {["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio"].map((mes) => (
-              <span key={mes}>{mes}</span>
-            ))}
-          </div>
+        {/* Gráfica */}
+        <div className="w-full h-[500px]">
+          <Bar data={data} options={opcionesChart} />
         </div>
       </div>
     </div>
@@ -137,4 +164,3 @@ const Variables_climam = () => {
 };
 
 export default Variables_climam;
-

@@ -68,21 +68,34 @@ const Regis_labores = () => {
         <div className="flex justify-center">
           <div className="bg-white border border-gray-300 rounded-xl p-6 space-y-6 w-full max-w-5xl text-lg">
             <div className="grid md:grid-cols-2 gap-x-4 gap-y-6">
-              <select className="border border-gray-300 p-2 rounded-md text-lg">
-                <option>Seleccionar finca</option>
-                <option>La esmeralda</option>
-                <option>Las palmas</option>
-                <option>Las carolinas</option>
-              </select>
-              <select className="border border-gray-300 p-2 rounded-md text-lg">
-                <option>Seleccionar lote:</option>
-              </select>
-              <select className="border border-gray-300 p-2 rounded-md text-lg">
-                <option>Labor:</option>
-              </select>
-              <input type="date" className="border border-gray-300 p-2 rounded-md text-lg" />
+              <div>
+                <p className="font-bold mb-1">Finca</p>
+                <select className="border border-gray-300 p-2 rounded-md text-lg w-full">
+                  <option>Seleccionar finca</option>
+                  <option>La esmeralda</option>
+                  <option>Las palmas</option>
+                  <option>Las carolinas</option>
+                </select>
+              </div>
+              <div>
+                <p className="font-bold mb-1">Lote</p>
+                <select className="border border-gray-300 p-2 rounded-md text-lg w-full">
+                  <option>Seleccionar lote</option>
+                </select>
+              </div>
+              <div>
+                <p className="font-bold mb-1">Labor</p>
+                <select className="border border-gray-300 p-2 rounded-md text-lg w-full">
+                  <option>Seleccionar labor</option>
+                </select>
+              </div>
+              <div>
+                <p className="font-bold mb-1">Fecha</p>
+                <input type="date" className="border border-gray-300 p-2 rounded-md text-lg w-full" />
+              </div>
             </div>
-            <div className="border border-gray-300 rounded-xl p-4">
+
+            <div className="border border-gray-300 rounded-xl p-4 mt-4">
               <table className="w-full text-left text-lg">
                 <thead>
                   <tr className="border-b border-gray-300">
@@ -123,14 +136,17 @@ const Regis_labores = () => {
                 </tbody>
               </table>
             </div>
+
             <button onClick={añadirFila} className="flex items-center gap-2 text-green-700 hover:text-green-800 text-lg">
               <IconPlus className="w-6 h-6" /> Añadir Trabajador
             </button>
+
             <textarea
               placeholder="Observación"
               className="border border-gray-300 p-2 rounded-md w-full mt-4 text-lg"
               rows={2}
             ></textarea>
+
             <button className="bg-green-600 text-white px-8 py-2 rounded-full mt-4 hover:bg-green-700 text-lg">
               Registrar
             </button>

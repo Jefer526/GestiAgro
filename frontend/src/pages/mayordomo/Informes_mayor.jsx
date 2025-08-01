@@ -94,52 +94,64 @@ const Informes_mayor = () => {
             </div>
           </div>
 
-          <select
-            name="finca"
-            value={filtros.finca}
-            onChange={handleChange}
-            className="w-full border p-4 rounded text-lg"
-          >
-            <option value="" disabled hidden>Selecciona una finca</option>
-            <option value="La Esmeralda">La Esmeralda</option>
-            <option value="Las Palmas">Las Palmas</option>
-            <option value="La Carolina">La Carolina</option>
-          </select>
+          <div>
+            <p className="font-bold text-lg mb-2">Finca</p>
+            <select
+              name="finca"
+              value={filtros.finca}
+              onChange={handleChange}
+              className="w-full border p-4 rounded text-lg"
+            >
+              <option value="" disabled hidden>Selecciona una finca</option>
+              <option value="La Esmeralda">La Esmeralda</option>
+              <option value="Las Palmas">Las Palmas</option>
+              <option value="La Carolina">La Carolina</option>
+            </select>
+          </div>
 
-          <select
-            name="lote"
-            value={filtros.lote}
-            onChange={handleChange}
-            className="w-full border p-4 rounded text-lg"
-          >
-            <option value="" disabled hidden>Selecciona un lote</option>
-            <option value="Lote 1">Lote 1</option>
-            <option value="Lote 2">Lote 2</option>
-            <option value="Lote 3">Lote 3</option>
-          </select>
+          <div>
+            <p className="font-bold text-lg mb-2">Lote</p>
+            <select
+              name="lote"
+              value={filtros.lote}
+              onChange={handleChange}
+              className="w-full border p-4 rounded text-lg"
+            >
+              <option value="" disabled hidden>Selecciona un lote</option>
+              <option value="Lote 1">Lote 1</option>
+              <option value="Lote 2">Lote 2</option>
+              <option value="Lote 3">Lote 3</option>
+            </select>
+          </div>
 
-          <select
-            name="tipo"
-            value={filtros.tipo}
-            onChange={handleChange}
-            className="w-full border p-4 rounded text-lg"
-          >
-            <option value="" disabled hidden>Selecciona una cosecha</option>
-            <option value="Fertilización">Fertilización</option>
-            <option value="Siembra">Siembra</option>
-          </select>
+          <div>
+            <p className="font-bold text-lg mb-2">Tipo de reporte</p>
+            <select
+              name="tipo"
+              value={filtros.tipo}
+              onChange={handleChange}
+              className="w-full border p-4 rounded text-lg"
+            >
+              <option value="" disabled hidden>Selecciona un tipo</option>
+              <option value="Fertilización">Fertilización</option>
+              <option value="Siembra">Siembra</option>
+            </select>
+          </div>
 
-          <select
-            name="labor"
-            value={filtros.labor}
-            onChange={handleChange}
-            className="w-full border p-4 rounded text-lg"
-          >
-            <option value="" disabled hidden>Selecciona una labor</option>
-            <option value="Siembra">Siembra</option>
-            <option value="Desyerba guadaña">Desyerba guadaña</option>
-            <option value="Recolección">Recolección</option>
-          </select>
+          <div>
+            <p className="font-bold text-lg mb-2">Labor</p>
+            <select
+              name="labor"
+              value={filtros.labor}
+              onChange={handleChange}
+              className="w-full border p-4 rounded text-lg"
+            >
+              <option value="" disabled hidden>Selecciona una labor</option>
+              <option value="Siembra">Siembra</option>
+              <option value="Desyerba guadaña">Desyerba guadaña</option>
+              <option value="Recolección">Recolección</option>
+            </select>
+          </div>
 
           <div className="flex justify-center">
             <button className="bg-green-600 text-white px-8 py-3 rounded hover:bg-green-700 text-lg">

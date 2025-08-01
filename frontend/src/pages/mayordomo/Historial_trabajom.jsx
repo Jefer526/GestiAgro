@@ -109,29 +109,30 @@ const Historial_trabajom = () => {
 
         {/* Tabla de historial */}
         <div className="bg-white rounded-xl shadow overflow-x-auto">
-        <table className="w-full text-sm md:text-base text-left">
+          <table className="w-full text-sm md:text-base text-center">
             <thead className="bg-green-600 text-white font-semibold">
-                <tr>
-                <th className="p-4 border border-gray-300">FECHA</th>
-                <th className="p-4 border border-gray-300">LABOR</th>
-                <th className="p-4 border border-gray-300">HORAS TRABAJADAS</th>
-                <th className="p-4 border border-gray-300">HORAS MÁQUINA</th>
-                <th className="p-4 border border-gray-300">OBSERVACIONES</th>
-                </tr>
+              <tr>
+                <th className="p-4 border border-gray-300 text-center">FECHA</th>
+                <th className="p-4 border border-gray-300 text-center">LABOR</th>
+                <th className="p-4 border border-gray-300 text-center">HORAS TRABAJADAS</th>
+                <th className="p-4 border border-gray-300 text-center">HORAS MÁQUINA</th>
+                <th className="p-4 border border-gray-300 text-center">OBSERVACIONES</th>
+              </tr>
             </thead>
             <tbody className="text-gray-700">
-                {historial.map((item, idx) => (
+              {historial.map((item, idx) => (
                 <tr key={idx} className="border-t border-gray-300">
-                    <td className="p-4 border border-gray-300">{item.fecha}</td>
-                    <td className="p-4 border border-gray-300">{item.labor}</td>
-                    <td className="p-4 border border-gray-300">{item.horasTrabajadas}</td>
-                    <td className="p-4 border border-gray-300">{item.horasMaquina}</td>
-                    <td className="p-4 border border-gray-300">{item.observaciones}</td>
+                  <td className="p-4 border border-gray-300 text-center">{item.fecha}</td>
+                  <td className="p-4 border border-gray-300 text-center">{item.labor}</td>
+                  <td className="p-4 border border-gray-300 text-center">{item.horasTrabajadas}</td>
+                  <td className="p-4 border border-gray-300 text-center">{item.horasMaquina}</td>
+                  <td className="p-4 border border-gray-300 text-center">{item.observaciones}</td>
                 </tr>
-                ))}
+              ))}
             </tbody>
-            </table>
+          </table>
         </div>
+
 
         {/* Botón exportar */}
         <div className="flex justify-end mt-4">

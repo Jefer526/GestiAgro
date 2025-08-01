@@ -21,7 +21,6 @@ import Regis_labores from "./pages/mayordomo/Regis_labores";
 import Historial_labor from "./pages/mayordomo/Historial_labor";
 import Bodega_insu from "./pages/mayordomo/Bodega_insu";
 import Detalle_produc from "./pages/mayordomo/Detalle_produc";
-import Agregar_prodm from "./pages/mayordomo/Agregar_prodm";
 import Variables_climam from "./pages/mayordomo/Variables_climam";
 import Registrar_vclima from "./pages/mayordomo/Registrar_vclima";
 import Informes_mayor from "./pages/mayordomo/Informes_mayor";
@@ -55,7 +54,6 @@ function App() {
       <Route path="/historial_labores" element={<Historial_labor />} />
       <Route path="/bodega_insumos" element={<Bodega_insu />} />
       <Route path="/detalle_producto" element={<Detalle_produc />} />
-      <Route path="/agregar_productom" element={<Agregar_prodm />} />
       <Route path="/variables_climaticasm" element={<Variables_climam />} />
       <Route path="/registrar_climam" element={<Registrar_vclima />} />
       <Route path="/informes_mayordomo" element={<Informes_mayor />} />
