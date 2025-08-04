@@ -207,7 +207,7 @@ const Crear_lote_agro = () => {
         </div>
 
         <div className="flex justify-center mt-6">
-        <button className="bg-green-600 text-white text-lg px-6 py-3 rounded-lg hover:bg-green-700 shadow-md">
+        <button className="bg-green-600 text-white text-lg px-6 py-3 rounded-lg hover:bg-green-700 font-bold">
             Guardar cambios
         </button>
         </div>

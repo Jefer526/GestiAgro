@@ -87,46 +87,46 @@ const Actualizar_maquina = () => {
 
         <h2 className="text-3xl font-bold text-green-700 mb-6 text">Actualizar estado de máquinas</h2>
 
-        <div className="bg-white shadow-md border border-green-300 p-6 rounded-xl w-full space-y-6">
-          <table className="w-full text-center text-lg border-collapse">
-            <thead>
-              <tr className="bg-green-600 text-white">
-                <th className="p-3 border font-bold">ID</th>
-                <th className="p-3 border font-bold">Máquina</th>
-                <th className="p-3 border font-bold">Referencia</th>
-                <th className="p-3 border font-bold">Estado</th>
+        {/* Tabla sin marco */}
+        <table className="w-full text-center text-lg border-collapse">
+          <thead>
+            <tr className="bg-green-600 text-white">
+              <th className="p-3 border text-center">ID</th>
+              <th className="p-3 border text-center">Máquina</th>
+              <th className="p-3 border text-center">Referencia</th>
+              <th className="p-3 border text-center">Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            {maquinas.map((m, index) => (
+              <tr key={m.id} className="border-b">
+                <td className="p-3 border text-center">{m.id}</td>
+                <td className="p-3 border text-center">{m.maquina}</td>
+                <td className="p-3 border text-center">{m.referencia}</td>
+                <td className="p-3 border text-center">
+                  <select
+                    value={m.estado}
+                    onChange={(e) => handleEstadoChange(index, e.target.value)}
+                    className="border border-gray-300 rounded px-2 py-1 text-center"
+                  >
+                    <option value="Óptimo">Óptimo</option>
+                    <option value="Mantenimiento">Mantenimiento</option>
+                    <option value="Averiado">Averiado</option>
+                  </select>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {maquinas.map((m, index) => (
-                <tr key={m.id} className="border-b hover:bg-gray-50">
-                  <td className="p-3 border">{m.id}</td>
-                  <td className="p-3 border">{m.maquina}</td>
-                  <td className="p-3 border">{m.referencia}</td>
-                  <td className="p-3 border">
-                    <select
-                      value={m.estado}
-                      onChange={(e) => handleEstadoChange(index, e.target.value)}
-                      className="border border-gray-300 rounded px-2 py-1"
-                    >
-                      <option value="Óptimo">Óptimo</option>
-                      <option value="Mantenimiento">Mantenimiento</option>
-                      <option value="Averiado">Averiado</option>
-                    </select>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+            ))}
+          </tbody>
+        </table>
 
-          <div className="flex justify-end">
-            <button
-              onClick={handleGuardar}
-              className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold"
-            >
-              Guardar
-            </button>
-          </div>
+        {/* Botón guardar */}
+        <div className="flex justify-end mt-6">
+          <button
+            onClick={handleGuardar}
+            className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold"
+          >
+            Guardar
+          </button>
         </div>
       </div>
     </div>
