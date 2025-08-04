@@ -97,31 +97,31 @@ const Maquinaria_equipos = () => {
     return () => document.removeEventListener("mousedown", clickFuera);
   }, []);
 
-  return (
+   return (
     <div className="flex h-screen">
       {/* Sidebar */}
-            <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
-              <div className="flex-1 flex flex-col items-center space-y-8 overflow-y-auto scrollbar-hide pr-1">
-                <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
-                <button onClick={() => navigate("/homeagro")} className="hover:bg-white/10 p-2 rounded-lg"><IconHome className="text-white w-11 h-11" /></button>
-                <button onClick={() => navigate("/Laboresagro")} className="hover:bg-white/10 p-2 rounded-lg"><IconClipboardList className="text-white w-11 h-11" /></button>
-                <button onClick={() => navigate("/Informesagro")} className="hover:bg-white/10 p-2 rounded-lg"><IconChartBar className="text-white w-11 h-11" /></button>
-                <button onClick={() => navigate("/Bodegaagro")} className="hover:bg-white/10 p-2 rounded-lg"><IconBox className="text-white w-11 h-11" /></button>
-                <button onClick={() => navigate("/variablesclimaticas")} className="hover:bg-white/10 p-2 rounded-lg"><IconCloudRain className="text-white w-11 h-11" /></button>
-                <button onClick={() => navigate("/maquinariaequipos")} className="hover:bg-white/10 p-2 rounded-lg"><IconTractor className="text-white w-11 h-11" /></button>
-                <button onClick={() => navigate("/manejopersonal")} className="hover:bg-white/10 p-2 rounded-lg"><IconUsersGroup className="text-white w-11 h-11" /></button>
-                <button onClick={() => navigate("/crearfinca")} className="hover:bg-white/10 p-2 rounded-lg"><IconPlant className="text-white w-11 h-11" /></button>
-                <button onClick={() => navigate("/crearlote")} className="hover:bg-white/10 p-2 rounded-lg"><IconFrame className="text-white w-11 h-11" /></button>
-              </div>
-              <div className="sticky bottom-6">
-                <button onClick={() => navigate("/ajustes")} className="hover:bg-white/10 p-2 rounded-lg"><IconSettings className="text-white w-11 h-11" /></button>
-              </div>
-            </div>
-      
+      <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
+        <div className="flex-1 flex flex-col items-center space-y-8 overflow-y-auto scrollbar-hide pr-1">
+          <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
+          <button onClick={() => navigate("/homeagro")} className="hover:bg-white/10 p-2 rounded-lg"><IconHome className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/Laboresagro")} className="hover:bg-white/10 p-2 rounded-lg"><IconClipboardList className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/Informesagro")} className="hover:bg-white/10 p-2 rounded-lg"><IconChartBar className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/Bodegaagro")} className="hover:bg-white/10 p-2 rounded-lg"><IconBox className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/variablesclimaticas")} className="hover:bg-white/10 p-2 rounded-lg"><IconCloudRain className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/maquinariaequipos")} className="hover:bg-white/10 p-2 rounded-lg"><IconTractor className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/manejopersonal")} className="hover:bg-white/10 p-2 rounded-lg"><IconUsersGroup className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/crearfinca")} className="hover:bg-white/10 p-2 rounded-lg"><IconPlant className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/crearlote")} className="hover:bg-white/10 p-2 rounded-lg"><IconFrame className="text-white w-11 h-11" /></button>
+        </div>
+        <div className="sticky bottom-6">
+          <button onClick={() => navigate("/ajustes")} className="hover:bg-white/10 p-2 rounded-lg"><IconSettings className="text-white w-11 h-11" /></button>
+        </div>
+      </div>
 
       <div className="flex-1 p-10 overflow-auto">
         <h1 className="text-3xl font-bold text-green-600 mb-6">Maquinaria y Equipos</h1>
 
+        {/* CONTENEDOR DE LA TABLA */}
         <div className="overflow-x-auto rounded-lg shadow-lg relative">
           <table className="min-w-full text-base bg-white">
             <thead className="bg-green-600 text-white font-bold text-center">
@@ -203,6 +203,26 @@ const Maquinaria_equipos = () => {
               </button>
             </div>
           )}
+        </div> 
+
+        <div className="flex justify-center gap-6 mt-10 mb-8">
+          <button
+            onClick={() => navigate("/registrarmaquina")}
+            className="bg-green-600 text-white px-7 py-2.5 rounded-lg hover:bg-green-700 text-lg font-semibold"
+          >
+            Registrar nueva máquina
+          </button>
+          <button
+            className="bg-green-600 text-white px-7 py-2.5 rounded-lg hover:bg-green-700 text-lg font-semibold"
+          >
+            Exportar
+          </button>
+          <button
+            onClick={() => navigate("/actualizarmaquina")}
+            className="bg-green-600 text-white px-7 py-2.5 rounded-lg hover:bg-green-700 text-lg font-semibold"
+          >
+            Actualizar estado
+          </button>
         </div>
       </div>
     </div>
