@@ -14,12 +14,13 @@ import {
   IconSortDescending2,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
 const Admin_usuarios = () => {
   const navigate = useNavigate();
   const filtroRef = useRef(null);
-  const [search, setSearch] = useState("");
+  const [usuarios, setUsuarios] = useState([]);
   const [menuAbiertoId, setMenuAbiertoId] = useState(null);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const [filtroActivo, setFiltroActivo] = useState(null);
@@ -28,13 +29,13 @@ const Admin_usuarios = () => {
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
 
-  const columnas = ["id", "nombre", "rol", "email"];
+  const columnas = ["id", "nombre_completo", "rol", "email"];
 
-  const usuarios = [
-    { id: 1, nombre: "Jefferson Pérez", telefono: "123456789", rol: "Administrador", email: "jefferson@example.com", contrasena: "********" },
-    { id: 2, nombre: "María García", telefono: "987654321", rol: "Gerente", email: "maria@example.com", contrasena: "********" },
-    { id: 3, nombre: "Carlos Ruiz", telefono: "555666777", rol: "Mayordomo", email: "carlos@example.com", contrasena: "********" },
-  ];
+  useEffect(() => {
+    axios.get("http://localhost:8000/api/usuarios/listar/")
+      .then((res) => setUsuarios(res.data))
+      .catch((err) => console.error("Error al obtener usuarios:", err));
+  }, []);
 
   const toggleFiltro = (campo, e) => {
     e.stopPropagation();
@@ -90,21 +91,19 @@ const Admin_usuarios = () => {
     });
 
   const handleMenuOpen = (id, event) => {
-  event.stopPropagation();
-  const rect = event.currentTarget.getBoundingClientRect();
-  const espacioDisponibleDerecha = window.innerWidth - rect.right;
-  const menuWidth = 160; // ancho estimado del menú
+    event.stopPropagation();
+    const rect = event.currentTarget.getBoundingClientRect();
+    const espacioDisponibleDerecha = window.innerWidth - rect.right;
+    const menuWidth = 160;
+    const left = espacioDisponibleDerecha > menuWidth
+      ? rect.right + 8
+      : rect.left - menuWidth - 8;
 
-  const left = espacioDisponibleDerecha > menuWidth
-    ? rect.right + 8
-    : rect.left - menuWidth - 8;
-
-  setTimeout(() => {
-    setMenuAbiertoId(id);
-    setMenuPosition({ x: left, y: rect.top });
-  }, 0);
-};
-
+    setTimeout(() => {
+      setMenuAbiertoId(id);
+      setMenuPosition({ x: left, y: rect.top });
+    }, 0);
+  };
 
   const handleClickOutside = (e) => {
     if (!e.target.closest("#floating-menu") && !e.target.closest(".menu-trigger")) {
@@ -133,8 +132,7 @@ const Admin_usuarios = () => {
       <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between">
         <div className="flex flex-col items-center space-y-8">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
-          <button onClick={() => navigate("/homeadm")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button onClick={() => navigate("/homeadm")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconHome className="text-white w-11 h-11" />
           </button>
           <div className="relative">
@@ -143,17 +141,14 @@ const Admin_usuarios = () => {
               <IconUsers className="text-white w-11 h-11" />
             </button>
           </div>
-          <button onClick={() => navigate("/copias")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button onClick={() => navigate("/copias")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconCloudUpload className="text-white w-11 h-11" />
           </button>
-          <button onClick={() => navigate("/soporte")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button onClick={() => navigate("/soporte")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconTool className="text-white w-11 h-11" />
           </button>
         </div>
-        <button onClick={() => navigate("/ajustes")}
-          className="mb-6 hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+        <button onClick={() => navigate("/ajustes")} className="mb-6 hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
           <IconSettings className="text-white w-11 h-11" />
         </button>
       </div>
@@ -166,7 +161,7 @@ const Admin_usuarios = () => {
           <table className="min-w-full text-base bg-white text-center">
             <thead className="bg-green-600 text-white">
               <tr>
-                {["id", "nombre", "telefono", "rol", "email", "contrasena"].map((col, idx) => (
+                {["id", "nombre_completo", "telefono", "rol", "email", "contrasena"].map((col, idx) => (
                   <th key={idx} className="p-4 border">
                     <div className="flex items-center justify-center gap-2">
                       <span>{col.toUpperCase()}</span>
@@ -185,14 +180,13 @@ const Admin_usuarios = () => {
               {datosFiltrados.map((u) => (
                 <tr key={u.id} className="border-t hover:bg-gray-50">
                   <td className="p-4 border">{u.id}</td>
-                  <td className="p-4 border">{u.nombre}</td>
+                  <td className="p-4 border">{u.nombre_completo}</td>
                   <td className="p-4 border">{u.telefono}</td>
-                  <td className="p-4 border">{u.rol}</td>
+                  <td className="p-4 border">{u.rol || "Sin asignar"}</td>
                   <td className="p-4 border">{u.email}</td>
-                  <td className="p-4 border">{u.contrasena}</td>
+                  <td className="p-4 border">{u.contrasena ? "********" : ""}</td>
                   <td className="p-4 border">
-                    <button onClick={(e) => handleMenuOpen(u.id, e)}
-                      className="menu-trigger p-1 rounded hover:bg-gray-200 z-50 relative">
+                    <button onClick={(e) => handleMenuOpen(u.id, e)} className="menu-trigger p-1 rounded hover:bg-gray-200 z-50 relative">
                       <IconDotsVertical className="w-5 h-5 text-gray-600" />
                     </button>
                   </td>
@@ -201,7 +195,7 @@ const Admin_usuarios = () => {
             </tbody>
           </table>
 
-          {/* Filtro activo */}
+          {/* Filtros emergentes */}
           {filtroActivo && (
             <div ref={filtroRef}
               className="fixed bg-white text-black shadow-md border rounded z-[9999] p-3 w-60 text-left text-sm"
@@ -233,11 +227,9 @@ const Admin_usuarios = () => {
             </div>
           )}
 
-          {/* Menú de opciones */}
+          {/* Menú de acciones */}
           {menuAbiertoId !== null && (
-            <div
-              id="floating-menu"
-              className="fixed bg-white border border-gray-200 rounded shadow-lg w-40 z-[9999]"
+            <div id="floating-menu" className="fixed bg-white border border-gray-200 rounded shadow-lg w-40 z-[9999]"
               style={{ top: menuPosition.y, left: menuPosition.x }}>
               <button onClick={() => navigate(`/editar-roluser/${menuAbiertoId}`)}
                 className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100">
@@ -255,6 +247,3 @@ const Admin_usuarios = () => {
 };
 
 export default Admin_usuarios;
-
-
-
