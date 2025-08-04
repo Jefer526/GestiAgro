@@ -1,16 +1,16 @@
-import { Routes, Route } from "react-router-dom";
-import AuthRoutes from "./routes/AuthRoutes";
-import AgronomoRoutes from "./routes/AgronomoRoutes";
-import MayordomoRoutes from "./routes/AgronomoRoutes";
-import AdminRoutes from "./routes/AgronomoRoutes";
+import { Routes } from "react-router-dom";
+import authRoutes from "./routes/AuthRoutes";
+import agronomoRoutes from "./routes/AgronomoRoutes";
+import MayordomoRoutes from "./routes/MayordomoRoutes";
+import AdminRoutes from "./routes/AdminRoutes";
 
 function App() {
   return (
     <Routes>
-      <AuthRoutes />
-      <AgronomoRoutes />
-      <MayordomoRoutes />
-      <AdminRoutes />
+      {authRoutes}
+      {agronomoRoutes}
+      {MayordomoRoutes}
+      {AdminRoutes}
     </Routes>
   );
 }

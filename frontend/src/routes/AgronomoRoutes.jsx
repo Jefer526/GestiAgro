@@ -22,31 +22,29 @@ import Editar_finca from "../pages/agronomo/Editar_finca";
 import Crear_lote_agro from "../pages/agronomo/Crear_lote_agro";
 import Editar_lote from "../pages/agronomo/Editar_lote";
 
-const AgronomoRoutes = () => (
-  <>
-      <Route path="/Homeagro" element={<Home_agro />} />
-      <Route path="/Laboresagro" element={<Labores_agro />} />
-      <Route path="/historial" element={<Historial_labores />} />
-      <Route path="/Informesagro" element={<Informes_agro />} />
-      <Route path="/Bodegaagro" element={<Bodega_agro />} />
-      <Route path="/Detallesagrop" element={<Detalles_agrop />} />
-      <Route path="/agregarproducto" element={<Agregar_producto />} />
-      <Route path="/variablesclimaticas" element={<Variables_climaticas />} />
-      <Route path="/Registrarclima" element={<Registrar_clima />} />
-      <Route path="/maquinariaequipos" element={<Maquinaria_equipos />} />
-      <Route path="/registrarmaquina" element={<Registrar_maquina />} />
-      <Route path="/actualizarmaquina" element={<Actualizar_maquina />} />
-      <Route path="/hojadevida" element={<Hoja_vida_agro />} />
-      <Route path="/historialtrabajo" element={<Historial_trabajo_agro />} />
-      <Route path="/registrar_mantenimiento" element={<Registrar_mantenimiento />} />
-      <Route path="/manejopersonal" element={<Manejo_personal_agro />} />
-      <Route path="/registrarempleado" element={<Registrar_empleado />} />
-      <Route path="/actualizarestado" element={<Actualizar_estado />} />
-      <Route path="/crearfinca" element={<Crear_finca_agro />} />
-      <Route path="/editarfinca" element={<Editar_finca />} />
-      <Route path="/crearlote" element={<Crear_lote_agro />} />
-      <Route path="/editarlote" element={<Editar_lote />} />
-  </>
-  );
+const agronomoRoutes = [
+  <Route key="home" path="/Homeagro" element={<Home_agro />} />,
+  <Route key="labores" path="/Laboresagro" element={<Labores_agro />} />,
+  <Route key="historial-labores" path="/historial" element={<Historial_labores />} />,
+  <Route key="informes" path="/Informesagro" element={<Informes_agro />} />,
+  <Route key="bodega" path="/Bodegaagro" element={<Bodega_agro />} />,
+  <Route key="detalles" path="/Detallesagrop" element={<Detalles_agrop />} />,
+  <Route key="agregar-producto" path="/agregarproducto" element={<Agregar_producto />} />,
+  <Route key="variables-clima" path="/variablesclimaticas" element={<Variables_climaticas />} />,
+  <Route key="registrar-clima" path="/Registrarclima" element={<Registrar_clima />} />,
+  <Route key="maquinaria" path="/maquinariaequipos" element={<Maquinaria_equipos />} />,
+  <Route key="registrar-maquina" path="/registrarmaquina" element={<Registrar_maquina />} />,
+  <Route key="actualizar-maquina" path="/actualizarmaquina" element={<Actualizar_maquina />} />,
+  <Route key="hoja-vida" path="/hojadevida" element={<Hoja_vida_agro />} />,
+  <Route key="historial-trabajo" path="/historialtrabajo" element={<Historial_trabajo_agro />} />,
+  <Route key="registrar-mantenimiento" path="/registrar_mantenimiento" element={<Registrar_mantenimiento />} />,
+  <Route key="manejo-personal" path="/manejopersonal" element={<Manejo_personal_agro />} />,
+  <Route key="registrar-empleado" path="/registrarempleado" element={<Registrar_empleado />} />,
+  <Route key="actualizar-estado" path="/actualizarestado" element={<Actualizar_estado />} />,
+  <Route key="crear-finca" path="/crearfinca" element={<Crear_finca_agro />} />,
+  <Route key="editar-finca" path="/editarfinca" element={<Editar_finca />} />,
+  <Route key="crear-lote" path="/crearlote" element={<Crear_lote_agro />} />,
+  <Route key="editar-lote" path="/editarlote" element={<Editar_lote />} />,
+];
 
-export default AgronomoRoutes;
+export default agronomoRoutes;
