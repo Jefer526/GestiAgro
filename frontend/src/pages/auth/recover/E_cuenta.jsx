@@ -8,11 +8,12 @@ const E_cuenta = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    navigate("/confirmar-correo", { state: { email } }); // 👈 Envía el email por state
+    navigate("/confirmar-correo", { state: { email } }); // Envía el email por state
   };
 
   return (
     <div className="min-h-screen bg-green-600 flex flex-col items-center justify-center p-4 relative">
+      
       {/* Botón cerrar */}
       <button
         className="absolute top-4 right-4 text-white text-5xl font-bold"
@@ -56,7 +57,6 @@ const E_cuenta = () => {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-
 
         <button
           type="submit"

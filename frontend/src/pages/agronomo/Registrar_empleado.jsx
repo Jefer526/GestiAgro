@@ -1,18 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   IconHome, IconClipboardList, IconChartBar, IconCloudRain,
   IconTractor, IconSettings, IconBox, IconUsersGroup,
-  IconPlant, IconFrame, IconChevronLeft
+  IconPlant, IconFrame, IconChevronLeft, IconCheck
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
 const Registrar_empleado = () => {
   const navigate = useNavigate();
+  const [alertaVisible, setAlertaVisible] = useState(false); // ✅ Alerta
 
   const manejarGuardar = (e) => {
     e.preventDefault();
-    navigate("/manejopersonal");
+    setAlertaVisible(true);
+    setTimeout(() => {
+      setAlertaVisible(false);
+      navigate("/manejopersonal");
+    }, 2000);
   };
 
   return (
@@ -37,7 +42,14 @@ const Registrar_empleado = () => {
       </div>
 
       {/* Contenido principal */}
-      <div className="flex-1 p-10 overflow-auto">
+      <div className="flex-1 p-10 overflow-auto relative bg-gray-50">
+        {/* 🔔 Alerta flotante */}
+        {alertaVisible && (
+          <div className="fixed top-3 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
+            <IconCheck className="w-5 h-5" /> Empleado registrado exitosamente
+          </div>
+        )}
+
         <button onClick={() => navigate("/manejopersonal")} className="flex items-center text-green-700 font-semibold mb-6 hover:underline">
           <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
         </button>
@@ -82,7 +94,6 @@ const Registrar_empleado = () => {
               </select>
             </div>
 
-            {/* Botón dentro del form y más compacto */}
             <div className="md:col-span-2 flex justify-center mt-6">
               <button
                 type="submit"

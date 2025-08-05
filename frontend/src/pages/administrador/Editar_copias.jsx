@@ -7,6 +7,7 @@ import {
   IconSettings,
   IconChevronLeft,
   IconDeviceFloppy,
+  IconCheck,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
@@ -15,10 +16,15 @@ const Editar_copias = () => {
   const navigate = useNavigate();
   const [fecha, setFecha] = useState("2025-06-12");
   const [hora, setHora] = useState("14:21");
+  const [alertaVisible, setAlertaVisible] = useState(false); // 👈 estado para la alerta
 
   const handleGuardar = () => {
     console.log("Guardando copia actualizada:", { fecha, hora });
-    navigate("/copias");
+    setAlertaVisible(true); // Mostrar alerta
+    setTimeout(() => {
+      setAlertaVisible(false);
+      navigate("/copias"); // Redirigir después de mostrar la alerta
+    }, 2000); // 2 segundos
   };
 
   return (
@@ -49,7 +55,14 @@ const Editar_copias = () => {
       </div>
 
       {/* Contenido principal */}
-      <div className="flex-1 p-10">
+      <div className="flex-1 bg-gray-50 min-h-screen p-10 relative">
+        {/* Alerta */}
+        {alertaVisible && (
+          <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
+            <IconCheck className="w-5 h-5" /> Cambios guardados exitosamente
+          </div>
+        )}
+
         <button onClick={() => navigate("/copias")} className="flex items-center text-green-600 font-semibold mb-6 text-lg hover:underline">
           <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
         </button>

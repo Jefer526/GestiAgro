@@ -115,14 +115,14 @@ const Crear_finca_agro = () => {
       {/* Contenido principal */}
       <div className="flex-1 p-10 overflow-auto">
         <h1 className="text-3xl font-bold text-green-700 mb-6">Crear finca</h1>
-        <div className="bg-white border border-green-200 shadow-green-300 shadow-md p-6 rounded-lg mb-10 max-w-4xl">
+        <div className="bg-white border  border-gray-200 shadow-gray-300 shadow-md p-6 rounded-lg mb-10 max-w-4xl">
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="font-bold block mb-1">Nombre finca</label>
               <input name="nombre" value={formData.nombre} onChange={handleChange} placeholder="Nombre finca" className="w-full p-2 border rounded" />
             </div>
             <div>
-              <label className="font-bold block mb-1 flex items-center gap-1">
+              <label className="font-bold block mb-1 items-center gap-1">
                 <IconMapPin className="w-4 h-4" /> Ubicación finca
               </label>
               <input name="ubicacion" value={formData.ubicacion} onChange={handleChange} placeholder="Ubicación finca" className="w-full p-2 border rounded" />
@@ -229,7 +229,7 @@ const Crear_finca_agro = () => {
 
         {/* Botón guardar cambios */}
         <div className="flex justify-center mt-6">
-        <button className="bg-green-600 text-white text-lg px-6 py-3 rounded-lg hover:bg-green-700 shadow-md">
+        <button className="bg-green-600 text-white text-lg px-6 py-3 rounded-lg hover:bg-green-700 font-bold">
             Guardar cambios
         </button>
         </div>

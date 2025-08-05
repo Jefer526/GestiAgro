@@ -18,6 +18,7 @@ const Register = () => {
 
   return (
     <div className="min-h-screen relative flex items-center justify-center bg-green-600">
+      
       {/* Alerta flotante */}
       {mostrarAlerta && (
         <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
@@ -31,12 +32,14 @@ const Register = () => {
       <div className="absolute top-0 left-0 w-full h-1/2 bg-green-600 z-0" />
       <div className="absolute bottom-0 left-0 w-full h-1/2 bg-white z-0" />
 
+      {/* Logo */}
       <img
         src={faviconBlanco}
         alt="Logo de GestiAgro"
         className="absolute top-4 left-4 w-10 h-10 object-contain"
       />
 
+      {/* Formulario */}
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-xl px-12 py-16 z-10 relative">
         <div className="flex justify-between items-start mb-10">
           <div>
@@ -55,7 +58,9 @@ const Register = () => {
 
         <form onSubmit={handleRegister} className="space-y-6">
           <div>
-            <label className="block mb-2 font-medium text-gray-800 text-base">Nombre</label>
+            <label className="block mb-2 font-medium text-gray-800 text-base">
+              Nombre
+            </label>
             <input
               type="text"
               placeholder="Ingrese su nombre"
@@ -63,8 +68,11 @@ const Register = () => {
               required
             />
           </div>
+
           <div>
-            <label className="block mb-2 font-medium text-gray-800 text-base">Teléfono</label>
+            <label className="block mb-2 font-medium text-gray-800 text-base">
+              Teléfono
+            </label>
             <input
               type="tel"
               placeholder="Ingrese su número de teléfono"
@@ -72,8 +80,11 @@ const Register = () => {
               required
             />
           </div>
+
           <div>
-            <label className="block mb-2 font-medium text-gray-800 text-base">Correo electrónico</label>
+            <label className="block mb-2 font-medium text-gray-800 text-base">
+              Correo electrónico
+            </label>
             <input
               type="email"
               placeholder="Ingrese su correo electrónico"
@@ -95,4 +106,3 @@ const Register = () => {
 };
 
 export default Register;
-

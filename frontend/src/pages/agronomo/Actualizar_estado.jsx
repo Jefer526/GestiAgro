@@ -1,10 +1,9 @@
-// src/pages/agronomo/Actualizar_estado.jsx
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   IconHome, IconClipboardList, IconChartBar, IconCloudRain,
   IconTractor, IconSettings, IconBox, IconUsersGroup,
-  IconPlant, IconFrame, IconFilter, IconSortAscending2, IconSortDescending2, IconArrowLeft
+  IconPlant, IconFrame, IconFilter, IconSortAscending2, IconSortDescending2, IconArrowLeft, IconCheck
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
@@ -25,6 +24,7 @@ const Actualizar_estado = () => {
   const [busquedas, setBusquedas] = useState({});
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
+  const [alertaVisible, setAlertaVisible] = useState(false);
   const filtroRef = useRef(null);
 
   const actualizarEstado = (id, nuevoEstado) => {
@@ -35,7 +35,11 @@ const Actualizar_estado = () => {
 
   const guardarCambios = () => {
     console.log("Estados actualizados:", estados);
-    navigate("/manejopersonal");
+    setAlertaVisible(true);
+    setTimeout(() => {
+      setAlertaVisible(false);
+      navigate("/manejopersonal");
+    }, 2000);
   };
 
   const toggleFiltro = (campo, e) => {
@@ -103,35 +107,37 @@ const Actualizar_estado = () => {
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
-            <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
-              <div className="flex-1 flex flex-col items-center space-y-8 overflow-y-auto scrollbar-hide pr-1">
-                <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
-                <button onClick={() => navigate("/homeagro")} className="hover:bg-white/10 p-2 rounded-lg"><IconHome className="text-white w-11 h-11" /></button>
-                <button onClick={() => navigate("/Laboresagro")} className="hover:bg-white/10 p-2 rounded-lg"><IconClipboardList className="text-white w-11 h-11" /></button>
-                <button onClick={() => navigate("/Informesagro")} className="hover:bg-white/10 p-2 rounded-lg"><IconChartBar className="text-white w-11 h-11" /></button>
-                <button onClick={() => navigate("/Bodegaagro")} className="hover:bg-white/10 p-2 rounded-lg"><IconBox className="text-white w-11 h-11" /></button>
-                <button onClick={() => navigate("/variablesclimaticas")} className="hover:bg-white/10 p-2 rounded-lg"><IconCloudRain className="text-white w-11 h-11" /></button>
-                <button onClick={() => navigate("/maquinariaequipos")} className="hover:bg-white/10 p-2 rounded-lg"><IconTractor className="text-white w-11 h-11" /></button>
-                <button onClick={() => navigate("/manejopersonal")} className="hover:bg-white/10 p-2 rounded-lg"><IconUsersGroup className="text-white w-11 h-11" /></button>
-                <button onClick={() => navigate("/crearfinca")} className="hover:bg-white/10 p-2 rounded-lg"><IconPlant className="text-white w-11 h-11" /></button>
-                <button onClick={() => navigate("/crearlote")} className="hover:bg-white/10 p-2 rounded-lg"><IconFrame className="text-white w-11 h-11" /></button>
-              </div>
-              <div className="sticky bottom-6">
-                <button onClick={() => navigate("/ajustes")} className="hover:bg-white/10 p-2 rounded-lg"><IconSettings className="text-white w-11 h-11" /></button>
-              </div>
-            </div>
+      <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
+        <div className="flex-1 flex flex-col items-center space-y-8 overflow-y-auto scrollbar-hide pr-1">
+          <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
+          <button onClick={() => navigate("/homeagro")} className="hover:bg-white/10 p-2 rounded-lg"><IconHome className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/Laboresagro")} className="hover:bg-white/10 p-2 rounded-lg"><IconClipboardList className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/Informesagro")} className="hover:bg-white/10 p-2 rounded-lg"><IconChartBar className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/Bodegaagro")} className="hover:bg-white/10 p-2 rounded-lg"><IconBox className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/variablesclimaticas")} className="hover:bg-white/10 p-2 rounded-lg"><IconCloudRain className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/maquinariaequipos")} className="hover:bg-white/10 p-2 rounded-lg"><IconTractor className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/manejopersonal")} className="hover:bg-white/10 p-2 rounded-lg"><IconUsersGroup className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/crearfinca")} className="hover:bg-white/10 p-2 rounded-lg"><IconPlant className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/crearlote")} className="hover:bg-white/10 p-2 rounded-lg"><IconFrame className="text-white w-11 h-11" /></button>
+        </div>
+        <div className="sticky bottom-6">
+          <button onClick={() => navigate("/ajustes")} className="hover:bg-white/10 p-2 rounded-lg"><IconSettings className="text-white w-11 h-11" /></button>
+        </div>
+      </div>
 
       {/* Contenido */}
-      
-      <div className="flex-1 p-10 overflow-auto">
+      <div className="flex-1 p-10 overflow-auto relative bg-gray-50">
+        {/* Alerta flotante */}
+        {alertaVisible && (
+          <div className="fixed top-3 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
+            <IconCheck className="w-5 h-5" /> Cambios guardados exitosamente
+          </div>
+        )}
+
         <div className="mb-4">
-            <button
-            onClick={() => navigate("/manejopersonal")}
-            className="flex items-center text-green-700 hover:underline"
-            >
-            <IconArrowLeft className="w-5 h-5 mr-2" />
-            Volver
-            </button>
+          <button onClick={() => navigate("/manejopersonal")} className="flex items-center text-green-700 hover:underline">
+            <IconArrowLeft className="w-5 h-5 mr-2" /> Volver
+          </button>
         </div>
 
         <h1 className="text-3xl font-bold text-green-700 mb-8">Actualizar estado de empleados</h1>
@@ -225,4 +231,5 @@ const Actualizar_estado = () => {
 };
 
 export default Actualizar_estado;
+
 

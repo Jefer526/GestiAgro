@@ -6,19 +6,21 @@ import {
   IconSettings,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
-import faviconBlanco from "../../assets/favicon-blanco.png"; // ✅ Importa el logo
+import faviconBlanco from "../../assets/favicon-blanco.png";
 
 const Home_adm = () => {
   const navigate = useNavigate();
 
   return (
     <div className="flex">
+      
       {/* Sidebar */}
       <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between">
         <div className="flex flex-col items-center space-y-8">
-          <img src={faviconBlanco} alt="Logo" className="w-11 h-11" /> {/* ✅ Logo real */}
+          {/* Logo */}
+          <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
 
-          {/* Botón HOME con indicador */}
+          {/* Icono Home con indicador */}
           <div className="relative">
             <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
             <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
@@ -26,15 +28,17 @@ const Home_adm = () => {
             </button>
           </div>
 
-          {/* Otros iconos sin indicador */}
+          {/* Otros íconos */}
           <button
             onClick={() => navigate("/Admuser")}
             className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
           >
             <IconUsers className="text-white w-11 h-11" />
           </button>
-          <button onClick={() => navigate("/copias")}
-          className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button
+            onClick={() => navigate("/copias")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
             <IconCloudUpload className="text-white w-11 h-11" />
           </button>
           <button
@@ -44,7 +48,9 @@ const Home_adm = () => {
             <IconTool className="text-white w-11 h-11" />
           </button>
         </div>
-        <button 
+
+        {/* Icono ajustes */}
+        <button
           onClick={() => navigate("/ajustesadm")}
           className="mb-6 hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
         >
@@ -60,25 +66,29 @@ const Home_adm = () => {
           ¡Bienvenido!
         </div>
 
-        {/* Botones grandes con íconos */}
+        {/* Botones principales */}
         <div className="flex justify-center space-x-12">
-          {[{
-          icon: <IconUsers className="w-24 h-24 text-green-700" />,
-          label: "Gestionar usuarios",
-          route: "/Admuser",
-        }, {
-            icon: <IconCloudUpload className="w-24 h-24 text-green-700" />,
-            label: "Copias de seguridad",
-            route: "/copias",
-          }, {
-            icon: <IconTool className="w-24 h-24 text-green-700" />,
-            label: "Soporte",
-            route: "/soporte",
-          }].map(({ icon, label, route }, i) => (
+          {[
+            {
+              icon: <IconUsers className="w-24 h-24 text-green-700" />,
+              label: "Gestionar usuarios",
+              route: "/Admuser",
+            },
+            {
+              icon: <IconCloudUpload className="w-24 h-24 text-green-700" />,
+              label: "Copias de seguridad",
+              route: "/copias",
+            },
+            {
+              icon: <IconTool className="w-24 h-24 text-green-700" />,
+              label: "Soporte",
+              route: "/soporte",
+            },
+          ].map(({ icon, label, route }, i) => (
             <button
               key={i}
-              className="flex flex-col items-center justify-center w-64 h-64 border border-black p-6 rounded-xl hover:bg-gray-100 shadow-lg transition-all"
               onClick={() => navigate(route)}
+              className="flex flex-col items-center justify-center w-64 h-64 border border-black p-6 rounded-xl hover:bg-gray-100 shadow-lg transition-all"
             >
               {icon}
               <span className="mt-4 font-medium text-lg">{label}</span>

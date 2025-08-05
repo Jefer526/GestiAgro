@@ -1,14 +1,17 @@
 // src/pages/agronomo/Editar_finca.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   IconHome, IconClipboardList, IconChartBar, IconCloudRain, IconTractor,
-  IconSettings, IconBox, IconUsersGroup, IconPlant, IconFrame, IconChevronLeft
+  IconSettings, IconBox, IconUsersGroup, IconPlant, IconFrame,
+  IconChevronLeft, IconCheck
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
 const Editar_finca = () => {
   const navigate = useNavigate();
+  const [alertaVisible, setAlertaVisible] = useState(false);
+
   const [finca, setFinca] = useState({
     nombre: "",
     ubicacion: "",
@@ -23,7 +26,11 @@ const Editar_finca = () => {
 
   const handleGuardar = () => {
     console.log("Finca editada:", finca);
-    navigate("/crearfinca");
+    setAlertaVisible(true);
+    setTimeout(() => {
+      setAlertaVisible(false);
+      navigate("/crearfinca");
+    }, 2000);
   };
 
   return (
@@ -48,7 +55,13 @@ const Editar_finca = () => {
       </div>
 
       {/* Contenido */}
-      <div className="flex-1 p-10 overflow-y-auto">
+      <div className="flex-1 p-10 overflow-y-auto relative">
+        {alertaVisible && (
+          <div className="fixed top-3 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
+            <IconCheck className="w-5 h-5" /> Finca actualizada exitosamente
+          </div>
+        )}
+
         <button
           onClick={() => navigate("/crearfinca")}
           className="flex items-center text-green-600 font-semibold mb-6 text-lg hover:underline"
@@ -61,63 +74,29 @@ const Editar_finca = () => {
 
           <div>
             <label className="block mb-1 font-semibold text-black">Nombre finca</label>
-            <input
-              type="text"
-              name="nombre"
-              placeholder="Nombre de la finca"
-              value={finca.nombre}
-              onChange={handleChange}
-              className="w-full border p-3 rounded text-base"
-            />
+            <input type="text" name="nombre" placeholder="Nombre de la finca" value={finca.nombre} onChange={handleChange} className="w-full border p-3 rounded text-base" />
           </div>
 
           <div>
             <label className="block mb-1 font-semibold text-black">Ubicación finca</label>
-            <input
-              type="text"
-              name="ubicacion"
-              placeholder="Ubicación"
-              value={finca.ubicacion}
-              onChange={handleChange}
-              className="w-full border p-3 rounded text-base"
-            />
+            <input type="text" name="ubicacion" placeholder="Ubicación" value={finca.ubicacion} onChange={handleChange} className="w-full border p-3 rounded text-base" />
           </div>
 
           <div>
             <label className="block mb-1 font-semibold text-black">Coordenadas</label>
-            <input
-              type="text"
-              name="coordenadas"
-              placeholder="Ej: 2.40,-75.25"
-              value={finca.coordenadas}
-              onChange={handleChange}
-              className="w-full border p-3 rounded text-base"
-            />
+            <input type="text" name="coordenadas" placeholder="Ej: 2.40,-75.25" value={finca.coordenadas} onChange={handleChange} className="w-full border p-3 rounded text-base" />
           </div>
 
           <div>
             <label className="block mb-1 font-semibold text-black">Área finca</label>
-            <input
-              type="text"
-              name="area"
-              placeholder="Ej: 12 ha"
-              value={finca.area}
-              onChange={handleChange}
-              className="w-full border p-3 rounded text-base"
-            />
+            <input type="text" name="area" placeholder="Ej: 12 ha" value={finca.area} onChange={handleChange} className="w-full border p-3 rounded text-base" />
           </div>
 
           <div className="flex justify-center space-x-6 mt-6">
-            <button
-              onClick={handleGuardar}
-              className="bg-green-600 text-white px-8 py-2 rounded hover:bg-green-700"
-            >
+            <button onClick={handleGuardar} className="bg-green-600 text-white px-8 py-2 rounded hover:bg-green-700">
               Guardar cambios
             </button>
-            <button
-              onClick={() => navigate("/crearfinca")}
-              className="bg-gray-300 text-black px-8 py-2 rounded hover:bg-gray-400"
-            >
+            <button onClick={() => navigate("/crearfinca")} className="bg-gray-300 text-black px-8 py-2 rounded hover:bg-gray-400">
               Cancelar
             </button>
           </div>

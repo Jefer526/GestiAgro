@@ -1,6 +1,4 @@
-// src/pages/agronomo/Registrar_vclima.jsx
-
-import React from "react";
+import React, { useState } from "react";
 import {
   IconArrowLeft,
   IconHome,
@@ -13,17 +11,22 @@ import {
   IconPlant,
   IconFrame,
   IconSettings,
+  IconCheck,
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 import { useNavigate } from "react-router-dom";
 
 const Registrar_clima = () => {
   const navigate = useNavigate();
+  const [alertaVisible, setAlertaVisible] = useState(false); // Estado de alerta
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Aquí podrías enviar los datos al backend
-    navigate("/variablesclimaticas");
+    setAlertaVisible(true); // Mostrar alerta
+    setTimeout(() => {
+      setAlertaVisible(false);
+      navigate("/variablesclimaticas"); // Redirigir después de 2s
+    }, 2000);
   };
 
   return (
@@ -35,39 +38,30 @@ const Registrar_clima = () => {
           <button onClick={() => navigate("/homeagro")} className="hover:bg-white/10 p-2 rounded-lg">
             <IconHome className="text-white w-11 h-11" />
           </button>
-
           <button onClick={() => navigate("/Laboresagro")} className="hover:bg-white/10 p-2 rounded-lg">
             <IconClipboardList className="text-white w-11 h-11" />
           </button>
-
           <button onClick={() => navigate("/Informesagro")} className="hover:bg-white/10 p-2 rounded-lg">
             <IconChartBar className="text-white w-11 h-11" />
           </button>
-
           <button onClick={() => navigate("/Bodegaagro")} className="hover:bg-white/10 p-2 rounded-lg">
             <IconBox className="text-white w-11 h-11" />
           </button>
-
           <button onClick={() => navigate("/variablesclimaticas")} className="bg-white/10 p-2 rounded-lg">
             <IconCloudRain className="text-white w-11 h-11" />
           </button>
-
           <button onClick={() => navigate("/maquinariaequipos")} className="hover:bg-white/10 p-2 rounded-lg">
             <IconTractor className="text-white w-11 h-11" />
           </button>
-
           <button onClick={() => navigate("/manejopersonal")} className="hover:bg-white/10 p-2 rounded-lg">
             <IconUsersGroup className="text-white w-11 h-11" />
           </button>
-
           <button onClick={() => navigate("/crearfinca")} className="hover:bg-white/10 p-2 rounded-lg">
             <IconPlant className="text-white w-11 h-11" />
           </button>
-
           <button onClick={() => navigate("/crearlote")} className="hover:bg-white/10 p-2 rounded-lg">
             <IconFrame className="text-white w-11 h-11" />
           </button>
-          
         </div>
         <div className="sticky bottom-6">
           <button onClick={() => navigate("/ajustes")} className="hover:bg-white/10 p-2 rounded-lg">
@@ -77,7 +71,14 @@ const Registrar_clima = () => {
       </div>
 
       {/* Contenido principal */}
-      <div className="flex-1 flex flex-col items-center pt-8 bg-[#f6f6f6]">
+      <div className="flex-1 flex flex-col items-center pt-8 bg-[#f6f6f6] relative">
+        {/* Alerta flotante */}
+        {alertaVisible && (
+          <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
+            <IconCheck className="w-5 h-5" /> Registro exitoso
+          </div>
+        )}
+
         {/* Botón Volver */}
         <button
           type="button"
@@ -97,48 +98,28 @@ const Registrar_clima = () => {
 
           <div>
             <label className="block font-bold mb-1">Fecha</label>
-            <input
-              type="date"
-              className="border px-4 py-2 rounded w-full text-lg"
-              required
-            />
+            <input type="date" className="border px-4 py-2 rounded w-full text-lg" required />
           </div>
 
           <div>
             <label className="block font-bold mb-1">Precipitación (mm)</label>
-            <input
-              type="text"
-              placeholder="Ej: 10"
-              className="border px-4 py-2 rounded w-full text-lg"
-            />
+            <input type="text" placeholder="Ej: 10" className="border px-4 py-2 rounded w-full text-lg" />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block font-bold mb-1">Temperatura mínima (°C)</label>
-              <input
-                type="text"
-                placeholder="Ej: 16°"
-                className="border px-4 py-2 rounded w-full text-lg"
-              />
+              <input type="text" placeholder="Ej: 16°" className="border px-4 py-2 rounded w-full text-lg" />
             </div>
             <div>
               <label className="block font-bold mb-1">Temperatura máxima (°C)</label>
-              <input
-                type="text"
-                placeholder="Ej: 29°"
-                className="border px-4 py-2 rounded w-full text-lg"
-              />
+              <input type="text" placeholder="Ej: 29°" className="border px-4 py-2 rounded w-full text-lg" />
             </div>
           </div>
 
           <div>
             <label className="block font-bold mb-1">Humedad relativa (%)</label>
-            <input
-              type="text"
-              placeholder="Ej: 85%"
-              className="border px-4 py-2 rounded w-full text-lg"
-            />
+            <input type="text" placeholder="Ej: 85%" className="border px-4 py-2 rounded w-full text-lg" />
           </div>
 
           <div className="text-center">
@@ -153,8 +134,6 @@ const Registrar_clima = () => {
 };
 
 export default Registrar_clima;
-
-
 
 
 

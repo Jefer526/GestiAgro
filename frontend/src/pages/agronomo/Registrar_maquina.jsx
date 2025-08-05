@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   IconHome,
@@ -12,16 +12,21 @@ import {
   IconFrame,
   IconSettings,
   IconArrowLeft,
+  IconCheck,
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
 const Registrar_maquina = () => {
   const navigate = useNavigate();
+  const [alertaVisible, setAlertaVisible] = useState(false); // 👈 estado alerta
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Aquí iría la lógica de guardar datos si tuvieras backend
-    navigate("/maquinariaequipos");
+    setAlertaVisible(true); // Mostrar alerta
+    setTimeout(() => {
+      setAlertaVisible(false);
+      navigate("/maquinariaequipos");
+    }, 2000); // Espera 2s antes de redirigir
   };
 
   return (
@@ -33,39 +38,30 @@ const Registrar_maquina = () => {
           <button onClick={() => navigate("/homeagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconHome className="text-white w-11 h-11" />
           </button>
-
           <button onClick={() => navigate("/Laboresagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconClipboardList className="text-white w-11 h-11" />
           </button>
-
           <button onClick={() => navigate("/Informesagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconChartBar className="text-white w-11 h-11" />
           </button>
-
           <button onClick={() => navigate("/Bodegaagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconBox className="text-white w-11 h-11" />
           </button>
-
           <button onClick={() => navigate("/variablesclimaticas")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconCloudRain className="text-white w-11 h-11" />
           </button>
-
           <button onClick={() => navigate("/maquinariaequipos")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconTractor className="text-white w-11 h-11" />
           </button>
-
           <button onClick={() => navigate("/manejopersonal")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconUsersGroup className="text-white w-11 h-11" />
           </button>
-
           <button onClick={() => navigate("/crearfinca")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconPlant className="text-white w-11 h-11" />
           </button>
-
           <button onClick={() => navigate("/crearlote")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconFrame className="text-white w-11 h-11" />
           </button>
-          
         </div>
         <div className="sticky bottom-6 bg-green-600">
           <button onClick={() => navigate("/ajustes")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
@@ -75,8 +71,15 @@ const Registrar_maquina = () => {
       </div>
 
       {/* Contenido principal */}
-      <div className="flex-1 px-10 py-6 relative">
-        {/* Botón volver afuera del cuadro */}
+      <div className="flex-1 px-10 py-6 relative bg-gray-50">
+        {/* 🔔 Alerta flotante */}
+        {alertaVisible && (
+          <div className="fixed top-3 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
+            <IconCheck className="w-5 h-5" /> Máquina registrada exitosamente
+          </div>
+        )}
+
+        {/* Botón volver */}
         <button
           onClick={() => navigate("/maquinariaequipos")}
           className="flex items-center text-green-600 hover:text-green-800 mb-6"
@@ -85,7 +88,7 @@ const Registrar_maquina = () => {
           <span className="text-base font-medium">Volver</span>
         </button>
 
-        {/* Cuadro de formulario */}
+        {/* Formulario */}
         <div className="max-w-2xl mx-auto bg-white border border-green-300 rounded-xl p-10 shadow-md">
           <h1 className="text-3xl font-bold text-green-600 mb-10 text-center">Registrar Nueva Máquina</h1>
 

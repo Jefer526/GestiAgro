@@ -12,6 +12,7 @@ import {
   IconFrame,
   IconSettings,
   IconChevronLeft,
+  IconCheck,
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
@@ -24,6 +25,8 @@ const Actualizar_maquina = () => {
     { id: 3, maquina: "Podadora", referencia: "Stihl BR 130", estado: "Averiado" },
   ]);
 
+  const [alertaVisible, setAlertaVisible] = useState(false);
+
   const handleEstadoChange = (index, nuevoEstado) => {
     const nuevasMaquinas = [...maquinas];
     nuevasMaquinas[index].estado = nuevoEstado;
@@ -32,7 +35,11 @@ const Actualizar_maquina = () => {
 
   const handleGuardar = () => {
     console.log("Estados actualizados:", maquinas);
-    navigate("/maquinariaequipos");
+    setAlertaVisible(true);
+    setTimeout(() => {
+      setAlertaVisible(false);
+      navigate("/maquinariaequipos");
+    }, 2000);
   };
 
   return (
@@ -80,53 +87,58 @@ const Actualizar_maquina = () => {
       </div>
 
       {/* Contenido principal */}
-      <div className="flex-1 p-10 overflow-auto">
+      <div className="flex-1 p-10 overflow-auto relative bg-gray-50">
+        {alertaVisible && (
+          <div className="fixed top-3 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
+            <IconCheck className="w-5 h-5" /> Estados actualizados exitosamente
+          </div>
+        )}
+
         <button onClick={() => navigate("/maquinariaequipos")} className="flex items-center text-green-600 font-semibold mb-6 text-lg hover:underline">
           <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
         </button>
 
-        <h2 className="text-3xl font-bold text-green-700 mb-6 text">Actualizar estado de máquinas</h2>
+        <h2 className="text-3xl font-bold text-green-700 mb-4">Actualizar estado de máquinas</h2>
 
-        <div className="bg-white shadow-md border border-green-300 p-6 rounded-xl w-full space-y-6">
-          <table className="w-full text-center text-lg border-collapse">
-            <thead>
-              <tr className="bg-green-600 text-white">
-                <th className="p-3 border font-bold">ID</th>
-                <th className="p-3 border font-bold">Máquina</th>
-                <th className="p-3 border font-bold">Referencia</th>
-                <th className="p-3 border font-bold">Estado</th>
+        <table className="w-full text-center text-lg border-collapse shadow-md bg-white rounded-xl">
+          <thead>
+            <tr className="bg-green-600 text-white">
+              <th className="p-3 border font-bold">ID</th>
+              <th className="p-3 border font-bold">Máquina</th>
+              <th className="p-3 border font-bold">Referencia</th>
+              <th className="p-3 border font-bold">Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            {maquinas.map((m, index) => (
+              <tr key={m.id} className="border-b hover:bg-gray-50">
+                <td className="p-3 border">{m.id}</td>
+                <td className="p-3 border">{m.maquina}</td>
+                <td className="p-3 border">{m.referencia}</td>
+                <td className="p-3 border">
+                  <select
+                    value={m.estado}
+                    onChange={(e) => handleEstadoChange(index, e.target.value)}
+                    className="border border-gray-300 rounded px-2 py-1"
+                  >
+                    <option value="Óptimo">Óptimo</option>
+                    <option value="Mantenimiento">Mantenimiento</option>
+                    <option value="Averiado">Averiado</option>
+                  </select>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {maquinas.map((m, index) => (
-                <tr key={m.id} className="border-b hover:bg-gray-50">
-                  <td className="p-3 border">{m.id}</td>
-                  <td className="p-3 border">{m.maquina}</td>
-                  <td className="p-3 border">{m.referencia}</td>
-                  <td className="p-3 border">
-                    <select
-                      value={m.estado}
-                      onChange={(e) => handleEstadoChange(index, e.target.value)}
-                      className="border border-gray-300 rounded px-2 py-1"
-                    >
-                      <option value="Óptimo">Óptimo</option>
-                      <option value="Mantenimiento">Mantenimiento</option>
-                      <option value="Averiado">Averiado</option>
-                    </select>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+            ))}
+          </tbody>
+        </table>
 
-          <div className="flex justify-end">
-            <button
-              onClick={handleGuardar}
-              className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold"
-            >
-              Guardar
-            </button>
-          </div>
+        {/* Botón fuera de la tabla */}
+        <div className="flex justify-end mt-4">
+          <button
+            onClick={handleGuardar}
+            className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold"
+          >
+            Guardar
+          </button>
         </div>
       </div>
     </div>
@@ -134,4 +146,3 @@ const Actualizar_maquina = () => {
 };
 
 export default Actualizar_maquina;
-

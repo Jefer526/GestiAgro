@@ -159,7 +159,7 @@ const Editar_roluser = () => {
           </div>
 
           <div className="mb-6">
-            <label className="block text-lg font-bold text-gray-800 mb-2 flex items-center gap-1">
+            <label className="text-lg font-bold text-gray-800 mb-2 flex items-center gap-1">
               <IconShieldCheck className="w-5 h-5 text-green-600" /> Permisos asignados
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">

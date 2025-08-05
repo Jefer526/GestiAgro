@@ -114,7 +114,7 @@ const Crear_lote_agro = () => {
         <h1 className="text-3xl font-bold text-green-700 mb-6">Crear lote</h1>
 
         {/* Formulario */}
-        <div className="bg-white border border-green-200 shadow-green-300 p-6 rounded-lg shadow-md mb-10 max-w-5xl">
+        <div className="bg-white border border-gray-200 shadow-gray-300 p-6 rounded-lg shadow-md mb-10 max-w-5xl">
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
               <label className="font-bold block mb-1">Finca</label>
@@ -207,7 +207,7 @@ const Crear_lote_agro = () => {
         </div>
 
         <div className="flex justify-center mt-6">
-        <button className="bg-green-600 text-white text-lg px-6 py-3 rounded-lg hover:bg-green-700 shadow-md">
+        <button className="bg-green-600 text-white text-lg px-6 py-3 rounded-lg hover:bg-green-700 font-bold">
             Guardar cambios
         </button>
         </div>

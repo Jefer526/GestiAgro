@@ -3,12 +3,13 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   IconHome, IconClipboardList, IconChartBar, IconCloudRain, IconTractor,
-  IconSettings, IconBox, IconUsersGroup, IconPlant, IconFrame, IconChevronLeft
+  IconSettings, IconBox, IconUsersGroup, IconPlant, IconFrame, IconChevronLeft, IconCheck
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
 const Editar_lote = () => {
   const navigate = useNavigate();
+  const [alertaVisible, setAlertaVisible] = useState(false);
 
   const [formData, setFormData] = useState({
     finca: "",
@@ -24,8 +25,11 @@ const Editar_lote = () => {
   };
 
   const handleGuardar = () => {
-    console.log("Lote actualizado:", formData);
-    navigate("/crearlote");
+    setAlertaVisible(true);
+    setTimeout(() => {
+      setAlertaVisible(false);
+      navigate("/crearlote");
+    }, 1800);
   };
 
   return (
@@ -51,6 +55,12 @@ const Editar_lote = () => {
 
       {/* Contenido */}
       <div className="flex-1 p-10 overflow-y-auto">
+        {alertaVisible && (
+          <div className="fixed top-3 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
+            <IconCheck className="w-5 h-5" /> Lote actualizado exitosamente
+          </div>
+        )}
+
         <button
           onClick={() => navigate("/crearlote")}
           className="flex items-center text-green-600 font-semibold mb-6 text-lg hover:underline"
@@ -137,5 +147,3 @@ const Editar_lote = () => {
 };
 
 export default Editar_lote;
-
-

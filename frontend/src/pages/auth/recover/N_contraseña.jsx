@@ -20,6 +20,7 @@ const N_contraseña = () => {
 
   return (
     <div className="min-h-screen bg-green-600 flex flex-col items-center justify-center p-4 relative">
+      
       {/* Alerta de error */}
       {mostrarAlerta && (
         <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
@@ -51,7 +52,9 @@ const N_contraseña = () => {
 
       {/* Formulario */}
       <div className="w-full max-w-md">
-        <label className="text-white text-lg block mb-1">Ingresa tu contraseña</label>
+        <label className="text-white text-lg block mb-1">
+          Ingresa tu contraseña
+        </label>
         <input
           type="password"
           className="w-full px-4 py-2 text-lg border rounded-md mb-4"
@@ -59,7 +62,9 @@ const N_contraseña = () => {
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <label className="text-white text-lg block mb-1">Confirma contraseña</label>
+        <label className="text-white text-lg block mb-1">
+          Confirma contraseña
+        </label>
         <input
           type="password"
           className="w-full text-lg px-4 py-2 border rounded-md mb-6"

@@ -5,12 +5,12 @@ import faviconBlanco from "../../../assets/favicon-blanco.png";
 const C_correo = () => {
   const navigate = useNavigate();
   const location = useLocation();
-
-  const email = location.state?.email || "correo@desconocido.com"; // 👈 Recupera el email
+  const email = location.state?.email || "correo@desconocido.com"; // Recupera el email
 
   return (
     <div className="min-h-screen bg-green-600 text-white flex flex-col justify-center items-center px-6 relative">
-      {/* Botón de cierre */}
+      
+      {/* Botón cerrar */}
       <button
         onClick={() => navigate("/")}
         className="absolute top-4 right-4 text-white text-5xl font-bold"
@@ -30,7 +30,7 @@ const C_correo = () => {
         Confirmación de correo electrónico
       </h1>
 
-      {/* Contenido alineado a la izquierda */}
+      {/* Contenido */}
       <div className="w-full max-w-xl flex flex-col items-start">
         <p className="text-xl text-center mb-7 font-semibold">
           Antes de cambiar tu contraseña, necesitamos asegurarnos de que realmente eres tú.
@@ -46,12 +46,12 @@ const C_correo = () => {
 
         <p className="text-left text-xl mb-10">
           Contacta{" "}
-        <span
-          className="text-blue-300 font-semibold underline cursor-pointer"
-          onClick={() => navigate("/soporte_user")}
-        >
-          proyecto soporte
-        </span>
+          <span
+            className="text-blue-300 font-semibold underline cursor-pointer"
+            onClick={() => navigate("/soporte_user")}
+          >
+            proyecto soporte
+          </span>
         </p>
 
         {/* Botón Confirmar */}
@@ -67,4 +67,3 @@ const C_correo = () => {
 };
 
 export default C_correo;
-

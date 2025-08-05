@@ -13,7 +13,7 @@ const Soporte = () => {
     console.log("Descripción:", descripcion);
     setMostrarAlerta(true);
 
-    // Cierra la alerta tras 3 segundos y redirige
+    // Oculta la alerta tras 2 segundos y redirige
     setTimeout(() => {
       setMostrarAlerta(false);
       navigate("/");
@@ -22,6 +22,7 @@ const Soporte = () => {
 
   return (
     <div className="min-h-screen bg-green-600 text-white p-6 relative flex flex-col items-center">
+
       {/* Alerta flotante */}
       {mostrarAlerta && (
         <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
@@ -31,14 +32,14 @@ const Soporte = () => {
         </div>
       )}
 
-      {/* Logo arriba a la izquierda */}
+      {/* Logo superior izquierdo */}
       <img
         src={faviconBlanco}
         alt="Logo de GestiAgro"
         className="absolute top-4 left-4 w-10 h-10 object-contain"
       />
 
-      {/* Botón cerrar arriba a la derecha */}
+      {/* Botón cerrar */}
       <button
         onClick={() => navigate("/")}
         className="absolute top-4 right-4 text-white text-3xl font-bold"

@@ -1,4 +1,3 @@
-// src/pages/administrador/Admin_usuarios.jsx
 import React, { useState, useRef, useEffect } from "react";
 import {
   IconUsers,
@@ -90,21 +89,20 @@ const Admin_usuarios = () => {
     });
 
   const handleMenuOpen = (id, event) => {
-  event.stopPropagation();
-  const rect = event.currentTarget.getBoundingClientRect();
-  const espacioDisponibleDerecha = window.innerWidth - rect.right;
-  const menuWidth = 160; // ancho estimado del menú
+    event.stopPropagation();
+    const rect = event.currentTarget.getBoundingClientRect();
+    const espacioDisponibleDerecha = window.innerWidth - rect.right;
+    const menuWidth = 160;
 
-  const left = espacioDisponibleDerecha > menuWidth
-    ? rect.right + 8
-    : rect.left - menuWidth - 8;
+    const left = espacioDisponibleDerecha > menuWidth
+      ? rect.right + 8
+      : rect.left - menuWidth - 8;
 
-  setTimeout(() => {
-    setMenuAbiertoId(id);
-    setMenuPosition({ x: left, y: rect.top });
-  }, 0);
-};
-
+    setTimeout(() => {
+      setMenuAbiertoId(id);
+      setMenuPosition({ x: left, y: rect.top });
+    }, 0);
+  };
 
   const handleClickOutside = (e) => {
     if (!e.target.closest("#floating-menu") && !e.target.closest(".menu-trigger")) {
@@ -129,12 +127,12 @@ const Admin_usuarios = () => {
 
   return (
     <div className="flex">
+
       {/* Sidebar */}
       <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between">
         <div className="flex flex-col items-center space-y-8">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
-          <button onClick={() => navigate("/homeadm")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button onClick={() => navigate("/homeadm")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconHome className="text-white w-11 h-11" />
           </button>
           <div className="relative">
@@ -143,17 +141,14 @@ const Admin_usuarios = () => {
               <IconUsers className="text-white w-11 h-11" />
             </button>
           </div>
-          <button onClick={() => navigate("/copias")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button onClick={() => navigate("/copias")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconCloudUpload className="text-white w-11 h-11" />
           </button>
-          <button onClick={() => navigate("/soporte")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button onClick={() => navigate("/soporte")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconTool className="text-white w-11 h-11" />
           </button>
         </div>
-        <button onClick={() => navigate("/ajustes")}
-          className="mb-6 hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+        <button onClick={() => navigate("/ajustes")} className="mb-6 hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
           <IconSettings className="text-white w-11 h-11" />
         </button>
       </div>
@@ -171,7 +166,11 @@ const Admin_usuarios = () => {
                     <div className="flex items-center justify-center gap-2">
                       <span>{col.toUpperCase()}</span>
                       {columnas.includes(col) && (
-                        <button onClick={(e) => toggleFiltro(col, e)} className="z-10" onMouseDown={(e) => e.stopPropagation()}>
+                        <button
+                          onClick={(e) => toggleFiltro(col, e)}
+                          className="z-10"
+                          onMouseDown={(e) => e.stopPropagation()}
+                        >
                           <IconFilter className="w-4 h-4" />
                         </button>
                       )}
@@ -191,8 +190,7 @@ const Admin_usuarios = () => {
                   <td className="p-4 border">{u.email}</td>
                   <td className="p-4 border">{u.contrasena}</td>
                   <td className="p-4 border">
-                    <button onClick={(e) => handleMenuOpen(u.id, e)}
-                      className="menu-trigger p-1 rounded hover:bg-gray-200 z-50 relative">
+                    <button onClick={(e) => handleMenuOpen(u.id, e)} className="menu-trigger p-1 rounded hover:bg-gray-200 z-50 relative">
                       <IconDotsVertical className="w-5 h-5 text-gray-600" />
                     </button>
                   </td>
@@ -203,9 +201,11 @@ const Admin_usuarios = () => {
 
           {/* Filtro activo */}
           {filtroActivo && (
-            <div ref={filtroRef}
+            <div
+              ref={filtroRef}
               className="fixed bg-white text-black shadow-md border rounded z-[9999] p-3 w-60 text-left text-sm"
-              style={{ top: filtroPosicion.top, left: filtroPosicion.left }}>
+              style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
+            >
               <div className="font-semibold mb-2">Filtrar por {filtroActivo}</div>
               <button onClick={() => ordenar(filtroActivo, "asc")} className="text-green-700 flex items-center gap-1 mb-1 capitalize">
                 <IconSortAscending2 className="w-4 h-4" /> Ordenar A → Z
@@ -213,7 +213,9 @@ const Admin_usuarios = () => {
               <button onClick={() => ordenar(filtroActivo, "desc")} className="text-green-700 flex items-center gap-1 mb-2 capitalize">
                 <IconSortDescending2 className="w-4 h-4" /> Ordenar Z → A
               </button>
-              <input type="text" placeholder="Buscar..."
+              <input
+                type="text"
+                placeholder="Buscar..."
                 className="w-full border border-gray-300 px-2 py-1 rounded mb-2 text-sm"
                 value={busquedas[filtroActivo] || ""}
                 onChange={(e) => handleBusqueda(filtroActivo, e.target.value)}
@@ -221,8 +223,12 @@ const Admin_usuarios = () => {
               <div className="flex flex-col max-h-40 overflow-y-auto">
                 {getValoresUnicos(filtroActivo).map((val, idx) => (
                   <label key={idx} className="flex items-center gap-2 mb-1 capitalize">
-                    <input type="checkbox" checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
-                      onChange={() => toggleValor(filtroActivo, val)} className="accent-green-600" />
+                    <input
+                      type="checkbox"
+                      checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
+                      onChange={() => toggleValor(filtroActivo, val)}
+                      className="accent-green-600"
+                    />
                     {val.charAt(0).toUpperCase() + val.slice(1)}
                   </label>
                 ))}
@@ -233,14 +239,17 @@ const Admin_usuarios = () => {
             </div>
           )}
 
-          {/* Menú de opciones */}
+          {/* Menú de acciones */}
           {menuAbiertoId !== null && (
             <div
               id="floating-menu"
               className="fixed bg-white border border-gray-200 rounded shadow-lg w-40 z-[9999]"
-              style={{ top: menuPosition.y, left: menuPosition.x }}>
-              <button onClick={() => navigate(`/editar-roluser/${menuAbiertoId}`)}
-                className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100">
+              style={{ top: menuPosition.y, left: menuPosition.x }}
+            >
+              <button
+                onClick={() => navigate(`/editar-roluser/${menuAbiertoId}`)}
+                className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100"
+              >
                 <IconPencil className="w-4 h-4 text-blue-600" /> Editar Rol y Permisos
               </button>
               <button className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50">
@@ -255,6 +264,7 @@ const Admin_usuarios = () => {
 };
 
 export default Admin_usuarios;
+
 
 
 
