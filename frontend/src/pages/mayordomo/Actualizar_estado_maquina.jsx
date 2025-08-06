@@ -9,7 +9,8 @@ import {
   IconCloudRain,
   IconTractor,
   IconSettings,
-  IconChevronLeft
+  IconChevronLeft,
+  IconCheck,
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
@@ -22,6 +23,8 @@ const Actualizar_estado_maquina = () => {
     { id: 3, maquina: "Podadora", referencia: "Stihl BR 130", estado: "Averiado" },
   ]);
 
+  const [alertaVisible, setAlertaVisible] = useState(false);
+
   const handleEstadoChange = (index, nuevoEstado) => {
     const nuevasMaquinas = [...maquinas];
     nuevasMaquinas[index].estado = nuevoEstado;
@@ -30,7 +33,12 @@ const Actualizar_estado_maquina = () => {
 
   const handleGuardar = () => {
     console.log("Estados actualizados:", maquinas);
-    navigate("/equipos_mayordomo");
+    setAlertaVisible(true);
+
+    setTimeout(() => {
+      setAlertaVisible(false);
+      navigate("/equipos_mayordomo");
+    }, 2000);
   };
 
   return (
@@ -73,13 +81,19 @@ const Actualizar_estado_maquina = () => {
 
       {/* Contenido principal */}
       <div className="flex-1 p-10 overflow-auto">
+        {/* Alerta flotante */}
+        {alertaVisible && (
+          <div className="fixed top-3 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
+            <IconCheck className="w-5 h-5" /> Estados actualizados exitosamente
+          </div>
+        )}
+
         <button onClick={() => navigate("/equipos_mayordomo")} className="flex items-center text-green-600 font-semibold mb-6 text-lg hover:underline">
           <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
         </button>
 
         <h2 className="text-3xl font-bold text-green-700 mb-6">Actualizar estado de máquinas</h2>
 
-        {/* Tabla sin marco */}
         <table className="w-full text-center text-lg border-collapse">
           <thead>
             <tr className="bg-green-600 text-white">
@@ -111,7 +125,6 @@ const Actualizar_estado_maquina = () => {
           </tbody>
         </table>
 
-        {/* Botón guardar */}
         <div className="flex justify-end mt-6">
           <button
             onClick={handleGuardar}

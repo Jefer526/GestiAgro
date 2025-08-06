@@ -8,20 +8,25 @@ import {
   IconCloudRain,
   IconTractor,
   IconSettings,
-  IconArrowLeft
+  IconArrowLeft,
+  IconCheck,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
 const Registrar_vclima = () => {
   const navigate = useNavigate();
+  const [alertaVisible, setAlertaVisible] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Aquí podrías enviar los datos al backend
-    navigate("/variables_climaticasm");
-  };
 
+    setAlertaVisible(true);
+    setTimeout(() => {
+      setAlertaVisible(false);
+      navigate("/variables_climaticasm");
+    }, 2000);
+  };
 
   return (
     <div className="flex h-screen">
@@ -62,7 +67,14 @@ const Registrar_vclima = () => {
       </div>
 
       {/* Contenido principal */}
-      <div className="flex-1 flex flex-col items-center pt-8 bg-[#f6f6f6]">
+      <div className="flex-1 flex flex-col items-center pt-8 bg-[#f6f6f6] relative">
+        {/* Alerta flotante */}
+        {alertaVisible && (
+          <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 z-50 font-semibold text-base">
+            <IconCheck className="w-5 h-5" /> Variables registradas exitosamente
+          </div>
+        )}
+
         {/* Botón Volver */}
         <button
           type="button"
@@ -138,4 +150,3 @@ const Registrar_vclima = () => {
 };
 
 export default Registrar_vclima;
-
