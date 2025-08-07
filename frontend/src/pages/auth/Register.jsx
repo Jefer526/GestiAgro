@@ -5,15 +5,42 @@ import faviconBlanco from '../../assets/favicon-blanco.png';
 const Register = () => {
   const navigate = useNavigate();
   const [mostrarAlerta, setMostrarAlerta] = useState(false);
+  const [nombre, setNombre] = useState("");
+  const [telefono, setTelefono] = useState("");
+  const [email, setEmail] = useState("");
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
-    console.log("Registro completado");
-    setMostrarAlerta(true);
-    setTimeout(() => {
-      setMostrarAlerta(false);
-      navigate("/");
-    }, 2000);
+
+    const datos = {
+      nombre_completo: nombre,
+      telefono: telefono,
+      email: email,
+    };
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/registro/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(datos),
+      });
+
+      if (response.ok) {
+        setMostrarAlerta(true);
+        setTimeout(() => {
+          setMostrarAlerta(false);
+          navigate("/");
+        }, 2000);
+      } else {
+        const error = await response.json();
+        alert("Error al registrar: " + (error.detail || "verifica los datos"));
+      }
+    } catch (error) {
+      console.error("Error de red:", error);
+      alert("Error de red al registrar");
+    }
   };
 
   return (
@@ -63,6 +90,8 @@ const Register = () => {
             </label>
             <input
               type="text"
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
               placeholder="Ingrese su nombre"
               className="w-full border text-lg border-gray-300 rounded-md px-4 py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all"
               required
@@ -75,6 +104,8 @@ const Register = () => {
             </label>
             <input
               type="tel"
+              value={telefono}
+              onChange={(e) => setTelefono(e.target.value)}
               placeholder="Ingrese su número de teléfono"
               className="w-full border text-lg border-gray-300 rounded-md px-4 py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all"
               required
@@ -87,6 +118,8 @@ const Register = () => {
             </label>
             <input
               type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="Ingrese su correo electrónico"
               className="w-full border text-lg border-gray-300 rounded-md px-4 py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all"
               required
