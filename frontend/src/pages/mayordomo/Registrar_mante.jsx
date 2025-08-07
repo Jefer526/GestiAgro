@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   IconHome,
@@ -9,6 +9,8 @@ import {
   IconCloudRain,
   IconTractor,
   IconSettings,
+  IconTool,
+  IconLogout,
   IconChevronLeft,
   IconCheck,
 } from "@tabler/icons-react";
@@ -30,6 +32,23 @@ const Registrar_mante = () => {
     descripcion: "",
     realizadoPor: "Luis Gómez",
   });
+
+  // Perfil - inicial y control tarjeta
+  const nombreUsuario = "Juan Pérez"; // Cambia aquí con nombre real
+  const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
+  const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
+  const tarjetaRef = useRef(null);
+
+  // Cerrar tarjeta al hacer clic fuera
+  useEffect(() => {
+    const handler = (e) => {
+      if (tarjetaRef.current && !tarjetaRef.current.contains(e.target)) {
+        setMostrarTarjeta(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   const handleChange = (e) => {
     setFormData({
@@ -55,22 +74,40 @@ const Registrar_mante = () => {
       <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
         <div className="flex flex-col items-center space-y-8">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
-          <button onClick={() => navigate("/homemayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button
+            onClick={() => navigate("/homemayordomo")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
             <IconHome className="text-white w-11 h-11" />
           </button>
-          <button onClick={() => navigate("/registrolabores")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button
+            onClick={() => navigate("/registrolabores")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
             <IconClipboardList className="text-white w-11 h-11" />
           </button>
-          <button onClick={() => navigate("/historial_labores")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button
+            onClick={() => navigate("/historial_labores")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
             <IconHistory className="text-white w-11 h-11" />
           </button>
-          <button onClick={() => navigate("/bodega_insumos")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button
+            onClick={() => navigate("/bodega_insumos")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
             <IconBox className="text-white w-11 h-11" />
           </button>
-          <button onClick={() => navigate("/variables_climaticasm")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button
+            onClick={() => navigate("/variables_climaticasm")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
             <IconCloudRain className="text-white w-11 h-11" />
           </button>
-          <button onClick={() => navigate("/informes_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button
+            onClick={() => navigate("/informes_mayordomo")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
             <IconChartBar className="text-white w-11 h-11" />
           </button>
           <div className="relative w-full flex justify-center">
@@ -80,10 +117,54 @@ const Registrar_mante = () => {
             </button>
           </div>
         </div>
-        <div className="mb-6">
-          <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconSettings className="text-white w-11 h-11" />
+
+        {/* Botón perfil con tarjeta */}
+        <div className="relative mb-6">
+          <button
+            onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
+            className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
+            aria-label="Menú de usuario"
+          >
+            {letraInicial}
           </button>
+
+          {mostrarTarjeta && (
+            <div
+              ref={tarjetaRef}
+              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-green-300 rounded-xl shadow-2xl py-3 z-50"
+            >
+              <button
+                onClick={() => {
+                  setMostrarTarjeta(false);
+                  navigate("/ajustes");
+                }}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
+                <IconSettings className="w-5 h-5 mr-2 text-green-600" />
+                Ajustes
+              </button>
+              <button
+                onClick={() => {
+                  setMostrarTarjeta(false);
+                  navigate("/soporte");
+                }}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
+                <IconTool className="w-5 h-5 mr-2 text-green-600" />
+                Soporte
+              </button>
+              <button
+                onClick={() => {
+                  setMostrarTarjeta(false);
+                  alert("Cerrar sesión");
+                }}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
+              >
+                <IconLogout className="w-5 h-5 mr-2 text-red-600" />
+                Cerrar sesión
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -96,7 +177,10 @@ const Registrar_mante = () => {
           </div>
         )}
 
-        <button onClick={() => navigate("/hoja_vidam")} className="flex items-center text-green-600 font-medium mb-4">
+        <button
+          onClick={() => navigate("/hoja_vidam")}
+          className="flex items-center text-green-600 font-medium mb-4"
+        >
           <IconChevronLeft className="w-5 h-5 mr-2" />
           Volver
         </button>
@@ -108,19 +192,39 @@ const Registrar_mante = () => {
             <div className="grid grid-cols-2 gap-5">
               <div>
                 <label className="block font-semibold mb-1">ID Máquina:</label>
-                <input name="idMaquina" value={formData.idMaquina} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-1.5" />
+                <input
+                  name="idMaquina"
+                  value={formData.idMaquina}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 rounded px-3 py-1.5"
+                />
               </div>
               <div>
                 <label className="block font-semibold mb-1">Referencia:</label>
-                <input name="referencia" value={formData.referencia} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-1.5" />
+                <input
+                  name="referencia"
+                  value={formData.referencia}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 rounded px-3 py-1.5"
+                />
               </div>
               <div>
                 <label className="block font-semibold mb-1">Máquina:</label>
-                <input name="maquina" value={formData.maquina} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-1.5" />
+                <input
+                  name="maquina"
+                  value={formData.maquina}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 rounded px-3 py-1.5"
+                />
               </div>
               <div>
                 <label className="block font-semibold mb-1">Ubicación:</label>
-                <select name="ubicacion" value={formData.ubicacion} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-1.5">
+                <select
+                  name="ubicacion"
+                  value={formData.ubicacion}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 rounded px-3 py-1.5"
+                >
                   <option>Bodega</option>
                   <option>La Esmeralda</option>
                   <option>La Carolina</option>
@@ -128,7 +232,12 @@ const Registrar_mante = () => {
               </div>
               <div>
                 <label className="block font-semibold mb-1">Estado:</label>
-                <select name="estado" value={formData.estado} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-1.5">
+                <select
+                  name="estado"
+                  value={formData.estado}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 rounded px-3 py-1.5"
+                >
                   <option>Óptimo</option>
                   <option>En operación</option>
                   <option>Mantenimiento</option>
@@ -137,26 +246,51 @@ const Registrar_mante = () => {
               </div>
               <div>
                 <label className="block font-semibold mb-1">Fecha:</label>
-                <input name="fecha" type="date" value={formData.fecha} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-1.5" />
+                <input
+                  name="fecha"
+                  type="date"
+                  value={formData.fecha}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 rounded px-3 py-1.5"
+                />
               </div>
               <div className="col-span-2">
                 <label className="block font-semibold mb-1">Tipo de mantenimiento:</label>
-                <input name="tipo" value={formData.tipo} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-1.5" />
+                <input
+                  name="tipo"
+                  value={formData.tipo}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 rounded px-3 py-1.5"
+                />
               </div>
             </div>
 
             <div>
               <label className="block font-semibold mb-1">Descripción:</label>
-              <textarea name="descripcion" value={formData.descripcion} onChange={handleChange} rows="3" className="w-full border border-gray-300 rounded px-3 py-2" />
+              <textarea
+                name="descripcion"
+                value={formData.descripcion}
+                onChange={handleChange}
+                rows="3"
+                className="w-full border border-gray-300 rounded px-3 py-2"
+              />
             </div>
 
             <div>
               <label className="block font-semibold mb-1">Realizado por:</label>
-              <input name="realizadoPor" value={formData.realizadoPor} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-1.5" />
+              <input
+                name="realizadoPor"
+                value={formData.realizadoPor}
+                onChange={handleChange}
+                className="w-full border border-gray-300 rounded px-3 py-1.5"
+              />
             </div>
 
             <div className="flex justify-center mt-4">
-              <button type="submit" className="bg-green-600 text-white px-8 py-2 rounded-lg hover:bg-green-700 font-semibold">
+              <button
+                type="submit"
+                className="bg-green-600 text-white px-8 py-2 rounded-lg hover:bg-green-700 font-semibold"
+              >
                 Guardar
               </button>
             </div>

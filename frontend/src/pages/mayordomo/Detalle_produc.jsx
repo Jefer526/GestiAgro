@@ -9,6 +9,8 @@ import {
   IconSettings,
   IconChevronLeft,
   IconFilter,
+  IconTool,
+  IconLogout
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
@@ -21,6 +23,23 @@ const Detalle_produc = () => {
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [filtroPosicion, setFiltroPosicion] = useState({ top: 0, left: 0 });
 
+  // Datos perfil
+  const nombreUsuario = "Juan Pérez"; // Cambiar por nombre real
+  const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
+  const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
+  const tarjetaRef = useRef(null);
+
+  // Cierra tarjeta de perfil al hacer clic fuera
+  useEffect(() => {
+    const handler = (e) => {
+      if (tarjetaRef.current && !tarjetaRef.current.contains(e.target)) {
+        setMostrarTarjeta(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
   const movimientos = [
     { fecha: "2025-06-15", lote: 1, cantidad: 50, um: "Kg", tipo: "Entrada" },
     { fecha: "2025-06-16", lote: 2, cantidad: 20, um: "Kg", tipo: "Salida" },
@@ -28,21 +47,19 @@ const Detalle_produc = () => {
   ];
 
   const toggleFiltro = (campo, event) => {
-  const icono = event.currentTarget.getBoundingClientRect();
-  const cardWidth = 240; // ancho estimado del filtro
-  const margen = 12;
-
-  let left = icono.left + window.scrollX;
-  if (left + cardWidth + margen > window.innerWidth) {
-    left = window.innerWidth - cardWidth - margen;
-  }
-
-  setFiltroActivo(filtroActivo === campo ? null : campo);
-  setFiltroPosicion({
-    top: icono.bottom + window.scrollY + 4,
-    left,
-  });
-};
+    const icono = event.currentTarget.getBoundingClientRect();
+    const cardWidth = 240;
+    const margen = 12;
+    let left = icono.left + window.scrollX;
+    if (left + cardWidth + margen > window.innerWidth) {
+      left = window.innerWidth - cardWidth - margen;
+    }
+    setFiltroActivo(filtroActivo === campo ? null : campo);
+    setFiltroPosicion({
+      top: icono.bottom + window.scrollY + 4,
+      left,
+    });
+  };
 
   const toggleValor = (campo, valor) => {
     const seleccionados = new Set(valoresSeleccionados[campo] || []);
@@ -131,10 +148,44 @@ const Detalle_produc = () => {
             <IconTractor className="text-white w-11 h-11" />
           </button>
         </div>
-        <div className="mb-6">
-          <button className="hover:bg-white/10 p-2 rounded-lg">
-            <IconSettings className="text-white w-11 h-11" />
+
+        {/* Botón perfil con tarjeta flotante */}
+        <div className="relative mb-6">
+          <button
+            onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
+            className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
+          >
+            {letraInicial}
           </button>
+
+          {mostrarTarjeta && (
+            <div
+              ref={tarjetaRef}
+              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-green-300 rounded-xl shadow-2xl py-3 z-50"
+            >
+              <button
+                onClick={() => { setMostrarTarjeta(false); navigate("/ajustes"); }}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
+                <IconSettings className="w-5 h-5 mr-2 text-green-600" />
+                Ajustes
+              </button>
+              <button
+                onClick={() => { setMostrarTarjeta(false); navigate("/soporte"); }}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
+                <IconTool className="w-5 h-5 mr-2 text-green-600" />
+                Soporte
+              </button>
+              <button
+                onClick={() => { setMostrarTarjeta(false); alert("Cerrar sesión"); }}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
+              >
+                <IconLogout className="w-5 h-5 mr-2 text-red-600" />
+                Cerrar sesión
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -226,10 +277,7 @@ const Detalle_produc = () => {
                   ))}
                 </div>
               ))}
-              <button
-                onClick={() => limpiarFiltro("fecha")}
-                className="text-blue-600 hover:underline text-xs mt-2"
-              >
+              <button onClick={() => limpiarFiltro("fecha")} className="text-blue-600 hover:underline text-xs mt-2">
                 Borrar filtro
               </button>
             </div>
@@ -247,8 +295,3 @@ const Detalle_produc = () => {
 };
 
 export default Detalle_produc;
-
-
-
-
-

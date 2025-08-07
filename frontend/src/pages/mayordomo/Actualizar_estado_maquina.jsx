@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   IconHome,
@@ -9,6 +9,8 @@ import {
   IconCloudRain,
   IconTractor,
   IconSettings,
+  IconTool,
+  IconLogout,
   IconChevronLeft,
   IconCheck,
 } from "@tabler/icons-react";
@@ -24,6 +26,23 @@ const Actualizar_estado_maquina = () => {
   ]);
 
   const [alertaVisible, setAlertaVisible] = useState(false);
+
+  const nombreUsuario = "Juan Pérez"; // Cambiar por el nombre real del usuario
+  const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
+
+  const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
+  const tarjetaRef = useRef(null);
+
+  // Cierra la tarjeta si se hace clic fuera
+  useEffect(() => {
+    const manejarClickFuera = (e) => {
+      if (tarjetaRef.current && !tarjetaRef.current.contains(e.target)) {
+        setMostrarTarjeta(false);
+      }
+    };
+    document.addEventListener("mousedown", manejarClickFuera);
+    return () => document.removeEventListener("mousedown", manejarClickFuera);
+  }, []);
 
   const handleEstadoChange = (index, nuevoEstado) => {
     const nuevasMaquinas = [...maquinas];
@@ -72,10 +91,53 @@ const Actualizar_estado_maquina = () => {
             </button>
           </div>
         </div>
-        <div className="mb-6">
-          <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconSettings className="text-white w-11 h-11" />
+
+        {/* Botón perfil con tarjeta */}
+        <div className="relative mb-6">
+          <button
+            onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
+            className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
+          >
+            {letraInicial}
           </button>
+
+          {mostrarTarjeta && (
+            <div
+              ref={tarjetaRef}
+              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-green-300 rounded-xl shadow-2xl py-3 z-50"
+            >
+              <button
+                onClick={() => {
+                  setMostrarTarjeta(false);
+                  navigate("/ajustes");
+                }}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
+                <IconSettings className="w-5 h-5 mr-2 text-green-600" />
+                Ajustes
+              </button>
+              <button
+                onClick={() => {
+                  setMostrarTarjeta(false);
+                  navigate("/soporte");
+                }}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
+                <IconTool className="w-5 h-5 mr-2 text-green-600" />
+                Soporte
+              </button>
+              <button
+                onClick={() => {
+                  setMostrarTarjeta(false);
+                  alert("Cerrar sesión");
+                }}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
+              >
+                <IconLogout className="w-5 h-5 mr-2 text-red-600" />
+                Cerrar sesión
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

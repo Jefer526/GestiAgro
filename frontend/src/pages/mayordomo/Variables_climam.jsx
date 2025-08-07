@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react"; 
 import {
   IconHome,
   IconClipboardList,
@@ -7,7 +7,9 @@ import {
   IconBox,
   IconCloudRain,
   IconTractor,
-  IconSettings
+  IconSettings,
+  IconTool,
+  IconLogout
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
@@ -29,6 +31,23 @@ const Variables_climam = () => {
   const navigate = useNavigate();
   const [filtro, setFiltro] = useState("Día");
 
+  // Perfil
+  const nombreUsuario = "Juan Pérez"; // <-- reemplaza por el nombre real
+  const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
+  const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
+  const tarjetaRef = useRef(null);
+
+  // Cerrar tarjeta al hacer clic fuera
+  useEffect(() => {
+    const handler = (e) => {
+      if (tarjetaRef.current && !tarjetaRef.current.contains(e.target)) {
+        setMostrarTarjeta(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
   const data = {
     labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio"],
     datasets: [
@@ -45,17 +64,13 @@ const Variables_climam = () => {
   const opcionesChart = {
     responsive: true,
     maintainAspectRatio: false,
-    scales: {
-      y: {
-        beginAtZero: true,
-      },
-    },
+    scales: { y: { beginAtZero: true } },
   };
 
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
-      <div className="bg-green-600 w-28 h-full flex flex-col items-center py-6 justify-between">
+      <div className="bg-green-600 w-28 h-full flex flex-col items-center py-6 justify-between relative">
         <div className="flex flex-col items-center space-y-8">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
           <button onClick={() => navigate("/homemayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
@@ -83,10 +98,45 @@ const Variables_climam = () => {
             <IconTractor className="text-white w-11 h-11" />
           </button>
         </div>
-        <div className="mb-6">
-          <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconSettings className="text-white w-11 h-11" />
+
+        {/* Perfil (reemplaza IconSettings) */}
+        <div className="relative mb-6">
+          <button
+            onClick={() => setMostrarTarjeta((v) => !v)}
+            className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
+          >
+            {letraInicial}
           </button>
+
+          {/* Tarjeta flotante */}
+          {mostrarTarjeta && (
+            <div
+              ref={tarjetaRef}
+              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-green-300 rounded-xl shadow-2xl py-3 z-50"
+            >
+              <button
+                onClick={() => { setMostrarTarjeta(false); navigate("/ajustes"); }}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
+                <IconSettings className="w-5 h-5 mr-2 text-green-600" />
+                Ajustes
+              </button>
+              <button
+                onClick={() => { setMostrarTarjeta(false); navigate("/soporte"); }}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
+                <IconTool className="w-5 h-5 mr-2 text-green-600" />
+                Soporte
+              </button>
+              <button
+                onClick={() => { setMostrarTarjeta(false); alert("Cerrar sesión"); }}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
+              >
+                <IconLogout className="w-5 h-5 mr-2 text-red-600" />
+                Cerrar sesión
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

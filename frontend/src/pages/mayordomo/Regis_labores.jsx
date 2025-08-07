@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   IconHome,
   IconClipboardList,
@@ -8,6 +8,8 @@ import {
   IconCloudRain,
   IconTractor,
   IconSettings,
+  IconTool,
+  IconLogout,
   IconTrash,
   IconPlus,
   IconSearch,
@@ -21,8 +23,24 @@ const Regis_labores = () => {
   const [filas, setFilas] = useState([{}]);
   const [alertaVisible, setAlertaVisible] = useState(false);
 
-  const añadirFila = () => setFilas([...filas, {}]);
+  // Datos perfil
+  const nombreUsuario = "Juan Pérez"; // reemplazar con nombre real
+  const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
+  const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
+  const tarjetaRef = useRef(null);
 
+  // Cerrar tarjeta al hacer clic fuera
+  useEffect(() => {
+    const handler = (e) => {
+      if (tarjetaRef.current && !tarjetaRef.current.contains(e.target)) {
+        setMostrarTarjeta(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const añadirFila = () => setFilas([...filas, {}]);
   const eliminarFila = (index) => {
     const nuevas = [...filas];
     nuevas.splice(index, 1);
@@ -33,7 +51,7 @@ const Regis_labores = () => {
     setAlertaVisible(true);
     setTimeout(() => {
       setAlertaVisible(false);
-      navigate("/historial_labores"); // puedes cambiar la ruta si deseas
+      navigate("/historial_labores");
     }, 2000);
   };
 
@@ -43,7 +61,7 @@ const Regis_labores = () => {
       <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
         <div className="flex flex-col items-center space-y-8">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
-          <button onClick={() => navigate("/homemayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition relative">
+          <button onClick={() => navigate("/homemayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconHome className="text-white w-11 h-11" />
           </button>
           <div className="relative w-full flex justify-center">
@@ -68,10 +86,45 @@ const Regis_labores = () => {
             <IconTractor className="text-white w-11 h-11" />
           </button>
         </div>
-        <div className="mb-6">
-          <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconSettings className="text-white w-11 h-11" />
+
+        {/* Botón perfil */}
+        <div className="relative mb-6">
+          <button
+            onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
+            className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
+          >
+            {letraInicial}
           </button>
+
+          {/* Tarjeta flotante */}
+          {mostrarTarjeta && (
+            <div
+              ref={tarjetaRef}
+              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-green-300 rounded-xl shadow-2xl py-3 z-50"
+            >
+              <button
+                onClick={() => { setMostrarTarjeta(false); navigate("/ajustes"); }}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
+                <IconSettings className="w-5 h-5 mr-2 text-green-600" />
+                Ajustes
+              </button>
+              <button
+                onClick={() => { setMostrarTarjeta(false); navigate("/soporte"); }}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
+                <IconTool className="w-5 h-5 mr-2 text-green-600" />
+                Soporte
+              </button>
+              <button
+                onClick={() => { setMostrarTarjeta(false); alert("Cerrar sesión"); }}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
+              >
+                <IconLogout className="w-5 h-5 mr-2 text-red-600" />
+                Cerrar sesión
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -88,6 +141,7 @@ const Regis_labores = () => {
 
         <div className="flex justify-center">
           <div className="bg-white border border-gray-300 rounded-xl p-6 space-y-6 w-full max-w-5xl text-lg">
+            {/* Formulario */}
             <div className="grid md:grid-cols-2 gap-x-4 gap-y-6">
               <div>
                 <p className="font-bold mb-1">Finca</p>
@@ -116,6 +170,7 @@ const Regis_labores = () => {
               </div>
             </div>
 
+            {/* Tabla */}
             <div className="border border-gray-300 rounded-xl p-4 mt-4">
               <table className="w-full text-left text-lg">
                 <thead>
