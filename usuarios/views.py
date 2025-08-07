@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.generics import DestroyAPIView
 from .models import Usuarios
 from .serializers import UsuarioRegistroSerializer, UsuarioListaSerializer
 
@@ -17,3 +18,8 @@ class ListaUsuariosAPIView(APIView):
         usuarios = Usuarios.objects.all()
         serializer = UsuarioListaSerializer(usuarios, many=True)
         return Response(serializer.data)
+    
+class EliminarUsuarioAPIView(DestroyAPIView):
+    queryset = Usuarios.objects.all()
+    serializer_class = UsuarioListaSerializer
+    lookup_field = 'id_usuario'

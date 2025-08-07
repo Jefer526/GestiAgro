@@ -16,9 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from usuarios.views import RegistroUsuarioAPIView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('usuarios.urls')),
     path('api/usuarios/', include('usuarios.urls')),
+    path('api/registro/', RegistroUsuarioAPIView.as_view()),  # Acceso directo
+    path('api/usuarios/', include('usuarios.urls')),  # Acceso agrupado
 ]
