@@ -11,6 +11,7 @@ import {
   IconTrash,
   IconPlus,
   IconSearch,
+  IconCheck,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
@@ -18,16 +19,27 @@ import faviconBlanco from "../../assets/favicon-blanco.png";
 const Regis_labores = () => {
   const navigate = useNavigate();
   const [filas, setFilas] = useState([{}]);
+  const [alertaVisible, setAlertaVisible] = useState(false);
 
   const añadirFila = () => setFilas([...filas, {}]);
+
   const eliminarFila = (index) => {
     const nuevas = [...filas];
     nuevas.splice(index, 1);
     setFilas(nuevas);
   };
 
+  const handleRegistrar = () => {
+    setAlertaVisible(true);
+    setTimeout(() => {
+      setAlertaVisible(false);
+      navigate("/historial_labores"); // puedes cambiar la ruta si deseas
+    }, 2000);
+  };
+
   return (
     <div className="flex">
+      {/* Sidebar */}
       <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
         <div className="flex flex-col items-center space-y-8">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
@@ -63,8 +75,17 @@ const Regis_labores = () => {
         </div>
       </div>
 
+      {/* Contenido principal */}
       <div className="flex-1 p-10">
+        {/* Alerta flotante */}
+        {alertaVisible && (
+          <div className="fixed top-3 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
+            <IconCheck className="w-5 h-5" /> Labor registrada exitosamente
+          </div>
+        )}
+
         <h1 className="text-3xl font-bold text-green-700 mb-6">Registrar labores</h1>
+
         <div className="flex justify-center">
           <div className="bg-white border border-gray-300 rounded-xl p-6 space-y-6 w-full max-w-5xl text-lg">
             <div className="grid md:grid-cols-2 gap-x-4 gap-y-6">
@@ -147,7 +168,10 @@ const Regis_labores = () => {
               rows={2}
             ></textarea>
 
-            <button className="bg-green-600 text-white px-8 py-2 rounded-full mt-4 hover:bg-green-700 text-lg">
+            <button
+              onClick={handleRegistrar}
+              className="bg-green-600 text-white px-8 py-2 rounded-full mt-4 hover:bg-green-700 text-lg"
+            >
               Registrar
             </button>
           </div>

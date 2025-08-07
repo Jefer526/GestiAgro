@@ -24,7 +24,7 @@ const mayordomoRoutes = [
   <Route key="informes-mayor" path="/informes_mayordomo" element={<Informes_mayor />} />,
   <Route key="equipos" path="/equipos_mayordomo" element={<Equipos_mayor />} />,
   <Route key="hoja-vida" path="/hoja_vidam" element={<Hoja_vidam />} />,
-  <Route key="registrar-mantenimiento" path="/registrar_mantenimiento" element={<Registrar_mante />} />,
+  <Route key="registrar-mantenimiento" path="/registrar_mantenimientom" element={<Registrar_mante />} />,
   <Route key="historial-trabajo" path="/historial_trabajom" element={<Historial_trabajom />} />,
   <Route key="actualizar-estado" path="/actualizar_estado_maquina" element={<Actualizar_estado_maquina />} />,
 ];

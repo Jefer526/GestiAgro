@@ -13,12 +13,13 @@ import {
   IconSortDescending2,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
 const Admin_usuarios = () => {
   const navigate = useNavigate();
   const filtroRef = useRef(null);
-  const [search, setSearch] = useState("");
+  const [usuarios, setUsuarios] = useState([]);
   const [menuAbiertoId, setMenuAbiertoId] = useState(null);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const [filtroActivo, setFiltroActivo] = useState(null);
@@ -27,13 +28,13 @@ const Admin_usuarios = () => {
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
 
-  const columnas = ["id", "nombre", "rol", "email"];
+  const columnas = ["nombre_completo", "telefono", "rol", "email"];
 
-  const usuarios = [
-    { id: 1, nombre: "Jefferson Pérez", telefono: "123456789", rol: "Administrador", email: "jefferson@example.com", contrasena: "********" },
-    { id: 2, nombre: "María García", telefono: "987654321", rol: "Gerente", email: "maria@example.com", contrasena: "********" },
-    { id: 3, nombre: "Carlos Ruiz", telefono: "555666777", rol: "Mayordomo", email: "carlos@example.com", contrasena: "********" },
-  ];
+  useEffect(() => {
+    axios.get("http://localhost:8000/api/usuarios/listar/")
+      .then((res) => setUsuarios(res.data))
+      .catch((err) => console.error("Error al obtener usuarios:", err));
+  }, []);
 
   const toggleFiltro = (campo, e) => {
     e.stopPropagation();
@@ -88,18 +89,17 @@ const Admin_usuarios = () => {
         : b[campo]?.toString().localeCompare(a[campo]?.toString());
     });
 
-  const handleMenuOpen = (id, event) => {
+  const handleMenuOpen = (id_usuario, event) => {
     event.stopPropagation();
     const rect = event.currentTarget.getBoundingClientRect();
     const espacioDisponibleDerecha = window.innerWidth - rect.right;
     const menuWidth = 160;
-
     const left = espacioDisponibleDerecha > menuWidth
       ? rect.right + 8
       : rect.left - menuWidth - 8;
 
     setTimeout(() => {
-      setMenuAbiertoId(id);
+      setMenuAbiertoId(id_usuario);
       setMenuPosition({ x: left, y: rect.top });
     }, 0);
   };
@@ -124,6 +124,20 @@ const Admin_usuarios = () => {
     document.addEventListener("mousedown", clickFuera);
     return () => document.removeEventListener("mousedown", clickFuera);
   }, []);
+
+  const handleEliminar = async (id_usuario) => {
+    const confirmar = window.confirm("¿Estás seguro de que deseas eliminar este usuario?");
+    if (!confirmar) return;
+
+    try {
+      await axios.delete(`http://localhost:8000/api/usuarios/eliminar/${id_usuario}/`);
+      setUsuarios((prev) => prev.filter((u) => u.id_usuario !== id_usuario));
+      setMenuAbiertoId(null); // cerrar menú
+    } catch (error) {
+      console.error("Error al eliminar usuario:", error);
+      alert("No se pudo eliminar el usuario.");
+    }
+  };
 
   return (
     <div className="flex">
@@ -161,7 +175,7 @@ const Admin_usuarios = () => {
           <table className="min-w-full text-base bg-white text-center">
             <thead className="bg-green-600 text-white">
               <tr>
-                {["id", "nombre", "telefono", "rol", "email", "contrasena"].map((col, idx) => (
+                {["nombre_completo", "telefono", "rol", "email", "contrasena"].map((col, idx) => (
                   <th key={idx} className="p-4 border">
                     <div className="flex items-center justify-center gap-2">
                       <span>{col.toUpperCase()}</span>
@@ -182,15 +196,14 @@ const Admin_usuarios = () => {
             </thead>
             <tbody>
               {datosFiltrados.map((u) => (
-                <tr key={u.id} className="border-t hover:bg-gray-50">
-                  <td className="p-4 border">{u.id}</td>
-                  <td className="p-4 border">{u.nombre}</td>
+                <tr key={u.id_usuario} className="border-t hover:bg-gray-50">
+                  <td className="p-4 border">{u.nombre_completo}</td>
                   <td className="p-4 border">{u.telefono}</td>
-                  <td className="p-4 border">{u.rol}</td>
+                  <td className="p-4 border">{u.rol || "Sin asignar"}</td>
                   <td className="p-4 border">{u.email}</td>
-                  <td className="p-4 border">{u.contrasena}</td>
+                  <td className="p-4 border">{u.contrasena ? "********" : ""}</td>
                   <td className="p-4 border">
-                    <button onClick={(e) => handleMenuOpen(u.id, e)} className="menu-trigger p-1 rounded hover:bg-gray-200 z-50 relative">
+                    <button onClick={(e) => handleMenuOpen(u.id_usuario, e)} className="menu-trigger p-1 rounded hover:bg-gray-200 z-50 relative">
                       <IconDotsVertical className="w-5 h-5 text-gray-600" />
                     </button>
                   </td>
@@ -199,7 +212,7 @@ const Admin_usuarios = () => {
             </tbody>
           </table>
 
-          {/* Filtro activo */}
+          {/* Filtros emergentes */}
           {filtroActivo && (
             <div
               ref={filtroRef}
@@ -241,18 +254,14 @@ const Admin_usuarios = () => {
 
           {/* Menú de acciones */}
           {menuAbiertoId !== null && (
-            <div
-              id="floating-menu"
-              className="fixed bg-white border border-gray-200 rounded shadow-lg w-40 z-[9999]"
-              style={{ top: menuPosition.y, left: menuPosition.x }}
-            >
-              <button
-                onClick={() => navigate(`/editar-roluser/${menuAbiertoId}`)}
-                className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100"
-              >
+            <div id="floating-menu" className="fixed bg-white border border-gray-200 rounded shadow-lg w-40 z-[9999]"
+              style={{ top: menuPosition.y, left: menuPosition.x }}>
+              <button onClick={() => navigate(`/editar-roluser/${menuAbiertoId}`)}
+                className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100">
                 <IconPencil className="w-4 h-4 text-blue-600" /> Editar Rol y Permisos
               </button>
-              <button className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+              <button onClick={() => handleEliminar(menuAbiertoId)}
+                className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50">
                 <IconTrash className="w-4 h-4" /> Eliminar
               </button>
             </div>
@@ -264,7 +273,3 @@ const Admin_usuarios = () => {
 };
 
 export default Admin_usuarios;
-
-
-
-
