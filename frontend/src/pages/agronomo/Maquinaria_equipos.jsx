@@ -1,4 +1,3 @@
-// src/pages/agronomo/Maquinaria_equipos.jsx
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -15,12 +14,16 @@ import {
   IconFilter,
   IconSortAscending2,
   IconSortDescending2,
+  IconTool,
+  IconLogout,
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
 const Maquinaria_equipos = () => {
   const navigate = useNavigate();
   const filtroRef = useRef(null);
+  const tarjetaPerfilRef = useRef(null);
+
   const columnas = ["id", "maquina", "referencia", "ubicacion", "estado"];
 
   const maquinas = [
@@ -34,6 +37,33 @@ const Maquinaria_equipos = () => {
   const [busquedas, setBusquedas] = useState({});
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
+
+  // Estado y manejo para tarjeta de perfil
+  const nombreUsuario = "Juan Pérez"; // Cambiar por el nombre real del usuario
+  const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
+  const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
+
+  // Cierra la tarjeta de filtro si se hace click fuera
+  useEffect(() => {
+    const clickFueraFiltro = (e) => {
+      if (filtroRef.current && !filtroRef.current.contains(e.target)) {
+        setFiltroActivo(null);
+      }
+    };
+    document.addEventListener("mousedown", clickFueraFiltro);
+    return () => document.removeEventListener("mousedown", clickFueraFiltro);
+  }, []);
+
+  // Cierra la tarjeta de perfil si se hace click fuera
+  useEffect(() => {
+    const clickFueraPerfil = (e) => {
+      if (tarjetaPerfilRef.current && !tarjetaPerfilRef.current.contains(e.target)) {
+        setMostrarTarjeta(false);
+      }
+    };
+    document.addEventListener("mousedown", clickFueraPerfil);
+    return () => document.removeEventListener("mousedown", clickFueraPerfil);
+  }, []);
 
   const getValoresUnicos = (campo) => {
     const search = (busquedas[campo] || "").toLowerCase();
@@ -87,37 +117,128 @@ const Maquinaria_equipos = () => {
         : b[campo]?.toString().localeCompare(a[campo]?.toString());
     });
 
-  useEffect(() => {
-    const clickFuera = (e) => {
-      if (filtroRef.current && !filtroRef.current.contains(e.target)) {
-        setFiltroActivo(null);
-      }
-    };
-    document.addEventListener("mousedown", clickFuera);
-    return () => document.removeEventListener("mousedown", clickFuera);
-  }, []);
-
-   return (
-    <div className="flex h-screen">
+  return (
+    <div className="flex">
       {/* Sidebar */}
       <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
-        <div className="flex-1 flex flex-col items-center space-y-8 overflow-y-auto scrollbar-hide pr-1">
-          <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
-          <button onClick={() => navigate("/homeagro")} className="hover:bg-white/10 p-2 rounded-lg"><IconHome className="text-white w-11 h-11" /></button>
-          <button onClick={() => navigate("/Laboresagro")} className="hover:bg-white/10 p-2 rounded-lg"><IconClipboardList className="text-white w-11 h-11" /></button>
-          <button onClick={() => navigate("/Informesagro")} className="hover:bg-white/10 p-2 rounded-lg"><IconChartBar className="text-white w-11 h-11" /></button>
-          <button onClick={() => navigate("/Bodegaagro")} className="hover:bg-white/10 p-2 rounded-lg"><IconBox className="text-white w-11 h-11" /></button>
-          <button onClick={() => navigate("/variablesclimaticas")} className="hover:bg-white/10 p-2 rounded-lg"><IconCloudRain className="text-white w-11 h-11" /></button>
-          <button onClick={() => navigate("/maquinariaequipos")} className="hover:bg-white/10 p-2 rounded-lg"><IconTractor className="text-white w-11 h-11" /></button>
-          <button onClick={() => navigate("/manejopersonal")} className="hover:bg-white/10 p-2 rounded-lg"><IconUsersGroup className="text-white w-11 h-11" /></button>
-          <button onClick={() => navigate("/crearfinca")} className="hover:bg-white/10 p-2 rounded-lg"><IconPlant className="text-white w-11 h-11" /></button>
-          <button onClick={() => navigate("/crearlote")} className="hover:bg-white/10 p-2 rounded-lg"><IconFrame className="text-white w-11 h-11" /></button>
+        {/* Logo fijo con sticky */}
+        <div className="sticky top-0 mb-6 bg-green-600 z-10">
+          <img src={faviconBlanco} alt="Logo" className="w-11 h-11 mx-auto" />
         </div>
-        <div className="sticky bottom-6">
-          <button onClick={() => navigate("/ajustes")} className="hover:bg-white/10 p-2 rounded-lg"><IconSettings className="text-white w-11 h-11" /></button>
+
+        {/* Iconos con scroll */}
+        <div className="flex-1 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only">
+          {/* Icono activo */}
+          <div className="relative">
+            <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            <button
+              onClick={() => navigate("/Homeagro")}
+              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              <IconHome className="text-white w-11 h-11" />
+            </button>
+          </div>
+
+          {/* Navegación */}
+          <button
+            onClick={() => navigate("/Laboresagro")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
+            <IconClipboardList className="text-white w-11 h-11" />
+          </button>
+          <button
+            onClick={() => navigate("/Informesagro")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
+            <IconChartBar className="text-white w-11 h-11" />
+          </button>
+          <button
+            onClick={() => navigate("/Bodegaagro")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
+            <IconBox className="text-white w-11 h-11" />
+          </button>
+          <button
+            onClick={() => navigate("/variablesclimaticas")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
+            <IconCloudRain className="text-white w-11 h-11" />
+          </button>
+          <button
+            onClick={() => navigate("/maquinariaequipos")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
+            <IconTractor className="text-white w-11 h-11" />
+          </button>
+          <button
+            onClick={() => navigate("/manejopersonal")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
+            <IconUsersGroup className="text-white w-11 h-11" />
+          </button>
+          <button
+            onClick={() => navigate("/crearfinca")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
+            <IconPlant className="text-white w-11 h-11" />
+          </button>
+          <button
+            onClick={() => navigate("/crearlote")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
+            <IconFrame className="text-white w-11 h-11" />
+          </button>
+        </div>
+
+        {/* Botón de ajustes abajo */}
+        <div className="relative mb-4">
+          <button
+            onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
+            className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
+          >
+            {letraInicial}
+          </button>
+
+          {mostrarTarjeta && (
+            <div
+              ref={tarjetaPerfilRef}
+              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-grey-300 rounded-xl shadow-2xl py-3 z-50"
+            >
+              <button
+                onClick={() => {
+                  setMostrarTarjeta(false);
+                  navigate("/ajustes");
+                }}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
+                <IconSettings className="w-5 h-5 mr-2 text-green-600" />
+                Ajustes
+              </button>
+              <button
+                onClick={() => {
+                  setMostrarTarjeta(false);
+                  navigate("/soporte");
+                }}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
+                <IconTool className="w-5 h-5 mr-2 text-green-600" />
+                Soporte
+              </button>
+              <button
+                onClick={() => {
+                  setMostrarTarjeta(false);
+                  navigate("/");
+                }}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
+              >
+                <IconLogout className="w-5 h-5 mr-2 text-red-600" />
+                Cerrar sesión
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
+      {/* Contenido principal */}
       <div className="flex-1 p-10 overflow-auto">
         <h1 className="text-3xl font-bold text-green-600 mb-6">Maquinaria y Equipos</h1>
 
@@ -149,14 +270,18 @@ const Maquinaria_equipos = () => {
                   <td className="p-4 border">{m.ubicacion}</td>
                   <td className="p-4 border">{m.estado}</td>
                   <td className="p-4 border">
-                    <button onClick={() => navigate("/hojadevida", { state: { maquina: m } })}
-                      className="bg-blue-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded">
+                    <button
+                      onClick={() => navigate("/hojadevida", { state: { maquina: m } })}
+                      className="bg-blue-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded"
+                    >
                       Ver
                     </button>
                   </td>
                   <td className="p-4 border">
-                    <button onClick={() => navigate("/historialtrabajo")}
-                      className="bg-blue-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded">
+                    <button
+                      onClick={() => navigate("/historialtrabajo")}
+                      className="bg-blue-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded"
+                    >
                       Ver
                     </button>
                   </td>
@@ -171,11 +296,19 @@ const Maquinaria_equipos = () => {
               className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60 text-left text-sm"
               style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
             >
-              <div className="font-semibold mb-2">Filtrar por {filtroActivo.charAt(0).toUpperCase() + filtroActivo.slice(1)}</div>
-              <button onClick={() => ordenar(filtroActivo, "asc")} className="text-green-700 flex items-center gap-1 mb-1 capitalize">
+              <div className="font-semibold mb-2">
+                Filtrar por {filtroActivo.charAt(0).toUpperCase() + filtroActivo.slice(1)}
+              </div>
+              <button
+                onClick={() => ordenar(filtroActivo, "asc")}
+                className="text-green-700 flex items-center gap-1 mb-1 capitalize"
+              >
                 <IconSortAscending2 className="w-4 h-4" /> Ordenar A → Z
               </button>
-              <button onClick={() => ordenar(filtroActivo, "desc")} className="text-green-700 flex items-center gap-1 mb-2 capitalize">
+              <button
+                onClick={() => ordenar(filtroActivo, "desc")}
+                className="text-green-700 flex items-center gap-1 mb-2 capitalize"
+              >
                 <IconSortDescending2 className="w-4 h-4" /> Ordenar Z → A
               </button>
               <input
@@ -198,12 +331,15 @@ const Maquinaria_equipos = () => {
                   </label>
                 ))}
               </div>
-              <button onClick={() => limpiarFiltro(filtroActivo)} className="text-blue-600 hover:underline text-xs capitalize mt-2">
+              <button
+                onClick={() => limpiarFiltro(filtroActivo)}
+                className="text-blue-600 hover:underline text-xs capitalize mt-2"
+              >
                 Borrar filtro
               </button>
             </div>
           )}
-        </div> 
+        </div>
 
         <div className="flex justify-center gap-6 mt-10 mb-8">
           <button
@@ -212,9 +348,7 @@ const Maquinaria_equipos = () => {
           >
             Registrar nueva máquina
           </button>
-          <button
-            className="bg-green-600 text-white px-7 py-2.5 rounded-lg hover:bg-green-700 text-lg font-semibold"
-          >
+          <button className="bg-green-600 text-white px-7 py-2.5 rounded-lg hover:bg-green-700 text-lg font-semibold">
             Exportar
           </button>
           <button
@@ -230,5 +364,6 @@ const Maquinaria_equipos = () => {
 };
 
 export default Maquinaria_equipos;
+
 
 

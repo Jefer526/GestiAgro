@@ -1,21 +1,37 @@
+import React, { useState, useRef, useEffect } from "react";
 import {
   IconUsers,
   IconCloudUpload,
   IconTool,
   IconHome,
   IconSettings,
+  IconLogout,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
 const Home_adm = () => {
   const navigate = useNavigate();
+  const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
+  const tarjetaRef = useRef(null);
+
+  const letraInicial = "J"; // Reemplaza con la inicial del usuario si tienes el nombre
+
+  // Cierra la tarjeta si se hace clic fuera
+  useEffect(() => {
+    const manejarClickFuera = (e) => {
+      if (tarjetaRef.current && !tarjetaRef.current.contains(e.target)) {
+        setMostrarTarjeta(false);
+      }
+    };
+    document.addEventListener("mousedown", manejarClickFuera);
+    return () => document.removeEventListener("mousedown", manejarClickFuera);
+  }, []);
 
   return (
     <div className="flex">
-      
       {/* Sidebar */}
-      <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between">
+      <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
         <div className="flex flex-col items-center space-y-8">
           {/* Logo */}
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
@@ -49,18 +65,52 @@ const Home_adm = () => {
           </button>
         </div>
 
-        {/* Icono ajustes */}
-        <button
-          onClick={() => navigate("/ajustesadm")}
-          className="mb-6 hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-        >
-          <IconSettings className="text-white w-11 h-11" />
-        </button>
+        {/* Botón de perfil con letra */}
+        <div className="relative mb-6">
+          <button
+            onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
+            className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
+          >
+            {letraInicial}
+          </button>
+
+          {/* Tarjeta flotante con íconos */}
+          {mostrarTarjeta && (
+            <div
+              ref={tarjetaRef}
+              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
+            >
+              <button
+                onClick={() => navigate("/ajustesadm")}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
+                <IconSettings className="w-5 h-5 mr-2 text-green-600" />
+                Ajustes
+              </button>
+              <button
+                onClick={() => navigate("/soporte")}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
+                <IconTool className="w-5 h-5 mr-2 text-green-600" />
+                Soporte
+              </button>
+              <button
+                onClick={() => alert("Cerrar sesión")}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
+              >
+                <IconLogout className="w-5 h-5 mr-2 text-red-600" />
+                Cerrar sesión
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Contenido principal */}
       <div className="flex-1 p-10">
-        <h1 className="text-3xl font-bold text-green-700 mb-6">Panel principal</h1>
+        <h1 className="text-3xl font-bold text-green-700 mb-6">
+          Panel principal
+        </h1>
 
         <div className="bg-gray-200 p-6 rounded-lg w-fit mb-10 font-semibold text-green-700 shadow text-3xl">
           ¡Bienvenido!
@@ -101,3 +151,4 @@ const Home_adm = () => {
 };
 
 export default Home_adm;
+

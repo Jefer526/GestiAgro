@@ -1,9 +1,22 @@
 // src/pages/agronomo/Detalles_agrop.jsx
 import React, { useState, useRef, useEffect } from "react";
 import {
-  IconHome, IconClipboardList, IconChartBar, IconCloudRain,
-  IconTractor, IconSettings, IconBox, IconUsersGroup, IconPlant,
-  IconFrame, IconChevronLeft, IconFilter, IconSortAscending2, IconSortDescending2
+  IconHome,
+  IconClipboardList,
+  IconChartBar,
+  IconCloudRain,
+  IconTractor,
+  IconSettings,
+  IconBox,
+  IconUsersGroup,
+  IconPlant,
+  IconFrame,
+  IconChevronLeft,
+  IconFilter,
+  IconSortAscending2,
+  IconSortDescending2,
+  IconTool,
+  IconLogout,
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 import { useNavigate } from "react-router-dom";
@@ -11,6 +24,35 @@ import { useNavigate } from "react-router-dom";
 const Detalles_agrop = () => {
   const navigate = useNavigate();
   const filtroRef = useRef(null);
+
+  // Estado y refs para tarjeta flotante perfil
+  const nombreUsuario = "Juan Pérez"; // Cambiar por nombre real del usuario
+  const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
+
+  const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
+  const tarjetaPerfilRef = useRef(null);
+
+  // Cierra filtro al hacer click fuera
+  useEffect(() => {
+    const clickFueraFiltro = (e) => {
+      if (filtroRef.current && !filtroRef.current.contains(e.target)) {
+        setFiltroActivo(null);
+      }
+    };
+    document.addEventListener("mousedown", clickFueraFiltro);
+    return () => document.removeEventListener("mousedown", clickFueraFiltro);
+  }, []);
+
+  // Cierra tarjeta perfil al hacer click fuera
+  useEffect(() => {
+    const clickFueraPerfil = (e) => {
+      if (tarjetaPerfilRef.current && !tarjetaPerfilRef.current.contains(e.target)) {
+        setMostrarTarjeta(false);
+      }
+    };
+    document.addEventListener("mousedown", clickFueraPerfil);
+    return () => document.removeEventListener("mousedown", clickFueraPerfil);
+  }, []);
 
   const movimientos = [
     { fecha: "2025-06-15", lote: "1", cantidad: "50", um: "Kg", tipo: "Entrada" },
@@ -26,30 +68,29 @@ const Detalles_agrop = () => {
   const [ordenCampo, setOrdenCampo] = useState(null);
 
   const getValoresUnicos = (campo) => {
-  if (campo === "fecha") return []; // desactiva el filtro plano para 'fecha'
-  const search = (busquedas[campo] || "").toLowerCase();
-  return [...new Set(movimientos.map(e => e[campo]))].filter(v =>
-    v.toLowerCase().includes(search)
-  );
-};
+    if (campo === "fecha") return []; // desactiva el filtro plano para 'fecha'
+    const search = (busquedas[campo] || "").toLowerCase();
+    return [...new Set(movimientos.map((e) => e[campo]))].filter((v) =>
+      v.toLowerCase().includes(search)
+    );
+  };
 
   const toggleFiltro = (campo, e) => {
-  const icono = e.currentTarget.getBoundingClientRect();
-  const filtroWidth = 240; // Ancho aprox. del filtro (w-72 = 18rem = 288px)
-  const pantallaWidth = window.innerWidth;
+    const icono = e.currentTarget.getBoundingClientRect();
+    const filtroWidth = 240; // Ancho aprox. del filtro (w-60 = 15rem = 240px)
+    const pantallaWidth = window.innerWidth;
 
-  let left = icono.left + window.scrollX;
-  if (left + filtroWidth > pantallaWidth) {
-    left = pantallaWidth - filtroWidth - 10; // margen de 10px
-  }
+    let left = icono.left + window.scrollX;
+    if (left + filtroWidth > pantallaWidth) {
+      left = pantallaWidth - filtroWidth - 10; // margen de 10px
+    }
 
-  setFiltroActivo(filtroActivo === campo ? null : campo);
-  setFiltroPosicion({
-    top: icono.bottom + window.scrollY + 4,
-    left
-  });
-};
-
+    setFiltroActivo(filtroActivo === campo ? null : campo);
+    setFiltroPosicion({
+      top: icono.bottom + window.scrollY + 4,
+      left,
+    });
+  };
 
   const toggleValor = (campo, valor) => {
     const seleccionados = new Set(valoresSeleccionados[campo] || []);
@@ -72,8 +113,8 @@ const Detalles_agrop = () => {
   };
 
   const movimientosFiltrados = movimientos
-    .filter(item =>
-      columnas.every(campo =>
+    .filter((item) =>
+      columnas.every((campo) =>
         !valoresSeleccionados[campo] || valoresSeleccionados[campo].length === 0
           ? true
           : valoresSeleccionados[campo].includes(item[campo])
@@ -87,52 +128,158 @@ const Detalles_agrop = () => {
         : b[campo].localeCompare(a[campo]);
     });
 
-  useEffect(() => {
-    const clickFuera = (e) => {
-      if (filtroRef.current && !filtroRef.current.contains(e.target)) {
-        setFiltroActivo(null);
-      }
-    };
-    document.addEventListener("mousedown", clickFuera);
-    return () => document.removeEventListener("mousedown", clickFuera);
-  }, []);
-
   return (
-    <div className="flex h-screen">
+    <div className="flex">
       {/* Sidebar */}
       <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
-        <div className="flex-1 flex flex-col items-center space-y-8 overflow-y-auto scrollbar-hide pr-1">
-          <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
-          <button onClick={() => navigate("/homeagro")} className="hover:bg-white/10 p-2 rounded-lg"><IconHome className="text-white w-11 h-11" /></button>
-          <button onClick={() => navigate("/Laboresagro")} className="hover:bg-white/10 p-2 rounded-lg"><IconClipboardList className="text-white w-11 h-11" /></button>
-          <button onClick={() => navigate("/Informesagro")} className="hover:bg-white/10 p-2 rounded-lg"><IconChartBar className="text-white w-11 h-11" /></button>
-          <button onClick={() => navigate("/Bodegaagro")} className="hover:bg-white/10 p-2 rounded-lg"><IconBox className="text-white w-11 h-11" /></button>
-          <button onClick={() => navigate("/variablesclimaticas")} className="hover:bg-white/10 p-2 rounded-lg"><IconCloudRain className="text-white w-11 h-11" /></button>
-          <button onClick={() => navigate("/maquinariaequipos")} className="hover:bg-white/10 p-2 rounded-lg"><IconTractor className="text-white w-11 h-11" /></button>
-          <button onClick={() => navigate("/manejopersonal")} className="hover:bg-white/10 p-2 rounded-lg"><IconUsersGroup className="text-white w-11 h-11" /></button>
-          <button onClick={() => navigate("/crearfinca")} className="hover:bg-white/10 p-2 rounded-lg"><IconPlant className="text-white w-11 h-11" /></button>
-          <button onClick={() => navigate("/crearlote")} className="hover:bg-white/10 p-2 rounded-lg"><IconFrame className="text-white w-11 h-11" /></button>
+        {/* Logo fijo con sticky */}
+        <div className="sticky top-0 mb-6 bg-green-600 z-10">
+          <img src={faviconBlanco} alt="Logo" className="w-11 h-11 mx-auto" />
         </div>
-        <div className="sticky bottom-6 bg-green-600">
-          <button onClick={() => navigate("/ajustes")} className="hover:bg-white/10 p-2 rounded-lg"><IconSettings className="text-white w-11 h-11" /></button>
+
+        {/* Iconos con scroll */}
+        <div className="flex-1 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only">
+          {/* Icono activo */}
+          <div className="relative">
+            <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            <button
+              onClick={() => navigate("/Homeagro")}
+              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              <IconHome className="text-white w-11 h-11" />
+            </button>
+          </div>
+
+          {/* Navegación */}
+          <button
+            onClick={() => navigate("/Laboresagro")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
+            <IconClipboardList className="text-white w-11 h-11" />
+          </button>
+          <button
+            onClick={() => navigate("/Informesagro")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
+            <IconChartBar className="text-white w-11 h-11" />
+          </button>
+          <button
+            onClick={() => navigate("/Bodegaagro")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
+            <IconBox className="text-white w-11 h-11" />
+          </button>
+          <button
+            onClick={() => navigate("/variablesclimaticas")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
+            <IconCloudRain className="text-white w-11 h-11" />
+          </button>
+          <button
+            onClick={() => navigate("/maquinariaequipos")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
+            <IconTractor className="text-white w-11 h-11" />
+          </button>
+          <button
+            onClick={() => navigate("/manejopersonal")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
+            <IconUsersGroup className="text-white w-11 h-11" />
+          </button>
+          <button
+            onClick={() => navigate("/crearfinca")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
+            <IconPlant className="text-white w-11 h-11" />
+          </button>
+          <button
+            onClick={() => navigate("/crearlote")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
+            <IconFrame className="text-white w-11 h-11" />
+          </button>
+        </div>
+
+        {/* Perfil con tarjeta flotante */}
+        <div className="relative mb-4">
+          <button
+            onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
+            className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
+            aria-label="Perfil usuario"
+          >
+            {letraInicial}
+          </button>
+
+          {mostrarTarjeta && (
+            <div
+              ref={tarjetaPerfilRef}
+              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
+            >
+              <button
+                onClick={() => {
+                  setMostrarTarjeta(false);
+                  navigate("/ajustes");
+                }}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
+                <IconSettings className="w-5 h-5 mr-2 text-green-600" />
+                Ajustes
+              </button>
+              <button
+                onClick={() => {
+                  setMostrarTarjeta(false);
+                  navigate("/soporte");
+                }}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
+                <IconTool className="w-5 h-5 mr-2 text-green-600" />
+                Soporte
+              </button>
+              <button
+                onClick={() => {
+                  setMostrarTarjeta(false);
+                  navigate("/");
+                }}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
+              >
+                <IconLogout className="w-5 h-5 mr-2 text-red-600" />
+                Cerrar sesión
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Contenido principal */}
       <div className="flex-1 p-10">
-        <button onClick={() => navigate("/Bodegaagro")} className="flex items-center text-green-600 font-semibold mb-6 text-lg hover:underline">
+        <button
+          onClick={() => navigate("/Bodegaagro")}
+          className="flex items-center text-green-600 font-semibold mb-6 text-lg hover:underline"
+        >
           <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
         </button>
 
         <h1 className="text-3xl font-bold text-green-700 mb-6">Detalle del producto</h1>
 
         <div className="border border-gray-400 rounded-lg p-6 text-lg grid grid-cols-2 gap-y-2 max-w-3xl mb-10">
-          <div><span className="font-bold">Producto:</span> Urea</div>
-          <div><span className="font-bold">Ingrediente activo:</span> Nitrogeno 46%</div>
-          <div><span className="font-bold">Finca:</span> La esmeralda</div>
-          <div><span className="font-bold">Categoría:</span> Fertilizante</div>
-          <div><span className="font-bold">Cantidad:</span> 300</div>
-          <div><span className="font-bold">Um:</span> Kg</div>
+          <div>
+            <span className="font-bold">Producto:</span> Urea
+          </div>
+          <div>
+            <span className="font-bold">Ingrediente activo:</span> Nitrogeno 46%
+          </div>
+          <div>
+            <span className="font-bold">Finca:</span> La esmeralda
+          </div>
+          <div>
+            <span className="font-bold">Categoría:</span> Fertilizante
+          </div>
+          <div>
+            <span className="font-bold">Cantidad:</span> 300
+          </div>
+          <div>
+            <span className="font-bold">Um:</span> Kg
+          </div>
         </div>
 
         <h2 className="text-2xl font-bold text-green-700 mb-4">Movimiento del producto</h2>
@@ -142,10 +289,15 @@ const Detalles_agrop = () => {
             <thead className="bg-green-600 text-white">
               <tr>
                 {columnas.map((col, idx) => (
-                  <th key={idx} className="px-4 py-3 border-r border-gray-300 uppercase text-center">
+                  <th
+                    key={idx}
+                    className="px-4 py-3 border-r border-gray-300 uppercase text-center"
+                  >
                     <div className="flex justify-center items-center gap-2">
                       <span>{col.toUpperCase()}</span>
-                      <button onClick={(e) => toggleFiltro(col, e)}><IconFilter className="w-4 h-4" /></button>
+                      <button onClick={(e) => toggleFiltro(col, e)}>
+                        <IconFilter className="w-4 h-4" />
+                      </button>
                     </div>
                   </th>
                 ))}
@@ -165,90 +317,99 @@ const Detalles_agrop = () => {
           </table>
 
           {filtroActivo && (
-  <div
-    ref={filtroRef}
-    className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60 text-left text-sm"
-    style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
-  >
-    <div className="font-semibold mb-2">
-      Filtrar por {filtroActivo.charAt(0).toUpperCase() + filtroActivo.slice(1)}
-    </div>
-
-    {filtroActivo !== "fecha" ? (
-      <>
-        <button onClick={() => ordenar(filtroActivo, "asc")} className="text-green-700 flex items-center gap-1 mb-1">
-          <IconSortAscending2 className="w-4 h-4" /> Ordenar A → Z
-        </button>
-        <button onClick={() => ordenar(filtroActivo, "desc")} className="text-green-700 flex items-center gap-1 mb-2">
-          <IconSortDescending2 className="w-4 h-4" /> Ordenar Z → A
-        </button>
-        <input
-          type="text"
-          placeholder="Buscar..."
-          className="w-full border border-gray-300 px-2 py-1 rounded mb-2 text-sm"
-          value={busquedas[filtroActivo] || ""}
-          onChange={(e) => handleBusqueda(filtroActivo, e.target.value)}
-        />
-        <div className="flex flex-col max-h-40 overflow-y-auto">
-          {getValoresUnicos(filtroActivo).map((val, idx) => (
-            <label key={idx} className="flex items-center gap-2 mb-1">
-              <input
-                type="checkbox"
-                checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
-                onChange={() => toggleValor(filtroActivo, val)}
-                className="accent-green-600"
-              />
-              {val.charAt(0).toUpperCase() + val.slice(1).toLowerCase()}
-            </label>
-          ))}
-        </div>
-      </>
-    ) : (
-      <>
-        {Object.entries(
-          movimientos.reduce((acc, { fecha }) => {
-            const [year, month, day] = fecha.split("-");
-            const monthName = new Date(fecha).toLocaleString("default", { month: "long" });
-            acc[year] = acc[year] || {};
-            acc[year][monthName] = acc[year][monthName] || new Set();
-            acc[year][monthName].add(day);
-            return acc;
-          }, {})
-        ).map(([year, months]) => (
-          <div key={year} className="mb-2">
-            <div className="font-medium">{year}</div>
-            {Object.entries(months).map(([month, days]) => (
-              <div key={month} className="ml-4">
-                <div className="font-medium">{month}</div>
-                {[...days].map((day) => {
-                  const fullDate = `2025-${String(new Date(`${month} 1`).getMonth() + 1).padStart(2, "0")}-${day}`;
-                  return (
-                    <label key={day} className="ml-6 flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        checked={(valoresSeleccionados["fecha"] || []).includes(fullDate)}
-                        onChange={() => toggleValor("fecha", fullDate)}
-                      />
-                      {day}
-                    </label>
-                  );
-                })}
+            <div
+              ref={filtroRef}
+              className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60 text-left text-sm"
+              style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
+            >
+              <div className="font-semibold mb-2">
+                Filtrar por {filtroActivo.charAt(0).toUpperCase() + filtroActivo.slice(1)}
               </div>
-            ))}
-          </div>
-        ))}
-      </>
-    )}
 
-    <button
-      onClick={() => limpiarFiltro(filtroActivo)}
-      className="text-blue-600 hover:underline text-xs lowercase mt-2"
-    >
-      Borrar filtro
-    </button>
-  </div>
-)}
+              {filtroActivo !== "fecha" ? (
+                <>
+                  <button
+                    onClick={() => ordenar(filtroActivo, "asc")}
+                    className="text-green-700 flex items-center gap-1 mb-1"
+                  >
+                    <IconSortAscending2 className="w-4 h-4" /> Ordenar A → Z
+                  </button>
+                  <button
+                    onClick={() => ordenar(filtroActivo, "desc")}
+                    className="text-green-700 flex items-center gap-1 mb-2"
+                  >
+                    <IconSortDescending2 className="w-4 h-4" /> Ordenar Z → A
+                  </button>
+                  <input
+                    type="text"
+                    placeholder="Buscar..."
+                    className="w-full border border-gray-300 px-2 py-1 rounded mb-2 text-sm"
+                    value={busquedas[filtroActivo] || ""}
+                    onChange={(e) => handleBusqueda(filtroActivo, e.target.value)}
+                  />
+                  <div className="flex flex-col max-h-40 overflow-y-auto">
+                    {getValoresUnicos(filtroActivo).map((val, idx) => (
+                      <label key={idx} className="flex items-center gap-2 mb-1">
+                        <input
+                          type="checkbox"
+                          checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
+                          onChange={() => toggleValor(filtroActivo, val)}
+                          className="accent-green-600"
+                        />
+                        {val.charAt(0).toUpperCase() + val.slice(1).toLowerCase()}
+                      </label>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <>
+                  {Object.entries(
+                    movimientos.reduce((acc, { fecha }) => {
+                      const [year, month, day] = fecha.split("-");
+                      const monthName = new Date(fecha).toLocaleString("default", {
+                        month: "long",
+                      });
+                      acc[year] = acc[year] || {};
+                      acc[year][monthName] = acc[year][monthName] || new Set();
+                      acc[year][monthName].add(day);
+                      return acc;
+                    }, {})
+                  ).map(([year, months]) => (
+                    <div key={year} className="mb-2">
+                      <div className="font-medium">{year}</div>
+                      {Object.entries(months).map(([month, days]) => (
+                        <div key={month} className="ml-4">
+                          <div className="font-medium">{month}</div>
+                          {[...days].map((day) => {
+                            const fullDate = `2025-${String(
+                              new Date(`${month} 1`).getMonth() + 1
+                            ).padStart(2, "0")}-${day}`;
+                            return (
+                              <label key={day} className="ml-6 flex items-center gap-2">
+                                <input
+                                  type="checkbox"
+                                  checked={(valoresSeleccionados["fecha"] || []).includes(fullDate)}
+                                  onChange={() => toggleValor("fecha", fullDate)}
+                                />
+                                {day}
+                              </label>
+                            );
+                          })}
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </>
+              )}
 
+              <button
+                onClick={() => limpiarFiltro(filtroActivo)}
+                className="text-blue-600 hover:underline text-xs lowercase mt-2"
+              >
+                Borrar filtro
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="flex justify-end mt-6">
@@ -262,4 +423,5 @@ const Detalles_agrop = () => {
 };
 
 export default Detalles_agrop;
+
 
