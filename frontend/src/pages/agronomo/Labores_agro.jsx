@@ -14,6 +14,8 @@ import {
   IconFilter,
   IconSortAscending2,
   IconSortDescending2,
+  IconTool,
+  IconLogout,
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 import { useNavigate } from "react-router-dom";
@@ -26,6 +28,10 @@ const Labores_agro = () => {
   const [ordenCampo, setOrdenCampo] = useState(null);
   const [busquedas, setBusquedas] = useState({});
   const filtroRef = useRef(null);
+  const menuRef = useRef(null);
+  const [mostrarMenu, setMostrarMenu] = useState(false);
+
+  const user = { inicial: "J" };
 
   const labores = [
     { semana: 22, finca: "La Esmeralda", labor: "Siembra", lote: "Lote 1", estado: "En progreso", avance: 50, unidad: "220 Árboles" },
@@ -89,84 +95,108 @@ const Labores_agro = () => {
     });
 
   useEffect(() => {
-    const handleClickOutside = (e) => {
+    const handleClickOutsideFiltro = (e) => {
       if (filtroRef.current && !filtroRef.current.contains(e.target)) {
         setFiltroActivo(null);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutsideFiltro);
+    return () => document.removeEventListener("mousedown", handleClickOutsideFiltro);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutsideMenu = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setMostrarMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutsideMenu);
+    return () => document.removeEventListener("mousedown", handleClickOutsideMenu);
   }, []);
 
   return (
     <div className="flex">
       {/* Sidebar */}
-            <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
-              <div className="flex-1 flex flex-col items-center space-y-8 overflow-y-auto scrollbar-hide pr-1">
-                <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
-      
-                <button
-                  className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-                  onClick={() => navigate("/homeagro")}>
-                  <IconHome className="text-white w-11 h-11" />
-                </button>
-      
-                <button
-                  className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-                  onClick={() => navigate("/laboresagro")}>
-                  <IconClipboardList className="text-white w-11 h-11" />
-                </button>
-      
-                <div className="relative">
-                  <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+      <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
+        {/* Logo fijo */}
+        <div className="mb-6">
+          <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
+        </div>
 
-                  <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-                  onClick={() => navigate("/Informesagro")}>
-                    <IconChartBar className="text-white w-11 h-11" />
-                  </button>
-                </div>
-      
-                 <button
-                   className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-                   onClick={() => navigate("/Bodegaagro")}>
-                   <IconBox className="text-white w-11 h-11" />
-                 </button>
-      
-                <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-                  onClick={() => navigate("/variablesclimaticas")}>
-                  <IconCloudRain className="text-white w-11 h-11" />
-                </button>
-      
-                <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-                onClick={() => navigate("/maquinariaequipos")}>
-                  <IconTractor className="text-white w-11 h-11" />
-                </button>
+        {/* Iconos con scroll */}
+        <div className="flex-1 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only">
+          {/* Icono activo */}
+          <div className="relative">
+            <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            <button onClick={() => navigate("/Homeagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+            <IconHome className="text-white w-11 h-11" />
+          </button>
+          </div>
 
-                <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-                onClick={() => navigate("/manejopersonal")}>
-                  <IconUsersGroup className="text-white w-11 h-11" />
-                </button>
+          {/* Navegación */}
+          <button onClick={() => navigate("/Laboresagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+            <IconClipboardList className="text-white w-11 h-11" />
+          </button>
+          <button onClick={() => navigate("/Informesagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+            <IconChartBar className="text-white w-11 h-11" />
+          </button>
+          <button onClick={() => navigate("/Bodegaagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+            <IconBox className="text-white w-11 h-11" />
+          </button>
+          <button onClick={() => navigate("/variablesclimaticas")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+            <IconCloudRain className="text-white w-11 h-11" />
+          </button>
+          <button onClick={() => navigate("/maquinariaequipos")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+            <IconTractor className="text-white w-11 h-11" />
+          </button>
+          <button onClick={() => navigate("/manejopersonal")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+            <IconUsersGroup className="text-white w-11 h-11" />
+          </button>
+          <button onClick={() => navigate("/crearfinca")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+            <IconPlant className="text-white w-11 h-11" />
+          </button>
+          <button onClick={() => navigate("/crearlote")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+            <IconFrame className="text-white w-11 h-11" />
+          </button>
+        </div>
+  
 
-                <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-                 onClick={() => navigate("/crearfinca")}>
-                  <IconPlant className="text-white w-11 h-11" />
-                </button>
+        {/* Botón perfil con tarjeta */}
+        <div className="relative mb-4">
+          <button
+            onClick={() => setMostrarMenu(!mostrarMenu)}
+            className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
+          >
+            {user.inicial}
+          </button>
 
-                <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-                 onClick={() => navigate("/crearlote")}>
-                  <IconFrame className="text-white w-11 h-11" />
-                </button>
-                
-              </div>
-              <div className="sticky bottom-6 bg-green-600">
-                <button
-                  onClick={() => navigate("/ajustes")}
-                  className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-                >
-                  <IconSettings className="text-white w-11 h-11" />
-                </button>
-              </div>
+          {mostrarMenu && (
+            <div
+              ref={menuRef}
+              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
+            >
+              <button
+                onClick={() => navigate("/ajustes")}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
+                <IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes
+              </button>
+              <button
+                onClick={() => navigate("/soporte")}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
+                <IconTool className="w-5 h-5 mr-2 text-green-600" /> Soporte
+              </button>
+              <button
+                onClick={() => alert("Cerrar sesión")}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
+              >
+                <IconLogout className="w-5 h-5 mr-2 text-red-600" /> Cerrar sesión
+              </button>
             </div>
+          )}
+        </div>
+      </div>
 
       {/* Contenido principal */}
       <div className="flex-1 p-12">

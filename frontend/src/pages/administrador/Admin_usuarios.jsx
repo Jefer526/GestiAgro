@@ -11,6 +11,7 @@ import {
   IconDotsVertical,
   IconSortAscending2,
   IconSortDescending2,
+  IconLogout,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -19,6 +20,7 @@ import faviconBlanco from "../../assets/favicon-blanco.png";
 const Admin_usuarios = () => {
   const navigate = useNavigate();
   const filtroRef = useRef(null);
+  const tarjetaRef = useRef(null);
   const [usuarios, setUsuarios] = useState([]);
   const [menuAbiertoId, setMenuAbiertoId] = useState(null);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
@@ -27,6 +29,8 @@ const Admin_usuarios = () => {
   const [busquedas, setBusquedas] = useState({});
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
+  const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
+  const letraInicial = "J";
 
   const columnas = ["nombre_completo", "telefono", "rol", "email"];
 
@@ -125,6 +129,16 @@ const Admin_usuarios = () => {
     return () => document.removeEventListener("mousedown", clickFuera);
   }, []);
 
+  useEffect(() => {
+    const clickFueraTarjeta = (e) => {
+      if (tarjetaRef.current && !tarjetaRef.current.contains(e.target)) {
+        setMostrarTarjeta(false);
+      }
+    };
+    document.addEventListener("mousedown", clickFueraTarjeta);
+    return () => document.removeEventListener("mousedown", clickFueraTarjeta);
+  }, []);
+
   const handleEliminar = async (id_usuario) => {
     const confirmar = window.confirm("¿Estás seguro de que deseas eliminar este usuario?");
     if (!confirmar) return;
@@ -132,7 +146,7 @@ const Admin_usuarios = () => {
     try {
       await axios.delete(`http://localhost:8000/api/usuarios/eliminar/${id_usuario}/`);
       setUsuarios((prev) => prev.filter((u) => u.id_usuario !== id_usuario));
-      setMenuAbiertoId(null); // cerrar menú
+      setMenuAbiertoId(null);
     } catch (error) {
       console.error("Error al eliminar usuario:", error);
       alert("No se pudo eliminar el usuario.");
@@ -141,9 +155,8 @@ const Admin_usuarios = () => {
 
   return (
     <div className="flex">
-
       {/* Sidebar */}
-      <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between">
+      <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
         <div className="flex flex-col items-center space-y-8">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
           <button onClick={() => navigate("/homeadm")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
@@ -162,15 +175,35 @@ const Admin_usuarios = () => {
             <IconTool className="text-white w-11 h-11" />
           </button>
         </div>
-        <button onClick={() => navigate("/ajustes")} className="mb-6 hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-          <IconSettings className="text-white w-11 h-11" />
-        </button>
+        <div className="relative mb-6">
+          <button
+            onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
+            className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
+          >
+            {letraInicial}
+          </button>
+          {mostrarTarjeta && (
+            <div
+              ref={tarjetaRef}
+              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
+            >
+              <button onClick={() => navigate("/ajustes")} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
+                <IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes
+              </button>
+              <button onClick={() => navigate("/soporte")} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
+                <IconTool className="w-5 h-5 mr-2 text-green-600" /> Soporte
+              </button>
+              <button onClick={() => alert("Cerrar sesión")} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600">
+                <IconLogout className="w-5 h-5 mr-2 text-red-600" /> Cerrar sesión
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Contenido */}
       <div className="flex-1 p-10 overflow-auto">
         <h1 className="text-4xl font-bold text-green-600 mb-6">Gestionar usuarios</h1>
-
         <div className="overflow-x-auto shadow-md rounded-lg relative">
           <table className="min-w-full text-base bg-white text-center">
             <thead className="bg-green-600 text-white">
@@ -212,7 +245,6 @@ const Admin_usuarios = () => {
             </tbody>
           </table>
 
-          {/* Filtros emergentes */}
           {filtroActivo && (
             <div
               ref={filtroRef}
@@ -252,7 +284,6 @@ const Admin_usuarios = () => {
             </div>
           )}
 
-          {/* Menú de acciones */}
           {menuAbiertoId !== null && (
             <div id="floating-menu" className="fixed bg-white border border-gray-200 rounded shadow-lg w-40 z-[9999]"
               style={{ top: menuPosition.y, left: menuPosition.x }}>
@@ -273,3 +304,4 @@ const Admin_usuarios = () => {
 };
 
 export default Admin_usuarios;
+

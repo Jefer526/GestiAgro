@@ -13,6 +13,7 @@ import {
   IconDotsVertical,
   IconSortAscending2,
   IconSortDescending2,
+  IconLogout,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
@@ -20,6 +21,7 @@ import faviconBlanco from "../../assets/favicon-blanco.png";
 const Copias_segu = () => {
   const navigate = useNavigate();
   const filtroRef = useRef(null);
+  const tarjetaRef = useRef(null);
   const [menuAbiertoId, setMenuAbiertoId] = useState(null);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const [filtroActivo, setFiltroActivo] = useState(null);
@@ -27,6 +29,9 @@ const Copias_segu = () => {
   const [busquedas, setBusquedas] = useState({});
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
+  const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
+  const letraInicial = "J";
+
   const columnas = ["id", "fecha", "hora"];
 
   const copias = [
@@ -117,6 +122,9 @@ const Copias_segu = () => {
       if (filtroRef.current && !filtroRef.current.contains(e.target)) {
         setFiltroActivo(null);
       }
+      if (tarjetaRef.current && !tarjetaRef.current.contains(e.target)) {
+        setMostrarTarjeta(false);
+      }
     };
     document.addEventListener("mousedown", clickFuera);
     return () => document.removeEventListener("mousedown", clickFuera);
@@ -125,7 +133,7 @@ const Copias_segu = () => {
   return (
     <div className="flex">
       {/* Sidebar */}
-      <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between">
+      <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
         <div className="flex flex-col items-center space-y-8">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
           <button onClick={() => navigate("/homeadm")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconHome className="text-white w-11 h-11" /></button>
@@ -136,7 +144,30 @@ const Copias_segu = () => {
           </div>
           <button onClick={() => navigate("/soporte")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconTool className="text-white w-11 h-11" /></button>
         </div>
-        <button onClick={() => navigate("/ajustes")} className="mb-6 hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconSettings className="text-white w-11 h-11" /></button>
+        <div className="relative mb-6">
+          <button
+            onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
+            className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
+          >
+            {letraInicial}
+          </button>
+          {mostrarTarjeta && (
+            <div
+              ref={tarjetaRef}
+              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
+            >
+              <button onClick={() => navigate("/ajustes")} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
+                <IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes
+              </button>
+              <button onClick={() => navigate("/soporte")} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
+                <IconTool className="w-5 h-5 mr-2 text-green-600" /> Soporte
+              </button>
+              <button onClick={() => alert("Cerrar sesión")} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600">
+                <IconLogout className="w-5 h-5 mr-2 text-red-600" /> Cerrar sesión
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Contenido principal */}
