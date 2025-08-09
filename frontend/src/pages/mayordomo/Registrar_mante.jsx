@@ -131,12 +131,12 @@ const Registrar_mante = () => {
           {mostrarTarjeta && (
             <div
               ref={tarjetaRef}
-              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-green-300 rounded-xl shadow-2xl py-3 z-50"
+              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
             >
               <button
                 onClick={() => {
                   setMostrarTarjeta(false);
-                  navigate("/ajustes");
+                  navigate("/ajustesmayordomo");
                 }}
                 className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
               >
@@ -146,7 +146,7 @@ const Registrar_mante = () => {
               <button
                 onClick={() => {
                   setMostrarTarjeta(false);
-                  navigate("/soporte");
+                  navigate("/soportemayordomo");
                 }}
                 className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
               >
@@ -156,7 +156,7 @@ const Registrar_mante = () => {
               <button
                 onClick={() => {
                   setMostrarTarjeta(false);
-                  alert("Cerrar sesión");
+                  navigate("/login");
                 }}
                 className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
               >
