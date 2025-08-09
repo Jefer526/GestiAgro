@@ -164,22 +164,22 @@ const Hoja_vidam = () => {
           {mostrarTarjeta && (
             <div
               ref={tarjetaRef}
-              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-green-300 rounded-xl shadow-2xl py-3 z-50"
+              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
             >
               <button
-                onClick={() => { setMostrarTarjeta(false); navigate("/ajustes"); }}
+                onClick={() => { setMostrarTarjeta(false); navigate("/ajustesmayordomo"); }}
                 className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
               >
                 <IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes
               </button>
               <button
-                onClick={() => { setMostrarTarjeta(false); navigate("/soporte"); }}
+                onClick={() => { setMostrarTarjeta(false); navigate("/soportemayordomo"); }}
                 className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
               >
                 <IconTool className="w-5 h-5 mr-2 text-green-600" /> Soporte
               </button>
               <button
-                onClick={() => { setMostrarTarjeta(false); alert("Cerrar sesión"); }}
+                onClick={() => { setMostrarTarjeta(false); navigate("/login"); }}
                 className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
               >
                 <IconLogout className="w-5 h-5 mr-2 text-red-600" /> Cerrar sesión
