@@ -20,6 +20,8 @@ import {
   IconBrandWhatsapp,
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
+import heroBg from "../../assets/Fondo_pantalla_principal.png";
+
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -33,9 +35,11 @@ const Landing = () => {
   const [enviando, setEnviando] = useState(false);
   const [form, setForm] = useState({ nombre: "", email: "", mensaje: "" });
 
-  const scrollTo = (ref) => ref?.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const scrollTo = (ref) =>
+    ref?.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 
-  const onChange = (e) => setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
+  const onChange = (e) =>
+    setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -57,31 +61,46 @@ const Landing = () => {
     </div>
   );
 
+  
+
   return (
     <div className="min-h-screen bg-white text-gray-900">
       {/* NAVBAR */}
-      <header className="sticky top-0 z-40 backdrop-blur bg-white/80 border-b">
-        <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between">
+      <header className="sticky top-0 z-40 bg-green-700/80 backdrop-blur border-b border-green-700 font-bold transition-colors duration-300">
+        <div className="mx-auto max-w-7xl px-4 py-5 flex items-center justify-between">
+          {/* Logo y nombre */}
           <div className="flex items-center gap-3">
-            <img src={faviconBlanco} alt="GestiAgro" className="w-9 h-9 rounded" />
-            <span className="font-bold text-lg text-green-700">GestiAgro</span>
+            <img src={faviconBlanco} alt="GestiAgro" className="w-10 h-10 rounded" />
+            <span className="font-bold text-lg text-white">GestiAgro</span>
           </div>
-          <nav className="hidden md:flex items-center gap-6">
-            <button onClick={() => scrollTo(queEsRef)} className="hover:text-green-700">¿Qué es?</button>
-            <button onClick={() => scrollTo(modulosRef)} className="hover:text-green-700">Módulos</button>
-            <button onClick={() => scrollTo(serviciosRef)} className="hover:text-green-700">Servicios</button>
-            <button onClick={() => scrollTo(contactoRef)} className="hover:text-green-700">Contacto</button>
+
+          {/* Menú */}
+          <nav className="hidden md:flex items-center gap-6 font-bold">
+            <button onClick={() => scrollTo(queEsRef)} className="hover:text-green-200 text-white">
+              ¿Qué es?
+            </button>
+            <button onClick={() => scrollTo(modulosRef)} className="hover:text-green-200 text-white">
+              Módulos
+            </button>
+            <button onClick={() => scrollTo(serviciosRef)} className="hover:text-green-200 text-white">
+              Servicios
+            </button>
+            <button onClick={() => scrollTo(contactoRef)} className="hover:text-green-200 text-white">
+              Contacto
+            </button>
           </nav>
-          <div className="flex items-center gap-3">
+
+          {/* Botones */}
+          <div className="flex items-center gap-3 font-bold">
             <button
-              onClick={() => navigate("/demo")}
-              className="rounded-xl bg-green-600 px-4 py-2 text-white font-medium hover:bg-green-700 active:scale-[.98] transition"
+              onClick={() => navigate("/crear-cuenta")}
+              className="rounded-xl bg-white px-4 py-2 text-green-700 font-bold hover:bg-green-100 active:scale-[.98] transition"
             >
               Prueba DEMO gratis
             </button>
             <button
               onClick={() => navigate("/login")}
-              className="rounded-xl border border-green-600 px-4 py-2 text-green-700 font-medium hover:bg-green-50 active:scale-[.98] transition"
+              className="rounded-xl border border-white px-4 py-2 text-white font-bold hover:bg-green-700 hover:border-green-700 active:scale-[.98] transition"
             >
               Iniciar sesión
             </button>
@@ -89,32 +108,42 @@ const Landing = () => {
         </div>
       </header>
 
-      {/* HERO / FLAYER */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1500937386664-56f2d62fb2e1?q=80&w=1600&auto=format&fit=crop')] bg-cover bg-center opacity-25"></div>
-        <div className="relative mx-auto max-w-7xl px-4 py-20 md:py-28">
+      {/* HERO / FONDO CON DEGRADADO */}
+      <section
+        className="relative h-[92vh] flex items-center bg-cover bg-center"
+        style={{ backgroundImage: `url(${heroBg})` }}>
+        <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-black/15 to-transparent"/>
+        <div className="absolute inset-0 bg-green-900/10" />
+
+        <div className="relative z-10 mx-auto max-w-7xl px-4">
           <div className="max-w-3xl">
-            <div className="flex items-center gap-3 mb-5">
-              <img src={faviconBlanco} alt="logo" className="w-10 h-10 rounded" />
-              <span className="uppercase tracking-wide text-green-700 font-semibold">Software de gestión agrícola</span>
+            <div className="flex items-center gap-3 mb-6 justify-start">
+              <span className="uppercase tracking-widest text-green-300 font-bold text-3xl">
+                Software de gestión agrícola
+              </span>
             </div>
-            <h1 className="text-4xl md:text-6xl font-extrabold text-gray-900 leading-tight">
-              Optimiza tus campos de forma <span className="text-green-700">simple</span> y <span className="text-green-700">100% digital</span>
+
+            <h1 className="text-5xl md:text-7xl font-extrabold text-white leading-[1.05]">
+              Optimiza tus campos de forma{" "}
+              <span className="text-green-400">simple</span> y{" "}
+              <span className="text-green-400">100% digital</span>
             </h1>
-            <p className="mt-5 text-lg text-gray-700">
-              GestiAgro centraliza labores, clima, inventarios, maquinaria y personal para administrar tus fincas desde cualquier dispositivo.
+
+            <p className="mt-6 text-lg md:text-xl text-gray-200">
+              GestiAgro centraliza labores, clima, inventarios, maquinaria y personal
+              para administrar tus fincas desde cualquier dispositivo.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
+
+            <div className="mt-8 flex flex-wrap gap-4">
               <button
                 onClick={() => navigate("/demo")}
-                className="rounded-xl bg-green-600 px-6 py-3 text-white font-semibold hover:bg-green-700 transition"
+                className="rounded-xl bg-green-600 px-7 py-3.5 text-white text-lg font-semibold hover:bg-green-700 shadow-lg transition"
               >
                 Probar DEMO gratis
               </button>
-        
               <button
                 onClick={() => scrollTo(queEsRef)}
-                className="rounded-xl border border-gray-300 px-6 py-3 font-semibold hover:border-green-600 hover:text-green-700 transition"
+                className="rounded-xl border-2 border-white px-7 py-3.5 text-white text-lg font-semibold hover:border-green-400 hover:text-green-400 transition"
               >
                 Ver más
               </button>
@@ -176,32 +205,32 @@ const Landing = () => {
 
           <div className="mt-8 grid md:grid-cols-3 gap-6">
             <ModuleCard
-              icon={<IconClipboardList className="w-7 h-7 text-green-700" />}
+              icon={<IconClipboardList className="w-7 h-7 text-blue-600" />}
               title="Gestión de labores"
               desc="Programación semanal, responsables, estados y evidencias."
             />
             <ModuleCard
-              icon={<IconCloudRain className="w-7 h-7 text-green-700" />}
+              icon={<IconCloudRain className="w-7 h-7 text-cyan-500" />}
               title="Variables climáticas"
               desc="Registro de precipitación, humedad, temperatura y alertas."
             />
             <ModuleCard
-              icon={<IconBox className="w-7 h-7 text-green-700" />}
+              icon={<IconBox className="w-7 h-7 text-amber-500" />}
               title="Bodega de insumos"
               desc="Movimientos, mínimos, vencimientos y costos."
             />
             <ModuleCard
-              icon={<IconTractor className="w-7 h-7 text-green-700" />}
+              icon={<IconTractor className="w-7 h-7 text-red-500" />}
               title="Maquinaria y equipos"
               desc="Hoja de vida, mantenimientos y estados."
             />
             <ModuleCard
-              icon={<IconUsers className="w-7 h-7 text-green-700" />}
+              icon={<IconUsers className="w-7 h-7 text-purple-500" />}
               title="Personal"
               desc="Perfiles, permisos y asignación de labores."
             />
             <ModuleCard
-              icon={<IconChartBar className="w-7 h-7 text-green-700" />}
+              icon={<IconChartBar className="w-7 h-7 text-emerald-500" />}
               title="Informes"
               desc="KPIs, avances, productividad y exportación."
             />
@@ -209,7 +238,7 @@ const Landing = () => {
 
           <div className="mt-10 flex flex-wrap gap-3">
             <button
-              onClick={() => navigate("/demo")}
+              onClick={() => navigate("/crear-cuenta")}
               className="rounded-xl bg-green-600 px-6 py-3 text-white font-semibold hover:bg-green-700 transition"
             >
               Explorar DEMO
@@ -263,10 +292,10 @@ const Landing = () => {
               </div>
 
               <div className="mt-6 flex items-center gap-4">
-                <a href="#" className="p-2 rounded-lg border hover:bg-gray-100"><IconBrandFacebook className="w-6 h-6 text-green-700" /></a>
-                <a href="#" className="p-2 rounded-lg border hover:bg-gray-100"><IconBrandInstagram className="w-6 h-6 text-green-700" /></a>
-                <a href="#" className="p-2 rounded-lg border hover:bg-gray-100"><IconBrandLinkedin className="w-6 h-6 text-green-700" /></a>
-                <a href="#" className="p-2 rounded-lg border hover:bg-gray-100"><IconBrandWhatsapp className="w-6 h-6 text-green-700" /></a>
+                <a href="#" className="p-2 rounded-lg border hover:bg-gray-100"><IconBrandFacebook className="w-6 h-6 text-blue-600" /></a>
+                <a href="#" className="p-2 rounded-lg border hover:bg-gray-100"><IconBrandInstagram className="w-6 h-6 text-pink-600" /></a>
+                <a href="#" className="p-2 rounded-lg border hover:bg-gray-100"><IconBrandLinkedin className="w-6 h-6 text-blue-700" /></a>
+                <a href="#" className="p-2 rounded-lg border hover:bg-gray-100"><IconBrandWhatsapp className="w-6 h-6 text-green-500" /></a>
               </div>
             </div>
 
@@ -318,22 +347,22 @@ const Landing = () => {
       </section>
 
       {/* FOOTER */}
-      <footer className="border-t">
+      <footer className="bg-green-700/80 border-t border-green-700 text-white font-bold">
         <div className="mx-auto max-w-7xl px-4 py-10">
           <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-6">
             <div className="flex items-center gap-3">
               <img src={faviconBlanco} alt="GestiAgro" className="w-9 h-9 rounded" />
               <div>
-                <p className="font-bold text-green-700">GestiAgro</p>
-                <p className="text-sm text-gray-600">Software de Gestión Agrícola</p>
+                <p className="font-bold">GestiAgro</p>
+                <p className="text-sm">Software de Gestión Agrícola</p>
               </div>
             </div>
-            <div className="text-sm text-gray-600">
+            <div className="text-sm">
               <p>Seguridad de la información</p>
               <p>Centro de ayuda</p>
               <p>Términos y condiciones</p>
             </div>
-            <div className="text-sm text-gray-600">
+            <div className="text-sm">
               <p>© {new Date().getFullYear()} GestiAgro</p>
               <p>Desarrollado por tu equipo</p>
             </div>
@@ -345,4 +374,5 @@ const Landing = () => {
 };
 
 export default Landing;
+
 

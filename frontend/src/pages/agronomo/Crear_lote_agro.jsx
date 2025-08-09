@@ -200,7 +200,7 @@ const Crear_lote_agro = () => {
               <button
                 onClick={() => {
                   setMostrarTarjetaPerfil(false);
-                  navigate("/ajustes");
+                  navigate("/ajustesagro");
                 }}
                 className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
               >
@@ -210,7 +210,7 @@ const Crear_lote_agro = () => {
               <button
                 onClick={() => {
                   setMostrarTarjetaPerfil(false);
-                  navigate("/soporte");
+                  navigate("/soporteagro");
                 }}
                 className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
               >
@@ -220,7 +220,7 @@ const Crear_lote_agro = () => {
               <button
                 onClick={() => {
                   setMostrarTarjetaPerfil(false);
-                  navigate("/");
+                  navigate("/login");
                 }}
                 className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
               >

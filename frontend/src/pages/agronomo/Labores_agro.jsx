@@ -176,19 +176,19 @@ const Labores_agro = () => {
               className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
             >
               <button
-                onClick={() => navigate("/ajustes")}
+                onClick={() => navigate("/ajustesagro")}
                 className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
               >
                 <IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes
               </button>
               <button
-                onClick={() => navigate("/soporte")}
+                onClick={() => navigate("/soporteagro")}
                 className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
               >
                 <IconTool className="w-5 h-5 mr-2 text-green-600" /> Soporte
               </button>
               <button
-                onClick={() => alert("Cerrar sesión")}
+                onClick={() =>  navigate("/login")}
                 className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
               >
                 <IconLogout className="w-5 h-5 mr-2 text-red-600" /> Cerrar sesión

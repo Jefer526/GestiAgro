@@ -113,17 +113,17 @@ const Home_adm = () => {
         <div className="flex justify-center space-x-12">
           {[
             {
-              icon: <IconUsers className="w-24 h-24 text-green-700" />,
+              icon: <IconUsers className="w-24 h-24 text-purple-400" />,
               label: "Gestionar usuarios",
               route: "/Admuser",
             },
             {
-              icon: <IconCloudUpload className="w-24 h-24 text-green-700" />,
+              icon: <IconCloudUpload className="w-24 h-24 text-blue-400" />,
               label: "Copias de seguridad",
               route: "/copias",
             },
             {
-              icon: <IconTool className="w-24 h-24 text-green-700" />,
+              icon: <IconTool className="w-24 h-24 text-gray-400" />,
               label: "Soporte",
               route: "/soporte",
             },

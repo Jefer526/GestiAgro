@@ -151,7 +151,7 @@ const Informes_agro = () => {
               <button
                 onClick={() => {
                   setMenuAbierto(false);
-                  navigate("/ajustes");
+                  navigate("/ajustesagro");
                 }}
                 className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
               >
@@ -161,7 +161,7 @@ const Informes_agro = () => {
               <button
                 onClick={() => {
                   setMenuAbierto(false);
-                  navigate("/soporte");
+                  navigate("/soporteagro");
                 }}
                 className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
               >
@@ -171,7 +171,7 @@ const Informes_agro = () => {
               <button
                 onClick={() => {
                   setMenuAbierto(false);
-                  cerrarSesion();
+                  navigate("/login");
                 }}
                 className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
               >
