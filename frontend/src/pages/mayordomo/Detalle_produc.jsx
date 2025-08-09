@@ -138,13 +138,13 @@ const Detalle_produc = () => {
               <IconBox className="text-white w-11 h-11" />
             </button>
           </div>
-          <button className="hover:bg-white/10 p-2 rounded-lg">
+          <button onClick={() => navigate("/variables_climaticasm")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconCloudRain className="text-white w-11 h-11" />
           </button>
-          <button className="hover:bg-white/10 p-2 rounded-lg">
+          <button onClick={() => navigate("/informes_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconChartBar className="text-white w-11 h-11" />
           </button>
-          <button className="hover:bg-white/10 p-2 rounded-lg">
+          <button onClick={() => navigate("/equipos_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconTractor className="text-white w-11 h-11" />
           </button>
         </div>
