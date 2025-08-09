@@ -79,7 +79,7 @@ const Editar_roluser = () => {
             <IconTool className="text-white w-11 h-11" />
           </button>
         </div>
-        <button onClick={() => navigate("/ajustes")} className="mb-6 hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+        <button onClick={() => navigate("/ajustesadm")} className="mb-6 hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
           <IconSettings className="text-white w-11 h-11" />
         </button>
       </div>

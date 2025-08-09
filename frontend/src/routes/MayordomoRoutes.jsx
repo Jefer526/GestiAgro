@@ -12,6 +12,8 @@ import Hoja_vidam from "../pages/mayordomo/Hoja_vidam";
 import Registrar_mante from "../pages/mayordomo/Registrar_mante";
 import Historial_trabajom from "../pages/mayordomo/Historial_trabajom";
 import Actualizar_estado_maquina from "../pages/mayordomo/Actualizar_estado_maquina";
+import Soporte_mayordomo from "../pages/mayordomo/Soporte_mayordomo";
+import Ajustes_mayordomo from "../pages/mayordomo/Ajustes_mayordomo";
 
 const mayordomoRoutes = [
   <Route key="home" path="/homemayordomo" element={<Home_mayo />} />,
@@ -27,6 +29,8 @@ const mayordomoRoutes = [
   <Route key="registrar-mantenimiento" path="/registrar_mantenimientom" element={<Registrar_mante />} />,
   <Route key="historial-trabajo" path="/historial_trabajom" element={<Historial_trabajom />} />,
   <Route key="actualizar-estado" path="/actualizar_estado_maquina" element={<Actualizar_estado_maquina />} />,
+  <Route key="soporte-mayordomo" path="/soportemayordomo" element={<Soporte_mayordomo />} />,
+  <Route key="ajustes-mayordomo" path="/ajustesmayordomo" element={<Ajustes_mayordomo />} />,
 ];
 
 export default mayordomoRoutes;

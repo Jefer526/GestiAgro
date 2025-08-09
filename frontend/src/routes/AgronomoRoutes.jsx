@@ -21,6 +21,8 @@ import Crear_finca_agro from "../pages/agronomo/Crear_finca_agro";
 import Editar_finca from "../pages/agronomo/Editar_finca";
 import Crear_lote_agro from "../pages/agronomo/Crear_lote_agro";
 import Editar_lote from "../pages/agronomo/Editar_lote";
+import Soporte_agro from "../pages/agronomo/Soporte_agro";
+import Ajustes_agro from "../pages/agronomo/Ajustes_agro";
 
 const agronomoRoutes = [
   <Route key="home" path="/Homeagro" element={<Home_agro />} />,
@@ -45,6 +47,9 @@ const agronomoRoutes = [
   <Route key="editar-finca" path="/editarfinca" element={<Editar_finca />} />,
   <Route key="crear-lote" path="/crearlote" element={<Crear_lote_agro />} />,
   <Route key="editar-lote" path="/editarlote" element={<Editar_lote />} />,
+  <Route key="soporte-agro" path="/soporteagro" element={<Soporte_agro />} />,
+  <Route key="ajustes-agro" path="/ajustesagro" element={<Ajustes_agro />} />,
+  
 ];
 
 export default agronomoRoutes;
