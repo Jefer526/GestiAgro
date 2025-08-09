@@ -10,7 +10,7 @@ import Soporte from "../pages/auth/recover/Soporte";
 import Seleccion_rol from "../pages/Seleccion_rol";
 
 const AuthRoutes = [
-  <Route key="login" path="/" element={<Login />} />,
+  <Route key="login" path="/login" element={<Login />} />,
   <Route key="register" path="/crear-cuenta" element={<Register />} />,
   <Route key="correo" path="/confirmar-correo" element={<C_correo />} />,
   <Route key="cuenta" path="/recuperar-cuenta" element={<E_cuenta />} />,

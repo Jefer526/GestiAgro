@@ -1,100 +1,89 @@
+// src/pages/Login.jsx
 import React from "react";
-import fondoImagen from "../../assets/fondo.jpg";
 import { Link } from "react-router-dom";
+import faviconBlanco from "../../assets/favicon-blanco.png";
 
 const Login = () => {
   return (
-    <div className="w-screen min-h-screen flex flex-col lg:flex-row m-0 p-0 overflow-hidden relative font-sans">
-      
-      {/* Degradado entre zonas */}
-      <div
-        className="hidden lg:block absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2 w-24 z-10 pointer-events-none"
-        style={{
-          background: 'linear-gradient(to right, transparent, rgba(0,0,0,0.6), transparent)'
-        }}
-      ></div>
+    <div className="min-h-screen relative flex items-center justify-center bg-green-600">
+      {/* Fondo dividido */}
+      <div className="absolute top-0 left-0 w-full h-1/2 bg-green-600 z-0" />
+      <div className="absolute bottom-0 left-0 w-full h-1/2 bg-white z-0" />
 
-      {/* Zona izquierda: imagen con mensaje */}
-      <div
-        className="w-full lg:w-1/2 h-1/2 lg:h-auto bg-cover bg-center flex flex-col justify-center px-6 sm:px-10 md:px-16 lg:px-20 py-12 relative z-0"
-        style={{ backgroundImage: `url(${fondoImagen})` }}
-      >
-        <div className="max-w-xl bg-black bg-opacity-50 p-6 rounded-2xl backdrop-blur-md shadow-lg">
-          <h2 className="text-white font-semibold text-xl sm:text-2xl mb-2">
-            GESTIAGRO - Gestión Agrícola
-          </h2>
-          <h1 className="text-white font-bold text-4xl sm:text-5xl md:text-6xl leading-tight mb-4">
-            Inteligencia para el campo
-          </h1>
-          <p className="text-white text-base sm:text-xl">
-            Soluciones digitales para una agricultura más eficiente.
-          </p>
-        </div>
-      </div>
+      {/* Logo */}
+      <img
+        src={faviconBlanco}
+        alt="Logo de GestiAgro"
+        className="absolute top-4 left-4 w-10 h-10 object-contain"
+      />
 
-      {/* Zona derecha: formulario */}
-      <div className="w-full lg:w-1/2 h-1/2 lg:h-auto bg-gradient-to-b from-green-900 to-green-600 flex items-center justify-center py-10 px-4 sm:px-8">
-        <div className="w-full max-w-[560px] bg-white p-8 sm:p-12 md:p-16 rounded-3xl shadow-2xl z-20 transition-all duration-300">
-          
-          {/* Encabezado superior */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center text-base text-gray-600 mb-6 gap-2">
-            <span>
-              Bienvenido a <span className="text-green-600 font-semibold">GESTIAGRO</span>
-            </span>
-            <a href="/crear-cuenta" className="text-green-600 hover:underline text-base">
-              ¿Sin cuenta? Registrate
-            </a>
+      {/* Formulario */}
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-xl px-12 py-16 z-10 relative">
+        <div className="flex justify-between items-start mb-10">
+          <div>
+            <h2 className="text-lg font-medium">
+              Bienvenido a{" "}
+              <span className="text-green-500 font-semibold">GESTIAGRO</span>
+            </h2>
+            <h1 className="text-3xl font-bold mt-1">Iniciar sesión</h1>
           </div>
+          <div className="text-right text-sm text-gray-500">
+            <p className="mb-1">¿Sin cuenta?</p>
+            <Link
+              to="/crear-cuenta"
+              className="text-green-600 hover:underline font-medium"
+            >
+              Regístrate
+            </Link>
+          </div>
+        </div>
 
-          {/* Título principal */}
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-10">
-            Iniciar sesión
-          </h2>
-
-          {/* Campo de usuario */}
-          <div className="mb-6">
-            <label className="block text-base text-gray-800 mb-2">
+        <form className="space-y-6">
+          <div>
+            <label className="block mb-2 font-medium text-gray-800 text-base">
               Nombre de usuario o correo electrónico
             </label>
             <input
               type="text"
-              className="w-full border border-gray-300 text-lg rounded-lg px-5 py-3 sm:py-4 outline-none focus:ring-2 focus:ring-green-400 transition-all"
               placeholder="Correo o usuario"
+              className="w-full border text-lg border-gray-300 rounded-md px-4 py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all"
+              required
             />
           </div>
 
-          {/* Campo de contraseña */}
-          <div className="mb-4">
-            <label className="block text-base text-gray-800 mb-2">
+          <div>
+            <label className="block mb-2 font-medium text-gray-800 text-base">
               Contraseña
             </label>
             <input
               type="password"
-              className="w-full border border-gray-300 text-lg rounded-lg px-5 py-3 sm:py-4 outline-none focus:ring-2 focus:ring-green-400 transition-all"
               placeholder="Contraseña"
+              className="w-full border text-lg border-gray-300 rounded-md px-4 py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all"
+              required
             />
           </div>
 
-          {/* Enlace recuperación */}
           <Link
             to="/recuperar-cuenta"
-            className="text-green-600 hover:underline text-base block text-right mb-[1cm]"
+            className="text-green-600 hover:underline text-base block text-right"
           >
             Olvidé mi contraseña
           </Link>
 
-          {/* Botón iniciar sesión */}
           <Link to="/seleccion-rol">
-            <button className="w-full bg-green-600 text-white py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:bg-green-700 shadow-md transition-all">
+            <button
+              type="submit"
+              className="w-full bg-green-600 text-white py-3 rounded-lg text-lg font-semibold hover:bg-green-700 shadow-md transition-all mt-4"
+            >
               Iniciar sesión
             </button>
           </Link>
-
-        </div>
+        </form>
       </div>
     </div>
   );
 };
 
 export default Login;
+
 

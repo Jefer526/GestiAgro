@@ -17,7 +17,7 @@ const E_cuenta = () => {
       {/* Botón cerrar */}
       <button
         className="absolute top-4 right-4 text-white text-5xl font-bold"
-        onClick={() => navigate("/")}
+        onClick={() => navigate("/login")}
       >
         ×
       </button>

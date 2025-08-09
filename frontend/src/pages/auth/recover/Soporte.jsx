@@ -41,7 +41,7 @@ const Soporte = () => {
 
       {/* Botón cerrar */}
       <button
-        onClick={() => navigate("/")}
+        onClick={() => navigate("/login")}
         className="absolute top-4 right-4 text-white text-3xl font-bold"
       >
         ×

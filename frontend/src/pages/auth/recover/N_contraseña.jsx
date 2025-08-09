@@ -11,7 +11,7 @@ const N_contraseña = () => {
   const handleConfirm = () => {
     if (password === confirmar && password.trim() !== "") {
       console.log("Contraseña actualizada:", password);
-      navigate("/"); // Redirige al login
+      navigate("/login"); // Redirige al login
     } else {
       setMostrarAlerta(true);
       setTimeout(() => setMostrarAlerta(false), 2000);
@@ -33,7 +33,7 @@ const N_contraseña = () => {
       {/* Botón cerrar */}
       <button
         className="absolute top-4 right-4 text-white text-5xl font-bold"
-        onClick={() => navigate("/")}
+        onClick={() => navigate("/login")}
       >
         ×
       </button>
