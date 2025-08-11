@@ -1,6 +1,6 @@
 // src/pages/administrador/Editar_roluser.jsx
-import React, { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import {
   IconArrowLeft,
   IconShieldCheck,
@@ -12,23 +12,28 @@ import {
   IconTool,
   IconSettings,
 } from "@tabler/icons-react";
+import axios from "axios";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
 const Editar_roluser = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { state } = useLocation(); // <- aquí llega el usuario desde la tabla (opcional)
+
+  const [alertaVisible, setAlertaVisible] = useState(false);
+  const [cargando, setCargando] = useState(true);
 
   const [usuario, setUsuario] = useState({
     id,
     nombre: "",
     telefono: "",
     email: "",
-    contraseña: "",
-    rol: "Administrador",
+    rol: "",
     permisos: [],
   });
 
-  const [alertaVisible, setAlertaVisible] = useState(false);
+  // campo independiente para una NUEVA contraseña (no se prellena)
+  const [nuevaContrasena, setNuevaContrasena] = useState("");
 
   const todosLosPermisos = [
     "Ver reportes",
@@ -38,24 +43,82 @@ const Editar_roluser = () => {
     "Gestionar soporte",
   ];
 
+  // Prefill: primero intenta con location.state; si no, pide al backend
+  useEffect(() => {
+    const cargar = async () => {
+      try {
+        if (state?.usuario) {
+          const u = state.usuario;
+          setUsuario({
+            id: u.id_usuario ?? id,
+            nombre: u.nombre_completo ?? "",
+            telefono: u.telefono ?? "",
+            email: u.email ?? "",
+            rol: u.rol?.id_rol || u.rol || "", // ajusta según tu API
+            permisos: u.permisos || [],
+          });
+          setCargando(false);
+        } else {
+          const res = await axios.get(`/api/usuarios/${id}/`); // <-- tu endpoint de detalle SIN contraseña
+          const u = res.data;
+          setUsuario({
+            id: u.id_usuario ?? id,
+            nombre: u.nombre_completo ?? "",
+            telefono: u.telefono ?? "",
+            email: u.email ?? "",
+            rol: u.rol?.id_rol || u.rol || "",
+            permisos: u.permisos || [],
+          });
+          setCargando(false);
+        }
+      } catch (e) {
+        console.error(e);
+        setCargando(false);
+      }
+    };
+    cargar();
+  }, [id, state]);
+
   const handlePermisoChange = (permiso) => {
     const tienePermiso = usuario.permisos.includes(permiso);
-    setUsuario({
-      ...usuario,
+    setUsuario((prev) => ({
+      ...prev,
       permisos: tienePermiso
-        ? usuario.permisos.filter((p) => p !== permiso)
-        : [...usuario.permisos, permiso],
-    });
+        ? prev.permisos.filter((p) => p !== permiso)
+        : [...prev.permisos, permiso],
+    }));
   };
 
-  const handleSave = () => {
-    console.log("Usuario actualizado:", usuario);
-    setAlertaVisible(true);
-    setTimeout(() => {
-      setAlertaVisible(false);
-      navigate("/admuser");
-    }, 2000);
+  const handleSave = async () => {
+    try {
+      // armamos el payload SIN contraseña
+      const payload = {
+        nombre_completo: usuario.nombre,
+        telefono: usuario.telefono,
+        email: usuario.email,
+        rol: usuario.rol || null,
+        permisos: usuario.permisos,
+      };
+      // si el usuario escribió una contraseña nueva, la incluimos aparte
+      if (nuevaContrasena.trim()) {
+        payload.contrasena = nuevaContrasena.trim();
+      }
+
+      await axios.put(`/api/usuarios/${usuario.id}/`, payload);
+      setAlertaVisible(true);
+      setTimeout(() => {
+        setAlertaVisible(false);
+        navigate("/admuser");
+      }, 2000);
+    } catch (e) {
+      console.error(e);
+      alert("No se pudo guardar. Revisa la consola para más detalles.");
+    }
   };
+
+  if (cargando) {
+    return <div className="p-6">Cargando...</div>;
+  }
 
   return (
     <div className="flex">
@@ -133,14 +196,16 @@ const Editar_roluser = () => {
                 placeholder="Ingrese correo"
               />
             </div>
+
+            {/* Contraseña: nunca se prellena; sólo se envía si el usuario escribe algo */}
             <div>
-              <label className="block font-semibold text-gray-700 mb-1">Contraseña</label>
+              <label className="block font-semibold text-gray-700 mb-1">Contraseña (opcional)</label>
               <input
                 type="password"
-                value={usuario.contraseña}
-                onChange={(e) => setUsuario({ ...usuario, contraseña: e.target.value })}
+                value={nuevaContrasena}
+                onChange={(e) => setNuevaContrasena(e.target.value)}
                 className="w-full p-3 rounded-md border border-gray-300 focus:ring-1 focus:ring-green-500 outline-none"
-                placeholder="Ingrese contraseña"
+                placeholder="Nueva contraseña (dejar vacío para no cambiar)"
               />
             </div>
           </div>
@@ -152,9 +217,10 @@ const Editar_roluser = () => {
               onChange={(e) => setUsuario({ ...usuario, rol: e.target.value })}
               className="w-full p-3 rounded-md border border-gray-300 focus:ring-1 focus:ring-green-500 outline-none"
             >
-              <option>Administrador</option>
-              <option>Gerente</option>
-              <option>Mayordomo</option>
+              <option value="">Sin asignar</option>
+              <option value="Administrador">Administrador</option>
+              <option value="Gerente">Gerente</option>
+              <option value="Mayordomo">Mayordomo</option>
             </select>
           </div>
 
@@ -192,7 +258,3 @@ const Editar_roluser = () => {
 };
 
 export default Editar_roluser;
-
-
-
-
