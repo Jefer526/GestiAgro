@@ -21,6 +21,7 @@ const Admin_usuarios = () => {
   const navigate = useNavigate();
   const filtroRef = useRef(null);
   const tarjetaRef = useRef(null);
+
   const [usuarios, setUsuarios] = useState([]);
   const [menuAbiertoId, setMenuAbiertoId] = useState(null);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
@@ -35,7 +36,8 @@ const Admin_usuarios = () => {
   const columnas = ["nombre_completo", "telefono", "rol", "email"];
 
   useEffect(() => {
-    axios.get("http://localhost:8000/api/usuarios/listar/")
+    axios
+      .get("http://localhost:8000/api/usuarios/listar/")
       .then((res) => setUsuarios(res.data))
       .catch((err) => console.error("Error al obtener usuarios:", err));
   }, []);
@@ -52,15 +54,20 @@ const Admin_usuarios = () => {
 
   const getValoresUnicos = (campo) => {
     const search = (busquedas[campo] || "").toLowerCase();
-    return [...new Set(usuarios.map(e => e[campo]?.toString()))].filter(v =>
+    return [...new Set(usuarios.map((e) => e[campo]?.toString()))].filter((v) =>
       v.toLowerCase().includes(search)
     );
   };
 
   const toggleValor = (campo, valor) => {
     const seleccionados = new Set(valoresSeleccionados[campo] || []);
-    seleccionados.has(valor) ? seleccionados.delete(valor) : seleccionados.add(valor);
-    setValoresSeleccionados({ ...valoresSeleccionados, [campo]: [...seleccionados] });
+    seleccionados.has(valor)
+      ? seleccionados.delete(valor)
+      : seleccionados.add(valor);
+    setValoresSeleccionados({
+      ...valoresSeleccionados,
+      [campo]: [...seleccionados],
+    });
   };
 
   const limpiarFiltro = (campo) => {
@@ -78,9 +85,10 @@ const Admin_usuarios = () => {
   };
 
   const datosFiltrados = usuarios
-    .filter(item =>
-      columnas.every(campo =>
-        !valoresSeleccionados[campo] || valoresSeleccionados[campo].length === 0
+    .filter((item) =>
+      columnas.every((campo) =>
+        !valoresSeleccionados[campo] ||
+        valoresSeleccionados[campo].length === 0
           ? true
           : valoresSeleccionados[campo].includes(item[campo]?.toString())
       )
@@ -98,9 +106,10 @@ const Admin_usuarios = () => {
     const rect = event.currentTarget.getBoundingClientRect();
     const espacioDisponibleDerecha = window.innerWidth - rect.right;
     const menuWidth = 160;
-    const left = espacioDisponibleDerecha > menuWidth
-      ? rect.right + 8
-      : rect.left - menuWidth - 8;
+    const left =
+      espacioDisponibleDerecha > menuWidth
+        ? rect.right + 8
+        : rect.left - menuWidth - 8;
 
     setTimeout(() => {
       setMenuAbiertoId(id_usuario);
@@ -109,7 +118,10 @@ const Admin_usuarios = () => {
   };
 
   const handleClickOutside = (e) => {
-    if (!e.target.closest("#floating-menu") && !e.target.closest(".menu-trigger")) {
+    if (
+      !e.target.closest("#floating-menu") &&
+      !e.target.closest(".menu-trigger")
+    ) {
       setMenuAbiertoId(null);
     }
   };
@@ -140,12 +152,18 @@ const Admin_usuarios = () => {
   }, []);
 
   const handleEliminar = async (id_usuario) => {
-    const confirmar = window.confirm("¿Estás seguro de que deseas eliminar este usuario?");
+    const confirmar = window.confirm(
+      "¿Estás seguro de que deseas eliminar este usuario?"
+    );
     if (!confirmar) return;
 
     try {
-      await axios.delete(`http://localhost:8000/api/usuarios/eliminar/${id_usuario}/`);
-      setUsuarios((prev) => prev.filter((u) => u.id_usuario !== id_usuario));
+      await axios.delete(
+        `http://localhost:8000/api/usuarios/eliminar/${id_usuario}/`
+      );
+      setUsuarios((prev) =>
+        prev.filter((u) => u.id_usuario !== id_usuario)
+      );
       setMenuAbiertoId(null);
     } catch (error) {
       console.error("Error al eliminar usuario:", error);
@@ -159,7 +177,10 @@ const Admin_usuarios = () => {
       <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
         <div className="flex flex-col items-center space-y-8">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
-          <button onClick={() => navigate("/homeadm")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button
+            onClick={() => navigate("/homeadm")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
             <IconHome className="text-white w-11 h-11" />
           </button>
           <div className="relative">
@@ -168,10 +189,16 @@ const Admin_usuarios = () => {
               <IconUsers className="text-white w-11 h-11" />
             </button>
           </div>
-          <button onClick={() => navigate("/copias")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button
+            onClick={() => navigate("/copias")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
             <IconCloudUpload className="text-white w-11 h-11" />
           </button>
-          <button onClick={() => navigate("/soporte")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button
+            onClick={() => navigate("/soporte")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
             <IconTool className="text-white w-11 h-11" />
           </button>
         </div>
@@ -187,11 +214,18 @@ const Admin_usuarios = () => {
               ref={tarjetaRef}
               className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
             >
-              <button onClick={() => navigate("/ajustesadm")} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
+              <button
+                onClick={() => navigate("/ajustesadm")}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
                 <IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes
               </button>
-              <button onClick={() => navigate("/")} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600">
-                <IconLogout className="w-5 h-5 mr-2 text-red-600" /> Cerrar sesión
+              <button
+                onClick={() => navigate("/")}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
+              >
+                <IconLogout className="w-5 h-5 mr-2 text-red-600" /> Cerrar
+                sesión
               </button>
             </div>
           )}
@@ -200,24 +234,24 @@ const Admin_usuarios = () => {
 
       {/* Contenido */}
       <div className="flex-1 p-10 overflow-auto">
-        <h1 className="text-4xl font-bold text-green-600 mb-6">Gestionar usuarios</h1>
+        <h1 className="text-4xl font-bold text-green-600 mb-6">
+          Gestionar usuarios
+        </h1>
         <div className="overflow-x-auto shadow-md rounded-lg relative">
           <table className="min-w-full text-base bg-white text-center">
             <thead className="bg-green-600 text-white">
               <tr>
-                {["nombre_completo", "telefono", "rol", "email", ].map((col, idx) => (
+                {columnas.map((col, idx) => (
                   <th key={idx} className="p-4 border">
                     <div className="flex items-center justify-center gap-2">
                       <span>{col.toUpperCase()}</span>
-                      {columnas.includes(col) && (
-                        <button
-                          onClick={(e) => toggleFiltro(col, e)}
-                          className="z-10"
-                          onMouseDown={(e) => e.stopPropagation()}
-                        >
-                          <IconFilter className="w-4 h-4" />
-                        </button>
-                      )}
+                      <button
+                        onClick={(e) => toggleFiltro(col, e)}
+                        className="z-10"
+                        onMouseDown={(e) => e.stopPropagation()}
+                      >
+                        <IconFilter className="w-4 h-4" />
+                      </button>
                     </div>
                   </th>
                 ))}
@@ -226,14 +260,16 @@ const Admin_usuarios = () => {
             </thead>
             <tbody>
               {datosFiltrados.map((u) => (
-                <tr key={u.id_usuario} className="border-t hover:bg-gray-50">
+                <tr key={u.email} className="border-t hover:bg-gray-50">
                   <td className="p-4 border">{u.nombre_completo}</td>
                   <td className="p-4 border">{u.telefono}</td>
                   <td className="p-4 border">{u.rol || "Sin asignar"}</td>
                   <td className="p-4 border">{u.email}</td>
-                  <td className="p-4 border">{u.contrasena ? "********" : ""}</td>
                   <td className="p-4 border">
-                    <button onClick={(e) => handleMenuOpen(u.id_usuario, e)} className="menu-trigger p-1 rounded hover:bg-gray-200 z-50 relative">
+                    <button
+                      onClick={(e) => handleMenuOpen(u.id_usuario, e)}
+                      className="menu-trigger p-1 rounded hover:bg-gray-200 z-50 relative"
+                    >
                       <IconDotsVertical className="w-5 h-5 text-gray-600" />
                     </button>
                   </td>
@@ -248,11 +284,19 @@ const Admin_usuarios = () => {
               className="fixed bg-white text-black shadow-md border rounded z-[9999] p-3 w-60 text-left text-sm"
               style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
             >
-              <div className="font-semibold mb-2">Filtrar por {filtroActivo}</div>
-              <button onClick={() => ordenar(filtroActivo, "asc")} className="text-green-700 flex items-center gap-1 mb-1 capitalize">
+              <div className="font-semibold mb-2">
+                Filtrar por {filtroActivo}
+              </div>
+              <button
+                onClick={() => ordenar(filtroActivo, "asc")}
+                className="text-green-700 flex items-center gap-1 mb-1 capitalize"
+              >
                 <IconSortAscending2 className="w-4 h-4" /> Ordenar A → Z
               </button>
-              <button onClick={() => ordenar(filtroActivo, "desc")} className="text-green-700 flex items-center gap-1 mb-2 capitalize">
+              <button
+                onClick={() => ordenar(filtroActivo, "desc")}
+                className="text-green-700 flex items-center gap-1 mb-2 capitalize"
+              >
                 <IconSortDescending2 className="w-4 h-4" /> Ordenar Z → A
               </button>
               <input
@@ -264,10 +308,15 @@ const Admin_usuarios = () => {
               />
               <div className="flex flex-col max-h-40 overflow-y-auto">
                 {getValoresUnicos(filtroActivo).map((val, idx) => (
-                  <label key={idx} className="flex items-center gap-2 mb-1 capitalize">
+                  <label
+                    key={idx}
+                    className="flex items-center gap-2 mb-1 capitalize"
+                  >
                     <input
                       type="checkbox"
-                      checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
+                      checked={(
+                        valoresSeleccionados[filtroActivo] || []
+                      ).includes(val)}
                       onChange={() => toggleValor(filtroActivo, val)}
                       className="accent-green-600"
                     />
@@ -275,21 +324,32 @@ const Admin_usuarios = () => {
                   </label>
                 ))}
               </div>
-              <button onClick={() => limpiarFiltro(filtroActivo)} className="text-blue-600 hover:underline text-xs capitalize mt-2">
+              <button
+                onClick={() => limpiarFiltro(filtroActivo)}
+                className="text-blue-600 hover:underline text-xs capitalize mt-2"
+              >
                 Borrar filtro
               </button>
             </div>
           )}
 
           {menuAbiertoId !== null && (
-            <div id="floating-menu" className="fixed bg-white border border-gray-200 rounded shadow-lg w-40 z-[9999]"
-              style={{ top: menuPosition.y, left: menuPosition.x }}>
-              <button onClick={() => navigate(`/editar-roluser/${menuAbiertoId}`)}
-                className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100">
-                <IconPencil className="w-4 h-4 text-blue-600" /> Editar Rol y Permisos
+            <div
+              id="floating-menu"
+              className="fixed bg-white border border-gray-200 rounded shadow-lg w-40 z-[9999]"
+              style={{ top: menuPosition.y, left: menuPosition.x }}
+            >
+              <button
+                onClick={() => navigate(`/editar-roluser/${menuAbiertoId}`)}
+                className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100"
+              >
+                <IconPencil className="w-4 h-4 text-blue-600" /> Editar Rol y
+                Permisos
               </button>
-              <button onClick={() => handleEliminar(menuAbiertoId)}
-                className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+              <button
+                onClick={() => handleEliminar(menuAbiertoId)}
+                className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+              >
                 <IconTrash className="w-4 h-4" /> Eliminar
               </button>
             </div>
@@ -301,4 +361,3 @@ const Admin_usuarios = () => {
 };
 
 export default Admin_usuarios;
-

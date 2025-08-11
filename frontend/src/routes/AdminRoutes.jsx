@@ -6,6 +6,7 @@ import EditarRolUser from "../pages/administrador/Editar_roluser";
 import Copias_segu from "../pages/administrador/Copias_segu";
 import Editar_copias from "../pages/administrador/Editar_copias";
 import Soporte_adm from "../pages/administrador/Soporte_adm";
+import Detalles_ticket from "../pages/administrador/Detalles_ticket";
 import Ajustes_adm from "../pages/administrador/Ajustes_adm";
 
 const adminRoutes = [
@@ -15,7 +16,9 @@ const adminRoutes = [
   <Route key="copias" path="/copias" element={<Copias_segu />} />,
   <Route key="editar-copias" path="/editarcopiassegu" element={<Editar_copias />} />,
   <Route key="soporte" path="/soporte" element={<Soporte_adm />} />,
+  <Route key="detalles" path="/detallesticket" element={<Detalles_ticket />} />,
   <Route key="ajustes" path="/Ajustesadm" element={<Ajustes_adm />} />,
+  
 ];
 
 export default adminRoutes;
