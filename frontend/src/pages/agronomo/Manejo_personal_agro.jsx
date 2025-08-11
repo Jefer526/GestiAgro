@@ -64,12 +64,17 @@ const Manejo_personal_agro = () => {
     },
   ];
 
-  const columnas = ["id", "nombre", "cargo", "estado", "finca"];
+  // ➜ Agregamos "telefono" para que tenga filtro; quitamos "acceso"
+  const columnas = ["id", "nombre", "cargo", "estado", "finca", "telefono"];
   const [filtroActivo, setFiltroActivo] = useState(null);
   const [filtroPosicion, setFiltroPosicion] = useState({ top: 0, left: 0 });
   const [busquedas, setBusquedas] = useState({});
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
+
+  // Constantes para tamaño del panel de filtro
+  const PANEL_W = 240; // w-60 = 15rem = 240px
+  const PANEL_H = 320; // alto estimado suficiente
 
   const getValoresUnicos = (campo) => {
     const search = (busquedas[campo] || "").toLowerCase();
@@ -78,13 +83,26 @@ const Manejo_personal_agro = () => {
     );
   };
 
+  // ⤵️ Reemplazo: misma firma, calcula posición segura sin salirse de la pantalla
   const toggleFiltro = (campo, e) => {
-    const icono = e.currentTarget.getBoundingClientRect();
+    const r = e.currentTarget.getBoundingClientRect();
+    const scrollX = window.scrollX || window.pageXOffset;
+    const scrollY = window.scrollY || window.pageYOffset;
+
+    // Por defecto, abrir debajo y alineado al icono
+    let top = r.bottom + scrollY + 4;
+    let left = r.left + scrollX;
+
+    // Si se sale por la derecha, muévelo hacia la izquierda
+    const maxLeft = window.innerWidth - PANEL_W - 8 + scrollX;
+    if (left > maxLeft) left = Math.max(8 + scrollX, maxLeft);
+
+    // Si se sale por abajo, ábrelo hacia arriba
+    const maxTop = window.innerHeight - PANEL_H - 8 + scrollY;
+    if (top > maxTop) top = r.top + scrollY - PANEL_H - 8;
+
     setFiltroActivo(filtroActivo === campo ? null : campo);
-    setFiltroPosicion({
-      top: icono.bottom + window.scrollY + 4,
-      left: icono.left + window.scrollX
-    });
+    setFiltroPosicion({ top, left });
   };
 
   const toggleValor = (campo, valor) => {
@@ -257,15 +275,14 @@ const Manejo_personal_agro = () => {
                 {columnas.map((col, idx) => (
                   <th key={idx} className="p-4 border">
                     <div className="flex items-center justify-center gap-2">
-                      <span>{col.toUpperCase()}</span>
+                      {/* Mostramos TELÉFONO con acento */}
+                      <span>{col === "telefono" ? "TELÉFONO" : col.toUpperCase()}</span>
                       <button onClick={(e) => toggleFiltro(col, e)}>
                         <IconFilter className="w-4 h-4" />
                       </button>
                     </div>
                   </th>
                 ))}
-                <th className="p-4 border">TELÉFONO</th>
-                <th className="p-4 border">ACCESO</th>
               </tr>
             </thead>
             <tbody>
@@ -277,7 +294,6 @@ const Manejo_personal_agro = () => {
                   <td className="p-4 border">{e.estado}</td>
                   <td className="p-4 border">{e.finca}</td>
                   <td className="p-4 border">{e.telefono}</td>
-                  <td className="p-4 border">{e.acceso}</td>
                 </tr>
               ))}
             </tbody>
@@ -286,10 +302,12 @@ const Manejo_personal_agro = () => {
           {filtroActivo && (
             <div
               ref={filtroRef}
-              className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60 text-left text-sm"
-              style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
+              className="fixed bg-white text-black shadow-md border rounded z-50 p-3 text-left text-sm"
+              style={{ top: filtroPosicion.top, left: filtroPosicion.left, width: PANEL_W }}
             >
-              <div className="font-semibold mb-2">Filtrar por {filtroActivo.charAt(0).toUpperCase() + filtroActivo.slice(1)}</div>
+              <div className="font-semibold mb-2">
+                Filtrar por {filtroActivo.charAt(0).toUpperCase() + filtroActivo.slice(1)}
+              </div>
               <button onClick={() => ordenar(filtroActivo, "asc")} className="text-green-700 flex items-center gap-1 mb-1 capitalize">
                 <IconSortAscending2 className="w-4 h-4" /> Ordenar A → Z
               </button>
@@ -330,7 +348,7 @@ const Manejo_personal_agro = () => {
           </button>
           <button onClick={() => navigate("/actualizarestado")}
           className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 text-lg font-semibold">
-            Actualizar estado
+            Editar empleado
           </button>
           <button className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 text-lg font-semibold">
             Exportar
@@ -342,4 +360,6 @@ const Manejo_personal_agro = () => {
 };
 
 export default Manejo_personal_agro;
+
+
 

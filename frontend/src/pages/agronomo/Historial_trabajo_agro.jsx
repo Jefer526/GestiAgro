@@ -43,7 +43,7 @@ const Historial_trabajo_agro = () => {
   }, []);
 
   const infoGeneral = {
-    id: 1,
+    codigo: 1,
     maquina: "Tractor",
     referencia: "JD 5055",
     ubicacion: "La Esmeralda",
@@ -75,12 +75,12 @@ const Historial_trabajo_agro = () => {
   ];
 
   const columnas = [
-    "fecha",
-    "labor",
-    "horas trabajadas",
-    "horas maquina",
-    "observaciones",
-  ];
+  "fecha",
+  "labor",
+  "horas maquina",
+  "observaciones",
+];
+
   const [filtroActivo, setFiltroActivo] = useState(null);
   const [filtroPosicion, setFiltroPosicion] = useState({ top: 0, left: 0 });
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
@@ -293,7 +293,7 @@ const Historial_trabajo_agro = () => {
           </h2>
           <div className="grid grid-cols-2 gap-x-12 gap-y-2 text-lg">
             <p>
-              <strong>ID Máquina:</strong> {infoGeneral.id}
+              <strong>Código Equipo:</strong> {infoGeneral.codigo}
             </p>
             <p>
               <strong>Ubicación:</strong> {infoGeneral.ubicacion}

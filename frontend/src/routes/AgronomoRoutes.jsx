@@ -1,5 +1,5 @@
 import { Route } from "react-router-dom";
-import Home_agro from "../pages/agronomo/Home_agro";
+import Home_agro from "../pages/agronomo/home_agro";
 import Labores_agro from "../pages/agronomo/Labores_agro";
 import Historial_labores from "../pages/agronomo/Historial_labores";
 import Informes_agro from "../pages/agronomo/Informes_agro";
@@ -23,6 +23,7 @@ import Crear_lote_agro from "../pages/agronomo/Crear_lote_agro";
 import Editar_lote from "../pages/agronomo/Editar_lote";
 import Soporte_agro from "../pages/agronomo/Soporte_agro";
 import Ajustes_agro from "../pages/agronomo/Ajustes_agro";
+import Detalle_mantenimiento from "../pages/agronomo/Detalle_mantenimiento";
 
 const agronomoRoutes = [
   <Route key="home" path="/Homeagro" element={<Home_agro />} />,
@@ -49,6 +50,7 @@ const agronomoRoutes = [
   <Route key="editar-lote" path="/editarlote" element={<Editar_lote />} />,
   <Route key="soporte-agro" path="/soporteagro" element={<Soporte_agro />} />,
   <Route key="ajustes-agro" path="/ajustesagro" element={<Ajustes_agro />} />,
+  <Route key="detalle-mantenimiento" path="/detalle_mantenimiento" element={<Detalle_mantenimiento />} />,
   
 ];
 

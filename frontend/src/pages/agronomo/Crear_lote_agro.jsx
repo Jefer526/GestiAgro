@@ -1,6 +1,6 @@
 // src/pages/agronomo/Crear_lote_agro.jsx
 import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   IconHome,
   IconClipboardList,
@@ -23,26 +23,33 @@ import faviconBlanco from "../../assets/favicon-blanco.png";
 
 const Crear_lote_agro = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
   const [lotes, setLotes] = useState([
     { finca: "La Esmeralda", lote: "1", coordenadas: "2.42,-75.20", area: "3 ha", cultivo: "Macadamia" },
     { finca: "Las Palmas", lote: "2", coordenadas: "2.45,-75.22", area: "2.5 ha", cultivo: "Aguacate" },
   ]);
   const [formData, setFormData] = useState({ finca: "", lote: "", coordenadas: "", area: "", cultivo: "" });
+
   const [filtroActivo, setFiltroActivo] = useState(null);
   const [busquedas, setBusquedas] = useState({});
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
+
   const [posicionTarjeta, setPosicionTarjeta] = useState({});
   const [visibleTarjeta, setVisibleTarjeta] = useState(null);
   const filtroRef = useRef(null);
+
   const columnas = ["finca", "lote", "coordenadas", "area", "cultivo"];
 
-  // Para el perfil flotante
-  const nombreUsuario = "Juan Pérez"; // Cambiar por el nombre real del usuario
+  // Perfil
+  const nombreUsuario = "Juan Pérez";
   const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
-
   const [mostrarTarjetaPerfil, setMostrarTarjetaPerfil] = useState(false);
   const tarjetaPerfilRef = useRef(null);
+
+  // Contenedor scrollable del sidebar para auto-scroll
+  const iconListRef = useRef(null);
 
   useEffect(() => {
     const clickFuera = (e) => {
@@ -58,11 +65,24 @@ const Crear_lote_agro = () => {
     return () => document.removeEventListener("mousedown", clickFuera);
   }, []);
 
+  // Auto-scroll del contenedor de iconos para que el último no quede oculto
+  useEffect(() => {
+    if (!iconListRef.current) return;
+    if (location.pathname.includes("/crearlote")) {
+      iconListRef.current.scrollTo({
+        top: iconListRef.current.scrollHeight,
+        behavior: "instant",
+      });
+    } else {
+      iconListRef.current.scrollTo({ top: 0, behavior: "instant" });
+    }
+  }, [location.pathname]);
+
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const agregarLote = () => {
     if (!formData.finca || !formData.lote || !formData.coordenadas || !formData.area || !formData.cultivo) return;
-    setLotes([...lotes, { ...formData }]);
+    setLotes((prev) => [...prev, { ...formData }]);
     setFormData({ finca: "", lote: "", coordenadas: "", area: "", cultivo: "" });
   };
 
@@ -87,7 +107,7 @@ const Crear_lote_agro = () => {
     )
     .sort((a, b) => {
       if (!ordenCampo) return 0;
-      const { campo, orden } = ordenCampo;
+      const { campo, orden } = ordenCampo || {};
       return orden === "asc"
         ? a[campo]?.toString().localeCompare(b[campo]?.toString())
         : b[campo]?.toString().localeCompare(a[campo]?.toString());
@@ -115,76 +135,56 @@ const Crear_lote_agro = () => {
     <div className="flex">
       {/* Sidebar */}
       <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
-        {/* Logo fijo con sticky */}
+        {/* Logo */}
         <div className="sticky top-0 mb-6 bg-green-600 z-10">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11 mx-auto" />
         </div>
 
-        {/* Iconos con scroll */}
-        <div className="flex-1 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only">
-          {/* Icono activo */}
+        {/* Íconos con scroll */}
+        <div
+          ref={iconListRef}
+          className="flex-1 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only pb-24"
+        >
+          <button onClick={() => navigate("/Homeagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Inicio">
+            <IconHome className="text-white w-11 h-11" />
+          </button>
+          <button onClick={() => navigate("/Laboresagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Labores">
+            <IconClipboardList className="text-white w-11 h-11" />
+          </button>
+          <button onClick={() => navigate("/Informesagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Informes">
+            <IconChartBar className="text-white w-11 h-11" />
+          </button>
+          <button onClick={() => navigate("/Bodegaagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Bodega">
+            <IconBox className="text-white w-11 h-11" />
+          </button>
+          <button onClick={() => navigate("/variablesclimaticas")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Variables climáticas">
+            <IconCloudRain className="text-white w-11 h-11" />
+          </button>
+          <button onClick={() => navigate("/maquinariaequipos")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Maquinaria y equipos">
+            <IconTractor className="text-white w-11 h-11" />
+          </button>
+          <button onClick={() => navigate("/manejopersonal")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Manejo personal">
+            <IconUsersGroup className="text-white w-11 h-11" />
+          </button>
+          <button onClick={() => navigate("/crearfinca")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Gestión finca">
+            <IconPlant className="text-white w-11 h-11" />
+          </button>
+
+          {/* Gestión lote (activo) */}
           <div className="relative">
             <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
             <button
-              onClick={() => navigate("/Homeagro")}
-              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-              <IconHome className="text-white w-11 h-11" />
+              onClick={() => navigate("/crearlote")}
+              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+              title="Gestión lote"
+            >
+              <IconFrame className="text-white w-11 h-11" />
             </button>
           </div>
-
-          {/* Navegación */}
-          <button
-            onClick={() => navigate("/Laboresagro")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
-            <IconClipboardList className="text-white w-11 h-11" />
-          </button>
-          <button
-            onClick={() => navigate("/Informesagro")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
-            <IconChartBar className="text-white w-11 h-11" />
-          </button>
-          <button
-            onClick={() => navigate("/Bodegaagro")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
-            <IconBox className="text-white w-11 h-11" />
-          </button>
-          <button
-            onClick={() => navigate("/variablesclimaticas")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
-            <IconCloudRain className="text-white w-11 h-11" />
-          </button>
-          <button
-            onClick={() => navigate("/maquinariaequipos")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
-            <IconTractor className="text-white w-11 h-11" />
-          </button>
-          <button
-            onClick={() => navigate("/manejopersonal")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
-            <IconUsersGroup className="text-white w-11 h-11" />
-          </button>
-          <button
-            onClick={() => navigate("/crearfinca")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
-            <IconPlant className="text-white w-11 h-11" />
-          </button>
-          <button
-            onClick={() => navigate("/crearlote")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
-            <IconFrame className="text-white w-11 h-11" />
-          </button>
         </div>
 
-        {/* Perfil flotante */}
-        <div className="relative mb-4">
+        {/* Perfil */}
+        <div className="relative mb-4 mt-auto">
           <button
             onClick={() => setMostrarTarjetaPerfil(!mostrarTarjetaPerfil)}
             className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
@@ -241,23 +241,53 @@ const Crear_lote_agro = () => {
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
               <label className="font-bold block mb-1">Finca</label>
-              <input name="finca" value={formData.finca} onChange={handleChange} placeholder="Nombre finca" className="w-full p-2 border rounded" />
+              <input
+                name="finca"
+                value={formData.finca}
+                onChange={handleChange}
+                placeholder="Nombre finca"
+                className="w-full p-2 border rounded"
+              />
             </div>
             <div>
               <label className="font-bold block mb-1">Número de lote</label>
-              <input name="lote" value={formData.lote} onChange={handleChange} placeholder="Número" className="w-full p-2 border rounded" />
+              <input
+                name="lote"
+                value={formData.lote}
+                onChange={handleChange}
+                placeholder="Número"
+                className="w-full p-2 border rounded"
+              />
             </div>
             <div>
               <label className="font-bold block mb-1">Coordenadas</label>
-              <input name="coordenadas" value={formData.coordenadas} onChange={handleChange} placeholder="Coordenadas" className="w-full p-2 border rounded" />
+              <input
+                name="coordenadas"
+                value={formData.coordenadas}
+                onChange={handleChange}
+                placeholder="Coordenadas"
+                className="w-full p-2 border rounded"
+              />
             </div>
             <div>
               <label className="font-bold block mb-1">Área lote</label>
-              <input name="area" value={formData.area} onChange={handleChange} placeholder="Área" className="w-full p-2 border rounded" />
+              <input
+                name="area"
+                value={formData.area}
+                onChange={handleChange}
+                placeholder="Área"
+                className="w-full p-2 border rounded"
+              />
             </div>
             <div className="col-span-1">
               <label className="font-bold block mb-1">Cultivo</label>
-              <input name="cultivo" value={formData.cultivo} onChange={handleChange} placeholder="Tipo cultivo" className="w-full p-2 border rounded" />
+              <input
+                name="cultivo"
+                value={formData.cultivo}
+                onChange={handleChange}
+                placeholder="Tipo cultivo"
+                className="w-full p-2 border rounded"
+              />
             </div>
           </div>
           <button onClick={agregarLote} className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
@@ -327,7 +357,9 @@ const Crear_lote_agro = () => {
               className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60 text-left text-sm"
               style={{ top: posicionTarjeta.top, left: posicionTarjeta.left }}
             >
-              <div className="font-semibold mb-2">Filtrar por {filtroActivo.charAt(0).toUpperCase() + filtroActivo.slice(1)}</div>
+              <div className="font-semibold mb-2">
+                Filtrar por {filtroActivo.charAt(0).toUpperCase() + filtroActivo.slice(1)}
+              </div>
               <input
                 type="text"
                 placeholder="Buscar..."
@@ -356,7 +388,9 @@ const Crear_lote_agro = () => {
         </div>
 
         <div className="flex justify-center mt-6">
-          <button className="bg-green-600 text-white text-lg px-6 py-3 rounded-lg hover:bg-green-700 font-bold">Guardar cambios</button>
+          <button className="bg-green-600 text-white text-lg px-6 py-3 rounded-lg hover:bg-green-700 font-bold">
+            Guardar cambios
+          </button>
         </div>
       </div>
     </div>

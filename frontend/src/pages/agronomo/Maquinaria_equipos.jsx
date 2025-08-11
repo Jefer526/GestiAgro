@@ -348,14 +348,16 @@ const Maquinaria_equipos = () => {
           >
             Registrar nueva máquina
           </button>
-          <button className="bg-green-600 text-white px-7 py-2.5 rounded-lg hover:bg-green-700 text-lg font-semibold">
-            Exportar
-          </button>
+
           <button
             onClick={() => navigate("/actualizarmaquina")}
             className="bg-green-600 text-white px-7 py-2.5 rounded-lg hover:bg-green-700 text-lg font-semibold"
           >
-            Actualizar estado
+            Registrar novedad
+          </button>
+
+          <button className="bg-green-600 text-white px-7 py-2.5 rounded-lg hover:bg-green-700 text-lg font-semibold">
+            Exportar
           </button>
         </div>
       </div>

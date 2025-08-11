@@ -30,6 +30,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 const Variables_climaticas = () => {
   const navigate = useNavigate();
   const [filtro, setFiltro] = useState("Día");
+  const [finca, setFinca] = useState("Todas");
 
   // Datos para la gráfica
   const data = {
@@ -54,13 +55,12 @@ const Variables_climaticas = () => {
   };
 
   // Usuario y estado tarjeta perfil
-  const nombreUsuario = "Juan Pérez"; // Puedes reemplazarlo con el nombre real
+  const nombreUsuario = "Juan Pérez";
   const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
 
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
   const tarjetaRef = useRef(null);
 
-  // Cierra la tarjeta si haces clic fuera
   useEffect(() => {
     const manejarClickFuera = (e) => {
       if (tarjetaRef.current && !tarjetaRef.current.contains(e.target)) {
@@ -72,9 +72,9 @@ const Variables_climaticas = () => {
   }, []);
 
   return (
-    <div className="flex">
-      {/* Sidebar */}
-      <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
+    <div className="min-h-screen">
+      {/* Sidebar fijo */}
+      <div className="fixed left-0 top-0 bottom-0 bg-green-600 w-28 flex flex-col items-center py-6 justify-between">
         {/* Logo fijo con sticky */}
         <div className="sticky top-0 mb-6 bg-green-600 z-10">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11 mx-auto" />
@@ -193,25 +193,41 @@ const Variables_climaticas = () => {
         </div>
       </div>
 
-      {/* Contenido principal */}
-      <div className="flex-1 p-10 overflow-auto">
+      {/* Contenido principal (desplazado a la derecha del sidebar fijo) */}
+      <div className="ml-28 p-10 overflow-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-green-700">Variables climáticas</h1>
           <span className="text-2xl text-black font-bold">Hacienda La esmeralda</span>
         </div>
 
         {/* Filtros */}
-        <div className="mb-6">
-          <label className="text-black font-semibold mr-2">Filtrar por:</label>
-          <select
-            value={filtro}
-            onChange={(e) => setFiltro(e.target.value)}
-            className="border border-gray-300 rounded px-4 py-1"
-          >
-            <option>Día</option>
-            <option>Mes</option>
-            <option>Año</option>
-          </select>
+        <div className="mb-6 flex flex-wrap items-center gap-4">
+          <div>
+            <label className="text-black font-semibold mr-2">Finca:</label>
+            <select
+              value={finca}
+              onChange={(e) => setFinca(e.target.value)}
+              className="border border-gray-300 rounded px-4 py-1"
+            >
+              <option>Todas</option>
+              <option>La esmeralda</option>
+              <option>La Carolina</option>
+              <option>Las Palmas</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="text-black font-semibold mr-2">Filtrar por:</label>
+            <select
+              value={filtro}
+              onChange={(e) => setFiltro(e.target.value)}
+              className="border border-gray-300 rounded px-4 py-1"
+            >
+              <option>Día</option>
+              <option>Mes</option>
+              <option>Año</option>
+            </select>
+          </div>
         </div>
 
         {/* Fecha */}
@@ -267,6 +283,8 @@ const Variables_climaticas = () => {
 };
 
 export default Variables_climaticas;
+
+
 
 
 

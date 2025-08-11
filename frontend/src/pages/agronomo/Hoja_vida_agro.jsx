@@ -16,6 +16,7 @@ import {
   IconSortDescending2,
   IconTool,
   IconLogout,
+  IconEye,
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 import { useNavigate } from "react-router-dom";
@@ -31,7 +32,7 @@ const Hoja_vida = () => {
 
   // Datos de la máquina y historial
   const maquina = {
-    id: 1,
+    codigo: 1,
     maquina: "Tractor",
     referencia: "JD 5055",
     ubicacion: "La Esmeralda",
@@ -39,10 +40,14 @@ const Hoja_vida = () => {
   };
 
   const historial = [
-    { fecha: "2025-05-20", prev: true, correcc: false, descripcion: "Mantenimiento 1500 horas", realizado: "John Deere" },
-    { fecha: "2025-05-21", prev: false, correcc: true, descripcion: "Reparación Radiador", realizado: "Alex Condza" },
-    { fecha: "2025-05-22", prev: false, correcc: false, descripcion: "Cambio Refrigerante", realizado: "Alex Condza" },
-    { fecha: "2025-05-23", prev: false, correcc: false, descripcion: "Cambio de llantas", realizado: "Montalantas" },
+    { fecha: "2025-05-20", prev: true, correcc: false, descripcion: "Mantenimiento 1500 horas", realizado: "John Deere",
+      codigoEquipo: "1", maquina: "Tractor", referencia: "JD 5055", ubicacion: "La Esmeralda", estado: "Óptimo", tipo: "Preventivo", realizadoPor: "John Deere" },
+    { fecha: "2025-05-21", prev: false, correcc: true,  descripcion: "Reparación Radiador",   realizado: "Alex Condza",
+      codigoEquipo: "1", maquina: "Tractor", referencia: "JD 5055", ubicacion: "La Esmeralda", estado: "Mantenimiento", tipo: "Correctivo", realizadoPor: "Alex Condza" },
+    { fecha: "2025-05-22", prev: false, correcc: false, descripcion: "Cambio Refrigerante",    realizado: "Alex Condza",
+      codigoEquipo: "1", maquina: "Tractor", referencia: "JD 5055", ubicacion: "La Esmeralda", estado: "En operación", tipo: "Preventivo", realizadoPor: "Alex Condza" },
+    { fecha: "2025-05-23", prev: false, correcc: false, descripcion: "Cambio de llantas",      realizado: "Montalantas",
+      codigoEquipo: "1", maquina: "Tractor", referencia: "JD 5055", ubicacion: "La Esmeralda", estado: "Óptimo", tipo: "Correctivo", realizadoPor: "Montalantas" },
   ];
 
   const columnas = [
@@ -51,11 +56,12 @@ const Hoja_vida = () => {
     { campo: "correcc", label: "Mantenimiento correctivo" },
     { campo: "descripcion", label: "Descripción" },
     { campo: "realizado", label: "Realizado" },
+    { campo: "detalle", label: "Detalle" },
   ];
 
   // Funciones para filtros y ordenamientos
   const getValoresUnicos = (campo) => {
-    if (campo === "fecha" || campo === "descripcion") return [];
+    if (campo === "fecha" || campo === "descripcion" || campo === "detalle") return [];
     const search = (busquedas[campo] || "").toLowerCase();
     return [...new Set(historial.map((e) => {
       if (typeof e[campo] === "boolean") return e[campo] ? "Sí" : "No";
@@ -64,7 +70,7 @@ const Hoja_vida = () => {
   };
 
   const toggleFiltro = (campo, e) => {
-    if (campo === "descripcion") return;
+    if (campo === "descripcion" || campo === "detalle") return;
     const icono = e.currentTarget.getBoundingClientRect();
     const anchoVentana = window.innerWidth;
     const espacioDerecha = anchoVentana - icono.right;
@@ -100,6 +106,7 @@ const Hoja_vida = () => {
   const historialFiltrado = historial
     .filter((item) =>
       columnas.every(({ campo }) => {
+        if (campo === "detalle") return true;
         const val = typeof item[campo] === "boolean" ? (item[campo] ? "Sí" : "No") : item[campo];
         return !valoresSeleccionados[campo] || valoresSeleccionados[campo].length === 0
           ? true
@@ -114,8 +121,8 @@ const Hoja_vida = () => {
       return orden === "asc" ? valA.localeCompare(valB) : valB.localeCompare(valA);
     });
 
-  // Estado y lógica para menú flotante de perfil
-  const nombreUsuario = "Juan Pérez"; // Cambiar por usuario real si tienes context
+  // Menú flotante de perfil
+  const nombreUsuario = "Juan Pérez";
   const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
   const tarjetaRef = useRef(null);
@@ -144,75 +151,44 @@ const Hoja_vida = () => {
     <div className="flex">
       {/* Sidebar */}
       <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
-        {/* Logo fijo con sticky */}
         <div className="sticky top-0 mb-6 bg-green-600 z-10">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11 mx-auto" />
         </div>
 
-        {/* Iconos con scroll */}
         <div className="flex-1 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only">
-          {/* Icono activo */}
           <div className="relative">
             <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            <button
-              onClick={() => navigate("/Homeagro")}
-              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+            <button onClick={() => navigate("/Homeagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
               <IconHome className="text-white w-11 h-11" />
             </button>
           </div>
 
-          {/* Navegación */}
-          <button
-            onClick={() => navigate("/Laboresagro")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
+          <button onClick={() => navigate("/Laboresagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconClipboardList className="text-white w-11 h-11" />
           </button>
-          <button
-            onClick={() => navigate("/Informesagro")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
+          <button onClick={() => navigate("/Informesagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconChartBar className="text-white w-11 h-11" />
           </button>
-          <button
-            onClick={() => navigate("/Bodegaagro")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
+          <button onClick={() => navigate("/Bodegaagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconBox className="text-white w-11 h-11" />
           </button>
-          <button
-            onClick={() => navigate("/variablesclimaticas")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
+          <button onClick={() => navigate("/variablesclimaticas")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconCloudRain className="text-white w-11 h-11" />
           </button>
-          <button
-            onClick={() => navigate("/maquinariaequipos")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
+          <button onClick={() => navigate("/maquinariaequipos")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconTractor className="text-white w-11 h-11" />
           </button>
-          <button
-            onClick={() => navigate("/manejopersonal")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
+          <button onClick={() => navigate("/manejopersonal")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconUsersGroup className="text-white w-11 h-11" />
           </button>
-          <button
-            onClick={() => navigate("/crearfinca")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
+          <button onClick={() => navigate("/crearfinca")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconPlant className="text-white w-11 h-11" />
           </button>
-          <button
-            onClick={() => navigate("/crearlote")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
+          <button onClick={() => navigate("/crearlote")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconFrame className="text-white w-11 h-11" />
           </button>
         </div>
 
-        {/* Botón perfil con tarjeta */}
         <div className="relative mb-4">
           <button
             onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
@@ -276,21 +252,11 @@ const Hoja_vida = () => {
         <div className="bg-white border border-gray-300 p-6 rounded-xl mb-6 max-w-4xl">
           <h2 className="text-2xl font-bold mb-4 text-green-600">Información general</h2>
           <div className="grid grid-cols-2 gap-x-12 gap-y-2 text-lg">
-            <div>
-              <strong>ID Máquina:</strong> {maquina.id}
-            </div>
-            <div>
-              <strong>Ubicación:</strong> {maquina.ubicacion}
-            </div>
-            <div>
-              <strong>Máquina:</strong> {maquina.maquina}
-            </div>
-            <div>
-              <strong>Estado:</strong> {maquina.estado}
-            </div>
-            <div>
-              <strong>Referencia:</strong> {maquina.referencia}
-            </div>
+            <div><strong>Código Equipo:</strong> {maquina.codigo}</div>
+            <div><strong>Ubicación:</strong> {maquina.ubicacion}</div>
+            <div><strong>Máquina:</strong> {maquina.maquina}</div>
+            <div><strong>Estado:</strong> {maquina.estado}</div>
+            <div><strong>Referencia:</strong> {maquina.referencia}</div>
           </div>
         </div>
 
@@ -303,7 +269,7 @@ const Hoja_vida = () => {
                   <th key={campo} className="p-3 border">
                     <div className="flex items-center justify-center gap-2">
                       <span>{label.toUpperCase()}</span>
-                      {campo !== "descripcion" && (
+                      {campo !== "descripcion" && campo !== "detalle" && (
                         <button onClick={(e) => toggleFiltro(campo, e)}>
                           <IconFilter className="w-4 h-4" />
                         </button>
@@ -321,6 +287,18 @@ const Hoja_vida = () => {
                   <td className="p-3 border">{item.correcc ? "Sí" : "No"}</td>
                   <td className="p-3 border">{item.descripcion}</td>
                   <td className="p-3 border">{item.realizado}</td>
+                  <td className="p-3 border">
+                    <div className="flex justify-center">
+                      <button
+                        onClick={() => navigate("/detalle_mantenimiento", { state: item })}
+                        className="flex items-center gap-2 px-3 py-1 rounded-md bg-blue-100 text-blue-700 hover:bg-blue-200 transition"
+                        title="Ver detalle"
+                      >
+                        <IconEye className="w-4 h-4" />
+                        <span className="text-sm font-medium">Detalle</span>
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -338,16 +316,10 @@ const Hoja_vida = () => {
 
               {filtroActivo !== "fecha" ? (
                 <>
-                  <button
-                    onClick={() => ordenar(filtroActivo, "asc")}
-                    className="text-green-700 flex items-center gap-1 mb-1"
-                  >
+                  <button onClick={() => ordenar(filtroActivo, "asc")} className="text-green-700 flex items-center gap-1 mb-1">
                     <IconSortAscending2 className="w-4 h-4" /> Ordenar A → Z
                   </button>
-                  <button
-                    onClick={() => ordenar(filtroActivo, "desc")}
-                    className="text-green-700 flex items-center gap-1 mb-2"
-                  >
+                  <button onClick={() => ordenar(filtroActivo, "desc")} className="text-green-700 flex items-center gap-1 mb-2">
                     <IconSortDescending2 className="w-4 h-4" /> Ordenar Z → A
                   </button>
                   <input
@@ -410,10 +382,7 @@ const Hoja_vida = () => {
                 </>
               )}
 
-              <button
-                onClick={() => limpiarFiltro(filtroActivo)}
-                className="text-blue-600 hover:underline text-xs lowercase mt-2"
-              >
+              <button onClick={() => limpiarFiltro(filtroActivo)} className="text-blue-600 hover:underline text-xs lowercase mt-2">
                 borrar filtro
               </button>
             </div>
@@ -425,7 +394,7 @@ const Hoja_vida = () => {
             onClick={() => navigate("/registrar_mantenimiento")}
             className="bg-green-600 hover:bg-green-700 text-white font-semibold text-lg px-6 py-3 rounded-lg"
           >
-            Registrar mantenimiento
+            Registrar novedad
           </button>
           <button className="bg-green-600 hover:bg-green-700 text-white font-semibold text-lg px-6 py-3 rounded-lg">
             Descargar PDF
@@ -437,6 +406,9 @@ const Hoja_vida = () => {
 };
 
 export default Hoja_vida;
+
+
+
 
 
 
