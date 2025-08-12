@@ -350,7 +350,7 @@ const Maquinaria_equipos = () => {
           </button>
 
           <button
-            onClick={() => navigate("/actualizarmaquina")}
+            onClick={() => navigate("/registrarnovedad")}
             className="bg-green-600 text-white px-7 py-2.5 rounded-lg hover:bg-green-700 text-lg font-semibold"
           >
             Registrar novedad

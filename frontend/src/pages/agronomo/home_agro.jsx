@@ -37,6 +37,7 @@ const Home_agro = () => {
     {
       icon: <IconClipboardList className="w-8 h-8" />,
       label: "Seguimiento de labores",
+      desc: "Monitorea y registra las labores agrícolas.",
       ruta: "/Laboresagro",
       gradient: "from-emerald-500/20 to-green-500/20",
       ring: "ring-emerald-300/40",
@@ -46,6 +47,7 @@ const Home_agro = () => {
     {
       icon: <IconChartBar className="w-8 h-8" />,
       label: "Informes",
+      desc: "Consulta reportes y análisis de producción.",
       ruta: "/Informesagro",
       gradient: "from-sky-500/20 to-blue-500/20",
       ring: "ring-sky-300/40",
@@ -55,6 +57,7 @@ const Home_agro = () => {
     {
       icon: <IconBox className="w-8 h-8" />,
       label: "Bodega",
+      desc: "Gestiona insumos y existencias.",
       ruta: "/Bodegaagro",
       gradient: "from-amber-500/20 to-orange-500/20",
       ring: "ring-amber-300/40",
@@ -64,6 +67,7 @@ const Home_agro = () => {
     {
       icon: <IconCloudRain className="w-8 h-8" />,
       label: "Variables climáticas",
+      desc: "Registra lluvia, temperatura y más.",
       ruta: "/variablesclimaticas",
       gradient: "from-cyan-500/20 to-sky-500/20",
       ring: "ring-cyan-300/40",
@@ -73,6 +77,7 @@ const Home_agro = () => {
     {
       icon: <IconTractor className="w-8 h-8" />,
       label: "Maquinaria y equipos",
+      desc: "Controla equipos y mantenimientos.",
       ruta: "/maquinariaequipos",
       gradient: "from-lime-500/20 to-green-500/20",
       ring: "ring-lime-300/40",
@@ -82,6 +87,7 @@ const Home_agro = () => {
     {
       icon: <IconUsersGroup className="w-8 h-8" />,
       label: "Manejo personal",
+      desc: "Administra personal y roles.",
       ruta: "/manejopersonal",
       gradient: "from-purple-500/20 to-fuchsia-500/20",
       ring: "ring-purple-300/40",
@@ -91,6 +97,7 @@ const Home_agro = () => {
     {
       icon: <IconPlant className="w-8 h-8" />,
       label: "Gestión finca",
+      desc: "Registra y administra fincas.",
       ruta: "/crearfinca",
       gradient: "from-teal-500/20 to-emerald-500/20",
       ring: "ring-teal-300/40",
@@ -100,6 +107,7 @@ const Home_agro = () => {
     {
       icon: <IconFrame className="w-8 h-8" />,
       label: "Gestión lote",
+      desc: "Control y registro de lotes agrícolas.",
       ruta: "/crearlote",
       gradient: "from-rose-500/20 to-pink-500/20",
       ring: "ring-rose-300/40",
@@ -108,7 +116,7 @@ const Home_agro = () => {
     },
   ];
 
-   return (
+  return (
     <div className="flex">
       {/* Sidebar */}
       <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
@@ -127,7 +135,7 @@ const Home_agro = () => {
             </button>
           </div>
 
-           {/* Navegación */}
+          {/* Navegación */}
           <button onClick={() => navigate("/Laboresagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconClipboardList className="text-white w-11 h-11" />
           </button>
@@ -193,7 +201,7 @@ const Home_agro = () => {
 
         {/* Tarjetas */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {opciones.map(({ icon, label, ruta, gradient, ring, iconBg, text }, i) => (
+          {opciones.map(({ icon, label, desc, ruta, gradient, ring, iconBg, text }, i) => (
             <button
               key={i}
               onClick={() => navigate(ruta)}
@@ -213,7 +221,7 @@ const Home_agro = () => {
                 </div>
                 <div className="flex-1">
                   <h3 className="text-xl font-semibold text-slate-800">{label}</h3>
-                  <p className="text-slate-600 text-base">Entrar</p>
+                  <p className="text-slate-600 text-base">{desc}</p>
                 </div>
                 <IconChevronRight className="w-5 h-5 text-slate-400 transition-transform group-hover:translate-x-0.5" />
               </div>

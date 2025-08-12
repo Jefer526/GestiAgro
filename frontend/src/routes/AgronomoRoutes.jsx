@@ -16,7 +16,7 @@ import Historial_trabajo_agro from "../pages/agronomo/Historial_trabajo_agro";
 import Registrar_mantenimiento from "../pages/agronomo/Registrar_mantenimiento";
 import Manejo_personal_agro from "../pages/agronomo/Manejo_personal_agro";
 import Registrar_empleado from "../pages/agronomo/Registrar_empleado";
-import Actualizar_estado from "../pages/agronomo/Actualizar_estado";
+import Registrar_novedad_agro from "../pages/agronomo/Registrar_novedad_agro";
 import Crear_finca_agro from "../pages/agronomo/Crear_finca_agro";
 import Editar_finca from "../pages/agronomo/Editar_finca";
 import Crear_lote_agro from "../pages/agronomo/Crear_lote_agro";
@@ -43,7 +43,7 @@ const agronomoRoutes = [
   <Route key="registrar-mantenimiento" path="/registrar_mantenimiento" element={<Registrar_mantenimiento />} />,
   <Route key="manejo-personal" path="/manejopersonal" element={<Manejo_personal_agro />} />,
   <Route key="registrar-empleado" path="/registrarempleado" element={<Registrar_empleado />} />,
-  <Route key="actualizar-estado" path="/actualizarestado" element={<Actualizar_estado />} />,
+  <Route key="registrar-novedad-agro" path="/registrarnovedad" element={<Registrar_novedad_agro />} />,
   <Route key="crear-finca" path="/crearfinca" element={<Crear_finca_agro />} />,
   <Route key="editar-finca" path="/editarfinca" element={<Editar_finca />} />,
   <Route key="crear-lote" path="/crearlote" element={<Crear_lote_agro />} />,

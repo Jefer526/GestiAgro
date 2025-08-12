@@ -12,6 +12,8 @@ import {
   IconSettings,
   IconTool,
   IconLogout,
+  IconTemperature,
+  IconDroplet,
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 import { Bar } from "react-chartjs-2";
@@ -87,7 +89,8 @@ const Variables_climaticas = () => {
             <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
             <button
               onClick={() => navigate("/Homeagro")}
-              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+            >
               <IconHome className="text-white w-11 h-11" />
             </button>
           </div>
@@ -156,7 +159,7 @@ const Variables_climaticas = () => {
           {mostrarTarjeta && (
             <div
               ref={tarjetaRef}
-              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-grey-300 rounded-xl shadow-2xl py-3 z-50"
+              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
             >
               <button
                 onClick={() => {
@@ -249,29 +252,72 @@ const Variables_climaticas = () => {
           </button>
         </div>
 
-        {/* Tarjetas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white border shadow-md shadow-green-400/50 rounded-lg p-6 text-center">
-            <div className="text-2xl">🌧️</div>
-            <p className="text-lg font-semibold">5 mm</p>
-            <p className="text-sm">Precipitaciones</p>
-          </div>
-          <div className="bg-white border shadow-md shadow-green-400/50 rounded-lg p-6 text-center">
-            <div className="text-2xl">🌡️</div>
-            <p className="text-lg font-semibold">15 C</p>
-            <p className="text-sm">Temperatura Mínima</p>
-          </div>
-          <div className="bg-white border shadow-md shadow-green-400/50 rounded-lg p-6 text-center">
-            <div className="text-2xl">🌡️</div>
-            <p className="text-lg font-semibold">30 C</p>
-            <p className="text-sm">Temperatura Máxima</p>
-          </div>
-          <div className="bg-white border shadow-md shadow-green-400/50 rounded-lg p-6 text-center">
-            <div className="text-2xl">💧</div>
-            <p className="text-lg font-semibold">90 %</p>
-            <p className="text-sm">Humedad Relativa</p>
-          </div>
-        </div>
+        {/* Tarjetas (colores vivos, sin relleno de tarjeta) */}
+        <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+          {[
+            {
+              title: "Precipitaciones",
+              value: "5",
+              unit: "mm",
+              icon: <IconCloudRain className="w-6 h-6" />,
+              ring: "ring-sky-500/50",
+              iconBg: "bg-sky-100",
+              iconText: "text-sky-700",
+            },
+            {
+              title: "Temperatura mínima",
+              value: "15",
+              unit: "°C",
+              icon: <IconTemperature className="w-6 h-6" />,
+              ring: "ring-indigo-500/50",
+              iconBg: "bg-indigo-100",
+              iconText: "text-indigo-700",
+            },
+            {
+              title: "Temperatura máxima",
+              value: "30",
+              unit: "°C",
+              icon: <IconTemperature className="w-6 h-6" />,
+              ring: "ring-amber-500/50",
+              iconBg: "bg-amber-100",
+              iconText: "text-amber-700",
+            },
+            {
+              title: "Humedad relativa",
+              value: "90",
+              unit: "%",
+              icon: <IconDroplet className="w-6 h-6" />,
+              ring: "ring-emerald-500/50",
+              iconBg: "bg-emerald-100",
+              iconText: "text-emerald-700",
+            },
+          ].map((c, i) => (
+            <div
+              key={i}
+              className={[
+                "relative overflow-hidden rounded-2xl bg-white border",
+                "shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5",
+                "px-6 py-5 ring-1",
+                c.ring,
+              ].join(" ")}
+            >
+              <div className="flex items-center gap-4">
+                {/* Ícono */}
+                <div className={`${c.iconBg} ${c.iconText} rounded-xl p-3 shadow-sm border`}>
+                  {c.icon}
+                </div>
+                {/* Texto */}
+                <div>
+                  <p className="text-sm text-slate-500">{c.title}</p>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-2xl font-bold text-slate-900">{c.value}</span>
+                    <span className="text-slate-500 text-base">{c.unit}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </section>
 
         {/* Gráfica */}
         <div className="w-full h-[500px]">
@@ -283,6 +329,7 @@ const Variables_climaticas = () => {
 };
 
 export default Variables_climaticas;
+
 
 
 

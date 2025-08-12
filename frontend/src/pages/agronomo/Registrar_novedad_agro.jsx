@@ -17,12 +17,11 @@ import {
   IconCheck,
   IconDotsVertical,
   IconAlertTriangle,
-  IconCircle,
   IconCircleCheck,
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
-const Actualizar_maquina = () => {
+const RegistrarNovedadAgro = () => {
   const navigate = useNavigate();
 
   const nombreUsuario = "Juan Pérez";
@@ -76,6 +75,22 @@ const Actualizar_maquina = () => {
     return () => document.removeEventListener("mousedown", clickFuera);
   }, []);
 
+  // (Opcional) estilos del chip por estado
+  const estadoChip = (estado) => {
+    if (estado === "Averiado") {
+      return {
+        wrap: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full ring-1 text-sm font-semibold shadow-sm bg-red-50 text-red-700 ring-red-200",
+        icon: <IconAlertTriangle className="w-4 h-4" />,
+        label: "Averiado",
+      };
+    }
+    return {
+      wrap: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full ring-1 text-sm font-semibold shadow-sm bg-gray-50 text-gray-700 ring-gray-200",
+      icon: null,
+      label: estado,
+    };
+  };
+
   return (
     <div className="flex">
       {/* Sidebar */}
@@ -89,7 +104,8 @@ const Actualizar_maquina = () => {
             <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
             <button
               onClick={() => navigate("/Homeagro")}
-              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+            >
               <IconHome className="text-white w-11 h-11" />
             </button>
           </div>
@@ -171,55 +187,58 @@ const Actualizar_maquina = () => {
             </tr>
           </thead>
           <tbody>
-            {maquinas.map((m, index) => (
-              <tr key={m.id} className="border-b hover:bg-gray-50">
-                <td className="p-3 border">{m.id}</td>
-                <td className="p-3 border">{m.maquina}</td>
-                <td className="p-3 border">{m.referencia}</td>
-                <td className="p-3 border">
-                  <div className="relative inline-flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full ring-1 text-sm font-semibold shadow-sm bg-red-50 text-red-700 ring-red-200">
-                      <IconAlertTriangle className="w-4 h-4" /> Averiado
-                    </span>
-                    <button
-                      onClick={() => setMenuIndex(menuIndex === index ? null : index)}
-                      className="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-700 shadow-sm transition"
-                    >
-                      <IconDotsVertical className="w-5 h-5" />
-                    </button>
-                    {menuIndex === index && (
-                      <div
-                        ref={opcionesRef}
-                        className="absolute top-11 right-0 w-72 bg-white border border-gray-100 rounded-2xl shadow-2xl p-2 z-50"
+            {maquinas.map((m, index) => {
+              const chip = estadoChip(m.estado);
+              return (
+                <tr key={m.id} className="border-b hover:bg-gray-50">
+                  <td className="p-3 border">{m.id}</td>
+                  <td className="p-3 border">{m.maquina}</td>
+                  <td className="p-3 border">{m.referencia}</td>
+                  <td className="p-3 border">
+                    <div className="relative inline-flex items-center gap-2">
+                      <span className={chip.wrap}>
+                        {chip.icon} {chip.label}
+                      </span>
+                      <button
+                        onClick={() => setMenuIndex(menuIndex === index ? null : index)}
+                        className="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-700 shadow-sm transition"
                       >
-                        <div className="px-3 pt-2 pb-1 text-xs font-medium text-gray-500">
-                          Selecciona una opción
-                        </div>
-                        <button
-                          onClick={() => {
-                            handleEstadoChange(index, "Averiado");
-                            setMenuIndex(null);
-                          }}
-                          className="w-full flex items-center gap-3 px-3 py-3 rounded-xl transition text-left bg-red-50"
+                        <IconDotsVertical className="w-5 h-5" />
+                      </button>
+                      {menuIndex === index && (
+                        <div
+                          ref={opcionesRef}
+                          className="absolute top-11 right-0 w-72 bg-white border border-gray-100 rounded-2xl shadow-2xl p-2 z-50"
                         >
-                          <div className="shrink-0 inline-flex items-center justify-center w-8 h-8 rounded-lg border border-red-200">
-                            <IconCircleCheck className="w-5 h-5 text-red-600" />
+                          <div className="px-3 pt-2 pb-1 text-xs font-medium text-gray-500">
+                            Selecciona una opción
                           </div>
-                          <div>
-                            <div className="text-sm font-semibold text-red-700">
-                              Marcar como averiado
+                          <button
+                            onClick={() => {
+                              handleEstadoChange(index, "Averiado");
+                              setMenuIndex(null);
+                            }}
+                            className="w-full flex items-center gap-3 px-3 py-3 rounded-xl transition text-left bg-red-50"
+                          >
+                            <div className="shrink-0 inline-flex items-center justify-center w-8 h-8 rounded-lg border border-red-200">
+                              <IconCircleCheck className="w-5 h-5 text-red-600" />
                             </div>
-                            <div className="text-xs text-gray-500">
-                              El equipo quedará en estado “Averiado”.
+                            <div>
+                              <div className="text-sm font-semibold text-red-700">
+                                Marcar como averiado
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                El equipo quedará en estado “Averiado”.
+                              </div>
                             </div>
-                          </div>
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            ))}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
 
@@ -236,7 +255,8 @@ const Actualizar_maquina = () => {
   );
 };
 
-export default Actualizar_maquina;
+export default RegistrarNovedadAgro;
+
 
 
 
