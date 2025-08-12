@@ -18,7 +18,7 @@ import {
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
-const Registrar_mantenimiento = () => {
+const Registrar_novedad_hv = () => {
   const navigate = useNavigate();
 
   // Para la tarjeta flotante perfil
@@ -329,7 +329,7 @@ const Registrar_mantenimiento = () => {
   );
 };
 
-export default Registrar_mantenimiento;
+export default Registrar_novedad_hv;
 
 
 

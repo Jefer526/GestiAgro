@@ -129,8 +129,8 @@ const Labores_agro = () => {
           <div className="relative">
             <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
             <button onClick={() => navigate("/Homeagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconHome className="text-white w-11 h-11" />
-          </button>
+              <IconHome className="text-white w-11 h-11" />
+            </button>
           </div>
 
           {/* Navegación */}
@@ -207,7 +207,10 @@ const Labores_agro = () => {
             <thead className="bg-green-600 text-white">
               <tr>
                 {campos.map((campo, i) => (
-                  <th key={i} className="px-3 py-2 font-bold border relative">
+                  <th
+                    key={i}
+                    className="px-4 py-4 font-bold border relative"  // ← más grande
+                  >
                     <div className="flex items-center justify-center gap-2">
                       <span className="uppercase">{campo}</span>
                       <button onClick={(e) => toggleFiltro(campo, e)}>
@@ -216,8 +219,8 @@ const Labores_agro = () => {
                     </div>
                   </th>
                 ))}
-                <th className="px-3 py-2 font-bold border uppercase">avance</th>
-                <th className="px-3 py-2 font-bold border uppercase">detalle</th>
+                <th className="px-4 py-4 font-bold border uppercase">avance</th>
+                <th className="px-4 py-4 font-bold border uppercase">detalle</th>
               </tr>
             </thead>
             <tbody>
@@ -237,10 +240,10 @@ const Labores_agro = () => {
                       <span>{l.avance}%</span>
                     </div>
                   </td>
-                  <td className="px-3 py-2 border">
+                  <td className="px-3 py-2 border text-center">
                     <button
                       onClick={() => navigate("/historial", { state: { laborData: l } })}
-                      className="bg-blue-100 text-blue-700 px-4 py-2 rounded-lg flex items-center gap-1 text-xs font-medium hover:bg-blue-200 transition justify-center"
+                      className="bg-blue-100 text-blue-700 px-4 py-2 rounded-lg flex items-center gap-1 text-xs font-medium hover:bg-blue-200 transition justify-center mx-auto"
                     >
                       <IconEye className="w-4 h-4" />
                       Detalle
@@ -301,6 +304,7 @@ const Labores_agro = () => {
 };
 
 export default Labores_agro;
+
 
 
 

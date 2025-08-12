@@ -17,7 +17,7 @@ const empleadosIniciales = [
 const FINCAS = ["La Esmeralda", "La Carolina", "Las Palmas"];
 const ESTADOS = ["Activo", "Inactivo", "Vacaciones", "Suspendido"];
 
-const Actualizar_estado = () => {
+const Editar_empleado = () => {
   const navigate = useNavigate();
 
   const [empleados, setEmpleados] = useState(empleadosIniciales);
@@ -230,7 +230,7 @@ const Actualizar_estado = () => {
   );
 };
 
-export default Actualizar_estado;
+export default Editar_empleado;
 
 
 

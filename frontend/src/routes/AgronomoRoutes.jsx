@@ -10,13 +10,13 @@ import Variables_climaticas from "../pages/agronomo/Variables_climaticas";
 import Registrar_clima from "../pages/agronomo/Registrar_clima";
 import Maquinaria_equipos from "../pages/agronomo/Maquinaria_equipos";
 import Registrar_maquina from "../pages/agronomo/Registrar_maquina";
-import Actualizar_maquina from "../pages/agronomo/Actualizar_maquina";
+import Registrar_novedad_agro from "../pages/agronomo/Registrar_novedad_agro";
 import Hoja_vida_agro from "../pages/agronomo/Hoja_vida_agro";
 import Historial_trabajo_agro from "../pages/agronomo/Historial_trabajo_agro";
-import Registrar_mantenimiento from "../pages/agronomo/Registrar_mantenimiento";
+import Registrar_novedad_hv from "../pages/agronomo/Registrar_novedad_hv";
 import Manejo_personal_agro from "../pages/agronomo/Manejo_personal_agro";
 import Registrar_empleado from "../pages/agronomo/Registrar_empleado";
-import Registrar_novedad_agro from "../pages/agronomo/Registrar_novedad_agro";
+import Editar_empleado from "../pages/agronomo/Editar_empleado";
 import Crear_finca_agro from "../pages/agronomo/Crear_finca_agro";
 import Editar_finca from "../pages/agronomo/Editar_finca";
 import Crear_lote_agro from "../pages/agronomo/Crear_lote_agro";
@@ -24,6 +24,7 @@ import Editar_lote from "../pages/agronomo/Editar_lote";
 import Soporte_agro from "../pages/agronomo/Soporte_agro";
 import Ajustes_agro from "../pages/agronomo/Ajustes_agro";
 import Detalle_mantenimiento from "../pages/agronomo/Detalle_mantenimiento";
+
 
 const agronomoRoutes = [
   <Route key="home" path="/Homeagro" element={<Home_agro />} />,
@@ -37,13 +38,13 @@ const agronomoRoutes = [
   <Route key="registrar-clima" path="/Registrarclima" element={<Registrar_clima />} />,
   <Route key="maquinaria" path="/maquinariaequipos" element={<Maquinaria_equipos />} />,
   <Route key="registrar-maquina" path="/registrarmaquina" element={<Registrar_maquina />} />,
-  <Route key="actualizar-maquina" path="/actualizarmaquina" element={<Actualizar_maquina />} />,
+  <Route key="registrar-novedad-agro" path="/registrarnovedad" element={<Registrar_novedad_agro />} />,
   <Route key="hoja-vida" path="/hojadevida" element={<Hoja_vida_agro />} />,
   <Route key="historial-trabajo" path="/historialtrabajo" element={<Historial_trabajo_agro />} />,
-  <Route key="registrar-mantenimiento" path="/registrar_mantenimiento" element={<Registrar_mantenimiento />} />,
+  <Route key="registrar-novedad-hv" path="/registrarnovedadhv" element={<Registrar_novedad_hv />} />,
   <Route key="manejo-personal" path="/manejopersonal" element={<Manejo_personal_agro />} />,
   <Route key="registrar-empleado" path="/registrarempleado" element={<Registrar_empleado />} />,
-  <Route key="registrar-novedad-agro" path="/registrarnovedad" element={<Registrar_novedad_agro />} />,
+  <Route key="editar-empleado" path="/editarempleado" element={<Editar_empleado />} />,
   <Route key="crear-finca" path="/crearfinca" element={<Crear_finca_agro />} />,
   <Route key="editar-finca" path="/editarfinca" element={<Editar_finca />} />,
   <Route key="crear-lote" path="/crearlote" element={<Crear_lote_agro />} />,

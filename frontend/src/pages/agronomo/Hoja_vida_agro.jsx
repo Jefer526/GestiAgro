@@ -391,7 +391,7 @@ const Hoja_vida = () => {
 
         <div className="flex justify-center gap-10 mt-10">
           <button
-            onClick={() => navigate("/registrar_mantenimiento")}
+            onClick={() => navigate("/registrarnovedadhv")}
             className="bg-green-600 hover:bg-green-700 text-white font-semibold text-lg px-6 py-3 rounded-lg"
           >
             Registrar novedad

@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 import {
   IconHome, IconClipboardList, IconChartBar, IconCloudRain,
   IconTractor, IconSettings, IconBox, IconUsersGroup, IconPlant,
-  IconFrame, IconDownload, IconChevronLeft, IconEye, IconFilter,
+  IconFrame, IconChevronLeft, IconFilter,
   IconSortAscending2, IconSortDescending2, IconTool, IconLogout
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
@@ -12,7 +12,6 @@ import { useNavigate } from "react-router-dom";
 const Historial_labores = () => {
   const navigate = useNavigate();
 
-  // --- Datos e historial (igual que antes)
   const historialCompleto = [
     { fecha: "2025-06-15", actividad: "Siembra", responsable: "Carlos Andrés Pérez", observaciones: "Se sembraron 500 árboles", estado: "Cerrado" },
     { fecha: "2025-06-16", actividad: "Siembra", responsable: "María Fernanda Ríos", observaciones: "Se sembraron 120 árboles", estado: "Cerrado" },
@@ -30,7 +29,6 @@ const Historial_labores = () => {
 
   const columnas = ["fecha", "actividad", "responsable", "estado"];
 
-  // --- Estados y referencias para filtros (igual que antes)
   const [filtroActivo, setFiltroActivo] = useState(null);
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
@@ -38,13 +36,11 @@ const Historial_labores = () => {
   const [filtroPosicion, setFiltroPosicion] = useState({ top: 0, left: 0 });
   const filtroRef = useRef(null);
 
-  // --- Estados y referencias para menú flotante de perfil
-  const nombreUsuario = "Juan Pérez"; // Cambiar por el nombre real del usuario
+  const nombreUsuario = "Juan Pérez";
   const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
   const tarjetaRef = useRef(null);
 
-  // --- Funciones para filtros (igual que antes)
   const getValoresUnicos = (campo) => {
     const search = (busquedas[campo] || "").toLowerCase();
     return [...new Set(historialCompleto.map(e => e[campo]))].filter(v =>
@@ -81,7 +77,6 @@ const Historial_labores = () => {
     setBusquedas({ ...busquedas, [campo]: texto });
   };
 
-  // --- Filtrado y ordenamiento del historial (igual que antes)
   const historialFiltrado = historialCompleto
     .filter(item =>
       columnas.every(campo =>
@@ -98,13 +93,11 @@ const Historial_labores = () => {
         : b[campo].localeCompare(a[campo]);
     });
 
-  // --- Cerrar filtros al click fuera
   useEffect(() => {
     const clickFuera = (e) => {
       if (filtroRef.current && !filtroRef.current.contains(e.target)) {
         setFiltroActivo(null);
       }
-      // Cerrar tarjeta perfil si se clic afuera
       if (tarjetaRef.current && !tarjetaRef.current.contains(e.target)) {
         setMostrarTarjeta(false);
       }
@@ -117,22 +110,18 @@ const Historial_labores = () => {
     <div className="flex">
       {/* Sidebar */}
       <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
-        {/* Logo fijo */}
         <div className="mb-6">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
         </div>
 
-        {/* Iconos con scroll */}
         <div className="flex-1 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only">
-          {/* Icono activo */}
           <div className="relative">
             <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
             <button onClick={() => navigate("/Homeagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconHome className="text-white w-11 h-11" />
-          </button>
+              <IconHome className="text-white w-11 h-11" />
+            </button>
           </div>
 
-          {/* Navegación */}
           <button onClick={() => navigate("/Laboresagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconClipboardList className="text-white w-11 h-11" />
           </button>
@@ -158,9 +147,8 @@ const Historial_labores = () => {
             <IconFrame className="text-white w-11 h-11" />
           </button>
         </div>
-    
 
-        {/* Botón perfil con inicial fijo abajo */}
+        {/* Perfil */}
         <div className="relative mb-4">
           <button
             onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
@@ -202,14 +190,15 @@ const Historial_labores = () => {
 
       {/* Contenido */}
       <div className="flex-1 p-12 bg-[#f6f6f6] min-h-screen">
-        <h1 className="text-3xl font-bold text-green-600 mb-6">Historial labores</h1>
-
+        {/* Volver arriba */}
         <button
           onClick={() => navigate("/Laboresagro")}
-          className="flex items-center text-green-600 font-semibold mb-6 text-lg hover:underline"
+          className="flex items-center text-green-600 font-semibold mb-4 text-lg hover:underline"
         >
           <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
         </button>
+
+        <h1 className="text-3xl font-bold text-green-600 mb-6">Historial labores</h1>
 
         <div className="bg-white border border-gray-300 rounded-xl shadow-md mb-6 p-4 flex flex-wrap justify-between items-center">
           <div className="space-y-1 text-[15px]">
@@ -233,7 +222,7 @@ const Historial_labores = () => {
             <thead className="bg-green-600 text-white">
               <tr>
                 {columnas.map((col, idx) => (
-                  <th key={idx} className="px-6 py-4">
+                  <th key={idx} className="px-4 py-4 font-bold border">
                     <div className="flex justify-center items-center gap-2">
                       <span className="uppercase">{col}</span>
                       <button onClick={(e) => toggleFiltro(col, e)}>
@@ -242,17 +231,17 @@ const Historial_labores = () => {
                     </div>
                   </th>
                 ))}
-                <th className="px-6 py-4">OBSERVACIONES</th>
+                <th className="px-4 py-4 font-bold border uppercase">OBSERVACIONES</th>
               </tr>
             </thead>
             <tbody>
               {historialFiltrado.map((item, i) => (
                 <tr key={i} className="border-t hover:bg-gray-50 transition">
-                  <td className="px-6 py-4 border-gray-200">{item.fecha}</td>
-                  <td className="px-6 py-4 border-gray-200">{item.actividad}</td>
-                  <td className="px-6 py-4 border-gray-200">{item.responsable}</td>
-                  <td className="px-6 py-4 border-gray-200">{item.estado}</td>
-                  <td className="px-6 py-4 border-gray-200">{item.observaciones}</td>
+                  <td className="px-6 py-4 border border-gray-200">{item.fecha}</td>
+                  <td className="px-6 py-4 border border-gray-200">{item.actividad}</td>
+                  <td className="px-6 py-4 border border-gray-200">{item.responsable}</td>
+                  <td className="px-6 py-4 border border-gray-200">{item.estado}</td>
+                  <td className="px-6 py-4 border border-gray-200">{item.observaciones}</td>
                 </tr>
               ))}
             </tbody>
@@ -376,4 +365,6 @@ const Historial_labores = () => {
 };
 
 export default Historial_labores;
+
+
 

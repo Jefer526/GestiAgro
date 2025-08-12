@@ -344,9 +344,9 @@ const Manejo_personal_agro = () => {
         <div className="flex justify-center gap-8 mt-8">
           <button onClick={() => navigate("/registrarempleado")}
            className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 text-lg font-semibold">
-            Agregar empleado
+            Registrar empleado
           </button>
-          <button onClick={() => navigate("/actualizarestado")}
+          <button onClick={() => navigate("/editarempleado")}
           className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 text-lg font-semibold">
             Editar empleado
           </button>

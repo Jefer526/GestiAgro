@@ -256,10 +256,10 @@ const Bodega_agro = () => {
                   <td className="px-4 py-2 border">{d.ingrediente}</td>
                   <td className="px-4 py-2 border">{d.cantidad}</td>
                   <td className="px-4 py-2 border">{d.um}</td>
-                  <td className="px-4 py-2 border">
+                  <td className="px-4 py-2 border text-center">
                     <button
                       onClick={() => navigate("/Detallesagrop")}
-                      className="bg-blue-100 text-blue-800 px-4 py-1 rounded-full text-sm font-medium flex items-center gap-1 justify-center"
+                      className="bg-blue-100 text-blue-800 px-4 py-1 rounded-full text-sm font-medium flex items-center gap-1 justify-center mx-auto"
                     >
                       <IconEye className="w-4 h-4" />
                       Detalle
@@ -331,5 +331,6 @@ const Bodega_agro = () => {
 };
 
 export default Bodega_agro;
+
 
 
