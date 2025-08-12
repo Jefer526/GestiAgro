@@ -20,7 +20,12 @@ import faviconBlanco from "../../assets/favicon-blanco.png";
 
 const Regis_labores = () => {
   const navigate = useNavigate();
-  const [filas, setFilas] = useState([{}]);
+
+  // Sección 1: trabajadores de la misma finca
+  const [filasLocal, setFilasLocal] = useState([{}]);
+  // Sección 2: trabajadores de otra finca
+  const [filasOtraFinca, setFilasOtraFinca] = useState([]);
+
   const [alertaVisible, setAlertaVisible] = useState(false);
 
   // Datos perfil
@@ -40,12 +45,13 @@ const Regis_labores = () => {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const añadirFila = () => setFilas([...filas, {}]);
-  const eliminarFila = (index) => {
-    const nuevas = [...filas];
-    nuevas.splice(index, 1);
-    setFilas(nuevas);
-  };
+  // Agregar / eliminar filas por sección
+  const añadirFilaLocal = () => setFilasLocal((prev) => [...prev, {}]);
+  const añadirFilaOtra = () => setFilasOtraFinca((prev) => [...prev, {}]);
+  const eliminarFilaLocal = (idx) =>
+    setFilasLocal((prev) => prev.filter((_, i) => i !== idx));
+  const eliminarFilaOtra = (idx) =>
+    setFilasOtraFinca((prev) => prev.filter((_, i) => i !== idx));
 
   const handleRegistrar = () => {
     setAlertaVisible(true);
@@ -56,68 +62,108 @@ const Regis_labores = () => {
   };
 
   return (
-    <div className="flex">
-      {/* Sidebar */}
-      <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
+    <div className="min-h-[100dvh] bg-white">
+      {/* Sidebar fijo: siempre alto total del viewport */}
+      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col items-center py-6 justify-between">
         <div className="flex flex-col items-center space-y-8">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
-          <button onClick={() => navigate("/homemayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button
+            onClick={() => navigate("/homemayordomo")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+            title="Inicio"
+          >
             <IconHome className="text-white w-11 h-11" />
           </button>
+
+          {/* Opción activa con indicador */}
           <div className="relative w-full flex justify-center">
             <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full z-10" />
-            <button onClick={() => navigate("/registrolabores")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+            <button
+              onClick={() => navigate("/registrolabores")}
+              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+              title="Registrar labores"
+            >
               <IconClipboardList className="text-white w-11 h-11" />
             </button>
           </div>
-          <button onClick={() => navigate("/historial_labores")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+
+          <button
+            onClick={() => navigate("/historial_labores")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+            title="Historial labores"
+          >
             <IconHistory className="text-white w-11 h-11" />
           </button>
-          <button onClick={() => navigate("/bodega_insumos")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button
+            onClick={() => navigate("/bodega_insumos")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+            title="Bodega"
+          >
             <IconBox className="text-white w-11 h-11" />
           </button>
-          <button onClick={() => navigate("/variables_climaticasm")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button
+            onClick={() => navigate("/variables_climaticasm")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+            title="Variables climáticas"
+          >
             <IconCloudRain className="text-white w-11 h-11" />
           </button>
-          <button onClick={() => navigate("/informes_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button
+            onClick={() => navigate("/informes_mayordomo")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+            title="Informes"
+          >
             <IconChartBar className="text-white w-11 h-11" />
           </button>
-          <button onClick={() => navigate("/equipos_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button
+            onClick={() => navigate("/equipos_mayordomo")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+            title="Maquinaria"
+          >
             <IconTractor className="text-white w-11 h-11" />
           </button>
         </div>
 
-        {/* Botón perfil */}
+        {/* Perfil */}
         <div className="relative mb-6">
           <button
             onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
             className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
+            title="Perfil"
           >
             {letraInicial}
           </button>
 
-          {/* Tarjeta flotante */}
           {mostrarTarjeta && (
             <div
               ref={tarjetaRef}
               className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
             >
               <button
-                onClick={() => { setMostrarTarjeta(false); navigate("/ajustesmayordomo"); }}
+                onClick={() => {
+                  setMostrarTarjeta(false);
+                  navigate("/ajustesmayordomo");
+                }}
                 className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
               >
                 <IconSettings className="w-5 h-5 mr-2 text-green-600" />
                 Ajustes
               </button>
               <button
-                onClick={() => { setMostrarTarjeta(false); navigate("/soportemayordomo"); }}
+                onClick={() => {
+                  setMostrarTarjeta(false);
+                  navigate("/soportemayordomo");
+                }}
                 className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
               >
                 <IconTool className="w-5 h-5 mr-2 text-green-600" />
                 Soporte
               </button>
               <button
-                onClick={() => { setMostrarTarjeta(false); navigate("/login"); }}
+                onClick={() => {
+                  setMostrarTarjeta(false);
+                  navigate("/login");
+                }}
                 className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
               >
                 <IconLogout className="w-5 h-5 mr-2 text-red-600" />
@@ -126,10 +172,10 @@ const Regis_labores = () => {
             </div>
           )}
         </div>
-      </div>
+      </aside>
 
-      {/* Contenido principal */}
-      <div className="flex-1 p-10">
+      {/* Contenido principal a la derecha del sidebar */}
+      <main className="ml-28 min-h-[100dvh] p-10">
         {/* Alerta flotante */}
         {alertaVisible && (
           <div className="fixed top-3 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
@@ -137,11 +183,13 @@ const Regis_labores = () => {
           </div>
         )}
 
-        <h1 className="text-3xl font-bold text-green-700 mb-6">Registrar labores</h1>
+        <h1 className="text-3xl font-bold text-green-700 mb-6">
+          Registrar labores
+        </h1>
 
         <div className="flex justify-center">
           <div className="bg-white border border-gray-300 rounded-xl p-6 space-y-6 w-full max-w-5xl text-lg">
-            {/* Formulario */}
+            {/* Formulario principal */}
             <div className="grid md:grid-cols-2 gap-x-4 gap-y-6">
               <div>
                 <p className="font-bold mb-1">Finca</p>
@@ -166,12 +214,15 @@ const Regis_labores = () => {
               </div>
               <div>
                 <p className="font-bold mb-1">Fecha</p>
-                <input type="date" className="border border-gray-300 p-2 rounded-md text-lg w-full" />
+                <input
+                  type="date"
+                  className="border border-gray-300 p-2 rounded-md text-lg w-full"
+                />
               </div>
             </div>
 
-            {/* Tabla */}
-            <div className="border border-gray-300 rounded-xl p-4 mt-4">
+            {/* Tabla de registro */}
+            <div className="border border-gray-300 rounded-xl p-4 mt-4 overflow-x-auto">
               <table className="w-full text-left text-lg">
                 <thead>
                   <tr className="border-b border-gray-300">
@@ -183,9 +234,11 @@ const Regis_labores = () => {
                     <th className="p-2"></th>
                   </tr>
                 </thead>
+
+                {/* Sección: misma finca */}
                 <tbody>
-                  {filas.map((_, i) => (
-                    <tr key={i}>
+                  {filasLocal.map((_, i) => (
+                    <tr key={`local-${i}`}>
                       <td className="p-2 flex items-center">
                         <IconSearch className="w-5 h-5 text-gray-600 mr-1" />
                         <input className="border border-gray-300 p-1 w-full rounded-md text-lg" />
@@ -203,19 +256,82 @@ const Regis_labores = () => {
                         <input className="border border-gray-300 p-1 w-full rounded-md text-lg" />
                       </td>
                       <td className="p-2">
-                        <button onClick={() => eliminarFila(i)}>
+                        <button onClick={() => eliminarFilaLocal(i)}>
                           <IconTrash className="w-6 h-6 text-red-500" />
                         </button>
                       </td>
                     </tr>
                   ))}
+
+                  {/* Botón debajo de su sección */}
+                  <tr>
+                    <td colSpan={6} className="p-2">
+                      <button
+                        onClick={añadirFilaLocal}
+                        className="flex items-center gap-2 text-green-700 hover:text-green-800 text-lg"
+                      >
+                        <IconPlus className="w-6 h-6" /> Añadir Trabajador
+                      </button>
+                    </td>
+                  </tr>
+
+                  {/* Separador visual */}
+                  <tr>
+                    <td colSpan={6} className="pt-4">
+                      <div className="h-px bg-gray-200" />
+                    </td>
+                  </tr>
+
+                  {/* Título segunda sección */}
+                  <tr>
+                    <td colSpan={6} className="pb-2">
+                      <p className="font-semibold text-gray-700">
+                        Trabajador de otra finca
+                      </p>
+                    </td>
+                  </tr>
+
+                  {/* Sección: otra finca */}
+                  {filasOtraFinca.map((_, i) => (
+                    <tr key={`otra-${i}`}>
+                      <td className="p-2 flex items-center">
+                        <IconSearch className="w-5 h-5 text-gray-600 mr-1" />
+                        <input className="border border-gray-300 p-1 w-full rounded-md text-lg" />
+                      </td>
+                      <td className="p-2">
+                        <input className="border border-gray-300 p-1 w-56 rounded-md text-lg" />
+                      </td>
+                      <td className="p-2">
+                        <input className="border border-gray-300 p-1 w-56 rounded-md text-lg" />
+                      </td>
+                      <td className="p-2">
+                        <input className="border border-gray-300 p-1 w-56 rounded-md text-lg" />
+                      </td>
+                      <td className="p-2">
+                        <input className="border border-gray-300 p-1 w-full rounded-md text-lg" />
+                      </td>
+                      <td className="p-2">
+                        <button onClick={() => eliminarFilaOtra(i)}>
+                          <IconTrash className="w-6 h-6 text-red-500" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+
+                  {/* Botón debajo de su sección */}
+                  <tr>
+                    <td colSpan={6} className="p-2">
+                      <button
+                        onClick={añadirFilaOtra}
+                        className="flex items-center gap-2 text-green-700 hover:text-green-800 text-lg"
+                      >
+                        <IconPlus className="w-6 h-6" /> Añadir Trabajador de otra finca
+                      </button>
+                    </td>
+                  </tr>
                 </tbody>
               </table>
             </div>
-
-            <button onClick={añadirFila} className="flex items-center gap-2 text-green-700 hover:text-green-800 text-lg">
-              <IconPlus className="w-6 h-6" /> Añadir Trabajador
-            </button>
 
             <textarea
               placeholder="Observación"
@@ -231,7 +347,7 @@ const Regis_labores = () => {
             </button>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };

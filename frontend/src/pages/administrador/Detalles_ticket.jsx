@@ -117,46 +117,51 @@ const Detalles_ticket = () => {
         </button>
 
         <div className="bg-white border border-gray-200 shadow-xl rounded-xl p-6 max-w-5xl mx-auto">
+          {/* Título (sin cambios de tamaño) */}
           <h1 className="text-3xl font-bold text-green-600 mb-6">
             Detalles del ticket
           </h1>
 
-          {/* Resumen en recuadro */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <div className="border rounded-lg p-4">
-              <p className="text-sm text-gray-500">Ticket</p>
-              <p className="font-semibold text-gray-800">{t.ticket}</p>
+          {/* Todo el contenido en letra más grande */}
+          <div className="text-lg">
+            {/* Resumen en recuadro */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div className="border rounded-lg p-4">
+                <p className="text-gray-500">Ticket</p>
+                <p className="font-semibold text-gray-800">{t.ticket}</p>
+              </div>
+              <div className="border rounded-lg p-4">
+                <p className="text-gray-500">Asunto</p>
+                <p className="font-semibold text-gray-800">{t.asunto}</p>
+              </div>
+              <div className="border rounded-lg p-4">
+                <p className="text-gray-500">Solicitado por</p>
+                <p className="font-semibold text-gray-800">{t.solicitadoPor}</p>
+              </div>
+              <div className="border rounded-lg p-4">
+                <p className="text-gray-500">Estado</p>
+                <p className="font-semibold text-gray-800">{t.estado}</p>
+              </div>
+              <div className="border rounded-lg p-4 md:col-span-2">
+                <p className="text-gray-500">Fecha de solicitud</p>
+                <p className="font-semibold text-gray-800">{t.fechaSolicitud}</p>
+              </div>
             </div>
-            <div className="border rounded-lg p-4">
-              <p className="text-sm text-gray-500">Asunto</p>
-              <p className="font-semibold text-gray-800">{t.asunto}</p>
-            </div>
-            <div className="border rounded-lg p-4">
-              <p className="text-sm text-gray-500">Solicitado por</p>
-              <p className="font-semibold text-gray-800">{t.solicitadoPor}</p>
-            </div>
-            <div className="border rounded-lg p-4">
-              <p className="text-sm text-gray-500">Estado</p>
-              <p className="font-semibold text-gray-800">{t.estado}</p>
-            </div>
-            <div className="border rounded-lg p-4 md:col-span-2">
-              <p className="text-sm text-gray-500">Fecha de solicitud</p>
-              <p className="font-semibold text-gray-800">{t.fechaSolicitud}</p>
-            </div>
-          </div>
 
-          {/* Descripción detallada */}
-          <div>
-            <label className="block text-gray-700 font-semibold mb-2">
-              Descripción detallada del ticket
-            </label>
-            <textarea
-              className="w-full min-h-[160px] border rounded-md p-3 outline-none focus:ring-2 focus:ring-green-400"
-              value={t.descripcion}
-              readOnly
-            />
+            {/* Descripción detallada */}
+            <div>
+              <label className="block text-gray-700 font-semibold mb-2">
+                Descripción detallada del ticket
+              </label>
+              <textarea
+                className="w-full min-h-[160px] border rounded-md p-3 outline-none focus:ring-2 focus:ring-green-400 text-lg"
+                value={t.descripcion}
+                readOnly
+              />
+            </div>
           </div>
         </div>
+
       </main>
     </div>
   );

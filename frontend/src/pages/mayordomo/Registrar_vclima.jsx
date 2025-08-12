@@ -20,13 +20,13 @@ const Registrar_vclima = () => {
   const navigate = useNavigate();
   const [alertaVisible, setAlertaVisible] = useState(false);
 
-  // Datos de perfil
-  const nombreUsuario = "Juan Pérez"; // reemplazar por el nombre real
+  // Perfil
+  const nombreUsuario = "Juan Pérez";
   const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
   const tarjetaRef = useRef(null);
 
-  // Cierra la tarjeta si se hace clic fuera
+  // Cerrar tarjeta al hacer clic fuera
   useEffect(() => {
     const handler = (e) => {
       if (tarjetaRef.current && !tarjetaRef.current.contains(e.target)) {
@@ -47,9 +47,9 @@ const Registrar_vclima = () => {
   };
 
   return (
-    <div className="flex h-screen">
-      {/* Sidebar */}
-      <div className="bg-green-600 w-28 h-full flex flex-col items-center py-6 justify-between">
+    <div className="min-h-[100dvh] bg-[#f6f6f6]">
+      {/* Sidebar fijo: alto total del viewport */}
+      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col items-center py-6 justify-between">
         <div className="flex flex-col items-center space-y-8">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
           <button onClick={() => navigate("/homemayordomo")} className="hover:bg-white/10 p-2 rounded-lg transition">
@@ -66,23 +66,25 @@ const Registrar_vclima = () => {
           </button>
           <div className="relative w-full flex justify-center">
             <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full z-10" />
-            <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+            <button className="hover:bg-white/10 p-2 rounded-lg transition">
               <IconCloudRain className="text-white w-11 h-11" />
             </button>
           </div>
-          <button onClick={() => navigate("/informes_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button onClick={() => navigate("/informes_mayordomo")} className="hover:bg-white/10 p-2 rounded-lg transition">
             <IconChartBar className="text-white w-11 h-11" />
           </button>
-          <button onClick={() => navigate("/equipos_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button onClick={() => navigate("/equipos_mayordomo")} className="hover:bg-white/10 p-2 rounded-lg transition">
             <IconTractor className="text-white w-11 h-11" />
           </button>
         </div>
 
-        {/* Botón de perfil con tarjeta */}
+        {/* Perfil */}
         <div className="relative mb-6">
           <button
             onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
             className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
+            aria-haspopup="true"
+            aria-expanded={mostrarTarjeta}
           >
             {letraInicial}
           </button>
@@ -90,7 +92,7 @@ const Registrar_vclima = () => {
           {mostrarTarjeta && (
             <div
               ref={tarjetaRef}
-              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
+              className="absolute bottom-16 left-14 w-52 bg-white/95 backdrop-blur border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-[10000]"
             >
               <button
                 onClick={() => { setMostrarTarjeta(false); navigate("/ajustesmayordomo"); }}
@@ -116,18 +118,18 @@ const Registrar_vclima = () => {
             </div>
           )}
         </div>
-      </div>
+      </aside>
 
-      {/* Contenido principal */}
-      <div className="flex-1 flex flex-col items-center pt-8 bg-[#f6f6f6] relative">
-        {/* Alerta flotante */}
+      {/* Contenido principal desplazado por el sidebar */}
+      <main className="ml-28 min-h-[100dvh] flex flex-col items-center pt-8 relative">
+        {/* Alerta */}
         {alertaVisible && (
-          <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 z-50 font-semibold text-base">
+          <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 z-[11000] font-semibold text-base">
             <IconCheck className="w-5 h-5" /> Variables registradas exitosamente
           </div>
         )}
 
-        {/* Botón Volver */}
+        {/* Volver */}
         <button
           type="button"
           onClick={() => navigate("/variables_climaticasm")}
@@ -158,7 +160,7 @@ const Registrar_vclima = () => {
             <input type="text" placeholder="Ej: 10" className="border px-4 py-2 rounded w-full text-lg" />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block font-bold mb-1">Temperatura mínima (°C)</label>
               <input type="text" placeholder="Ej: 16°" className="border px-4 py-2 rounded w-full text-lg" />
@@ -180,10 +182,9 @@ const Registrar_vclima = () => {
             </button>
           </div>
         </form>
-      </div>
+      </main>
     </div>
   );
 };
 
 export default Registrar_vclima;
-

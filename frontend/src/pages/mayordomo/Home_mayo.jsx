@@ -12,6 +12,7 @@ import {
   IconTool,
   IconLogout,
   IconChevronRight,
+  IconPlant2,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
@@ -35,7 +36,6 @@ const Home_mayo = () => {
     return () => document.removeEventListener("mousedown", manejarClickFuera);
   }, []);
 
-  // Mismo diseño de tarjetas que Home_adm
   const cards = [
     {
       icon: <IconClipboardList className="w-8 h-8" />,
@@ -97,12 +97,22 @@ const Home_mayo = () => {
       iconBg: "bg-white/70",
       text: "text-slate-700",
     },
+    {
+      icon: <IconPlant2 className="w-8 h-8" />,
+      label: "Producción",
+      desc: "Gestión y registro de producción agrícola (En desarrollo).",
+      route: "/equipos_mayordomo",
+      gradient: "from-green-500/20 to-yellow-500/20",
+      ring: "ring-green-300/40",
+      iconBg: "bg-white/70",
+      text: "text-green-700",
+    },
   ];
-
+  
   return (
     <div className="min-h-[100dvh] bg-gray-50">
-      {/* Sidebar fijo (igual a Home_adm) */}
-      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col items-center py-6 justify-between">
+      {/* Sidebar fijo con z alto */}
+      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col items-center py-6 justify-between z-[200]">
         <div className="flex flex-col items-center space-y-8">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
 
@@ -140,7 +150,7 @@ const Home_mayo = () => {
           </button>
         </div>
 
-        {/* Perfil con tarjeta */}
+        {/* Perfil con tarjeta (z super alto) */}
         <div className="relative mb-6">
           <button
             onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
@@ -156,7 +166,7 @@ const Home_mayo = () => {
           {mostrarTarjeta && (
             <div
               ref={tarjetaRef}
-              className="absolute bottom-16 left-14 w-56 bg-white/95 border border-gray-200 rounded-xl shadow-2xl py-3 z-50 backdrop-blur text-base"
+              className="absolute bottom-16 left-14 w-56 bg-white/95 border border-gray-200 rounded-xl shadow-2xl py-3 z-[9999] backdrop-blur text-base"
             >
               <button
                 onClick={() => { setMostrarTarjeta(false); navigate("/ajustesmayordomo"); }}
@@ -184,8 +194,8 @@ const Home_mayo = () => {
         </div>
       </aside>
 
-      {/* Contenido principal (mismo layout y tipografía que Home_adm) */}
-      <main className="ml-28 min-h-[100dvh] p-10">
+      {/* Contenido principal */}
+      <main className="ml-28 min-h-[100dvh] p-10 relative">
         <h1 className="text-4xl font-bold text-green-700 mb-6">Panel principal</h1>
 
         {/* Bienvenida en gradiente */}
@@ -196,7 +206,7 @@ const Home_mayo = () => {
           </p>
         </div>
 
-        {/* Tarjetas principales (mismo diseño) */}
+        {/* Tarjetas principales */}
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {cards.map(
             ({ icon, label, desc, route, gradient, ring, iconBg, text }, i) => (
@@ -241,4 +251,3 @@ const Home_mayo = () => {
 };
 
 export default Home_mayo;
-

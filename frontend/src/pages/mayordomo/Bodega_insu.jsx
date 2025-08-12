@@ -27,13 +27,12 @@ const Bodega_insu = () => {
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
 
-  // Perfil usuario
-  const nombreUsuario = "Juan Pérez"; // Cambiar por nombre real
+  // Perfil
+  const nombreUsuario = "Juan Pérez";
   const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
   const tarjetaRef = useRef(null);
 
-  // Cerrar tarjeta perfil al hacer clic fuera
   useEffect(() => {
     const handler = (e) => {
       if (tarjetaRef.current && !tarjetaRef.current.contains(e.target)) {
@@ -80,13 +79,8 @@ const Bodega_insu = () => {
     setValoresSeleccionados(actualizado);
   };
 
-  const ordenar = (campo, orden) => {
-    setOrdenCampo({ campo, orden });
-  };
-
-  const handleBusqueda = (campo, texto) => {
-    setBusquedas({ ...busquedas, [campo]: texto });
-  };
+  const ordenar = (campo, orden) => setOrdenCampo({ campo, orden });
+  const handleBusqueda = (campo, texto) => setBusquedas({ ...busquedas, [campo]: texto });
 
   const datosFiltrados = datos
     .filter((d) =>
@@ -115,28 +109,35 @@ const Bodega_insu = () => {
   }, []);
 
   return (
-    <div className="flex">
-      {/* Sidebar con perfil */}
-      <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
+    <div className="min-h-[100dvh] bg-gray-50">
+      {/* Sidebar fijo: ocupa siempre el alto del viewport */}
+      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col items-center py-6 justify-between">
         <div className="flex flex-col items-center space-y-8">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
           <button onClick={() => navigate("/homemayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconHome className="text-white w-11 h-11" /></button>
           <button onClick={() => navigate("/registrolabores")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconClipboardList className="text-white w-11 h-11" /></button>
           <button onClick={() => navigate("/historial_labores")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconHistory className="text-white w-11 h-11" /></button>
+
+          {/* Indicador en Bodega */}
           <div className="relative w-full flex justify-center">
             <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full z-10" />
-            <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconBox className="text-white w-11 h-11" /></button>
+            <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              <IconBox className="text-white w-11 h-11" />
+            </button>
           </div>
+
           <button onClick={() => navigate("/variables_climaticasm")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconCloudRain className="text-white w-11 h-11" /></button>
           <button onClick={() => navigate("/informes_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconChartBar className="text-white w-11 h-11" /></button>
           <button onClick={() => navigate("/equipos_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconTractor className="text-white w-11 h-11" /></button>
         </div>
 
-        {/* Botón perfil */}
+        {/* Perfil */}
         <div className="relative mb-6">
           <button
             onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
             className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
+            aria-haspopup="true"
+            aria-expanded={mostrarTarjeta}
           >
             {letraInicial}
           </button>
@@ -144,7 +145,7 @@ const Bodega_insu = () => {
           {mostrarTarjeta && (
             <div
               ref={tarjetaRef}
-              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
+              className="absolute bottom-16 left-14 w-56 bg-white/95 border border-gray-200 rounded-xl shadow-2xl py-3 z-[10000] backdrop-blur"
             >
               <button
                 onClick={() => { setMostrarTarjeta(false); navigate("/ajustesmayordomo"); }}
@@ -162,7 +163,7 @@ const Bodega_insu = () => {
               </button>
               <button
                 onClick={() => { setMostrarTarjeta(false); navigate("/login"); }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-red-50 text-red-600"
               >
                 <IconLogout className="w-5 h-5 mr-2 text-red-600" />
                 Cerrar sesión
@@ -170,10 +171,10 @@ const Bodega_insu = () => {
             </div>
           )}
         </div>
-      </div>
+      </aside>
 
-      {/* Contenido */}
-      <div className="flex-1 p-10">
+      {/* Contenido desplazado por el sidebar */}
+      <main className="ml-28 min-h-[100dvh] p-10">
         <h1 className="text-3xl font-bold text-green-700 mb-6">Bodega de insumos</h1>
 
         <div className="bg-white border border-gray-300 rounded-xl overflow-auto">
@@ -214,10 +215,11 @@ const Bodega_insu = () => {
           </table>
         </div>
 
+        {/* Tarjeta de filtros */}
         {filtroActivo && (
           <div
             ref={filtroRef}
-            className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60 text-left text-sm"
+            className="fixed bg-white text-black shadow-md border rounded z-[10000] p-3 w-60 text-left text-sm"
             style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
           >
             <div className="font-semibold mb-2">
@@ -262,7 +264,7 @@ const Bodega_insu = () => {
             Exportar
           </button>
         </div>
-      </div>
+      </main>
     </div>
   );
 };

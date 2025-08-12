@@ -27,13 +27,11 @@ const Historial_labor = () => {
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
 
-  // Perfil usuario
-  const nombreUsuario = "Juan Pérez"; // Cambia por el nombre real
+  const nombreUsuario = "Juan Pérez";
   const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
   const tarjetaRef = useRef(null);
 
-  // Cerrar tarjeta de perfil al hacer clic fuera
   useEffect(() => {
     const handler = (e) => {
       if (tarjetaRef.current && !tarjetaRef.current.contains(e.target)) {
@@ -108,9 +106,9 @@ const Historial_labor = () => {
   }, []);
 
   return (
-    <div className="flex">
-      {/* Sidebar con perfil */}
-      <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
+    <div className="min-h-[100dvh] bg-white">
+      {/* Sidebar fijo */}
+      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col items-center py-6 justify-between">
         <div className="flex flex-col items-center space-y-8">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
           <button onClick={() => navigate("/homemayordomo")} className="hover:bg-white/10 p-2 rounded-lg">
@@ -153,34 +151,25 @@ const Historial_labor = () => {
               ref={tarjetaRef}
               className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
             >
-              <button
-                onClick={() => { setMostrarTarjeta(false); navigate("/ajustesmayordomo"); }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-              >
+              <button onClick={() => { setMostrarTarjeta(false); navigate("/ajustesmayordomo"); }} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
                 <IconSettings className="w-5 h-5 mr-2 text-green-600" />
                 Ajustes
               </button>
-              <button
-                onClick={() => { setMostrarTarjeta(false); navigate("/soportemayordomo"); }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-              >
+              <button onClick={() => { setMostrarTarjeta(false); navigate("/soportemayordomo"); }} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
                 <IconTool className="w-5 h-5 mr-2 text-green-600" />
                 Soporte
               </button>
-              <button
-                onClick={() => { setMostrarTarjeta(false); navigate("/login"); }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
-              >
+              <button onClick={() => { setMostrarTarjeta(false); navigate("/login"); }} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600">
                 <IconLogout className="w-5 h-5 mr-2 text-red-600" />
                 Cerrar sesión
               </button>
             </div>
           )}
         </div>
-      </div>
+      </aside>
 
-      {/* Contenido principal */}
-      <div className="flex-1 p-10">
+      {/* Contenido principal desplazado */}
+      <main className="ml-28 p-10">
         <h1 className="text-3xl font-bold text-green-700 mb-6">Historial labores finca: La Esmeralda</h1>
         <div className="bg-white border border-gray-300 rounded-xl overflow-auto">
           <table className="w-full text-base">
@@ -205,8 +194,8 @@ const Historial_labor = () => {
                   {campos.map((campo, j) => (
                     <td key={j} className="px-4 py-2 border-r text-center align-middle">{d[campo]}</td>
                   ))}
-                  <td className="px-4 py-2 text-blue-500 font-semibold text-center align-middle">
-                    <span>{expandido === i ? d.observacion : `${d.observacion.substring(0, 25)}...`}</span>
+                  <td className="px-4 py-2 text-blue-500 font-semibold text-left align-middle">
+                    <span>{expandido === i ? d.observacion : `${d.observacion.substring(0, 50)}...`}</span>
                     <button onClick={() => toggleExpandido(i)} className="ml-2 underline hover:text-green-800">
                       {expandido === i ? "Ocultar" : "Ver"}
                     </button>
@@ -216,99 +205,7 @@ const Historial_labor = () => {
             </tbody>
           </table>
         </div>
-
-
-        {filtroActivo === "fecha" ? (
-          <div
-            ref={filtroRef}
-            className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60 text-left text-sm"
-            style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
-          >
-            <div className="font-semibold mb-2">Filtrar por Fecha</div>
-            {Object.entries(
-              datos.reduce((acc, { fecha }) => {
-                const [day, month, year] = fecha.split("/");
-                const dateObj = new Date(`${year}-${month}-01T00:00:00`);
-                const monthName = dateObj.toLocaleDateString("es-ES", { month: "long" });
-                acc[year] = acc[year] || {};
-                acc[year][monthName] = acc[year][monthName] || new Set();
-                acc[year][monthName].add(day);
-                return acc;
-              }, {})
-            ).map(([year, months]) => (
-              <div key={year} className="mb-2">
-                <div className="font-medium">{year}</div>
-                {Object.entries(months).map(([month, days]) => (
-                  <div key={month} className="ml-4">
-                    <div className="font-medium">{month}</div>
-                    {[...days].map((day) => {
-                      const formattedDate = `${day.padStart(2, "0")}/${month.padStart(2, "0")}/${year}`;
-                      return (
-                        <label key={day} className="ml-6 flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            checked={(valoresSeleccionados["fecha"] || []).includes(`${day}/${month}/${year}`)}
-                            onChange={() => toggleValor("fecha", `${day}/${month}/${year}`)}
-                            className="accent-green-600"
-                          />
-                          {day}
-                        </label>
-                      );
-                    })}
-                  </div>
-                ))}
-              </div>
-            ))}
-            <button
-              onClick={() => limpiarFiltro("fecha")}
-              className="text-blue-600 hover:underline text-xs lowercase mt-2"
-            >
-              borrar filtro
-            </button>
-          </div>
-        ) : filtroActivo && (
-          <div
-            ref={filtroRef}
-            className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60 text-left text-sm"
-            style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
-          >
-            <div className="font-semibold mb-2">
-              Filtrar por {String(filtroActivo).charAt(0).toUpperCase() + String(filtroActivo).slice(1)}
-            </div>
-            <button onClick={() => ordenar(filtroActivo, "asc")} className="text-green-700 flex items-center gap-1 mb-1">
-              <IconSortAscending2 className="w-4 h-4" />
-              Ordenar A → Z
-            </button>
-            <button onClick={() => ordenar(filtroActivo, "desc")} className="text-green-700 flex items-center gap-1 mb-2">
-              <IconSortDescending2 className="w-4 h-4" />
-              Ordenar Z → A
-            </button>
-            <input
-              type="text"
-              placeholder="Buscar..."
-              className="w-full border border-gray-300 px-2 py-1 rounded mb-2 text-sm"
-              value={busquedas[filtroActivo] || ""}
-              onChange={(e) => handleBusqueda(filtroActivo, e.target.value)}
-            />
-            <div className="flex flex-col max-h-40 overflow-y-auto">
-              {getValoresUnicos(filtroActivo).map((val, idx) => (
-                <label key={idx} className="flex items-center gap-2 mb-1">
-                  <input
-                    type="checkbox"
-                    checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
-                    onChange={() => toggleValor(filtroActivo, val)}
-                    className="accent-green-600"
-                  />
-                  {String(val).charAt(0).toUpperCase() + String(val).slice(1)}
-                </label>
-              ))}
-            </div>
-            <button onClick={() => limpiarFiltro(filtroActivo)} className="text-blue-600 hover:underline text-xs mt-2">
-              Borrar filtro
-            </button>
-          </div>
-        )}
-      </div>
+      </main>
     </div>
   );
 };

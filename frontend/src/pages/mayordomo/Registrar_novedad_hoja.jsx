@@ -16,30 +16,14 @@ import {
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
-const Registrar_mante = () => {
+const Registrar_novedad_hoja = () => {
   const navigate = useNavigate();
-
-  const [alertaVisible, setAlertaVisible] = useState(false);
-
-  const [formData, setFormData] = useState({
-    idMaquina: "1",
-    maquina: "Tractor",
-    referencia: "JD 5055",
-    ubicacion: "Bodega",
-    estado: "En operación",
-    fecha: "2025-06-20",
-    tipo: "Mantenimiento preventivo",
-    descripcion: "",
-    realizadoPor: "Luis Gómez",
-  });
-
-  // Perfil - inicial y control tarjeta
-  const nombreUsuario = "Juan Pérez"; // Cambia aquí con nombre real
+  const nombreUsuario = "Juan Pérez";
   const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
+
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
   const tarjetaRef = useRef(null);
 
-  // Cerrar tarjeta al hacer clic fuera
   useEffect(() => {
     const handler = (e) => {
       if (tarjetaRef.current && !tarjetaRef.current.contains(e.target)) {
@@ -49,6 +33,20 @@ const Registrar_mante = () => {
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
+
+  const [alertaVisible, setAlertaVisible] = useState(false);
+
+  const [formData, setFormData] = useState({
+    codigoequipo: "",
+    maquina: "",
+    referencia: "",
+    ubicacion: "",
+    estado: "",
+    fecha: "",
+    tipo: "",
+    descripcion: "",
+    realizadoPor: "",
+  });
 
   const handleChange = (e) => {
     setFormData({
@@ -61,7 +59,6 @@ const Registrar_mante = () => {
     e.preventDefault();
     console.log("Datos registrados:", formData);
     setAlertaVisible(true);
-
     setTimeout(() => {
       setAlertaVisible(false);
       navigate("/hoja_vidam");
@@ -69,11 +66,16 @@ const Registrar_mante = () => {
   };
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex">
       {/* Sidebar */}
       <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
-        <div className="flex flex-col items-center space-y-8">
-          <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
+        {/* Logo fijo */}
+        <div className="sticky top-0 mb-6 bg-green-600 z-10">
+          <img src={faviconBlanco} alt="Logo" className="w-11 h-11 mx-auto" />
+        </div>
+
+        {/* Menú */}
+        <div className="flex-1 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only">
           <button
             onClick={() => navigate("/homemayordomo")}
             className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
@@ -110,20 +112,21 @@ const Registrar_mante = () => {
           >
             <IconChartBar className="text-white w-11 h-11" />
           </button>
-          <div className="relative w-full flex justify-center">
-            <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full z-10" />
+
+          {/* Icono activo */}
+          <div className="relative">
+            <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
             <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
               <IconTractor className="text-white w-11 h-11" />
             </button>
           </div>
         </div>
 
-        {/* Botón perfil con tarjeta */}
-        <div className="relative mb-6">
+        {/* Perfil */}
+        <div className="relative mb-4">
           <button
             onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
             className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
-            aria-label="Menú de usuario"
           >
             {letraInicial}
           </button>
@@ -168,12 +171,12 @@ const Registrar_mante = () => {
         </div>
       </div>
 
-      {/* Contenido principal */}
-      <div className="flex-1 p-10">
-        {/* Alerta flotante */}
+      {/* Contenido */}
+      <div className="flex-1 px-10 py-8 relative bg-gray-50">
+        {/* Alerta */}
         {alertaVisible && (
           <div className="fixed top-3 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
-            <IconCheck className="w-5 h-5" /> Mantenimiento registrado exitosamente
+            <IconCheck className="w-5 h-5" /> Registrado exitosamente
           </div>
         )}
 
@@ -186,15 +189,15 @@ const Registrar_mante = () => {
         </button>
 
         <div className="bg-white border border-green-300 rounded-xl shadow-md p-8 w-[800px] mx-auto">
-          <h1 className="text-2xl font-bold text-green-600 mb-6">Registro mantenimiento</h1>
+          <h1 className="text-2xl font-bold text-green-600 mb-6">Registro novedad</h1>
 
           <form onSubmit={handleSubmit} className="space-y-4 text-base">
             <div className="grid grid-cols-2 gap-5">
               <div>
-                <label className="block font-semibold mb-1">ID Máquina:</label>
+                <label className="block font-semibold mb-1">Código Equipo:</label>
                 <input
-                  name="idMaquina"
-                  value={formData.idMaquina}
+                  name="codigoequipo"
+                  value={formData.codigoequipo}
                   onChange={handleChange}
                   className="w-full border border-gray-300 rounded px-3 py-1.5"
                 />
@@ -225,6 +228,7 @@ const Registrar_mante = () => {
                   onChange={handleChange}
                   className="w-full border border-gray-300 rounded px-3 py-1.5"
                 >
+                  <option value="">Selecciona</option>
                   <option>Bodega</option>
                   <option>La Esmeralda</option>
                   <option>La Carolina</option>
@@ -238,6 +242,7 @@ const Registrar_mante = () => {
                   onChange={handleChange}
                   className="w-full border border-gray-300 rounded px-3 py-1.5"
                 >
+                  <option value="">Selecciona</option>
                   <option>Óptimo</option>
                   <option>En operación</option>
                   <option>Mantenimiento</option>
@@ -255,13 +260,17 @@ const Registrar_mante = () => {
                 />
               </div>
               <div className="col-span-2">
-                <label className="block font-semibold mb-1">Tipo de mantenimiento:</label>
-                <input
+                <label className="block font-semibold mb-1">Tipo de novedad:</label>
+                <select
                   name="tipo"
                   value={formData.tipo}
                   onChange={handleChange}
                   className="w-full border border-gray-300 rounded px-3 py-1.5"
-                />
+                >
+                  <option value="">Selecciona una opción</option>
+                  <option>Mantenimiento</option>
+                  <option>Reparación</option>
+                </select>
               </div>
             </div>
 
@@ -301,4 +310,4 @@ const Registrar_mante = () => {
   );
 };
 
-export default Registrar_mante;
+export default Registrar_novedad_hoja;

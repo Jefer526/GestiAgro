@@ -28,7 +28,7 @@ const Informes_mayor = () => {
   });
 
   // Datos perfil
-  const nombreUsuario = "Juan Pérez"; // cambiar por usuario real
+  const nombreUsuario = "Juan Pérez";
   const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
   const tarjetaRef = useRef(null);
@@ -49,38 +49,38 @@ const Informes_mayor = () => {
   };
 
   return (
-    <div className="flex h-screen">
-      {/* Sidebar */}
-      <div className="bg-green-600 w-28 h-full flex flex-col items-center py-6 justify-between">
+    <div className="min-h-[100dvh] bg-[#f6f6f6]">
+      {/* Sidebar fijo */}
+      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col items-center py-6 justify-between">
         <div className="flex flex-col items-center space-y-8">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
-          <button onClick={() => navigate("/homemayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button onClick={() => navigate("/homemayordomo")} className="hover:bg-white/10 p-2 rounded-lg transition">
             <IconHome className="text-white w-11 h-11" />
           </button>
-          <button onClick={() => navigate("/registrolabores")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button onClick={() => navigate("/registrolabores")} className="hover:bg-white/10 p-2 rounded-lg transition">
             <IconClipboardList className="text-white w-11 h-11" />
           </button>
-          <button onClick={() => navigate("/historial_labores")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button onClick={() => navigate("/historial_labores")} className="hover:bg-white/10 p-2 rounded-lg transition">
             <IconHistory className="text-white w-11 h-11" />
           </button>
-          <button onClick={() => navigate("/bodega_insumos")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button onClick={() => navigate("/bodega_insumos")} className="hover:bg-white/10 p-2 rounded-lg transition">
             <IconBox className="text-white w-11 h-11" />
           </button>
-          <button onClick={() => navigate("/variables_climaticasm")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button onClick={() => navigate("/variables_climaticasm")} className="hover:bg-white/10 p-2 rounded-lg transition">
             <IconCloudRain className="text-white w-11 h-11" />
           </button>
           <div className="relative w-full flex justify-center">
             <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full z-10" />
-            <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+            <button className="hover:bg-white/10 p-2 rounded-lg transition">
               <IconChartBar className="text-white w-11 h-11" />
             </button>
           </div>
-          <button onClick={() => navigate("/equipos_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button onClick={() => navigate("/equipos_mayordomo")} className="hover:bg-white/10 p-2 rounded-lg transition">
             <IconTractor className="text-white w-11 h-11" />
           </button>
         </div>
 
-        {/* Botón de perfil con tarjeta */}
+        {/* Perfil */}
         <div className="relative mb-6">
           <button
             onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
@@ -92,7 +92,7 @@ const Informes_mayor = () => {
           {mostrarTarjeta && (
             <div
               ref={tarjetaRef}
-              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
+              className="absolute bottom-16 left-14 w-52 bg-white/95 backdrop-blur border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-[10000]"
             >
               <button
                 onClick={() => { setMostrarTarjeta(false); navigate("/ajustesmayordomo"); }}
@@ -118,10 +118,10 @@ const Informes_mayor = () => {
             </div>
           )}
         </div>
-      </div>
+      </aside>
 
-      {/* Contenido */}
-      <div className="flex-1 flex justify-center items-center bg-[#f6f6f6] p-8 overflow-auto">
+      {/* Contenido desplazado */}
+      <main className="ml-28 min-h-[100dvh] flex justify-center items-center p-8 overflow-auto">
         <div className="bg-white border border-green-300 shadow-md p-10 rounded-xl w-full max-w-3xl space-y-6 text-black">
           <h1 className="text-3xl font-bold text-green-700">Informes</h1>
 
@@ -222,7 +222,7 @@ const Informes_mayor = () => {
             </button>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };

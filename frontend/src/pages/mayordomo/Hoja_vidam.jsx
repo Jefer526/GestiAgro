@@ -305,9 +305,9 @@ const Hoja_vidam = () => {
 
         {/* Botones finales */}
         <div className="flex justify-center gap-10 mt-10">
-          <button onClick={() => navigate("/registrar_mantenimientom")}
+          <button onClick={() => navigate("/registrar_novedad_hoja")}
                   className="bg-green-600 hover:bg-green-700 text-white font-semibold text-lg px-6 py-3 rounded-lg">
-            Registrar mantenimiento
+            Registrar novedad
           </button>
           <button className="bg-green-600 hover:bg-green-700 text-white font-semibold text-lg px-6 py-3 rounded-lg">
             Descargar PDF
