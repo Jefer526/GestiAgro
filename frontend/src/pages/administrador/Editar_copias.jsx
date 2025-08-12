@@ -1,3 +1,4 @@
+// src/pages/administrador/Editar_copias.jsx
 import React, { useState, useRef, useEffect } from "react";
 import {
   IconHome,
@@ -19,8 +20,8 @@ const Editar_copias = () => {
   const [hora, setHora] = useState("14:21");
   const [alertaVisible, setAlertaVisible] = useState(false);
 
-  // Datos perfil
-  const nombreUsuario = "Juan Pérez"; // cambiar por el real
+  // Datos perfil (mock)
+  const nombreUsuario = "Juan Pérez";
   const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
   const tarjetaRef = useRef(null);
@@ -46,32 +47,39 @@ const Editar_copias = () => {
   };
 
   return (
-    <div className="flex w-full h-full bg-white">
-      {/* Sidebar */}
-      <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between">
+    <div className="min-h-[100dvh] bg-gray-50">
+      {/* Sidebar fijo: ocupa todo el alto visible */}
+      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col items-center py-6 justify-between">
         <div className="flex flex-col items-center space-y-8">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
+
           <button
             onClick={() => navigate("/homeadm")}
             className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+            aria-label="Inicio"
           >
             <IconHome className="text-white w-11 h-11" />
           </button>
+
           <button
             onClick={() => navigate("/admuser")}
             className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+            aria-label="Gestionar usuarios"
           >
             <IconUsers className="text-white w-11 h-11" />
           </button>
+
           <div className="relative">
             <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+            <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" aria-label="Copias de seguridad">
               <IconCloudUpload className="text-white w-11 h-11" />
             </button>
           </div>
+
           <button
             onClick={() => navigate("/soporte")}
             className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+            aria-label="Soporte"
           >
             <IconTool className="text-white w-11 h-11" />
           </button>
@@ -82,6 +90,9 @@ const Editar_copias = () => {
           <button
             onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
             className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
+            aria-haspopup="true"
+            aria-expanded={mostrarTarjeta}
+            aria-label="Perfil"
           >
             {letraInicial}
           </button>
@@ -90,7 +101,7 @@ const Editar_copias = () => {
           {mostrarTarjeta && (
             <div
               ref={tarjetaRef}
-              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
+              className="absolute bottom-16 left-14 w-52 bg-white/95 border border-gray-200 rounded-xl shadow-2xl py-3 z-50"
             >
               <button
                 onClick={() => {
@@ -107,7 +118,7 @@ const Editar_copias = () => {
                   setMostrarTarjeta(false);
                   navigate("/");
                 }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-red-50 text-red-600"
               >
                 <IconLogout className="w-5 h-5 mr-2 text-red-600" />
                 Cerrar sesión
@@ -115,13 +126,13 @@ const Editar_copias = () => {
             </div>
           )}
         </div>
-      </div>
+      </aside>
 
-      {/* Contenido principal */}
-      <div className="flex-1 bg-gray-50 min-h-screen p-10 relative">
+      {/* Contenido principal: desplazado a la derecha del sidebar */}
+      <main className="ml-28 min-h-[100dvh] p-10 relative">
         {/* Alerta */}
         {alertaVisible && (
-          <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
+          <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[10000] bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
             <IconCheck className="w-5 h-5" /> Cambios guardados exitosamente
           </div>
         )}
@@ -149,6 +160,7 @@ const Editar_copias = () => {
               className="w-full px-4 py-2 border rounded-md outline-none focus:ring-2 focus:ring-green-400"
             />
           </div>
+
           <div className="mb-6">
             <label className="block text-gray-700 font-semibold mb-2">
               Hora de carga
@@ -160,6 +172,7 @@ const Editar_copias = () => {
               className="w-full px-4 py-2 border rounded-md outline-none focus:ring-2 focus:ring-green-400"
             />
           </div>
+
           <div className="flex justify-end">
             <button
               onClick={handleGuardar}
@@ -169,10 +182,11 @@ const Editar_copias = () => {
             </button>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };
 
 export default Editar_copias;
+
 

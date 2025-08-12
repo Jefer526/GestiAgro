@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react"; 
+import React, { useState, useRef, useEffect } from "react";
 import {
   IconHome,
   IconClipboardList,
@@ -9,7 +9,9 @@ import {
   IconTractor,
   IconSettings,
   IconTool,
-  IconLogout
+  IconLogout,
+  IconTemperature,
+  IconDroplet
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
@@ -68,9 +70,9 @@ const Variables_climam = () => {
   };
 
   return (
-    <div className="flex h-screen">
-      {/* Sidebar */}
-      <div className="bg-green-600 w-28 h-full flex flex-col items-center py-6 justify-between relative">
+    <div className="min-h-[100dvh] bg-gray-50">
+      {/* Sidebar fijo: ocupa todo el alto del viewport */}
+      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col items-center py-6 justify-between">
         <div className="flex flex-col items-center space-y-8">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
           <button onClick={() => navigate("/homemayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
@@ -99,11 +101,13 @@ const Variables_climam = () => {
           </button>
         </div>
 
-        {/* Perfil (reemplaza IconSettings) */}
+        {/* Perfil */}
         <div className="relative mb-6">
           <button
             onClick={() => setMostrarTarjeta((v) => !v)}
             className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
+            aria-haspopup="true"
+            aria-expanded={mostrarTarjeta}
           >
             {letraInicial}
           </button>
@@ -112,7 +116,7 @@ const Variables_climam = () => {
           {mostrarTarjeta && (
             <div
               ref={tarjetaRef}
-              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
+              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-[10000] backdrop-blur"
             >
               <button
                 onClick={() => { setMostrarTarjeta(false); navigate("/ajustesmayordomo"); }}
@@ -138,10 +142,10 @@ const Variables_climam = () => {
             </div>
           )}
         </div>
-      </div>
+      </aside>
 
-      {/* Contenido principal */}
-      <div className="flex-1 p-10 overflow-auto">
+      {/* Contenido principal desplazado por el sidebar */}
+      <main className="ml-28 min-h-[100dvh] p-10 overflow-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-green-700">Variables climáticas</h1>
           <span className="text-2xl text-black font-bold">Hacienda La esmeralda</span>
@@ -180,35 +184,73 @@ const Variables_climam = () => {
           </button>
         </div>
 
-        {/* Tarjetas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white border shadow-md shadow-green-400/50 rounded-lg p-6 text-center">
-            <div className="text-2xl">🌧️</div>
-            <p className="text-lg font-semibold">5 mm</p>
-            <p className="text-sm">Precipitaciones</p>
-          </div>
-          <div className="bg-white border shadow-md shadow-green-400/50 rounded-lg p-6 text-center">
-            <div className="text-2xl">🌡️</div>
-            <p className="text-lg font-semibold">15 C</p>
-            <p className="text-sm">Temperatura Mínima</p>
-          </div>
-          <div className="bg-white border shadow-md shadow-green-400/50 rounded-lg p-6 text-center">
-            <div className="text-2xl">🌡️</div>
-            <p className="text-lg font-semibold">30 C</p>
-            <p className="text-sm">Temperatura Máxima</p>
-          </div>
-          <div className="bg-white border shadow-md shadow-green-400/50 rounded-lg p-6 text-center">
-            <div className="text-2xl">💧</div>
-            <p className="text-lg font-semibold">90 %</p>
-            <p className="text-sm">Humedad Relativa</p>
-          </div>
-        </div>
+        {/* Tarjetas (colores vivos, sin animaciones) */}
+        <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+          {[
+            {
+              title: "Precipitaciones",
+              value: "5",
+              unit: "mm",
+              icon: <IconCloudRain className="w-6 h-6" />,
+              ring: "ring-sky-500/50",
+              iconBg: "bg-sky-100",
+              iconText: "text-sky-700",
+            },
+            {
+              title: "Temperatura mínima",
+              value: "15",
+              unit: "°C",
+              icon: <IconTemperature className="w-6 h-6" />,
+              ring: "ring-indigo-500/50",
+              iconBg: "bg-indigo-100",
+              iconText: "text-indigo-700",
+            },
+            {
+              title: "Temperatura máxima",
+              value: "30",
+              unit: "°C",
+              icon: <IconTemperature className="w-6 h-6" />,
+              ring: "ring-amber-500/50",
+              iconBg: "bg-amber-100",
+              iconText: "text-amber-700",
+            },
+            {
+              title: "Humedad relativa",
+              value: "90",
+              unit: "%",
+              icon: <IconDroplet className="w-6 h-6" />,
+              ring: "ring-emerald-500/50",
+              iconBg: "bg-emerald-100",
+              iconText: "text-emerald-700",
+            },
+          ].map((c, i) => (
+            <div
+              key={i}
+              className={`relative overflow-hidden rounded-2xl bg-white border shadow-md px-6 py-5 ring-1 ${c.ring}`}
+            >
+              <div className="flex items-center gap-4">
+                {/* Ícono */}
+                <div className={`${c.iconBg} ${c.iconText} rounded-xl p-3 shadow-sm border`}>
+                  {c.icon}
+                </div>
+                {/* Texto */}
+                <div>
+                  <p className="text-sm text-slate-500">{c.title}</p>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-2xl font-bold text-slate-900">{c.value}</span>
+                    <span className="text-slate-500 text-base">{c.unit}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </section>
 
         {/* Gráfica */}
         <div className="w-full h-[500px]">
           <Bar data={data} options={opcionesChart} />
         </div>
-      </div>
+      </main>
     </div>
   );
 };

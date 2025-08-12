@@ -6,6 +6,7 @@ import {
   IconTool,
   IconSettings,
   IconLogout,
+  IconEye,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
@@ -26,33 +27,44 @@ const Soporte_adm = () => {
     return () => document.removeEventListener("mousedown", clickFueraTarjeta);
   }, []);
 
-  const solicitudes = [
+  const tickets = [
     {
-      id: 1,
-      nombre: "Екатерина Лукшецкая",
-      rol: "Ing. Agrónomo",
-      tiempo: "Hace 1 día",
-      mensaje:
-        "Lorem ipsum dolor sit amet consectetur adipiscing, elit mauris curabitur nam nisi maecenas vulputate, metus nibh ultrices nisl consequat. Ridiculus tortor taciti eleifend facilisi commodo vulputate nullam metus purus porta quisque fames, mi risus phasellus leo consequat tincidunt nec mattis donec curae eu faucibus, torquent ac accumsan tempor sociis feugiat pharetra sed tempus integer gravida. Diam mollis interdum vestibulum placerat dignissim sem litora sociis, conubia pulvinar ac platea ut faucibus ornare magna egestas, cubilia tortor senectus tincidunt cursus dis turpis.",
-      avatar: "https://randomuser.me/api/portraits/women/40.jpg",
-      estado: ["Aceptar", "Hecho"],
+      ticket: "TK-0001",
+      asunto: "No carga el módulo de usuarios",
+      estado: "Abierto",
+      solicitadoPor: "Екатерина Лукшецкая",
+      fechaSolicitud: "2025-07-11",
+      descripcion:
+        "Al intentar ingresar al módulo de usuarios aparece pantalla en blanco. Probado en Chrome y Edge. Sucede desde ayer en la tarde.",
     },
     {
-      id: 2,
-      nombre: "Armen Sargsyan",
-      rol: "Mayordomo",
-      tiempo: "Hace 2 días",
-      mensaje:
-        "Pellentesque leo tincidunt penatibus tempus suspendisse accumsan ullamcorper netus risus cras sociis a fames, non eros cubilia neque mattis natoque nec montes sagittis at maecenas habitasse. Feugiat aptent felis habitant cursus tempor leo iaculis, dictum torquent aenean et nulla tempus fermentum, magnis sollicitudin ac urna molestie morbi. Potenti sociosqu ridiculus vehicula montes nostra enim eu curabitur semper, lectus pulvinar sagittis nisi porttitor massa quis feugiat.",
-      avatar: "https://randomuser.me/api/portraits/women/76.jpg",
-      estado: ["En proceso", "Hecho"],
+      ticket: "TK-0002",
+      asunto: "Error al generar copia de seguridad",
+      estado: "En proceso",
+      solicitadoPor: "Armen Sargsyan",
+      fechaSolicitud: "2025-07-12",
+      descripcion:
+        "El botón ‘Generar copia’ muestra error 500. Se adjunta captura en el correo enviado al soporte.",
+    },
+    {
+      ticket: "TK-0003",
+      asunto: "Solicitud de nuevo rol",
+      estado: "Cerrado",
+      solicitadoPor: "Juan Pérez",
+      fechaSolicitud: "2025-08-01",
+      descripcion:
+        "Se requiere crear un rol ‘Supervisor de campo’ con acceso de solo lectura a reportes y clima.",
     },
   ];
 
+  const verDetalle = (row) => {
+    navigate("/detallesticket", { state: { ticket: row } });
+  };
+
   return (
-    <div className="flex">
+    <div className="min-h-[100dvh] bg-gray-50">
       {/* Sidebar */}
-      <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
+      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col items-center py-6 justify-between">
         <div className="flex flex-col items-center space-y-8">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
           <button onClick={() => navigate("/homeadm")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
@@ -71,6 +83,7 @@ const Soporte_adm = () => {
             </button>
           </div>
         </div>
+
         <div className="relative mb-6">
           <button
             onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
@@ -92,53 +105,50 @@ const Soporte_adm = () => {
             </div>
           )}
         </div>
-      </div>
+      </aside>
 
-      {/* Contenido principal */}
-      <div className="flex-1 p-8">
+      {/* Contenido */}
+      <main className="ml-28 min-h-[100dvh] p-8">
         <h1 className="text-4xl font-bold text-green-600 mb-6">Soporte</h1>
-
-        <div className="space-y-6">
-          {solicitudes.map((s) => (
-            <div key={s.id} className="w-[700px] border rounded-xl p-4 shadow-sm flex flex-col gap-3">
-              <div className="flex items-center gap-4">
-                {s.avatar ? (
-                  <img src={s.avatar} alt={s.nombre} className="w-12 h-12 rounded-full object-cover" />
-                ) : (
-                  <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center font-semibold text-xl text-white">
-                    {s.nombre[0]}
-                  </div>
-                )}
-                <div>
-                  <p className="font-semibold text-gray-900">{s.nombre}</p>
-                  <p className="text-sm text-gray-500">{s.rol}</p>
-                  <p className="text-sm text-gray-400">{s.tiempo}</p>
-                </div>
-              </div>
-              <p className="text-gray-700 whitespace-pre-wrap break-words">{s.mensaje}</p>
-              <div className="flex gap-2 mt-2">
-                {s.estado.map((estado, i) => (
-                  <button
-                    key={i}
-                    className={`px-4 py-1 rounded-full text-sm font-medium ${
-                      estado === "Hecho"
-                        ? "bg-green-100 text-green-700"
-                        : estado === "Aceptar"
-                        ? "bg-green-600 text-white hover:bg-green-700"
-                        : "bg-blue-100 text-blue-700"
-                    }`}
-                  >
-                    {estado}
-                  </button>
+        <div className="overflow-x-auto bg-white shadow-md rounded-lg">
+          <table className="min-w-full text-base text-center">
+            <thead className="bg-green-600 text-white">
+              <tr>
+                {["Ticket", "Asunto", "Estado", "Solicitado por", "Fecha de solicitud", "Acciones"].map((h) => (
+                  <th key={h} className="p-4 border uppercase">{h}</th>
                 ))}
-              </div>
-            </div>
-          ))}
+              </tr>
+            </thead>
+            <tbody>
+              {tickets.map((t) => (
+                <tr key={t.ticket} className="border-t hover:bg-gray-50">
+                  <td className="p-3 border">{t.ticket}</td>
+                  <td className="p-3 border text-left">{t.asunto}</td>
+                  <td className="p-3 border">{t.estado}</td>
+                  <td className="p-3 border">{t.solicitadoPor}</td>
+                  <td className="p-3 border">{t.fechaSolicitud}</td>
+                  <td className="p-3 border">
+                    <button
+                      onClick={() => verDetalle(t)}
+                      className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
+                      title="Ver detalle"
+                    >
+                      <IconEye className="w-4 h-4" /> Ver detalle
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              {tickets.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="p-6 text-gray-500">Sin tickets</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
-      </div>
+      </main>
     </div>
   );
 };
 
 export default Soporte_adm;
-

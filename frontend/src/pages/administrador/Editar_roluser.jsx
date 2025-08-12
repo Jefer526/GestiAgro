@@ -1,5 +1,4 @@
-// src/pages/administrador/Editar_roluser.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import {
   IconArrowLeft,
@@ -11,20 +10,34 @@ import {
   IconCloudUpload,
   IconTool,
   IconSettings,
+  IconMail,
+  IconWand,
+  IconFilter,
+  IconX,
+  IconChevronDown,
 } from "@tabler/icons-react";
-import axios from "axios";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
 const Editar_roluser = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { state } = useLocation(); // <- aquí llega el usuario desde la tabla (opcional)
+  const { state } = useLocation();
 
   const [alertaVisible, setAlertaVisible] = useState(false);
   const [cargando, setCargando] = useState(true);
 
+  // Mock por defecto (si no llega state.usuario)
+  const mockUsuario = {
+    id: id || "42",
+    nombre: "Juan Pérez",
+    telefono: "+57 300 123 4567",
+    email: "juan.perez@empresa.com",
+    rol: "Mayordomo",
+    permisos: ["Dashboard", "Producción", "Reportes"],
+  };
+
   const [usuario, setUsuario] = useState({
-    id,
+    id: "",
     nombre: "",
     telefono: "",
     email: "",
@@ -32,101 +45,176 @@ const Editar_roluser = () => {
     permisos: [],
   });
 
-  // campo independiente para una NUEVA contraseña (no se prellena)
-  const [nuevaContrasena, setNuevaContrasena] = useState("");
+  // ---------- PASSWORD (solo frontend: simulado) ----------
+  const [enviandoCorreo, setEnviandoCorreo] = useState(false);
+  const [avisoPwd, setAvisoPwd] = useState("");
 
-  const todosLosPermisos = [
-    "Ver reportes",
-    "Editar usuarios",
-    "Eliminar usuarios",
-    "Crear copias de seguridad",
-    "Gestionar soporte",
+  const generarContrasenaFuerte = (len = 12) => {
+    const may = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+    const min = "abcdefghijkmnopqrstuvwxyz";
+    const num = "23456789";
+    const sym = "!@#$%^&*()-_=+?.";
+    const all = may + min + num + sym;
+    const pick = (s) => s[Math.floor(Math.random() * s.length)];
+    let pwd = pick(may) + pick(min) + pick(num) + pick(sym);
+    for (let i = pwd.length; i < len; i++) pwd += pick(all);
+    return pwd.split("").sort(() => Math.random() - 0.5).join("");
+  };
+
+  const manejarGenerarYEnviar = () => {
+    // Solo simulación en frontend (no se muestra la contraseña)
+    generarContrasenaFuerte(12);
+    setEnviandoCorreo(true);
+    setAvisoPwd("");
+    setTimeout(() => {
+      setEnviandoCorreo(false);
+      setAvisoPwd(
+        "Contraseña temporal generada y enviada al correo del usuario (simulado)."
+      );
+    }, 1200);
+  };
+  // --------------------------------------------------------
+
+  // ---------- Permisos (un solo campo con tarjeta) ----------
+  const pantallasDisponibles = [
+    "Dashboard",
+    "Usuarios",
+    "Copias de seguridad",
+    "Soporte",
+    "Producción",
+    "Inventario",
+    "Clima",
+    "Lotes",
+    "Tareas",
+    "Reportes",
+    "Ajustes",
   ];
 
-  // Prefill: primero intenta con location.state; si no, pide al backend
+  const [openPermisos, setOpenPermisos] = useState(false);
+  const [permSearch, setPermSearch] = useState("");
+  const [tempSeleccion, setTempSeleccion] = useState([]);
+
+  const permisosBtnRef = useRef(null);
+  const permisosCardRef = useRef(null);
+  const [permPos, setPermPos] = useState({ top: 0, left: 0 });
+
+  const filtrarPantallas = pantallasDisponibles.filter((p) =>
+    p.toLowerCase().includes(permSearch.toLowerCase())
+  );
+
+  // Posicionamiento robusto: mide tarjeta real, flip + clamp con zoom/scroll/resize
+  const positionPermCard = () => {
+    const btn = permisosBtnRef.current?.getBoundingClientRect();
+    const card = permisosCardRef.current;
+    if (!btn || !card) return;
+
+    const cardW = card.offsetWidth || 360;
+    const cardH = card.offsetHeight || 340;
+
+    const viewportW = window.innerWidth;
+    const viewportH = window.innerHeight;
+
+    const espacioAbajo = viewportH - btn.bottom;
+    let top =
+      espacioAbajo > cardH
+        ? btn.bottom + window.scrollY + 8 // abajo
+        : btn.top + window.scrollY - cardH - 8; // arriba
+
+    const minTop = window.scrollY + 8;
+    const maxTop = window.scrollY + viewportH - cardH - 8;
+    if (top < minTop) top = minTop;
+    if (top > maxTop) top = maxTop;
+
+    let left = btn.left + window.scrollX;
+    const maxLeft = window.scrollX + viewportW - cardW - 8;
+    const minLeft = window.scrollX + 8;
+    if (left > maxLeft) left = maxLeft;
+    if (left < minLeft) left = minLeft;
+
+    setPermPos({ top, left });
+  };
+
+  const abrirPermisos = () => {
+    setTempSeleccion(usuario.permisos || []);
+    setOpenPermisos(true);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        positionPermCard();
+      });
+    });
+  };
+
+  const cerrarPermisos = () => setOpenPermisos(false);
+
+  const toggleTemp = (pantalla) => {
+    setTempSeleccion((prev) =>
+      prev.includes(pantalla) ? prev.filter((p) => p !== pantalla) : [...prev, pantalla]
+    );
+  };
+
+  const seleccionarTodo = () => setTempSeleccion([...pantallasDisponibles]);
+  const limpiarSeleccion = () => setTempSeleccion([]);
+
+  const aplicarPermisos = () => {
+    setUsuario((prev) => ({ ...prev, permisos: [...tempSeleccion] }));
+    setOpenPermisos(false);
+  };
+
   useEffect(() => {
-    const cargar = async () => {
-      try {
-        if (state?.usuario) {
-          const u = state.usuario;
-          setUsuario({
-            id: u.id_usuario ?? id,
-            nombre: u.nombre_completo ?? "",
-            telefono: u.telefono ?? "",
-            email: u.email ?? "",
-            rol: u.rol?.id_rol || u.rol || "", // ajusta según tu API
-            permisos: u.permisos || [],
-          });
-          setCargando(false);
-        } else {
-          const res = await axios.get(`/api/usuarios/${id}/`); // <-- tu endpoint de detalle SIN contraseña
-          const u = res.data;
-          setUsuario({
-            id: u.id_usuario ?? id,
-            nombre: u.nombre_completo ?? "",
-            telefono: u.telefono ?? "",
-            email: u.email ?? "",
-            rol: u.rol?.id_rol || u.rol || "",
-            permisos: u.permisos || [],
-          });
-          setCargando(false);
-        }
-      } catch (e) {
-        console.error(e);
-        setCargando(false);
-      }
+    if (!openPermisos) return;
+    const handler = () => positionPermCard();
+    window.addEventListener("resize", handler);
+    window.addEventListener("scroll", handler, { passive: true });
+    return () => {
+      window.removeEventListener("resize", handler);
+      window.removeEventListener("scroll", handler);
     };
-    cargar();
+  }, [openPermisos]);
+  // ----------------------------------------------------------
+
+  // Prefill SOLO FRONTEND: toma state.usuario o usa mock
+  useEffect(() => {
+    const u = state?.usuario
+      ? {
+          id: state.usuario.id_usuario || id || mockUsuario.id,
+          nombre: state.usuario.nombre_completo || mockUsuario.nombre,
+          telefono: state.usuario.telefono || mockUsuario.telefono,
+          email: state.usuario.email || mockUsuario.email,
+          rol: state.usuario.rol?.id_rol || state.usuario.rol || mockUsuario.rol,
+          permisos: state.usuario.permisos || [], // 🔹 vacío si no hay permisos
+        }
+      : {
+          ...mockUsuario,
+          permisos: [], // 🔹 aunque usemos mock, permisos vacíos
+        };
+  
+    setUsuario(u);
+    setCargando(false);
   }, [id, state]);
+  
 
-  const handlePermisoChange = (permiso) => {
-    const tienePermiso = usuario.permisos.includes(permiso);
-    setUsuario((prev) => ({
-      ...prev,
-      permisos: tienePermiso
-        ? prev.permisos.filter((p) => p !== permiso)
-        : [...prev.permisos, permiso],
-    }));
+  // Guardado simulado (solo frontend)
+  const handleSave = () => {
+    setAlertaVisible(true);
+    setTimeout(() => {
+      setAlertaVisible(false);
+      navigate("/admuser");
+    }, 1200);
   };
 
-  const handleSave = async () => {
-    try {
-      // armamos el payload SIN contraseña
-      const payload = {
-        nombre_completo: usuario.nombre,
-        telefono: usuario.telefono,
-        email: usuario.email,
-        rol: usuario.rol || null,
-        permisos: usuario.permisos,
-      };
-      // si el usuario escribió una contraseña nueva, la incluimos aparte
-      if (nuevaContrasena.trim()) {
-        payload.contrasena = nuevaContrasena.trim();
-      }
-
-      await axios.put(`/api/usuarios/${usuario.id}/`, payload);
-      setAlertaVisible(true);
-      setTimeout(() => {
-        setAlertaVisible(false);
-        navigate("/admuser");
-      }, 2000);
-    } catch (e) {
-      console.error(e);
-      alert("No se pudo guardar. Revisa la consola para más detalles.");
-    }
-  };
-
-  if (cargando) {
-    return <div className="p-6">Cargando...</div>;
-  }
+  if (cargando) return <div className="p-6">Cargando...</div>;
 
   return (
-    <div className="flex">
-      {/* Sidebar */}
-      <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between">
+    // Usamos min-h-[100dvh] para asegurar alto total del viewport con zoom
+    <div className="min-h-[100dvh] bg-gray-50">
+      {/* Sidebar FIJO a la izquierda con altura del viewport dinámica */}
+      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col items-center py-6 justify-between">
         <div className="flex flex-col items-center space-y-8">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
-          <button onClick={() => navigate("/homeadm")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button
+            onClick={() => navigate("/homeadm")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
             <IconHome className="text-white w-11 h-11" />
           </button>
           <div className="relative">
@@ -135,22 +223,31 @@ const Editar_roluser = () => {
               <IconUsers className="text-white w-11 h-11" />
             </button>
           </div>
-          <button onClick={() => navigate("/copias")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button
+            onClick={() => navigate("/copias")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
             <IconCloudUpload className="text-white w-11 h-11" />
           </button>
-          <button onClick={() => navigate("/soporte")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button
+            onClick={() => navigate("/soporte")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
             <IconTool className="text-white w-11 h-11" />
           </button>
         </div>
-        <button onClick={() => navigate("/ajustesadm")} className="mb-6 hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+        <button
+          onClick={() => navigate("/ajustesadm")}
+          className="mb-6 hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+        >
           <IconSettings className="text-white w-11 h-11" />
         </button>
-      </div>
+      </aside>
 
-      {/* Contenido principal */}
-      <div className="flex-1 bg-gray-50 min-h-screen p-6 relative">
+      {/* Contenido principal desplazado a la derecha del sidebar fijo */}
+      <main className="ml-28 min-h-[100dvh] p-6 relative">
         {alertaVisible && (
-          <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
+          <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[10000] bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
             <IconCheck className="w-5 h-5" /> Cambios guardados exitosamente
           </div>
         )}
@@ -163,55 +260,85 @@ const Editar_roluser = () => {
         </button>
 
         <div className="bg-white shadow-xl border-2 border-green-500 rounded-xl p-8 w-full max-w-5xl mx-auto mt-16">
-          <h1 className="text-3xl font-bold text-green-600 mb-6">Editar usuarios y permisos</h1>
+          <h1 className="text-3xl font-bold text-green-600 mb-6">
+            Editar usuarios y permisos
+          </h1>
 
+          {/* Datos básicos */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
-              <label className="block font-semibold text-gray-700 mb-1">Nombre</label>
+              <label className="block font-semibold text-gray-700 mb-1">
+                Nombre
+              </label>
               <input
                 type="text"
                 value={usuario.nombre}
                 onChange={(e) => setUsuario({ ...usuario, nombre: e.target.value })}
                 className="w-full p-3 rounded-md border border-gray-300 focus:ring-1 focus:ring-green-500 outline-none"
-                placeholder="Ingrese nombre"
+                placeholder="Juan Pérez"
               />
             </div>
             <div>
-              <label className="block font-semibold text-gray-700 mb-1">Teléfono</label>
+              <label className="block font-semibold text-gray-700 mb-1">
+                Teléfono
+              </label>
               <input
                 type="tel"
                 value={usuario.telefono}
                 onChange={(e) => setUsuario({ ...usuario, telefono: e.target.value })}
                 className="w-full p-3 rounded-md border border-gray-300 focus:ring-1 focus:ring-green-500 outline-none"
-                placeholder="Ingrese teléfono"
+                placeholder="+57 300 123 4567"
               />
             </div>
             <div>
-              <label className="block font-semibold text-gray-700 mb-1">Correo</label>
+              <label className="block font-semibold text-gray-700 mb-1">
+                Correo
+              </label>
               <input
                 type="email"
                 value={usuario.email}
                 onChange={(e) => setUsuario({ ...usuario, email: e.target.value })}
                 className="w-full p-3 rounded-md border border-gray-300 focus:ring-1 focus:ring-green-500 outline-none"
-                placeholder="Ingrese correo"
+                placeholder="juan.perez@empresa.com"
               />
             </div>
 
-            {/* Contraseña: nunca se prellena; sólo se envía si el usuario escribe algo */}
-            <div>
-              <label className="block font-semibold text-gray-700 mb-1">Contraseña (opcional)</label>
-              <input
-                type="password"
-                value={nuevaContrasena}
-                onChange={(e) => setNuevaContrasena(e.target.value)}
-                className="w-full p-3 rounded-md border border-gray-300 focus:ring-1 focus:ring-green-500 outline-none"
-                placeholder="Nueva contraseña (dejar vacío para no cambiar)"
-              />
+            {/* Generar/enviar contraseña temporal (simulado) */}
+            <div className="flex flex-col">
+              <label className="block font-semibold text-gray-700 mb-1">
+                Contraseña temporal
+              </label>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={manejarGenerarYEnviar}
+                  disabled={enviandoCorreo}
+                  className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg font-semibold shadow"
+                >
+                  <IconWand className="w-5 h-5" />
+                  Generar y enviar al correo
+                </button>
+                {enviandoCorreo && (
+                  <span className="text-sm text-gray-600 flex items-center gap-1">
+                    <IconMail className="w-4 h-4" /> Enviando…
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-gray-500 mt-2">
+                La contraseña <strong>no se mostrará</strong> por seguridad. El
+                usuario la recibirá por correo.
+              </p>
+              {avisoPwd && (
+                <p className="text-sm text-green-700 mt-2">{avisoPwd}</p>
+              )}
             </div>
           </div>
 
+          {/* Rol */}
           <div className="mb-6">
-            <label className="block text-lg font-bold text-gray-800 mb-2">Rol</label>
+            <label className="block text-lg font-bold text-gray-800 mb-2">
+              Rol
+            </label>
             <select
               value={usuario.rol}
               onChange={(e) => setUsuario({ ...usuario, rol: e.target.value })}
@@ -224,23 +351,129 @@ const Editar_roluser = () => {
             </select>
           </div>
 
+          {/* Permisos: campo único con tarjeta de selección */}
           <div className="mb-6">
             <label className="text-lg font-bold text-gray-800 mb-2 flex items-center gap-1">
-              <IconShieldCheck className="w-5 h-5 text-green-600" /> Permisos asignados
+              <IconShieldCheck className="w-5 h-5 text-green-600" /> Permisos
+              asignados
             </label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
-              {todosLosPermisos.map((permiso, index) => (
-                <label key={index} className="flex items-center gap-2 text-gray-700">
+
+            <button
+              ref={permisosBtnRef}
+              type="button"
+              onClick={abrirPermisos}
+              className="w-full p-3 rounded-md border border-gray-300 focus:ring-1 focus:ring-green-500 outline-none flex items-center justify-between"
+            >
+              <span className="text-gray-700">
+                {usuario.permisos.length > 0
+                  ? `${usuario.permisos.length} seleccionado(s)`
+                  : "Seleccionar permisos"}
+              </span>
+              <IconChevronDown className="w-5 h-5 text-gray-500" />
+            </button>
+
+            {/* Chips opcionales */}
+            {usuario.permisos.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-2">
+                {usuario.permisos.slice(0, 6).map((p) => (
+                  <span
+                    key={p}
+                    className="px-2 py-1 text-xs rounded-full bg-green-50 text-green-700 border border-green-200"
+                  >
+                    {p}
+                  </span>
+                ))}
+                {usuario.permisos.length > 6 && (
+                  <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-600 border">
+                    +{usuario.permisos.length - 6}
+                  </span>
+                )}
+              </div>
+            )}
+
+            {openPermisos && (
+              <div
+                ref={permisosCardRef}
+                className="fixed z-[9999] w-[360px] rounded-xl border shadow-xl bg-white p-3"
+                style={{ top: permPos.top, left: permPos.left }}
+              >
+                {/* Encabezado con texto más grande */}
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2 font-semibold text-gray-800 text-base">
+                    <IconShieldCheck className="w-4 h-4 text-green-600" />
+                    Seleccionar permisos
+                  </div>
+                  <button
+                    onClick={cerrarPermisos}
+                    className="p-1 rounded hover:bg-gray-100"
+                  >
+                    <IconX className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Búsqueda con texto más grande */}
+                <div className="relative mb-2">
+                  <IconFilter className="w-4 h-4 absolute left-2 top-1/2 -translate-y-1/2 text-gray-400" />
                   <input
-                    type="checkbox"
-                    checked={usuario.permisos.includes(permiso)}
-                    onChange={() => handlePermisoChange(permiso)}
-                    className="accent-green-600"
+                    value={permSearch}
+                    onChange={(e) => setPermSearch(e.target.value)}
+                    placeholder="Buscar pantalla…"
+                    className="w-full pl-7 pr-2 py-2 rounded-md border border-gray-300 focus:ring-1 focus:ring-green-500 outline-none text-base"
                   />
-                  {permiso}
-                </label>
-              ))}
-            </div>
+                </div>
+
+                {/* Lista con altura adaptable y texto más grande */}
+                <div className="max-h-[60vh] overflow-auto pr-1">
+                  {filtrarPantallas.length === 0 ? (
+                    <div className="text-sm text-gray-500 px-1 py-2">
+                      Sin resultados
+                    </div>
+                  ) : (
+                    filtrarPantallas.map((p) => (
+                      <label
+                        key={p}
+                        className="flex items-center gap-2 px-1 py-1 text-gray-700 text-base"
+                      >
+                        <input
+                          type="checkbox"
+                          className="accent-green-600"
+                          checked={tempSeleccion.includes(p)}
+                          onChange={() => toggleTemp(p)}
+                        />
+                        {p}
+                      </label>
+                    ))
+                  )}
+                </div>
+
+                {/* Botones inferiores con texto más grande */}
+                <div className="mt-3 flex items-center justify-between">
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={seleccionarTodo}
+                      className="text-sm px-2 py-1 rounded border border-green-600 text-green-700 hover:bg-green-50"
+                    >
+                      Seleccionar todo
+                    </button>
+                    <button
+                      type="button"
+                      onClick={limpiarSeleccion}
+                      className="text-sm px-2 py-1 rounded border text-gray-700 hover:bg-gray-50"
+                    >
+                      Borrar
+                    </button>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={aplicarPermisos}
+                    className="text-sm px-3 py-1 rounded bg-green-600 text-white hover:bg-green-700"
+                  >
+                    Aplicar
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="flex justify-end">
@@ -252,9 +485,10 @@ const Editar_roluser = () => {
             </button>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };
 
 export default Editar_roluser;
+

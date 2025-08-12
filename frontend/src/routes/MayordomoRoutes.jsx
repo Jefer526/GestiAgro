@@ -9,9 +9,9 @@ import Registrar_vclima from "../pages/mayordomo/Registrar_vclima";
 import Informes_mayor from "../pages/mayordomo/Informes_mayor";
 import Equipos_mayor from "../pages/mayordomo/Equipos_mayor";
 import Hoja_vidam from "../pages/mayordomo/Hoja_vidam";
-import Registrar_mante from "../pages/mayordomo/Registrar_mante";
+import Registrar_novedad_hoja from "../pages/mayordomo/Registrar_novedad_hoja";
 import Historial_trabajom from "../pages/mayordomo/Historial_trabajom";
-import Actualizar_estado_maquina from "../pages/mayordomo/Actualizar_estado_maquina";
+import Registrar_novedad from "../pages/mayordomo/Registrar_novedad";
 import Soporte_mayordomo from "../pages/mayordomo/Soporte_mayordomo";
 import Ajustes_mayordomo from "../pages/mayordomo/Ajustes_mayordomo";
 
@@ -26,9 +26,9 @@ const mayordomoRoutes = [
   <Route key="informes-mayor" path="/informes_mayordomo" element={<Informes_mayor />} />,
   <Route key="equipos" path="/equipos_mayordomo" element={<Equipos_mayor />} />,
   <Route key="hoja-vida" path="/hoja_vidam" element={<Hoja_vidam />} />,
-  <Route key="registrar-mantenimiento" path="/registrar_mantenimientom" element={<Registrar_mante />} />,
+  <Route key="registrar-novedadhoja" path="/registrar_novedad_hoja" element={<Registrar_novedad_hoja />} />,
   <Route key="historial-trabajo" path="/historial_trabajom" element={<Historial_trabajom />} />,
-  <Route key="actualizar-estado" path="/actualizar_estado_maquina" element={<Actualizar_estado_maquina />} />,
+  <Route key="regisnovedad" path="/registrar_novedadm" element={<Registrar_novedad />} />,
   <Route key="soporte-mayordomo" path="/soportemayordomo" element={<Soporte_mayordomo />} />,
   <Route key="ajustes-mayordomo" path="/ajustesmayordomo" element={<Ajustes_mayordomo />} />,
 ];

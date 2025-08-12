@@ -277,11 +277,12 @@ const Equipos_mayor = () => {
         )}
 
         <div className="flex justify-center gap-8 mt-8">
+          
+          <button onClick={() => navigate("/registrar_novedadm")} className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 text-lg font-semibold">
+            Registrar novedad
+          </button>
           <button className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 text-lg font-semibold">
             Exportar
-          </button>
-          <button onClick={() => navigate("/actualizar_estado_maquina")} className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 text-lg font-semibold">
-            Actualizar estado
           </button>
         </div>
       </div>

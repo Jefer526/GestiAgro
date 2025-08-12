@@ -11,11 +11,13 @@ const Login = () => {
       <div className="absolute bottom-0 left-0 w-full h-1/2 bg-white z-0" />
 
       {/* Logo */}
-      <img
-        src={faviconBlanco}
-        alt="Logo de GestiAgro"
-        className="absolute top-4 left-4 w-10 h-10 object-contain"
-      />
+      <Link to="/">
+        <img
+          src={faviconBlanco}
+          alt="Logo de GestiAgro"
+          className="absolute top-4 left-4 w-10 h-10 object-contain cursor-pointer"
+        />
+      </Link>
 
       {/* Formulario */}
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-xl px-12 py-16 z-10 relative">
