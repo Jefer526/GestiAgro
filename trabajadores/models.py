@@ -9,7 +9,6 @@ class Trabajadores(models.Model):
     fecha_creacion = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'trabajadores'
 
     def __str__(self):
@@ -21,7 +20,6 @@ class TrabajadoresFincas(models.Model):
 
 
     class Meta:
-        managed = False
         db_table = 'trabajadores_fincas'
         unique_together = (('id_trabajador', 'id_finca'),)
 

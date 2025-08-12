@@ -8,7 +8,6 @@ class Roles(models.Model):
     fecha_creacion = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'roles'
 
     def __str__(self):
@@ -25,7 +24,6 @@ class Usuarios(models.Model):
     id_rol = models.ForeignKey(Roles, models.DO_NOTHING, db_column='id_rol', blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'usuarios'
     def __str__(self):
         return self.nombre_completo

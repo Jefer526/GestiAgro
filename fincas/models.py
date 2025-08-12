@@ -12,7 +12,6 @@ class Finca(models.Model):
     fecha_creacion = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'finca'
 
     def __str__(self):
@@ -36,7 +35,6 @@ class Lote(models.Model):
     fecha_creacion = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'lote'
 
     def __str__(self):
@@ -52,7 +50,6 @@ class FincaEquipos(models.Model):
     fecha_creacion = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'finca_equipos'
         unique_together = (('id_finca', 'id_equipo'),)
 
@@ -60,11 +57,3 @@ class FincaEquipos(models.Model):
         return f"{self.id_finca} - {self.id_equipo}"
 
 
-class TrabajadoresFincas(models.Model):
-    id_finca = models.ForeignKey('Finca', on_delete=models.CASCADE, related_name='fincas_trabajadores_fincas')
-    id_trabajador = models.ForeignKey('trabajadores.Trabajadores', on_delete=models.CASCADE, related_name='trabajadores_fincas_fincas')
-
-
-
-    def __str__(self):
-        return f"{self.id_trabajador} en {self.id_finca}"

@@ -24,7 +24,6 @@ class Jornales(models.Model):
     fecha_creacion = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'jornales'
 
     def __str__(self):
@@ -45,7 +44,6 @@ class HistorialJornales(models.Model):
     fecha_creacion = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'historial_jornales'
 
     def __str__(self):

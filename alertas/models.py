@@ -25,7 +25,6 @@ class Alertas(models.Model):
     fecha_creacion = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'alertas'
 
     def __str__(self):

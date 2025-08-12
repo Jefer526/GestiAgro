@@ -26,7 +26,6 @@ class InspeccionesCampo(models.Model):
     fecha_creacion = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'inspecciones_campo'
 
     def __str__(self):

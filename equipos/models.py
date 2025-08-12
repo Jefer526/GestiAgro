@@ -10,7 +10,6 @@ class Equipos(models.Model):
     estado = models.CharField(max_length=10, blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'equipos'
 
     def __str__(self):
@@ -33,7 +32,6 @@ class MantenimientoEquipos(models.Model):
     fecha_creacion = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'mantenimiento_equipos'
 
     def __str__(self):
