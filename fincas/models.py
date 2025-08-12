@@ -1,6 +1,6 @@
 from django.db import models
 from equipos.models import Equipos
-from trabajadores.models import Trabajadores  # Si tienes la app 'trabajadores' separada
+
 
 class Finca(models.Model):
     id_finca = models.AutoField(primary_key=True)

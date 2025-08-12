@@ -1,9 +1,54 @@
 // src/pages/Login.jsx
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
+import { login } from "../../services/apiClient"; // ← usa el cliente API
+
+const API = import.meta.env.VITE_API_URL || "";
 
 const Login = () => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPass, setShowPass] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [capsOn, setCapsOn] = useState(false);
+
+  // Si ya hay sesión, manda al usuario directo
+  useEffect(() => {
+    if (localStorage.getItem("access")) {
+      navigate("/seleccion-rol", { replace: true });
+    }
+  }, [navigate]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (loading) return;
+    setErrorMsg("");
+
+    const emailTrim = email.trim();
+    if (!emailTrim || !password.trim()) {
+      setErrorMsg("Ingresa tu correo y contraseña.");
+      return;
+    }
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailTrim);
+    if (!emailOk) {
+      setErrorMsg("Formato de correo no válido.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await login(emailTrim, password); // ← cliente API guarda tokens
+      navigate("/seleccion-rol", { replace: true });
+    } catch (err) {
+      setErrorMsg(err.message || "Error al iniciar sesión.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen relative flex items-center justify-center bg-green-600">
       {/* Fondo dividido */}
@@ -40,15 +85,18 @@ const Login = () => {
           </div>
         </div>
 
-        <form className="space-y-6">
+        <form className="space-y-6" onSubmit={handleSubmit} noValidate>
           <div>
             <label className="block mb-2 font-medium text-gray-800 text-base">
-              Nombre de usuario o correo electrónico
+              Correo electrónico
             </label>
             <input
-              type="text"
-              placeholder="Correo o usuario"
+              type="email"
+              placeholder="tucorreo@dominio.com"
               className="w-full border text-lg border-gray-300 rounded-md px-4 py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
               required
             />
           </div>
@@ -57,12 +105,31 @@ const Login = () => {
             <label className="block mb-2 font-medium text-gray-800 text-base">
               Contraseña
             </label>
-            <input
-              type="password"
-              placeholder="Contraseña"
-              className="w-full border text-lg border-gray-300 rounded-md px-4 py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all"
-              required
-            />
+            <div className="relative">
+              <input
+                type={showPass ? "text" : "password"}
+                placeholder="Contraseña"
+                className="w-full border text-lg border-gray-300 rounded-md px-4 py-3 pr-12 outline-none focus:ring-2 focus:ring-green-400 transition-all"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onKeyUp={(e) => setCapsOn(e.getModifierState && e.getModifierState("CapsLock"))}
+                autoComplete="current-password"
+                required
+              />
+              <button
+                type="button"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-green-700 hover:underline"
+                onClick={() => setShowPass((s) => !s)}
+                aria-label={showPass ? "Ocultar contraseña" : "Mostrar contraseña"}
+              >
+                {showPass ? "Ocultar" : "Mostrar"}
+              </button>
+            </div>
+            {capsOn && (
+              <p className="mt-1 text-xs text-amber-600">
+                Bloq Mayús activado.
+              </p>
+            )}
           </div>
 
           <Link
@@ -72,20 +139,33 @@ const Login = () => {
             Olvidé mi contraseña
           </Link>
 
-          <Link to="/seleccion-rol">
-            <button
-              type="submit"
-              className="w-full bg-green-600 text-white py-3 rounded-lg text-lg font-semibold hover:bg-green-700 shadow-md transition-all mt-4"
+          {errorMsg && (
+            <div
+              className="rounded-md bg-red-50 border border-red-200 px-4 py-3 text-red-700 text-sm"
+              role="alert"
             >
-              Iniciar sesión
-            </button>
-          </Link>
+              {errorMsg}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full bg-green-600 text-white py-3 rounded-lg text-lg font-semibold shadow-md transition-all mt-4 ${
+              loading ? "opacity-80 cursor-not-allowed" : "hover:bg-green-700"
+            }`}
+          >
+            {loading ? "Ingresando..." : "Iniciar sesión"}
+          </button>
         </form>
+
+        {/* Hint de entorno (opcional) */}
+        <p className="text-xs text-gray-400 mt-6 text-center">
+          API: {API || "(definir VITE_API_URL en tu .env)"}
+        </p>
       </div>
     </div>
   );
 };
 
 export default Login;
-
-

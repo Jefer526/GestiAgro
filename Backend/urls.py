@@ -24,4 +24,6 @@ urlpatterns = [
     path('api/usuarios/', include('usuarios.urls')),
     path('api/registro/', RegistroUsuarioAPIView.as_view()),  # Acceso directo
     path('api/usuarios/', include('usuarios.urls')),  # Acceso agrupado
+    path("api/auth/", include("accounts.urls")),
+    path("api/", include("accounts.urls")),
 ]
