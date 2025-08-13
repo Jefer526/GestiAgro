@@ -16,14 +16,21 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from usuarios.views import RegistroUsuarioAPIView
+from accounts.views import DemoSignupAPIView 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('usuarios.urls')),
-    path('api/usuarios/', include('usuarios.urls')),
-    path('api/registro/', RegistroUsuarioAPIView.as_view()),  # Acceso directo
-    path('api/usuarios/', include('usuarios.urls')),  # Acceso agrupado
-    path("api/auth/", include("accounts.urls")),
-    path("api/", include("accounts.urls")),
+
+    # --- Si aún necesitas las rutas de la app usuarios para otras cosas ---
+    # path('api/usuarios/', include('usuarios.urls')),
+
+    # --- Rutas antiguas que registraban en usuarios ---
+    # Eliminadas para que el frontend ya no use /api/registro/
+    # path('api/registro/', RegistroUsuarioAPIView.as_view()),
+
+    path('api/registro/', DemoSignupAPIView.as_view()),
+
+    # --- Rutas de accounts ---
+    # Prefijo claro para que sepas que es el módulo de autenticación
+    path("api/accounts/", include("accounts.urls")),
 ]
