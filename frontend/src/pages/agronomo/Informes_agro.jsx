@@ -12,7 +12,7 @@ import {
   IconFrame,
   IconFileDownload,
   IconLogout,
-  IconHelp,
+  IconTool,
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 import { useNavigate } from "react-router-dom";
@@ -165,7 +165,7 @@ const Informes_agro = () => {
                 }}
                 className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
               >
-                <IconHelp className="w-5 h-5 mr-2 text-green-600" />
+                <IconTool className="w-5 h-5 mr-2 text-green-600" />
                 Soporte
               </button>
               <button

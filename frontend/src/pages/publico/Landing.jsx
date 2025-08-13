@@ -1,4 +1,3 @@
-// src/pages/Landing.jsx
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -18,15 +17,15 @@ import {
   IconBrandInstagram,
   IconBrandLinkedin,
   IconBrandWhatsapp,
+  IconPlant,
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 import heroBg from "../../assets/Fondo_pantalla_principal.png";
-
+import fondoModulo from "../../assets/Fondo_modulo.png";
 
 const Landing = () => {
   const navigate = useNavigate();
 
-  // refs para scroll suave
   const queEsRef = useRef(null);
   const modulosRef = useRef(null);
   const serviciosRef = useRef(null);
@@ -56,41 +55,28 @@ const Landing = () => {
       <div className="mb-4 inline-flex rounded-xl bg-green-50 p-3 group-hover:bg-green-100 transition-colors">
         {icon}
       </div>
-      <h4 className="text-lg font-semibold text-gray-800">{title}</h4>
-      <p className="mt-2 text-sm text-gray-600">{desc}</p>
+      <h4 className="text-lg font-semibold">{title}</h4>
+      <p className="mt-2 text-sm">{desc}</p>
     </div>
   );
 
-  
-
   return (
-    <div className="min-h-screen bg-white text-gray-900">
+    <div className="min-h-screen bg-white text-black text-lg">
       {/* NAVBAR */}
-      <header className="sticky top-0 z-40 bg-green-700/80 backdrop-blur border-b border-green-700 font-bold transition-colors duration-300">
+      <header className="sticky top-0 z-40 bg-green-700/80 backdrop-blur border-b border-green-700 font-bold transition-colors duration-300 text-white">
         <div className="mx-auto max-w-7xl px-4 py-5 flex items-center justify-between">
-          {/* Logo y nombre */}
           <div className="flex items-center gap-3">
             <img src={faviconBlanco} alt="GestiAgro" className="w-10 h-10 rounded" />
             <span className="font-bold text-lg text-white">GestiAgro</span>
           </div>
 
-          {/* Menú */}
           <nav className="hidden md:flex items-center gap-6 font-bold">
-            <button onClick={() => scrollTo(queEsRef)} className="hover:text-green-200 text-white">
-              ¿Qué es?
-            </button>
-            <button onClick={() => scrollTo(modulosRef)} className="hover:text-green-200 text-white">
-              Módulos
-            </button>
-            <button onClick={() => scrollTo(serviciosRef)} className="hover:text-green-200 text-white">
-              Servicios
-            </button>
-            <button onClick={() => scrollTo(contactoRef)} className="hover:text-green-200 text-white">
-              Contacto
-            </button>
+            <button onClick={() => scrollTo(queEsRef)} className="hover:text-green-200 text-white">¿Qué es?</button>
+            <button onClick={() => scrollTo(modulosRef)} className="hover:text-green-200 text-white">Módulos</button>
+            <button onClick={() => scrollTo(serviciosRef)} className="hover:text-green-200 text-white">Servicios</button>
+            <button onClick={() => scrollTo(contactoRef)} className="hover:text-green-200 text-white">Contacto</button>
           </nav>
 
-          {/* Botones */}
           <div className="flex items-center gap-3 font-bold">
             <button
               onClick={() => navigate("/crear-cuenta")}
@@ -108,12 +94,14 @@ const Landing = () => {
         </div>
       </header>
 
-      {/* HERO / FONDO CON DEGRADADO */}
+      {/* HERO */}
       <section
-        className="relative h-[92vh] flex items-center bg-cover bg-center"
-        style={{ backgroundImage: `url(${heroBg})` }}>
-        <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-black/15 to-transparent"/>
-        <div className="absolute inset-0 bg-green-900/10" />
+        className="relative h-[92vh] flex items-center bg-cover bg-center text-white"
+        style={{ backgroundImage: `url(${heroBg})` }}
+      >
+        {/* Capa oscura mejorada */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent" />
+        <div className="absolute inset-0 bg-green-900/30" />
 
         <div className="relative z-10 mx-auto max-w-7xl px-4">
           <div className="max-w-3xl">
@@ -123,13 +111,13 @@ const Landing = () => {
               </span>
             </div>
 
-            <h1 className="text-5xl md:text-7xl font-extrabold text-white leading-[1.05]">
+            <h1 className="text-5xl md:text-7xl font-extrabold leading-[1.05]">
               Optimiza tus campos de forma{" "}
               <span className="text-green-400">simple</span> y{" "}
               <span className="text-green-400">100% digital</span>
             </h1>
 
-            <p className="mt-6 text-lg md:text-xl text-gray-200">
+            <p className="mt-6 text-xl md:text-2xl text-gray-200">
               GestiAgro centraliza labores, clima, inventarios, maquinaria y personal
               para administrar tus fincas desde cualquier dispositivo.
             </p>
@@ -152,16 +140,18 @@ const Landing = () => {
         </div>
       </section>
 
+
       {/* ¿QUÉ ES? */}
       <section ref={queEsRef} className="mx-auto max-w-7xl px-4 py-16">
         <div className="grid md:grid-cols-2 gap-10 items-center">
+          {/* Lado izquierdo: texto */}
           <div>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">¿Qué es GestiAgro?</h2>
-            <p className="mt-4 text-gray-700">
+            <h2 className="text-3xl md:text-4xl font-bold">¿Qué es GestiAgro?</h2>
+            <p className="mt-4">
               Es una plataforma pensada para el sector agrícola que te permite planear, ejecutar y medir las operaciones
               de tus fincas en tiempo real. Reduce errores, mejora la trazabilidad y toma decisiones con datos.
             </p>
-            <ul className="mt-6 space-y-2 text-gray-700">
+            <ul className="mt-6 space-y-2">
               <li>• Registro y control de labores por lote</li>
               <li>• Variables climáticas y alertas</li>
               <li>• Inventario de insumos y bodega</li>
@@ -170,27 +160,71 @@ const Landing = () => {
               <li>• Reportes y tableros</li>
             </ul>
           </div>
-          <div className="rounded-2xl border bg-white p-6 shadow">
-            <div className="grid grid-cols-2 gap-6">
-              <div className="rounded-xl bg-green-50 p-5">
-                <IconClipboardList className="w-10 h-10 text-green-700" />
-                <p className="mt-3 font-semibold">Labores</p>
-                <p className="text-sm text-gray-600">Planificación semanal y cierre de actividades.</p>
+
+          {/* Lado derecho: panel "Cómo funciona" */}
+          <div className="rounded-2xl border bg-white shadow overflow-hidden">
+            <div className="bg-gradient-to-r from-green-600 to-emerald-500 px-6 py-5 text-white">
+              <p className="text-sm/5 opacity-90 font-semibold uppercase tracking-wide">
+                Cómo funciona
+              </p>
+              <p className="text-xl font-bold">Del campo al dato útil</p>
+            </div>
+
+            <div className="p-6">
+              <ol className="relative border-s border-gray-200 ms-4 space-y-6">
+                <li className="ms-4 ps-8">
+                  <span className="absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full bg-green-100 ring-8 ring-white">
+                    <IconClipboardList className="h-4 w-4 text-green-700" />
+                  </span>
+                  <h4 className="font-semibold mb-1">Registrar</h4>
+                  <p className="text-sm text-gray-600">
+                    Captura labores, clima, insumos y equipos desde web o móvil, incluso sin conexión.
+                  </p>
+                </li>
+
+                <li className="ms-4 ps-8">
+                  <span className="absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full bg-green-100 ring-8 ring-white">
+                    <IconTool className="h-4 w-4 text-green-700" />
+                  </span>
+                  <h4 className="font-semibold mb-1">Gestionar</h4>
+                  <p className="text-sm text-gray-600">
+                    Asigna responsables, define prioridades y sigue el avance por finca y lote.
+                  </p>
+                </li>
+
+                <li className="ms-4 ps-8">
+                  <span className="absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full bg-green-100 ring-8 ring-white">
+                    <IconChartBar className="h-4 w-4 text-green-700" />
+                  </span>
+                  <h4 className="font-semibold mb-1">Analizar</h4>
+                  <p className="text-sm text-gray-600">
+                    Visualiza indicadores, exporta reportes y toma decisiones con datos confiables.
+                  </p>
+                </li>
+              </ol>
+
+              <div className="mt-6 grid grid-cols-3 gap-3">
+                <div className="rounded-xl bg-green-50 px-4 py-3 text-center">
+                  <p className="text-2xl font-extrabold text-green-700 leading-none">3x</p>
+                  <p className="text-xs text-gray-600 mt-1">Más rápido</p>
+                </div>
+                <div className="rounded-xl bg-green-50 px-4 py-3 text-center">
+                  <p className="text-2xl font-extrabold text-green-700 leading-none">-40%</p>
+                  <p className="text-xs text-gray-600 mt-1">Errores</p>
+                </div>
+                <div className="rounded-xl bg-green-50 px-4 py-3 text-center">
+                  <p className="text-2xl font-extrabold text-green-700 leading-none">24/7</p>
+                  <p className="text-xs text-gray-600 mt-1">Disponibilidad</p>
+                </div>
               </div>
-              <div className="rounded-xl bg-green-50 p-5">
-                <IconCloudRain className="w-10 h-10 text-green-700" />
-                <p className="mt-3 font-semibold">Clima</p>
-                <p className="text-sm text-gray-600">Histórico y registro local.</p>
-              </div>
-              <div className="rounded-xl bg-green-50 p-5">
-                <IconBox className="w-10 h-10 text-green-700" />
-                <p className="mt-3 font-semibold">Insumos</p>
-                <p className="text-sm text-gray-600">Kardex, entradas/salidas, mínimos.</p>
-              </div>
-              <div className="rounded-xl bg-green-50 p-5">
-                <IconChartBar className="w-10 h-10 text-green-700" />
-                <p className="mt-3 font-semibold">Reportes</p>
-                <p className="text-sm text-gray-600">Indicadores y exportaciones.</p>
+
+              <div className="mt-6">
+                <button
+                  onClick={() => scrollTo(modulosRef)}
+                  className="w-full rounded-xl bg-green-600 px-5 py-3 text-white font-semibold hover:bg-green-700 transition"
+                >
+                  Ver características
+                </button>
               </div>
             </div>
           </div>
@@ -198,10 +232,18 @@ const Landing = () => {
       </section>
 
       {/* MÓDULOS */}
-      <section ref={modulosRef} className="bg-gray-50">
-        <div className="mx-auto max-w-7xl px-4 py-16">
-          <h3 className="text-3xl font-bold text-gray-900">Módulos</h3>
-          <p className="mt-2 text-gray-700">Todo lo que necesitas para gestionar tu operación agrícola.</p>
+      <section
+        ref={modulosRef}
+        className="relative bg-cover bg-center"
+        style={{ backgroundImage: `url(${fondoModulo})` }}
+      >
+        {/* Capa clara para contraste del texto */}
+        <div className="absolute inset-0 bg-white/40"></div>
+
+        {/* Contenido */}
+        <div className="relative z-10 mx-auto max-w-7xl px-4 py-16">
+          <h3 className="text-3xl font-bold">Módulos</h3>
+          <p className="mt-2">Todo lo que necesitas para gestionar tu operación agrícola.</p>
 
           <div className="mt-8 grid md:grid-cols-3 gap-6">
             <ModuleCard
@@ -226,13 +268,23 @@ const Landing = () => {
             />
             <ModuleCard
               icon={<IconUsers className="w-7 h-7 text-purple-500" />}
-              title="Personal"
+              title="Usuarios y roles"
               desc="Perfiles, permisos y asignación de labores."
             />
             <ModuleCard
               icon={<IconChartBar className="w-7 h-7 text-emerald-500" />}
               title="Informes"
               desc="KPIs, avances, productividad y exportación."
+            />
+            <ModuleCard
+              icon={<IconTool className="w-7 h-7 text-slate-600" />}
+              title="Soporte técnico"
+              desc="Solicita ayuda y gestiona tickets."
+            />
+            <ModuleCard
+              icon={<IconPlant className="w-7 h-7 text-green-700" />}
+              title="Producción"
+              desc="Gestión y registro de producción agrícola."
             />
           </div>
 
@@ -245,7 +297,7 @@ const Landing = () => {
             </button>
             <button
               onClick={() => scrollTo(serviciosRef)}
-              className="rounded-xl border border-gray-300 px-6 py-3 font-semibold hover:border-green-600 hover:text-green-700 transition"
+              className="rounded-xl border border-green-600 px-6 py-3 font-bold hover:border-green-600 hover:text-white"
             >
               Ver servicios
             </button>
@@ -255,37 +307,75 @@ const Landing = () => {
 
       {/* SERVICIOS */}
       <section ref={serviciosRef} className="mx-auto max-w-7xl px-4 py-16">
-        <h3 className="text-3xl font-bold text-gray-900">Servicios</h3>
-        <p className="mt-2 text-gray-700">Acompañamiento para garantizar la adopción del sistema.</p>
+        <h3 className="text-3xl font-bold">Servicios</h3>
+        <p className="mt-2">Acompañamiento para garantizar la adopción del sistema.</p>
 
-        <div className="mt-8 grid md:grid-cols-3 gap-6">
-          <div className="rounded-2xl border bg-white p-6 shadow-sm hover:shadow-xl transition">
-            <IconSettings className="w-8 h-8 text-green-700" />
-            <h4 className="mt-3 font-semibold">Implementación</h4>
-            <p className="text-sm text-gray-600 mt-1">Parametrización inicial, usuarios, fincas y lotes.</p>
+        <div className="mt-8 grid lg:grid-cols-2 gap-8 items-start">
+          {/* Timeline izquierda */}
+          <ol className="relative ms-4 space-y-10 border-s border-gray-200">
+        <li className="ms-6 flex items-start">
+          <span className="absolute -start-3 flex h-10 w-10 items-center justify-center rounded-full bg-green-50 ring-8 ring-white">
+            <IconSettings className="w-5 h-5 text-green-700" />
+          </span>
+          <div className="ms-4">
+            <h4 className="text-lg font-semibold">Implementación</h4>
+            <p className="text-sm text-gray-900 mt-1">
+              Parametrización inicial: usuarios, fincas y lotes. Capacitación y puesta en marcha.
+            </p>
           </div>
-          <div className="rounded-2xl border bg-white p-6 shadow-sm hover:shadow-xl transition">
-            <IconTool className="w-8 h-8 text-green-700" />
-            <h4 className="mt-3 font-semibold">Soporte</h4>
-            <p className="text-sm text-gray-600 mt-1">Canal de ayuda y atención prioritaria.</p>
+        </li>
+
+        <li className="ms-6 flex items-start">
+          <span className="absolute -start-3 flex h-10 w-10 items-center justify-center rounded-full bg-green-50 ring-8 ring-white">
+            <IconTool className="w-5 h-5 text-green-700" />
+          </span>
+          <div className="ms-4">
+            <h4 className="text-lg font-semibold">Soporte continuo</h4>
+            <p className="text-sm text-gray-900 mt-1">
+              Canal de ayuda, resolución de incidentes y asesoría funcional prioritaria.
+            </p>
           </div>
-          <div className="rounded-2xl border bg-white p-6 shadow-sm hover:shadow-xl transition">
-            <IconDeviceFloppy className="w-8 h-8 text-green-700" />
-            <h4 className="mt-3 font-semibold">Copias de seguridad</h4>
-            <p className="text-sm text-gray-600 mt-1">Respaldo automático y recuperación.</p>
+        </li>
+
+        <li className="ms-6 flex items-start">
+          <span className="absolute -start-3 flex h-10 w-10 items-center justify-center rounded-full bg-green-50 ring-8 ring-white">
+            <IconDeviceFloppy className="w-5 h-5 text-green-700" />
+          </span>
+          <div className="ms-4">
+            <h4 className="text-lg font-semibold">Backups y seguridad</h4>
+            <p className="text-sm text-gray-900 mt-1">
+              Copias automáticas, recuperación ante desastres y buenas prácticas de acceso.
+            </p>
+          </div>
+        </li>
+      </ol>
+
+          {/* Tarjeta propuesta derecha */}
+          <div className="rounded-2xl border bg-white p-6 md:p-8 shadow-sm">
+            <h4 className="text-xl font-semibold">¿Necesitas algo a la medida?</h4>
+            <p className="text-sm text-gray-600 mt-2">
+              Integramos con tus sistemas, ajustamos flujos y armamos reportes personalizados.
+            </p>
+            <button
+              onClick={() => scrollTo(contactoRef)}
+              className="mt-5 inline-flex items-center justify-center rounded-xl bg-gray-900 px-5 py-2.5 text-white font-semibold hover:bg-black transition"
+            >
+              Pedir propuesta
+            </button>
           </div>
         </div>
       </section>
+
 
       {/* CONTACTO */}
       <section ref={contactoRef} className="bg-gray-50">
         <div className="mx-auto max-w-7xl px-4 py-16">
           <div className="grid md:grid-cols-2 gap-10">
             <div>
-              <h3 className="text-3xl font-bold text-gray-900">Contáctenos</h3>
-              <p className="mt-2 text-gray-700">¿Tienes dudas? Escríbenos y agenda una demo guiada.</p>
+              <h3 className="text-3xl font-bold">Contáctenos</h3>
+              <p className="mt-2">¿Tienes dudas? Escríbenos y agenda una demo guiada.</p>
 
-              <div className="mt-6 space-y-3 text-gray-700">
+              <div className="mt-6 space-y-3">
                 <p className="flex items-center gap-2"><IconPhone className="w-5 h-5 text-green-700" /> +57 300 000 0000</p>
                 <p className="flex items-center gap-2"><IconMail className="w-5 h-5 text-green-700" /> soporte@gestiagro.com</p>
                 <p className="flex items-center gap-2"><IconMapPin className="w-5 h-5 text-green-700" /> Medellín, Colombia</p>
@@ -347,7 +437,7 @@ const Landing = () => {
       </section>
 
       {/* FOOTER */}
-      <footer className="bg-green-700/80 border-t border-green-700 text-white font-bold">
+      <footer className="bg-green-700/80 border-t border-green-700 text-white font-bold text-lg">
         <div className="mx-auto max-w-7xl px-4 py-10">
           <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-6">
             <div className="flex items-center gap-3">
@@ -374,5 +464,11 @@ const Landing = () => {
 };
 
 export default Landing;
+
+
+
+
+
+
 
 
