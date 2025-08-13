@@ -38,10 +38,10 @@ const Hoja_vidam = () => {
   };
 
   const historial = [
-    { fecha: "2025-05-20", prev: true, correcc: false, descripcion: "Mantenimiento 1500 horas", realizado: "John Deere" },
-    { fecha: "2025-05-21", prev: false, correcc: true, descripcion: "Reparación Radiador", realizado: "Alex Condza" },
-    { fecha: "2025-05-22", prev: false, correcc: false, descripcion: "Cambio Refrigerante", realizado: "Alex Condza" },
-    { fecha: "2025-05-23", prev: false, correcc: false, descripcion: "Cambio de llantas", realizado: "Montalantas" },
+    { fecha: "2025-05-20", prev: true,  correcc: false, descripcion: "Mantenimiento 1500 horas", realizado: "John Deere" },
+    { fecha: "2025-05-21", prev: false, correcc: true,  descripcion: "Reparación Radiador",       realizado: "Alex Condza" },
+    { fecha: "2025-05-22", prev: false, correcc: false, descripcion: "Cambio Refrigerante",       realizado: "Alex Condza" },
+    { fecha: "2025-05-23", prev: false, correcc: false, descripcion: "Cambio de llantas",         realizado: "Montalantas" },
   ];
 
   const toggleFiltro = (campo, event) => {
@@ -120,12 +120,86 @@ const Hoja_vidam = () => {
     );
   };
 
+  // --- Filtro de fecha agrupado por año > mes > día (corregido) ---
+  const renderFiltroFecha = () => {
+    // Construir estructura { [año]: { [mesNum]: Set(días) } }
+    const estructura = historial.reduce((acc, { fecha }) => {
+      const d = new Date(fecha + "T00:00:00");
+      const y = d.getFullYear();
+      const m = d.getMonth() + 1; // 1-12
+      const day = d.getDate();
+
+      if (!acc[y]) acc[y] = {};
+      if (!acc[y][m]) acc[y][m] = new Set();
+      acc[y][m].add(day);
+      return acc;
+    }, /** @type {Record<number, Record<number, Set<number>>>} */ ({}));
+
+    const monthName = (m) =>
+      new Date(2000, m - 1, 1).toLocaleString("default", { month: "long" });
+
+    return (
+      <div
+        ref={filtroRef}
+        className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60 text-left text-sm"
+        style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
+      >
+        <div className="font-semibold mb-2">Filtrar por Fecha</div>
+
+        {Object.keys(estructura)
+          .sort((a, b) => Number(a) - Number(b))
+          .map((yearKey) => {
+            const y = Number(yearKey);
+            const meses = estructura[y];
+            return (
+              <div key={y} className="mb-2">
+                <div className="font-medium">{y}</div>
+
+                {Object.keys(meses)
+                  .map(Number)
+                  .sort((a, b) => a - b)
+                  .map((m) => (
+                    <div key={`${y}-${m}`} className="ml-4">
+                      <div className="font-medium">{monthName(m)}</div>
+                      {[...meses[m]]
+                        .sort((a, b) => a - b)
+                        .map((day) => {
+                          const fullDate = `${y}-${String(m).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+                          return (
+                            <label key={`${y}-${m}-${day}`} className="ml-6 flex items-center gap-2">
+                              <input
+                                type="checkbox"
+                                checked={(valoresSeleccionados["fecha"] || []).includes(fullDate)}
+                                onChange={() => toggleValor("fecha", fullDate)}
+                                className="accent-green-600"
+                              />
+                              {day}
+                            </label>
+                          );
+                        })}
+                    </div>
+                  ))}
+              </div>
+            );
+          })}
+
+        <button
+          onClick={() => limpiarFiltro("fecha")}
+          className="text-blue-600 hover:underline text-xs mt-2"
+        >
+          Borrar filtro
+        </button>
+      </div>
+    );
+  };
+
   return (
-    <div className="flex h-screen">
-      {/* Sidebar */}
-      <div className="bg-green-600 w-28 h-full flex flex-col items-center py-6 justify-between">
+    <div className="min-h-dvh bg-gray-50">
+      {/* SIDEBAR FIJO A PANTALLA COMPLETA (cubre alto total aun con zoom) */}
+      <aside className="fixed inset-y-0 left-0 w-28 bg-green-600 flex flex-col items-center py-6 justify-between z-40">
         <div className="flex flex-col items-center space-y-8">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
+
           <button onClick={() => navigate("/homemayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconHome className="text-white w-11 h-11" />
           </button>
@@ -144,6 +218,8 @@ const Hoja_vidam = () => {
           <button onClick={() => navigate("/informes_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconChartBar className="text-white w-11 h-11" />
           </button>
+
+          {/* Indicador en el ítem activo */}
           <div className="relative w-full flex justify-center">
             <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full z-10" />
             <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
@@ -152,7 +228,7 @@ const Hoja_vidam = () => {
           </div>
         </div>
 
-        {/* Botón perfil */}
+        {/* Perfil */}
         <div className="relative mb-6">
           <button
             onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
@@ -187,133 +263,93 @@ const Hoja_vidam = () => {
             </div>
           )}
         </div>
-      </div>
+      </aside>
 
-      {/* Contenido principal */}
-      <div className="flex-1 px-10 py-8 overflow-auto">
-        <h2 className="text-3xl font-bold text-green-600 mb-6">Hoja de vida</h2>
-        <button
-          onClick={() => navigate("/equipos_mayordomo")}
-          className="flex items-center text-green-600 hover:text-green-800 mb-6"
-        >
-          <IconChevronLeft className="w-6 h-6 mr-1" />
-          <span className="text-base font-medium">Volver</span>
-        </button>
+      {/* CONTENIDO: compensar el ancho del sidebar */}
+      <main className="pl-28 min-h-dvh">
+        <div className="px-10 py-8 overflow-auto">
+          <h2 className="text-3xl font-bold text-green-600 mb-6">Hoja de vida</h2>
 
-        {/* Información general */}
-        <div className="bg-white border border-gray-300 p-6 rounded-xl mb-6 max-w-4xl">
-          <h2 className="text-2xl font-bold mb-4 text-green-600">Información general</h2>
-          <div className="grid grid-cols-2 gap-x-12 gap-y-2 text-lg">
-            <div><strong>ID Máquina:</strong> {maquina.id}</div>
-            <div><strong>Ubicación:</strong> {maquina.ubicacion}</div>
-            <div><strong>Máquina:</strong> {maquina.maquina}</div>
-            <div><strong>Estado:</strong> {maquina.estado}</div>
-            <div><strong>Referencia:</strong> {maquina.referencia}</div>
+          <button
+            onClick={() => navigate("/equipos_mayordomo")}
+            className="flex items-center text-green-600 hover:text-green-800 mb-6"
+          >
+            <IconChevronLeft className="w-6 h-6 mr-1" />
+            <span className="text-base font-medium">Volver</span>
+          </button>
+
+          {/* Información general */}
+          <div className="bg-white border border-gray-300 p-6 rounded-xl mb-6 max-w-4xl">
+            <h2 className="text-2xl font-bold mb-4 text-green-600">Información general</h2>
+            <div className="grid grid-cols-2 gap-x-12 gap-y-2 text-lg">
+              <div><strong>ID Máquina:</strong> {maquina.id}</div>
+              <div><strong>Ubicación:</strong> {maquina.ubicacion}</div>
+              <div><strong>Máquina:</strong> {maquina.maquina}</div>
+              <div><strong>Estado:</strong> {maquina.estado}</div>
+              <div><strong>Referencia:</strong> {maquina.referencia}</div>
+            </div>
+          </div>
+
+          {/* Historial */}
+          <h2 className="text-2xl font-bold text-green-600 mb-4">Historial de mantenimiento</h2>
+          <div className="overflow-x-auto relative">
+            <table className="w-full bg-white border border-gray-300 text-base text-center">
+              <thead className="bg-green-600 text-white font-bold text-base">
+                <tr>
+                  {[
+                    { campo: "fecha", titulo: "FECHA" },
+                    { campo: "prev", titulo: "MANTENIMIENTO PREV" },
+                    { campo: "correcc", titulo: "MANTENIMIENTO CORREC" },
+                    { campo: "descripcion", titulo: "DESCRIPCIÓN" },
+                    { campo: "realizado", titulo: "REALIZADO POR" },
+                  ].map(({ campo, titulo }) => (
+                    <th key={campo} className="p-3 border text-center">
+                      {campo !== "descripcion" ? (
+                        <div className="flex justify-center items-center gap-2">
+                          {titulo}
+                          <button onClick={(e) => toggleFiltro(campo, e)}>
+                            <IconFilter className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ) : (
+                        titulo
+                      )}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {datosFiltrados.map((item, index) => (
+                  <tr key={index} className="hover:bg-gray-50">
+                    <td className="p-3 border text-center">{item.fecha}</td>
+                    <td className="p-3 border text-center">{item.prev ? "Sí" : "No"}</td>
+                    <td className="p-3 border text-center">{item.correcc ? "Sí" : "No"}</td>
+                    <td className="p-3 border text-center">{item.descripcion}</td>
+                    <td className="p-3 border text-center">{item.realizado}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            {/* Filtros */}
+            {filtroActivo &&
+              (filtroActivo === "fecha" ? renderFiltroFecha() : renderFiltroSimple(filtroActivo))}
+          </div>
+
+          {/* Botones finales */}
+          <div className="flex justify-center gap-10 mt-10">
+            <button
+              onClick={() => navigate("/registrar_novedad_hoja")}
+              className="bg-green-600 hover:bg-green-700 text-white font-semibold text-lg px-6 py-3 rounded-lg"
+            >
+              Registrar novedad
+            </button>
+            <button className="bg-green-600 hover:bg-green-700 text-white font-semibold text-lg px-6 py-3 rounded-lg">
+              Descargar PDF
+            </button>
           </div>
         </div>
-
-        {/* Historial */}
-        <h2 className="text-2xl font-bold text-green-600 mb-4">Historial de mantenimiento</h2>
-        <div className="overflow-x-auto relative">
-          <table className="w-full bg-white border border-gray-300 text-base text-center">
-            <thead className="bg-green-600 text-white font-bold text-base">
-              <tr>
-                {[
-                  { campo: "fecha", titulo: "FECHA" },
-                  { campo: "prev", titulo: "MANTENIMIENTO PREV" },
-                  { campo: "correcc", titulo: "MANTENIMIENTO CORREC" },
-                  { campo: "descripcion", titulo: "DESCRIPCIÓN" },
-                  { campo: "realizado", titulo: "REALIZADO POR" },
-                ].map(({ campo, titulo }) => (
-                  <th key={campo} className="p-3 border text-center">
-                    {campo !== "descripcion" ? (
-                      <div className="flex justify-center items-center gap-2">
-                        {titulo}
-                        <button onClick={(e) => toggleFiltro(campo, e)}>
-                          <IconFilter className="w-4 h-4" />
-                        </button>
-                      </div>
-                    ) : (
-                      titulo
-                    )}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {datosFiltrados.map((item, index) => (
-                <tr key={index} className="hover:bg-gray-50">
-                  <td className="p-3 border text-center">{item.fecha}</td>
-                  <td className="p-3 border text-center">{item.prev ? "Sí" : "No"}</td>
-                  <td className="p-3 border text-center">{item.correcc ? "Sí" : "No"}</td>
-                  <td className="p-3 border text-center">{item.descripcion}</td>
-                  <td className="p-3 border text-center">{item.realizado}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          {filtroActivo && (filtroActivo === "fecha"
-            ? (
-              <div
-                ref={filtroRef}
-                className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60 text-left text-sm"
-                style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
-              >
-                <div className="font-semibold mb-2">Filtrar por Fecha</div>
-                {Object.entries(
-                  historial.reduce((acc, { fecha }) => {
-                    const [year, month, day] = fecha.split("-");
-                    const monthName = new Date(`${year}-${month}-01`).toLocaleString("default", { month: "long" });
-                    acc[year] = acc[year] || {};
-                    acc[year][monthName] = acc[year][monthName] || new Set();
-                    acc[year][monthName].add(day);
-                    return acc;
-                  }, {})
-                ).map(([year, months]) => (
-                  <div key={year} className="mb-2">
-                    <div className="font-medium">{year}</div>
-                    {Object.entries(months).map(([month, days]) => (
-                      <div key={month} className="ml-4">
-                        <div className="font-medium">{month}</div>
-                        {[...days].map((day) => {
-                          const fullDate = `${year}-${String(month).padStart(2, "0")}-${day}`;
-                          return (
-                            <label key={day} className="ml-6 flex items-center gap-2">
-                              <input
-                                type="checkbox"
-                                checked={(valoresSeleccionados["fecha"] || []).includes(fullDate)}
-                                onChange={() => toggleValor("fecha", fullDate)}
-                                className="accent-green-600"
-                              />
-                              {day}
-                            </label>
-                          );
-                        })}
-                      </div>
-                    ))}
-                  </div>
-                ))}
-                <button onClick={() => limpiarFiltro("fecha")} className="text-blue-600 hover:underline text-xs mt-2">
-                  Borrar filtro
-                </button>
-              </div>
-            )
-            : renderFiltroSimple(filtroActivo)
-          )}
-        </div>
-
-        {/* Botones finales */}
-        <div className="flex justify-center gap-10 mt-10">
-          <button onClick={() => navigate("/registrar_novedad_hoja")}
-                  className="bg-green-600 hover:bg-green-700 text-white font-semibold text-lg px-6 py-3 rounded-lg">
-            Registrar novedad
-          </button>
-          <button className="bg-green-600 hover:bg-green-700 text-white font-semibold text-lg px-6 py-3 rounded-lg">
-            Descargar PDF
-          </button>
-        </div>
-      </div>
+      </main>
     </div>
   );
 };

@@ -172,7 +172,7 @@ const Historial_trabajom = () => {
   };
 
   // Datos perfil
-  const nombreUsuario = "Juan Pérez"; // reemplazar con el nombre real del usuario
+  const nombreUsuario = "Juan Pérez";
   const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
   const tarjetaRef = useRef(null);
@@ -188,9 +188,9 @@ const Historial_trabajom = () => {
   }, []);
 
   return (
-    <div className="flex h-screen">
-      {/* Sidebar */}
-      <div className="bg-green-600 w-28 h-full flex flex-col items-center py-6 justify-between relative">
+    <div className="min-h-dvh bg-gray-50">
+      {/* Sidebar fijo a toda la altura del viewport */}
+      <aside className="fixed left-0 top-0 h-dvh w-28 bg-green-600 flex flex-col items-center py-6 justify-between">
         <div className="flex flex-col items-center space-y-8">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
           <button onClick={() => navigate("/homemayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
@@ -211,6 +211,7 @@ const Historial_trabajom = () => {
           <button onClick={() => navigate("/informes_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconChartBar className="text-white w-11 h-11" />
           </button>
+
           <div className="relative w-full flex justify-center">
             <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full z-10" />
             <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
@@ -220,7 +221,7 @@ const Historial_trabajom = () => {
         </div>
 
         {/* Botón perfil con letra */}
-        <div className="relative mb-6">
+        <div className="relative mb-0">
           <button
             onClick={() => setMostrarTarjeta((v) => !v)}
             className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
@@ -257,10 +258,10 @@ const Historial_trabajom = () => {
             </div>
           )}
         </div>
-      </div>
+      </aside>
 
-      {/* Contenido principal */}
-      <div className="flex-1 p-10 text-black">
+      {/* Contenido principal (desplazado a la derecha del sidebar fijo) */}
+      <main className="ml-28 min-h-dvh p-10 text-black overflow-x-hidden">
         <h2 className="text-3xl font-bold text-green-600 mb-6">Historial de trabajo</h2>
 
         <button
@@ -286,23 +287,23 @@ const Historial_trabajom = () => {
             <thead className="bg-green-600 text-white font-semibold">
               <tr>
                 {[
-                { campo: "fecha", titulo: "FECHA" },
-                { campo: "labor", titulo: "LABOR" },
-                { campo: "horasTrabajadas", titulo: "HORAS TRABAJADAS" },
-                { campo: "horasMaquina", titulo: "HORAS MÁQUINA" },
-                { campo: "observaciones", titulo: "OBSERVACIONES" },
-              ].map(({ campo, titulo }) => (
-                <th key={campo} className="p-4 border border-gray-300 text-center">
-                  <div className="flex justify-center items-center gap-2">
-                    {titulo}
-                    {campo !== "observaciones" && (
-                      <button onClick={(e) => toggleFiltro(campo, e)}>
-                        <IconFilter className="w-4 h-4" />
-                      </button>
-                    )}
-                  </div>
-                </th>
-              ))}
+                  { campo: "fecha", titulo: "FECHA" },
+                  { campo: "labor", titulo: "LABOR" },
+                  { campo: "horasTrabajadas", titulo: "HORAS TRABAJADAS" },
+                  { campo: "horasMaquina", titulo: "HORAS MÁQUINA" },
+                  { campo: "observaciones", titulo: "OBSERVACIONES" },
+                ].map(({ campo, titulo }) => (
+                  <th key={campo} className="p-4 border border-gray-300 text-center">
+                    <div className="flex justify-center items-center gap-2">
+                      {titulo}
+                      {campo !== "observaciones" && (
+                        <button onClick={(e) => toggleFiltro(campo, e)}>
+                          <IconFilter className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody className="text-black">
@@ -317,7 +318,8 @@ const Historial_trabajom = () => {
               ))}
             </tbody>
           </table>
-          {filtroActivo && (filtroActivo === "fecha" ? renderFiltroFecha() : renderFiltroSimple(filtroActivo))}
+          {filtroActivo &&
+            (filtroActivo === "fecha" ? renderFiltroFecha() : renderFiltroSimple(filtroActivo))}
         </div>
 
         <div className="flex justify-end mt-4">
@@ -325,7 +327,7 @@ const Historial_trabajom = () => {
             Descargar PDF
           </button>
         </div>
-      </div>
+      </main>
     </div>
   );
 };
