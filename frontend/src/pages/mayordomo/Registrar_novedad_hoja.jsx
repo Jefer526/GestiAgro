@@ -66,16 +66,17 @@ const Registrar_novedad_hoja = () => {
   };
 
   return (
-    <div className="flex">
-      {/* Sidebar */}
-      <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
-        {/* Logo fijo */}
-        <div className="sticky top-0 mb-6 bg-green-600 z-10">
+    <div className="relative">
+      {/* SIDEBAR FIJO de alto completo de la ventana (siempre a tope incluso con zoom) */}
+      {/* Usamos fixed + inset-y-0 para abarcar del top al bottom. Además, h-[100dvh] para navegadores que ajustan la barra. */}
+      <aside className="fixed inset-y-0 left-0 w-28 bg-green-600 h-[100dvh] flex flex-col items-center justify-between py-6">
+        {/* Logo */}
+        <div className="w-full">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11 mx-auto" />
         </div>
 
-        {/* Menú */}
-        <div className="flex-1 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only">
+        {/* Menú con scroll interno si hace falta */}
+        <div className="flex-1 mt-6 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only">
           <button
             onClick={() => navigate("/homemayordomo")}
             className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
@@ -123,7 +124,7 @@ const Registrar_novedad_hoja = () => {
         </div>
 
         {/* Perfil */}
-        <div className="relative mb-4">
+        <div className="relative mb-2">
           <button
             onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
             className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
@@ -169,10 +170,10 @@ const Registrar_novedad_hoja = () => {
             </div>
           )}
         </div>
-      </div>
+      </aside>
 
-      {/* Contenido */}
-      <div className="flex-1 px-10 py-8 relative bg-gray-50">
+      {/* CONTENIDO (desplazado a la derecha del sidebar fijo) */}
+      <main className="ml-28 min-h-[100dvh] bg-gray-50 px-10 py-8 relative">
         {/* Alerta */}
         {alertaVisible && (
           <div className="fixed top-3 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
@@ -305,9 +306,10 @@ const Registrar_novedad_hoja = () => {
             </div>
           </form>
         </div>
-      </div>
+      </main>
     </div>
   );
 };
 
 export default Registrar_novedad_hoja;
+

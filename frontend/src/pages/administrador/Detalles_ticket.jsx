@@ -7,6 +7,8 @@ import {
   IconSettings,
   IconLogout,
   IconChevronLeft,
+  IconDeviceFloppy,
+  IconCheck,
 } from "@tabler/icons-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
@@ -15,9 +17,9 @@ const Detalles_ticket = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
 
-  // Sidebar: mismo comportamiento que en Soporte_adm
   const tarjetaRef = useRef(null);
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
+  const [alertaVisible, setAlertaVisible] = useState(false);
   const letraInicial = "J";
 
   useEffect(() => {
@@ -30,47 +32,52 @@ const Detalles_ticket = () => {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Ticket recibido por state (simple frontend)
   const t =
     state?.ticket || {
       ticket: "TK-????",
       asunto: "—",
-      estado: "—",
+      estado: "Abierto",
       solicitadoPor: "—",
       fechaSolicitud: "—",
       descripcion: "—",
+      seguimiento: "",
     };
+
+  const [estado, setEstado] = useState(t.estado);
+  const [seguimiento, setSeguimiento] = useState(t.seguimiento);
+
+  const handleGuardar = () => {
+    console.log("Nuevo estado guardado:", estado);
+    console.log("Seguimiento escrito:", seguimiento);
+
+    // Aquí iría tu llamada a la API para guardar
+    // axios.put(`/api/tickets/${t.ticket}`, { estado, seguimiento });
+
+    setAlertaVisible(true);
+    setTimeout(() => {
+      setAlertaVisible(false);
+      navigate("/soporte");
+    }, 2000);
+  };
 
   return (
     <div className="min-h-[100dvh] bg-gray-50">
-      {/* Sidebar fijo */}
+      {/* Sidebar */}
       <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col items-center py-6 justify-between">
         <div className="flex flex-col items-center space-y-8">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
-          <button
-            onClick={() => navigate("/homeadm")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
+          <button onClick={() => navigate("/homeadm")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconHome className="text-white w-11 h-11" />
           </button>
-          <button
-            onClick={() => navigate("/admuser")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
+          <button onClick={() => navigate("/admuser")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconUsers className="text-white w-11 h-11" />
           </button>
-          <button
-            onClick={() => navigate("/copias")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
+          <button onClick={() => navigate("/copias")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconCloudUpload className="text-white w-11 h-11" />
           </button>
           <div className="relative">
             <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            <button
-              onClick={() => navigate("/soporte")}
-              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-            >
+            <button onClick={() => navigate("/soporte")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
               <IconTool className="text-white w-11 h-11" />
             </button>
           </div>
@@ -88,17 +95,11 @@ const Detalles_ticket = () => {
               ref={tarjetaRef}
               className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50 text-base"
             >
-              <button
-                onClick={() => navigate("/ajustesadm")}
-                className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100"
-              >
+              <button onClick={() => navigate("/ajustesadm")} className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100">
                 <IconSettings className="w-5 h-5 mr-2 text-green-600" />
                 Ajustes
               </button>
-              <button
-                onClick={() => navigate("/")}
-                className="flex items-center w-full text-left px-4 py-2 hover:bg-red-50 text-red-600"
-              >
+              <button onClick={() => navigate("/")} className="flex items-center w-full text-left px-4 py-2 hover:bg-red-50 text-red-600">
                 <IconLogout className="w-5 h-5 mr-2 text-red-600" />
                 Cerrar sesión
               </button>
@@ -109,22 +110,20 @@ const Detalles_ticket = () => {
 
       {/* Contenido */}
       <main className="ml-28 min-h-[100dvh] p-8">
-        <button
-          onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-2 text-green-600 hover:text-green-800 font-semibold mb-6"
-        >
+        {alertaVisible && (
+          <div className="fixed top-3 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
+            <IconCheck className="w-5 h-5" /> Estado del ticket actualizado
+          </div>
+        )}
+
+        <button onClick={() => navigate(-1)} className="inline-flex items-center gap-2 text-green-600 hover:text-green-800 font-semibold mb-6">
           <IconChevronLeft className="w-5 h-5" /> Volver
         </button>
 
         <div className="bg-white border border-gray-200 shadow-xl rounded-xl p-6 max-w-5xl mx-auto">
-          {/* Título (sin cambios de tamaño) */}
-          <h1 className="text-3xl font-bold text-green-600 mb-6">
-            Detalles del ticket
-          </h1>
+          <h1 className="text-3xl font-bold text-green-600 mb-6">Detalles del ticket</h1>
 
-          {/* Todo el contenido en letra más grande */}
           <div className="text-lg">
-            {/* Resumen en recuadro */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div className="border rounded-lg p-4">
                 <p className="text-gray-500">Ticket</p>
@@ -139,8 +138,12 @@ const Detalles_ticket = () => {
                 <p className="font-semibold text-gray-800">{t.solicitadoPor}</p>
               </div>
               <div className="border rounded-lg p-4">
-                <p className="text-gray-500">Estado</p>
-                <p className="font-semibold text-gray-800">{t.estado}</p>
+                <p className="text-gray-500 mb-2">Estado</p>
+                <select className="border rounded-md p-2 w-full" value={estado} onChange={(e) => setEstado(e.target.value)}>
+                  <option value="Abierto">Abierto</option>
+                  <option value="En proceso">En proceso</option>
+                  <option value="Cerrado">Cerrado</option>
+                </select>
               </div>
               <div className="border rounded-lg p-4 md:col-span-2">
                 <p className="text-gray-500">Fecha de solicitud</p>
@@ -148,23 +151,41 @@ const Detalles_ticket = () => {
               </div>
             </div>
 
-            {/* Descripción detallada */}
-            <div>
-              <label className="block text-gray-700 font-semibold mb-2">
-                Descripción detallada del ticket
-              </label>
+            {/* Descripción */}
+            <div className="mb-6">
+              <label className="block text-gray-700 font-semibold mb-2">Descripción detallada del ticket</label>
               <textarea
                 className="w-full min-h-[160px] border rounded-md p-3 outline-none focus:ring-2 focus:ring-green-400 text-lg"
                 value={t.descripcion}
                 readOnly
               />
             </div>
+
+            {/* Seguimiento editable */}
+            <div className="mb-6">
+              <label className="block text-gray-700 font-semibold mb-2">Seguimiento del ticket</label>
+              <textarea
+                className="w-full min-h-[160px] border rounded-md p-3 outline-none focus:ring-2 focus:ring-green-400 text-lg"
+                value={seguimiento}
+                onChange={(e) => setSeguimiento(e.target.value)}
+                placeholder="Escribe aquí el seguimiento..."
+              />
+            </div>
+
+            <button
+              onClick={handleGuardar}
+              className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 font-semibold"
+            >
+              <IconDeviceFloppy className="w-5 h-5" />
+              Guardar cambios
+            </button>
           </div>
         </div>
-
       </main>
     </div>
   );
 };
 
 export default Detalles_ticket;
+
+

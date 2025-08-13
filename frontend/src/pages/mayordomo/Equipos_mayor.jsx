@@ -114,9 +114,9 @@ const Equipos_mayor = () => {
   }, []);
 
   return (
-    <div className="flex h-screen">
-      {/* Sidebar */}
-      <div className="bg-green-600 w-28 h-full flex flex-col items-center py-6 justify-between">
+    <div className="min-h-[100dvh] bg-gray-50">
+      {/* Sidebar fijo y a altura completa del viewport dinámico */}
+      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col items-center py-6 justify-between">
         <div className="flex flex-col items-center space-y-8">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
           <button onClick={() => navigate("/homemayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
@@ -137,6 +137,8 @@ const Equipos_mayor = () => {
           <button onClick={() => navigate("/informes_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconChartBar className="text-white w-11 h-11" />
           </button>
+
+          {/* Indicador activo en Equipos */}
           <div className="relative w-full flex justify-center">
             <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full z-10" />
             <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
@@ -183,10 +185,10 @@ const Equipos_mayor = () => {
             </div>
           )}
         </div>
-      </div>
+      </aside>
 
-      {/* Contenido */}
-      <div className="flex-1 p-10 overflow-auto">
+      {/* Contenido principal desplazado (evita quedar debajo del sidebar) */}
+      <main className="ml-28 min-h-[100dvh] p-10 overflow-auto">
         <h1 className="text-3xl font-bold text-green-600 mb-6">Maquinaria y Equipos</h1>
         <div className="overflow-x-auto rounded-lg shadow-lg">
           <table className="min-w-full text-center text-base bg-white">
@@ -234,7 +236,7 @@ const Equipos_mayor = () => {
           </table>
         </div>
 
-        {/* Filtro */}
+        {/* Filtro flotante */}
         {filtroActivo && (
           <div
             ref={filtroRef}
@@ -277,7 +279,6 @@ const Equipos_mayor = () => {
         )}
 
         <div className="flex justify-center gap-8 mt-8">
-          
           <button onClick={() => navigate("/registrar_novedadm")} className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 text-lg font-semibold">
             Registrar novedad
           </button>
@@ -285,10 +286,11 @@ const Equipos_mayor = () => {
             Exportar
           </button>
         </div>
-      </div>
+      </main>
     </div>
   );
 };
 
 export default Equipos_mayor;
+
 
