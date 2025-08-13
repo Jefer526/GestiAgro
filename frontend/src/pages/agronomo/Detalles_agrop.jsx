@@ -54,13 +54,16 @@ const Detalles_agrop = () => {
     return () => document.removeEventListener("mousedown", clickFueraPerfil);
   }, []);
 
+  // Movimientos con columna "saldo" añadida
   const movimientos = [
-    { fecha: "2025-06-15", lote: "1", cantidad: "50", um: "Kg", tipo: "Entrada" },
-    { fecha: "2025-06-16", lote: "2", cantidad: "20", um: "Kg", tipo: "Salida" },
-    { fecha: "2025-06-17", lote: "3", cantidad: "45", um: "Kg", tipo: "Entrada" },
+    { fecha: "2025-06-15", tipo: "Entrada", lote: "1", cantidad: "50", um: "Kg", saldo: "350" },
+    { fecha: "2025-06-16", tipo: "Salida",  lote: "2", cantidad: "20", um: "Kg", saldo: "330" },
+    { fecha: "2025-06-17", tipo: "Entrada", lote: "3", cantidad: "45", um: "Kg", saldo: "375" },
   ];
 
-  const columnas = ["fecha", "lote", "cantidad", "um", "tipo"];
+  // Nuevo orden de columnas + "saldo" al final
+  const columnas = ["fecha", "tipo", "lote", "cantidad", "um", "saldo"];
+
   const [filtroActivo, setFiltroActivo] = useState(null);
   const [filtroPosicion, setFiltroPosicion] = useState({ top: 0, left: 0 });
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
@@ -71,18 +74,18 @@ const Detalles_agrop = () => {
     if (campo === "fecha") return []; // desactiva el filtro plano para 'fecha'
     const search = (busquedas[campo] || "").toLowerCase();
     return [...new Set(movimientos.map((e) => e[campo]))].filter((v) =>
-      v.toLowerCase().includes(search)
+      String(v).toLowerCase().includes(search)
     );
   };
 
   const toggleFiltro = (campo, e) => {
     const icono = e.currentTarget.getBoundingClientRect();
-    const filtroWidth = 240; // Ancho aprox. del filtro (w-60 = 15rem = 240px)
+    const filtroWidth = 240; // w-60 = 240px
     const pantallaWidth = window.innerWidth;
 
     let left = icono.left + window.scrollX;
     if (left + filtroWidth > pantallaWidth) {
-      left = pantallaWidth - filtroWidth - 10; // margen de 10px
+      left = pantallaWidth - filtroWidth - 10;
     }
 
     setFiltroActivo(filtroActivo === campo ? null : campo);
@@ -124,8 +127,8 @@ const Detalles_agrop = () => {
       if (!ordenCampo) return 0;
       const { campo, orden } = ordenCampo;
       return orden === "asc"
-        ? a[campo].localeCompare(b[campo])
-        : b[campo].localeCompare(a[campo]);
+        ? String(a[campo]).localeCompare(String(b[campo]))
+        : String(b[campo]).localeCompare(String(a[campo]));
     });
 
   return (
@@ -218,7 +221,7 @@ const Detalles_agrop = () => {
               <button
                 onClick={() => {
                   setMostrarTarjeta(false);
-                  navigate("/ajustes");
+                  navigate("/ajustesagro");
                 }}
                 className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
               >
@@ -228,7 +231,7 @@ const Detalles_agrop = () => {
               <button
                 onClick={() => {
                   setMostrarTarjeta(false);
-                  navigate("/soporte");
+                  navigate("/soporteagro");
                 }}
                 className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
               >
@@ -261,6 +264,7 @@ const Detalles_agrop = () => {
 
         <h1 className="text-3xl font-bold text-green-700 mb-6">Detalle del producto</h1>
 
+        {/* Recuadro de datos: se elimina Cantidad y Um, se agrega Saldo */}
         <div className="border border-gray-400 rounded-lg p-6 text-lg grid grid-cols-2 gap-y-2 max-w-3xl mb-10">
           <div>
             <span className="font-bold">Producto:</span> Urea
@@ -275,10 +279,7 @@ const Detalles_agrop = () => {
             <span className="font-bold">Categoría:</span> Fertilizante
           </div>
           <div>
-            <span className="font-bold">Cantidad:</span> 300
-          </div>
-          <div>
-            <span className="font-bold">Um:</span> Kg
+            <span className="font-bold">Saldo:</span> 300
           </div>
         </div>
 
@@ -307,10 +308,11 @@ const Detalles_agrop = () => {
               {movimientosFiltrados.map((m, i) => (
                 <tr key={i} className="border-b border-gray-200">
                   <td className="px-4 py-2 border-r border-gray-200 text-center">{m.fecha}</td>
+                  <td className="px-4 py-2 border-r border-gray-200 text-center">{m.tipo}</td>
                   <td className="px-4 py-2 border-r border-gray-200 text-center">{m.lote}</td>
                   <td className="px-4 py-2 border-r border-gray-200 text-center">{m.cantidad}</td>
                   <td className="px-4 py-2 border-r border-gray-200 text-center">{m.um}</td>
-                  <td className="px-4 py-2 border-r border-gray-200 text-center">{m.tipo}</td>
+                  <td className="px-4 py-2 border-r border-gray-200 text-center">{m.saldo}</td>
                 </tr>
               ))}
             </tbody>
@@ -356,7 +358,7 @@ const Detalles_agrop = () => {
                           onChange={() => toggleValor(filtroActivo, val)}
                           className="accent-green-600"
                         />
-                        {val.charAt(0).toUpperCase() + val.slice(1).toLowerCase()}
+                        {String(val).charAt(0).toUpperCase() + String(val).slice(1).toLowerCase()}
                       </label>
                     ))}
                   </div>
@@ -423,5 +425,6 @@ const Detalles_agrop = () => {
 };
 
 export default Detalles_agrop;
+
 
 

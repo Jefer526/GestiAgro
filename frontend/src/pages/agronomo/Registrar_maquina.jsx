@@ -132,7 +132,7 @@ const Registrar_maquina = () => {
           {mostrarTarjeta && (
             <div
               ref={tarjetaRef}
-              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-grey-300 rounded-xl shadow-2xl py-3 z-50"
+              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
             >
               <button
                 onClick={() => {
