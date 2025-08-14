@@ -14,6 +14,7 @@ from pathlib import Path
 import os
 import environ
 from datetime import timedelta
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -165,11 +166,8 @@ CORS_ALLOWED_ORIGINS = [
     # "https://tu-frontend.com",
 ]
 
-# Configuración SMTP con Gmail
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = "jefer5261@gmail.com"  # tu cuenta de Gmail
-EMAIL_HOST_PASSWORD = "uenauurqzyndqooh"  # la clave de 16 caracteres
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT', cast=int)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)
