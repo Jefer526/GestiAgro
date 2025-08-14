@@ -17,10 +17,10 @@ from .serializers import (
     UserSerializer,
     DemoSignupSerializer,
     SetPasswordSerializer,
+    UserUpdateSerializer,  # 👈 nuevo serializer para update
 )
 
 User = get_user_model()
-
 
 # ===== Registro normal (con contraseña) =====
 class RegisterView(generics.CreateAPIView):
@@ -28,7 +28,6 @@ class RegisterView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = RegisterSerializer
     throttle_classes = [AnonRateThrottle]   # protección básica
-
 
 # ===== Yo mismo =====
 class MeView(generics.RetrieveAPIView):
@@ -38,7 +37,6 @@ class MeView(generics.RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
-
 
 # ===== Logout (blacklist JWT) =====
 class LogoutView(APIView):
@@ -54,30 +52,22 @@ class LogoutView(APIView):
             )
         try:
             token = RefreshToken(refresh)
-            # Si tienes 'rest_framework_simplejwt.token_blacklist' en INSTALLED_APPS
             token.blacklist()
         except Exception:
-            # No exponemos si el token es válido o no
             return Response(
                 {"detail": "No se pudo cerrar sesión."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         return Response({"detail": "Logout correcto."}, status=status.HTTP_200_OK)
 
-
 # ===== Alta DEMO (sin contraseña) =====
 class DemoSignupAPIView(APIView):
-    """
-    Crea un usuario demo sin contraseña (set_unusable_password),
-    marca is_demo=True y devuelve el enlace para establecer contraseña.
-    """
     permission_classes = [permissions.AllowAny]
     throttle_classes = [AnonRateThrottle]
 
     def post(self, request):
         ser = DemoSignupSerializer(data=request.data)
         ser.is_valid(raise_exception=True)
-        # IMPORTANTE: NO usar `User` (variable) como tipo. Usamos la superclase conocida.
         user: AbstractBaseUser = ser.save()
 
         token_gen = PasswordResetTokenGenerator()
@@ -86,23 +76,16 @@ class DemoSignupAPIView(APIView):
         frontend = getattr(settings, "FRONTEND_URL", "http://localhost:5173")
         set_password_url = f"{frontend}/establecer-contrasena?uid={uid}&token={token}"
 
-        # En producción: enviar email real con `set_password_url`
         return Response(
             {
                 "message": "Registro recibido. Revisa tu correo para establecer la contraseña.",
-                # Solo para desarrollo hasta tener SMTP:
-                "set_password_url_demo": set_password_url,
+                "set_password_url_demo": set_password_url,  # solo en desarrollo
             },
             status=status.HTTP_201_CREATED,
         )
 
-
-# ===== Establecer contraseña desde el link (uid+token) =====
+# ===== Establecer contraseña =====
 class SetPasswordAPIView(APIView):
-    """
-    Valida uid/token, fija la nueva contraseña, desmarca is_demo
-    y opcionalmente emite JWT para loguear al usuario.
-    """
     permission_classes = [permissions.AllowAny]
     throttle_classes = [AnonRateThrottle]
 
@@ -111,15 +94,13 @@ class SetPasswordAPIView(APIView):
         ser.is_valid(raise_exception=True)
 
         try:
-            user: AbstractBaseUser = ser.save()  # set_password + is_demo=False
+            user: AbstractBaseUser = ser.save()
         except Exception:
-            # Evitamos filtrar si fue por token/uid inválido u otra razón
             return Response(
                 {"message": "No fue posible establecer la contraseña."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Opcional: emitir JWT para login automático
         try:
             refresh = RefreshToken.for_user(user)
             return Response(
@@ -131,29 +112,28 @@ class SetPasswordAPIView(APIView):
                 status=status.HTTP_200_OK,
             )
         except Exception:
-            # Si no usas SimpleJWT aquí, devolvemos solo confirmación
             return Response(
                 {"message": "Contraseña establecida correctamente."},
                 status=status.HTTP_200_OK,
             )
 
+# ===== Listado de usuarios =====
 class UsersListView(generics.ListAPIView):
     queryset = User.objects.all().order_by('id')
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAdminUser]  # o IsAuthenticated
+    permission_classes = [permissions.IsAdminUser]
     authentication_classes = [JWTAuthentication]
-    ''
+
+# ===== Activar / desactivar usuario =====
 class AccountsUserToggleActiveAPIView(APIView):
-    permission_classes = [permissions.IsAdminUser]  # evita que cualquiera lo use
+    permission_classes = [permissions.IsAdminUser]
 
     def patch(self, request, pk):
-        """Alterna is_active o lo fija explícitamente si viene en el body."""
         try:
             user = User.objects.get(pk=pk)
         except User.DoesNotExist:
             return Response({"detail": "Usuario no encontrado"}, status=404)
 
-        # si mandan {"is_active": false/true} lo aplicamos; si no, toggl-eamos
         is_active = request.data.get("is_active")
         if isinstance(is_active, bool):
             user.is_active = is_active
@@ -161,3 +141,23 @@ class AccountsUserToggleActiveAPIView(APIView):
             user.is_active = not user.is_active
         user.save()
         return Response({"id": user.id, "is_active": user.is_active}, status=200)
+
+# ===== Detalle y actualización de usuario =====
+class UserDetailUpdateView(generics.RetrieveUpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserUpdateSerializer
+    permission_classes = [permissions.IsAdminUser]
+    authentication_classes = [JWTAuthentication]
+
+    def update(self, request, *args, **kwargs):
+        kwargs['partial'] = True  # permite actualizar solo algunos campos
+
+        # ⚠️ Normaliza si el frontend manda "nombre" pero no "first_name"
+        data = request.data.copy()
+        if 'nombre' in data and 'first_name' not in data:
+            data['first_name'] = data['nombre']
+
+        serializer = self.get_serializer(self.get_object(), data=data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)

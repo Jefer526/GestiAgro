@@ -3,7 +3,6 @@ from django.contrib.auth import get_user_model
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 
-
 User = get_user_model()
 
 class UserSerializer(serializers.ModelSerializer):
@@ -25,7 +24,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
-# --- NUEVO: Alta de DEMO sin contraseña ---
+# --- Alta de DEMO sin contraseña ---
 class DemoSignupSerializer(serializers.Serializer):
     nombre = serializers.CharField(max_length=255)
     telefono = serializers.CharField(max_length=20, allow_blank=True, required=False)
@@ -39,7 +38,7 @@ class DemoSignupSerializer(serializers.Serializer):
     def create(self, data):
         email = data["email"].lower()
         user = User(
-            username=email,                # cómodo: usa email como username
+            username=email,
             email=email,
             first_name=data["nombre"],
             telefono=data.get("telefono", ""),
@@ -47,11 +46,11 @@ class DemoSignupSerializer(serializers.Serializer):
         if hasattr(user, "is_demo"):
             user.is_demo = True
         user.is_active = True
-        user.set_unusable_password()      # clave: sin contraseña
+        user.set_unusable_password()
         user.save()
         return user
 
-# --- NUEVO: Establecer contraseña desde el link (uid+token) ---
+# --- Establecer contraseña desde link ---
 class SetPasswordSerializer(serializers.Serializer):
     uid = serializers.CharField()
     token = serializers.CharField()
@@ -77,3 +76,22 @@ class SetPasswordSerializer(serializers.Serializer):
             user.is_demo = False
         user.save()
         return user
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+    nombre = serializers.CharField(source='first_name', required=False)
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "username",
+            "nombre",
+            "last_name",
+            "email",
+            "telefono",
+            "is_active",      # 👈 agregado
+            "is_superuser",   # 👈 opcional
+            "is_staff"        # 👈 opcional
+        ]
+        extra_kwargs = {
+            "email": {"required": False}
+        }

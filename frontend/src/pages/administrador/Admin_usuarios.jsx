@@ -15,7 +15,6 @@ import {
   IconLogout,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
-// 👇 usa el cliente con interceptor
 import api, { accountsApi, ENDPOINTS } from "../../services/apiClient";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
@@ -38,7 +37,7 @@ const Admin_usuarios = () => {
 
   const columnas = ["nombre_completo", "telefono", "rol", "email", "estado"];
 
-  // Cargar usuarios (usa accountsApi -> ya manda Bearer)
+  // Cargar usuarios
   useEffect(() => {
     (async () => {
       try {
@@ -117,7 +116,10 @@ const Admin_usuarios = () => {
     const rect = event.currentTarget.getBoundingClientRect();
     const espacioDisponibleDerecha = window.innerWidth - rect.right;
     const menuWidth = 180;
-    const left = espacioDisponibleDerecha > menuWidth ? rect.right + 8 : rect.left - menuWidth - 8;
+    const left =
+      espacioDisponibleDerecha > menuWidth
+        ? rect.right + 8
+        : rect.left - menuWidth - 8;
     setTimeout(() => {
       setMenuAbiertoId(id_usuario);
       setMenuPosition({ x: left, y: rect.top });
@@ -155,13 +157,12 @@ const Admin_usuarios = () => {
     return () => document.removeEventListener("mousedown", clickFueraTarjeta);
   }, []);
 
-  // ====== LOGOUT real ======
+  // ====== LOGOUT ======
   const handleLogout = async () => {
     if (isLoggingOut) return;
     setIsLoggingOut(true);
     try {
       const refresh = localStorage.getItem("refresh");
-      // Intenta usar ENDPOINTS.logout o accountsApi.logout si existe
       try {
         if (ENDPOINTS?.logout) {
           await api.post(ENDPOINTS.logout, { refresh });
@@ -169,18 +170,15 @@ const Admin_usuarios = () => {
           await accountsApi.logout({ refresh });
         }
       } catch (e) {
-        // Si el backend responde 401/403/500, igual limpiamos cliente
-        console.warn("Fallo en logout del backend, se forza cierre de sesión local:", e);
+        console.warn("Fallo en logout del backend:", e);
       }
     } finally {
-      // Limpieza local SIEMPRE
       try {
         localStorage.removeItem("access");
         localStorage.removeItem("refresh");
         sessionStorage.removeItem("access");
         sessionStorage.removeItem("refresh");
       } catch {}
-      // quita Authorization del cliente con interceptor por si quedó seteado
       try {
         if (api?.defaults?.headers?.common) {
           delete api.defaults.headers.common.Authorization;
@@ -188,12 +186,11 @@ const Admin_usuarios = () => {
       } catch {}
       setMostrarTarjeta(false);
       setIsLoggingOut(false);
-      // Redirección fuerte para que no haya "logout fantasma"
       window.location.replace("/");
     }
   };
 
-  // Activar / Inactivar (PATCH toggle) usando el cliente 'api'
+  // Activar / Inactivar usuario
   const handleToggleActivo = async (id_usuario) => {
     const u = usuarios.find((x) => x.id_usuario === id_usuario);
     if (!u) return;
@@ -202,7 +199,10 @@ const Admin_usuarios = () => {
     if (!ok) return;
 
     try {
-      const res = await api.patch(`${ENDPOINTS.users}${id_usuario}/toggle-active/`, {});
+      const res = await api.patch(
+        `${ENDPOINTS.users}${id_usuario}/toggle-active/`,
+        {}
+      );
       const nuevoActivo = !!res.data?.is_active;
       setUsuarios((prev) =>
         prev.map((it) =>
@@ -284,28 +284,35 @@ const Admin_usuarios = () => {
 
       {/* Contenido */}
       <div className="flex-1 p-10 overflow-auto">
-        <h1 className="text-4xl font-bold text-green-600 mb-6">Gestionar usuarios</h1>
+        <h1 className="text-4xl font-bold text-green-600 mb-6">
+          Gestionar usuarios
+        </h1>
 
         <div className="overflow-x-auto shadow-md rounded-lg relative">
           <table className="min-w-full text-base bg-white text-center">
             <thead className="bg-green-600 text-white">
               <tr>
-                {["NOMBRE_COMPLETO", "TELEFONO", "ROL", "EMAIL", "ESTADO"].map((titulo, idx) => (
-                  <th key={idx} className="p-4 border">
-                    <div className="flex items-center justify-center gap-2">
-                      <span>{titulo}</span>
-                      <button
-                        onClick={(e) =>
-                          toggleFiltro(["nombre_completo", "telefono", "rol", "email", "estado"][idx], e)
-                        }
-                        className="z-10"
-                        onMouseDown={(e) => e.stopPropagation()}
-                      >
-                        <IconFilter className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </th>
-                ))}
+                {["NOMBRE_COMPLETO", "TELEFONO", "ROL", "EMAIL", "ESTADO"].map(
+                  (titulo, idx) => (
+                    <th key={idx} className="p-4 border">
+                      <div className="flex items-center justify-center gap-2">
+                        <span>{titulo}</span>
+                        <button
+                          onClick={(e) =>
+                            toggleFiltro(
+                              ["nombre_completo", "telefono", "rol", "email", "estado"][idx],
+                              e
+                            )
+                          }
+                          className="z-10"
+                          onMouseDown={(e) => e.stopPropagation()}
+                        >
+                          <IconFilter className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </th>
+                  )
+                )}
                 <th className="p-4 border">OPCIONES</th>
               </tr>
             </thead>
@@ -320,7 +327,9 @@ const Admin_usuarios = () => {
                   <td className="p-4 border">
                     <span
                       className={`px-2 py-1 rounded text-sm ${
-                        u.is_active ? "bg-green-100 text-green-700" : "bg-gray-200 text-gray-700"
+                        u.is_active
+                          ? "bg-green-100 text-green-700"
+                          : "bg-gray-200 text-gray-700"
                       }`}
                     >
                       {u.estado}
@@ -345,7 +354,9 @@ const Admin_usuarios = () => {
               className="fixed bg-white text-black shadow-md border rounded z-[9999] p-3 w-60 text-left text-sm"
               style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
             >
-              <div className="font-semibold mb-2">Filtrar por {filtroActivo}</div>
+              <div className="font-semibold mb-2">
+                Filtrar por {filtroActivo}
+              </div>
               <button
                 onClick={() => ordenar(filtroActivo, "asc")}
                 className="text-green-700 flex items-center gap-1 mb-1 capitalize"
@@ -363,11 +374,16 @@ const Admin_usuarios = () => {
                 placeholder="Buscar..."
                 className="w-full border border-gray-300 px-2 py-1 rounded mb-2 text-sm"
                 value={busquedas[filtroActivo] || ""}
-                onChange={(e) => setBusquedas({ ...busquedas, [filtroActivo]: e.target.value })}
+                onChange={(e) =>
+                  setBusquedas({ ...busquedas, [filtroActivo]: e.target.value })
+                }
               />
               <div className="flex flex-col max-h-40 overflow-y-auto">
                 {getValoresUnicos(filtroActivo).map((val, idx) => (
-                  <label key={idx} className="flex items-center gap-2 mb-1 capitalize">
+                  <label
+                    key={idx}
+                    className="flex items-center gap-2 mb-1 capitalize"
+                  >
                     <input
                       type="checkbox"
                       checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
@@ -394,10 +410,26 @@ const Admin_usuarios = () => {
               style={{ top: menuPosition.y, left: menuPosition.x }}
             >
               <button
-                onClick={() => navigate(`/editar-roluser/${menuAbiertoId}`)}
+                onClick={() => {
+                  const usuarioSeleccionado = usuarios.find(
+                    (x) => x.id_usuario === menuAbiertoId
+                  );
+                  navigate(`/editar-roluser/${menuAbiertoId}`, {
+                    state: {
+                      usuario: {
+                        ...usuarioSeleccionado._raw,
+                        nombre_completo: usuarioSeleccionado.nombre_completo,
+                        telefono: usuarioSeleccionado.telefono,
+                        rol: usuarioSeleccionado.rol,
+                        estado: usuarioSeleccionado.estado,
+                      },
+                    },
+                  });
+                }}
                 className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100"
               >
-                <IconPencil className="w-4 h-4 text-blue-600" /> Editar Rol y Permisos
+                <IconPencil className="w-4 h-4 text-blue-600" /> Editar Rol y
+                Permisos
               </button>
               <button
                 onClick={() => handleToggleActivo(menuAbiertoId)}
@@ -405,8 +437,8 @@ const Admin_usuarios = () => {
               >
                 <IconPower className="w-4 h-4 text-gray-700" />
                 {usuarios.find((x) => x.id_usuario === menuAbiertoId)?.is_active
-                  ? "Inactivar"
-                  : "Activar"}
+                  ? "Activar"
+                  : "Inactivar"}
               </button>
             </div>
           )}

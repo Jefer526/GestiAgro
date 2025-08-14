@@ -1,6 +1,6 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
-from .views import RegisterView, MeView, LogoutView, DemoSignupAPIView, SetPasswordAPIView, AccountsUserToggleActiveAPIView, UsersListView
+from .views import RegisterView, MeView, LogoutView, DemoSignupAPIView, SetPasswordAPIView, AccountsUserToggleActiveAPIView, UsersListView, AccountsUserToggleActiveAPIView, UserDetailUpdateView
 from .views_auth import EmailLoginView  # 👈 usa esta
 
 urlpatterns = [
@@ -15,4 +15,6 @@ urlpatterns = [
     path("users/<int:pk>/toggle-active/", AccountsUserToggleActiveAPIView.as_view(),
          name="accounts-users-toggle-active"),
     path('users/', UsersListView.as_view(), name='users-list'),
+    path('users/<int:pk>/', UserDetailUpdateView.as_view(), name='user-detail-update'),
+    path('users/<int:pk>/toggle-active/', AccountsUserToggleActiveAPIView.as_view(), name='toggle-active'),
 ]

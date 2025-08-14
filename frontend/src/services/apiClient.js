@@ -4,9 +4,6 @@ import axios from "axios";
 // ===== Base URL =====
 const API = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
-// Asegúrate de NO poner / al final en VITE_API_URL
-// Ej: VITE_API_URL=http://localhost:8000
-
 // ===== Axios instance =====
 const api = axios.create({
   baseURL: API,
@@ -70,10 +67,8 @@ api.interceptors.response.use(
       return api(original);
     } catch (err) {
       processQueue(err, null);
-      // Limpia sesión y (opcional) redirige
       localStorage.removeItem("access");
       localStorage.removeItem("refresh");
-      // window.location.href = "/login";
       return Promise.reject(err);
     } finally {
       isRefreshing = false;
@@ -81,13 +76,14 @@ api.interceptors.response.use(
   }
 );
 
-// ===== Endpoints canónicos (según tus logs) =====
+// ===== Endpoints =====
 export const ENDPOINTS = {
-  login: "/api/token/",             // SimpleJWT
-  refresh: "/api/token/refresh/",   // SimpleJWT
-  me: "/api/auth/me/",              // tu vista 'Me'
-  logout: "/api/auth/logout/",      // tu logout (blacklist refresh)
-  users: "/api/accounts/users/",    // lista de usuarios (requiere auth)
+  login: "/api/token/",
+  refresh: "/api/token/refresh/",
+  me: "/api/auth/me/",
+  logout: "/api/auth/logout/",
+  users: "/api/accounts/users/",
+  userDetail: (id) => `/api/accounts/users/${id}/`,
 };
 
 // ===== Métodos de autenticación =====
@@ -117,7 +113,7 @@ export const logout = async () => {
       await api.post(ENDPOINTS.logout, { refresh_token: refresh });
     }
   } catch (_) {
-    // Silenciar errores de red; igual limpiamos sesión abajo
+    // Silenciar errores
   } finally {
     localStorage.removeItem("access");
     localStorage.removeItem("refresh");
@@ -127,6 +123,8 @@ export const logout = async () => {
 // ===== Módulo accounts =====
 export const accountsApi = {
   listUsers: () => api.get(ENDPOINTS.users),
+  updateUser: (id, data) => api.put(ENDPOINTS.userDetail(id), data),   // PUT completo
+  patchUser: (id, data) => api.patch(ENDPOINTS.userDetail(id), data),  // PATCH parcial
 };
 
 export default api;
