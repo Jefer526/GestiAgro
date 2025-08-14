@@ -6,6 +6,8 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 User = get_user_model()
 
 class UserSerializer(serializers.ModelSerializer):
+    tiene_password = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = [
@@ -15,10 +17,16 @@ class UserSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "telefono",
-            "is_active",      # 👈 agregado
-            "is_superuser",   # 👈 opcional
-            "is_staff"        # 👈 opcional
+            "is_active",       # Estado activo/inactivo
+            "is_superuser",    # Admin total
+            "is_staff",        # Admin parcial
+            "tiene_password",  # 👈 agregado
         ]
+
+    def get_tiene_password(self, obj):
+        # Devuelve True si el usuario tiene contraseña usable
+        return obj.has_usable_password()
+
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=8)
@@ -33,6 +41,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         return user
+
 
 # --- Alta de DEMO sin contraseña ---
 class DemoSignupSerializer(serializers.Serializer):
@@ -59,6 +68,7 @@ class DemoSignupSerializer(serializers.Serializer):
         user.set_unusable_password()
         user.save()
         return user
+
 
 # --- Establecer contraseña desde link ---
 class SetPasswordSerializer(serializers.Serializer):
@@ -87,8 +97,11 @@ class SetPasswordSerializer(serializers.Serializer):
         user.save()
         return user
 
+
 class UserUpdateSerializer(serializers.ModelSerializer):
     nombre = serializers.CharField(source='first_name', required=False)
+    tiene_password = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = [
@@ -98,10 +111,14 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             "last_name",
             "email",
             "telefono",
-            "is_active",      # 👈 agregado
-            "is_superuser",   # 👈 opcional
-            "is_staff"        # 👈 opcional
+            "is_active",
+            "is_superuser",
+            "is_staff",
+            "tiene_password",  # 👈 agregado aquí también
         ]
         extra_kwargs = {
             "email": {"required": False}
         }
+
+    def get_tiene_password(self, obj):
+        return obj.has_usable_password()

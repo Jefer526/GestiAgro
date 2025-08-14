@@ -35,6 +35,7 @@ const Editar_roluser = () => {
     email: "juan.perez@empresa.com",
     rol: "Mayordomo",
     permisos: ["Dashboard", "Producción", "Reportes"],
+    tiene_password: true,
   };
 
   const [usuario, setUsuario] = useState({
@@ -44,6 +45,7 @@ const Editar_roluser = () => {
     email: "",
     rol: "",
     permisos: [],
+    tiene_password: true,
   });
 
   const tarjetaRef = useRef(null);
@@ -58,14 +60,27 @@ const Editar_roluser = () => {
 
   const [enviandoCorreo, setEnviandoCorreo] = useState(false);
   const [avisoPwd, setAvisoPwd] = useState("");
-  const manejarGenerarYEnviar = () => {
+  const manejarGenerarYEnviar = async () => {
+  try {
     setEnviandoCorreo(true);
     setAvisoPwd("");
-    setTimeout(() => {
-      setEnviandoCorreo(false);
-      setAvisoPwd("Contraseña temporal generada y enviada al correo (simulado).");
-    }, 1200);
-  };
+    const { data } = await accountsApi.sendTempPassword(usuario.id);
+
+    // 🔹 Solo actualizamos la propiedad tiene_password
+    setUsuario(prev => ({
+      ...prev,
+      tiene_password: data.tiene_password
+    }));
+
+    setAvisoPwd("Contraseña temporal generada y enviada al correo.");
+    setTimeout(() => setAvisoPwd(""), 4000); // mensaje desaparece en 4s
+  } catch (error) {
+    console.error("Error al generar contraseña:", error);
+    alert("Hubo un error al enviar la contraseña temporal.");
+  } finally {
+    setEnviandoCorreo(false);
+  }
+};
 
   const pantallasDisponibles = [
     "Dashboard",
@@ -97,7 +112,9 @@ const Editar_roluser = () => {
   const cerrarPermisos = () => setOpenPermisos(false);
   const toggleTemp = (pantalla) => {
     setTempSeleccion((prev) =>
-      prev.includes(p) ? prev.filter((p) => p !== pantalla) : [...prev, pantalla]
+      prev.includes(pantalla)
+        ? prev.filter((p) => p !== pantalla)
+        : [...prev, pantalla]
     );
   };
   const seleccionarTodo = () => setTempSeleccion([...pantallasDisponibles]);
@@ -116,6 +133,8 @@ const Editar_roluser = () => {
           email: state.usuario.email || mockUsuario.email,
           rol: state.usuario.rol?.id_rol || state.usuario.rol || mockUsuario.rol,
           permisos: state.usuario.permisos || [],
+          tiene_password:
+            state.usuario.tiene_password ?? mockUsuario.tiene_password,
         }
       : { ...mockUsuario, permisos: [] };
     setUsuario(u);
@@ -151,7 +170,10 @@ const Editar_roluser = () => {
       <aside className="w-28 h-[100dvh] bg-green-600 flex flex-col items-center py-6 justify-between fixed left-0 top-0">
         <div className="flex flex-col items-center space-y-8">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
-          <button onClick={() => navigate("/homeadm")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button
+            onClick={() => navigate("/homeadm")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
             <IconHome className="text-white w-11 h-11" />
           </button>
           <div className="relative">
@@ -160,10 +182,16 @@ const Editar_roluser = () => {
               <IconUsers className="text-white w-11 h-11" />
             </button>
           </div>
-          <button onClick={() => navigate("/copias")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button
+            onClick={() => navigate("/copias")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
             <IconCloudUpload className="text-white w-11 h-11" />
           </button>
-          <button onClick={() => navigate("/soporte")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          <button
+            onClick={() => navigate("/soporte")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
             <IconTool className="text-white w-11 h-11" />
           </button>
         </div>
@@ -206,61 +234,100 @@ const Editar_roluser = () => {
           </div>
         )}
 
-        <button onClick={() => navigate("/admuser")} className="text-green-600 hover:text-green-800 flex items-center gap-1 font-semibold mb-6">
+        <button
+          onClick={() => navigate("/admuser")}
+          className="text-green-600 hover:text-green-800 flex items-center gap-1 font-semibold mb-6"
+        >
           <IconArrowLeft className="w-5 h-5" /> Volver
         </button>
 
         {/* Formulario */}
         <div className="bg-white shadow-xl border-2 border-green-500 rounded-xl p-8 max-w-5xl mx-auto">
-          <h2 className="text-2xl font-bold text-green-700 mb-8">Editar roles y usuarios</h2>
+          <h2 className="text-2xl font-bold text-green-700 mb-8">
+            Editar roles y usuarios
+          </h2>
 
           {/* Datos */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
-              <label className="block font-semibold text-gray-700 mb-1">Nombre</label>
+              <label className="block font-semibold text-gray-700 mb-1">
+                Nombre
+              </label>
               <input
                 type="text"
                 value={usuario.nombre}
-                onChange={(e) => setUsuario({ ...usuario, nombre: e.target.value })}
+                onChange={(e) =>
+                  setUsuario({ ...usuario, nombre: e.target.value })
+                }
                 className="w-full p-3 rounded-md border border-gray-300 focus:ring-1 focus:ring-green-500 outline-none"
               />
             </div>
             <div>
-              <label className="block font-semibold text-gray-700 mb-1">Teléfono</label>
+              <label className="block font-semibold text-gray-700 mb-1">
+                Teléfono
+              </label>
               <input
                 type="tel"
                 value={usuario.telefono}
-                onChange={(e) => setUsuario({ ...usuario, telefono: e.target.value })}
+                onChange={(e) =>
+                  setUsuario({ ...usuario, telefono: e.target.value })
+                }
                 className="w-full p-3 rounded-md border border-gray-300 focus:ring-1 focus:ring-green-500 outline-none"
               />
             </div>
             <div>
-              <label className="block font-semibold text-gray-700 mb-1">Correo</label>
+              <label className="block font-semibold text-gray-700 mb-1">
+                Correo
+              </label>
               <input
                 type="email"
                 value={usuario.email}
-                onChange={(e) => setUsuario({ ...usuario, email: e.target.value })}
+                onChange={(e) =>
+                  setUsuario({ ...usuario, email: e.target.value })
+                }
                 className="w-full p-3 rounded-md border border-gray-300 focus:ring-1 focus:ring-green-500 outline-none"
               />
             </div>
             <div>
-              <label className="block font-semibold text-gray-700 mb-1">Contraseña temporal</label>
+              <label className="block font-semibold text-gray-700 mb-1">
+                Contraseña temporal
+              </label>
               <button
                 type="button"
                 onClick={manejarGenerarYEnviar}
-                disabled={enviandoCorreo}
-                className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg font-semibold shadow"
+                disabled={enviandoCorreo || usuario.tiene_password}
+                className={`inline-flex items-center gap-2 px-4 py-3 rounded-lg font-semibold shadow ${
+                  enviandoCorreo || usuario.tiene_password
+                    ? "bg-gray-400 cursor-not-allowed text-white"
+                    : "bg-green-600 hover:bg-green-700 text-white"
+                }`}
               >
                 <IconWand className="w-5 h-5" /> Generar y enviar
               </button>
-              {enviandoCorreo && <span className="ml-2 text-sm text-gray-600"><IconMail className="inline w-4 h-4" /> Enviando…</span>}
-              {avisoPwd && <p className="text-sm text-green-700 mt-2">{avisoPwd}</p>}
+
+              {usuario.tiene_password && !enviandoCorreo && (
+                <p className="text-sm text-gray-500 mt-1">
+                  Este usuario ya tiene una contraseña asignada.
+                </p>
+              )}
+
+              {enviandoCorreo && (
+                <span className="ml-2 text-sm text-gray-600">
+                  <IconMail className="inline w-4 h-4" /> Enviando…
+                </span>
+              )}
+              {avisoPwd && (
+                <p className="text-sm text-green-700 mt-2">{avisoPwd}</p>
+              )}
+              
             </div>
           </div>
 
           {/* Rol */}
           <div className="mb-6">
-            <label className="block text-lg font-bold text-gray-800 mb-2">Rol</label>
+            <label className="block text-lg font-bold text-gray-800 mb-2">
+              Rol
+            </label>
             <select
               value={usuario.rol}
               onChange={(e) => setUsuario({ ...usuario, rol: e.target.value })}
@@ -276,7 +343,8 @@ const Editar_roluser = () => {
           {/* Permisos */}
           <div className="mb-6">
             <label className="text-lg font-bold text-gray-800 mb-2 flex items-center gap-1">
-              <IconShieldCheck className="w-5 h-5 text-green-600" /> Permisos asignados
+              <IconShieldCheck className="w-5 h-5 text-green-600" /> Permisos
+              asignados
             </label>
             <button
               ref={permisosBtnRef}
@@ -307,7 +375,10 @@ const Editar_roluser = () => {
                   {filtrarPantallas.length === 0
                     ? "Sin resultados"
                     : filtrarPantallas.map((p) => (
-                        <label key={p} className="flex items-center gap-2 px-1 py-1">
+                        <label
+                          key={p}
+                          className="flex items-center gap-2 px-1 py-1"
+                        >
                           <input
                             type="checkbox"
                             className="accent-green-600"
@@ -319,9 +390,24 @@ const Editar_roluser = () => {
                       ))}
                 </div>
                 <div className="flex justify-between mt-3 pt-3 border-t">
-                  <button onClick={seleccionarTodo} className="text-green-600 text-sm font-semibold hover:underline">Seleccionar todo</button>
-                  <button onClick={limpiarSeleccion} className="text-red-600 text-sm font-semibold hover:underline">Limpiar</button>
-                  <button onClick={aplicarPermisos} className="text-blue-600 text-sm font-semibold hover:underline">Aceptar</button>
+                  <button
+                    onClick={seleccionarTodo}
+                    className="text-green-600 text-sm font-semibold hover:underline"
+                  >
+                    Seleccionar todo
+                  </button>
+                  <button
+                    onClick={limpiarSeleccion}
+                    className="text-red-600 text-sm font-semibold hover:underline"
+                  >
+                    Limpiar
+                  </button>
+                  <button
+                    onClick={aplicarPermisos}
+                    className="text-blue-600 text-sm font-semibold hover:underline"
+                  >
+                    Aceptar
+                  </button>
                 </div>
               </div>
             )}

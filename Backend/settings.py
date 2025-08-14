@@ -164,3 +164,12 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
     # "https://tu-frontend.com",
 ]
+
+# Configuración SMTP con Gmail
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "jefer5261@gmail.com"  # tu cuenta de Gmail
+EMAIL_HOST_PASSWORD = "uenauurqzyndqooh"  # la clave de 16 caracteres
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

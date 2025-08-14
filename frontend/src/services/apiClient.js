@@ -84,6 +84,7 @@ export const ENDPOINTS = {
   logout: "/api/auth/logout/",
   users: "/api/accounts/users/",
   userDetail: (id) => `/api/accounts/users/${id}/`,
+  sendTempPassword: (id) => `/api/accounts/users/${id}/send-temp-password/`,
 };
 
 // ===== Métodos de autenticación =====
@@ -125,6 +126,7 @@ export const accountsApi = {
   listUsers: () => api.get(ENDPOINTS.users),
   updateUser: (id, data) => api.put(ENDPOINTS.userDetail(id), data),   // PUT completo
   patchUser: (id, data) => api.patch(ENDPOINTS.userDetail(id), data),  // PATCH parcial
+  sendTempPassword: (id) => api.post(ENDPOINTS.sendTempPassword(id)),  // Contraseña temporal
 };
 
 export default api;

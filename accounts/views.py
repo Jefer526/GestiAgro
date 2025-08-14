@@ -11,6 +11,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.utils.crypto import get_random_string
+from django.core.mail import send_mail
 
 from .serializers import (
     RegisterSerializer,
@@ -175,3 +177,41 @@ class UserDetailUpdateView(generics.RetrieveUpdateAPIView):
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data)
+    
+class SendTemporaryPasswordAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, pk):
+        try:
+            user = User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            return Response({"detail": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Proteger superusuario
+        if user.is_superuser:
+            return Response(
+                {"detail": "No se puede cambiar la contraseña de un superusuario."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Generar contraseña temporal
+        temp_password = get_random_string(length=8)
+        user.set_password(temp_password)
+        user.save()
+
+        # Enviar correo
+        try:
+            send_mail(
+                subject="Contraseña temporal - GestiAgro",
+                message=f"Hola {user.first_name or ''},\n\nTu nueva contraseña temporal es: {temp_password}\n\nPor favor, cámbiala después de iniciar sesión.",
+                from_email="tu_correo@gmail.com",  # Configurado en settings.py
+                recipient_list=[user.email],
+                fail_silently=False,
+            )
+        except Exception as e:
+            return Response({"detail": f"Error al enviar el correo: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        # Forzar que el campo tiene_password sea True
+        user.tiene_password = True
+
+        return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
