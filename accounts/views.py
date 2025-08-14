@@ -19,14 +19,14 @@ from .serializers import (
     UserSerializer,
     DemoSignupSerializer,
     SetPasswordSerializer,
-    UserUpdateSerializer,  # 👈 nuevo serializer para update
+    UserUpdateSerializer,
+    UserRoleUpdateSerializer,
 )
 
 User = get_user_model()
 
 # ===== Registro normal (con contraseña) =====
 class RegisterView(generics.CreateAPIView):
-    queryset = User.objects.all()
     permission_classes = [permissions.AllowAny]
     serializer_class = RegisterSerializer
     throttle_classes = [AnonRateThrottle]   # protección básica
@@ -215,3 +215,14 @@ class SendTemporaryPasswordAPIView(APIView):
         user.tiene_password = True
 
         return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
+
+# ===== Actualizar rol de usuario =====
+class UpdateUserRoleView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserRoleUpdateSerializer
+    permission_classes = [permissions.IsAdminUser]
+    authentication_classes = [JWTAuthentication]
+
+    def update(self, request, *args, **kwargs):
+        kwargs['partial'] = True  # permitir actualización parcial
+        return super().update(request, *args, **kwargs)

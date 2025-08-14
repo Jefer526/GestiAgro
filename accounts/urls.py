@@ -1,6 +1,6 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
-from .views import RegisterView, MeView, LogoutView, DemoSignupAPIView, SetPasswordAPIView, AccountsUserToggleActiveAPIView, UsersListView, AccountsUserToggleActiveAPIView, UserDetailUpdateView, SendTemporaryPasswordAPIView
+from .views import RegisterView, MeView, LogoutView, DemoSignupAPIView, SetPasswordAPIView, AccountsUserToggleActiveAPIView, UsersListView, AccountsUserToggleActiveAPIView, UserDetailUpdateView, SendTemporaryPasswordAPIView, UpdateUserRoleView
 from .views_auth import EmailLoginView  
 
 
@@ -19,4 +19,5 @@ urlpatterns = [
     path('users/<int:pk>/', UserDetailUpdateView.as_view(), name='user-detail-update'),
     path('users/<int:pk>/toggle-active/', AccountsUserToggleActiveAPIView.as_view(), name='toggle-active'),
     path('users/<int:pk>/send-temp-password/', SendTemporaryPasswordAPIView.as_view(), name='send_temp_password'),
+    path('update-role/<int:pk>/', UpdateUserRoleView.as_view(), name='update-role'),
 ]

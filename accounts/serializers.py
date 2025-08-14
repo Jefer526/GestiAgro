@@ -17,14 +17,14 @@ class UserSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "telefono",
-            "is_active",       # Estado activo/inactivo
-            "is_superuser",    # Admin total
-            "is_staff",        # Admin parcial
-            "tiene_password",  # 👈 agregado
+            "rol",            # 👈 agregado aquí
+            "is_active",
+            "is_superuser",
+            "is_staff",
+            "tiene_password",
         ]
 
     def get_tiene_password(self, obj):
-        # Devuelve True si el usuario tiene contraseña usable
         return obj.has_usable_password()
 
 
@@ -122,3 +122,9 @@ class UserUpdateSerializer(serializers.ModelSerializer):
 
     def get_tiene_password(self, obj):
         return obj.has_usable_password()
+    
+
+class UserRoleUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "rol"]
