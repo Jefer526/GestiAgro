@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
-import { login } from "../../services/apiClient"; // ← usa el cliente API
+import { login } from "../../services/apiClient";
 
 const API = import.meta.env.VITE_API_URL || "";
 
@@ -10,13 +10,20 @@ const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberEmail, setRememberEmail] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [capsOn, setCapsOn] = useState(false);
 
-  // Si ya hay sesión, manda al usuario directo
+  // Cargar correo guardado si existe
   useEffect(() => {
+    const savedEmail = localStorage.getItem("rememberedEmail");
+    if (savedEmail) {
+      setEmail(savedEmail);
+      setRememberEmail(true);
+    }
+
     if (localStorage.getItem("access")) {
       navigate("/seleccion-rol", { replace: true });
     }
@@ -40,7 +47,15 @@ const Login = () => {
 
     setLoading(true);
     try {
-      await login(emailTrim, password); // ← cliente API guarda tokens
+      await login(emailTrim, password);
+
+      // Guardar o eliminar correo según checkbox
+      if (rememberEmail) {
+        localStorage.setItem("rememberedEmail", emailTrim);
+      } else {
+        localStorage.removeItem("rememberedEmail");
+      }
+
       navigate("/seleccion-rol", { replace: true });
     } catch (err) {
       setErrorMsg(err.message || "Error al iniciar sesión.");
@@ -112,7 +127,9 @@ const Login = () => {
                 className="w-full border text-lg border-gray-300 rounded-md px-4 py-3 pr-12 outline-none focus:ring-2 focus:ring-green-400 transition-all"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                onKeyUp={(e) => setCapsOn(e.getModifierState && e.getModifierState("CapsLock"))}
+                onKeyUp={(e) =>
+                  setCapsOn(e.getModifierState && e.getModifierState("CapsLock"))
+                }
                 autoComplete="current-password"
                 required
               />
@@ -120,7 +137,6 @@ const Login = () => {
                 type="button"
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-green-700 hover:underline"
                 onClick={() => setShowPass((s) => !s)}
-                aria-label={showPass ? "Ocultar contraseña" : "Mostrar contraseña"}
               >
                 {showPass ? "Ocultar" : "Mostrar"}
               </button>
@@ -132,18 +148,34 @@ const Login = () => {
             )}
           </div>
 
-          <Link
-            to="/recuperar-cuenta"
-            className="text-green-600 hover:underline text-base block text-right"
-          >
-            Olvidé mi contraseña
-          </Link>
+          {/* Recordar correo + Olvidé mi contraseña */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="rememberEmail"
+                className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                checked={rememberEmail}
+                onChange={(e) => setRememberEmail(e.target.checked)}
+              />
+              <label
+                htmlFor="rememberEmail"
+                className="ml-2 text-sm text-gray-700 select-none"
+              >
+                Recordar correo
+              </label>
+            </div>
+
+            <Link
+              to="/recuperar-cuenta"
+              className="text-green-600 hover:underline text-sm"
+            >
+              Olvidé mi contraseña
+            </Link>
+          </div>
 
           {errorMsg && (
-            <div
-              className="rounded-md bg-red-50 border border-red-200 px-4 py-3 text-red-700 text-sm"
-              role="alert"
-            >
+            <div className="rounded-md bg-red-50 border border-red-200 px-4 py-3 text-red-700 text-sm">
               {errorMsg}
             </div>
           )}
@@ -158,11 +190,6 @@ const Login = () => {
             {loading ? "Ingresando..." : "Iniciar sesión"}
           </button>
         </form>
-
-        {/* Hint de entorno (opcional) */}
-        <p className="text-xs text-gray-400 mt-6 text-center">
-          API: {API || "(definir VITE_API_URL en tu .env)"}
-        </p>
       </div>
     </div>
   );

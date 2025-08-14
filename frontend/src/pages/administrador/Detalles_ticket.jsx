@@ -1,3 +1,4 @@
+// src/pages/admin/Detalles_ticket.jsx
 import React, { useEffect, useRef, useState } from "react";
 import {
   IconHome,
@@ -12,6 +13,8 @@ import {
 } from "@tabler/icons-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
+// 👇 cliente y endpoints igual que en Admin_usuarios / Home_adm / Soporte_adm / Ajustes_adm
+import api, { accountsApi, ENDPOINTS } from "../../services/apiClient";
 
 const Detalles_ticket = () => {
   const navigate = useNavigate();
@@ -19,6 +22,7 @@ const Detalles_ticket = () => {
 
   const tarjetaRef = useRef(null);
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [alertaVisible, setAlertaVisible] = useState(false);
   const letraInicial = "J";
 
@@ -31,6 +35,39 @@ const Detalles_ticket = () => {
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
+
+  // ====== LOGOUT real (backend + limpieza + redirect) ======
+  const handleLogout = async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    try {
+      const refresh = localStorage.getItem("refresh");
+      try {
+        if (ENDPOINTS?.logout) {
+          await api.post(ENDPOINTS.logout, { refresh });
+        } else if (accountsApi?.logout) {
+          await accountsApi.logout({ refresh });
+        }
+      } catch (e) {
+        console.warn("Fallo en logout del backend, cierre local forzado:", e);
+      }
+    } finally {
+      try {
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
+        sessionStorage.removeItem("access");
+        sessionStorage.removeItem("refresh");
+      } catch {}
+      try {
+        if (api?.defaults?.headers?.common) {
+          delete api.defaults.headers.common.Authorization;
+        }
+      } catch {}
+      setMostrarTarjeta(false);
+      setIsLoggingOut(false);
+      window.location.replace("/"); // usa "/login" si prefieres ir directo al login
+    }
+  };
 
   const t =
     state?.ticket || {
@@ -50,8 +87,8 @@ const Detalles_ticket = () => {
     console.log("Nuevo estado guardado:", estado);
     console.log("Seguimiento escrito:", seguimiento);
 
-    // Aquí iría tu llamada a la API para guardar
-    // axios.put(`/api/tickets/${t.ticket}`, { estado, seguimiento });
+    // TODO: llamada real a la API
+    // await api.put(`/api/tickets/${t.ticket}`, { estado, seguimiento });
 
     setAlertaVisible(true);
     setTimeout(() => {
@@ -83,6 +120,7 @@ const Detalles_ticket = () => {
           </div>
         </div>
 
+        {/* Perfil — EXACTO al de las otras pantallas */}
         <div className="relative mb-6">
           <button
             onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
@@ -95,13 +133,22 @@ const Detalles_ticket = () => {
               ref={tarjetaRef}
               className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50 text-base"
             >
-              <button onClick={() => navigate("/ajustesadm")} className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100">
+              <button
+                onClick={() => navigate("/ajustesadm")}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
                 <IconSettings className="w-5 h-5 mr-2 text-green-600" />
                 Ajustes
               </button>
-              <button onClick={() => navigate("/")} className="flex items-center w-full text-left px-4 py-2 hover:bg-red-50 text-red-600">
+              <button
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className={`flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${
+                  isLoggingOut ? "opacity-60 cursor-not-allowed" : "text-red-600"
+                }`}
+              >
                 <IconLogout className="w-5 h-5 mr-2 text-red-600" />
-                Cerrar sesión
+                {isLoggingOut ? "Cerrando..." : "Cerrar sesión"}
               </button>
             </div>
           )}
@@ -139,7 +186,11 @@ const Detalles_ticket = () => {
               </div>
               <div className="border rounded-lg p-4">
                 <p className="text-gray-500 mb-2">Estado</p>
-                <select className="border rounded-md p-2 w-full" value={estado} onChange={(e) => setEstado(e.target.value)}>
+                <select
+                  className="border rounded-md p-2 w-full"
+                  value={estado}
+                  onChange={(e) => setEstado(e.target.value)}
+                >
                   <option value="Abierto">Abierto</option>
                   <option value="En proceso">En proceso</option>
                   <option value="Cerrado">Cerrado</option>
@@ -187,5 +238,3 @@ const Detalles_ticket = () => {
 };
 
 export default Detalles_ticket;
-
-

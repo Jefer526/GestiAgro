@@ -14,6 +14,7 @@ import {
   IconLogout,
   IconTemperature,
   IconDroplet,
+  IconPlant2,
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 import { Bar } from "react-chartjs-2";
@@ -144,6 +145,10 @@ const Variables_climaticas = () => {
           >
             <IconFrame className="text-white w-11 h-11" />
           </button>
+          <button 
+            onClick={() => navigate("/produccionagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+            <IconPlant2 className="text-white w-11 h-11" />
+          </button>
         </div>
 
         {/* Tarjeta perfil flotante abajo */}
@@ -200,7 +205,6 @@ const Variables_climaticas = () => {
       <div className="ml-28 p-10 overflow-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-green-700">Variables climáticas</h1>
-          <span className="text-2xl text-black font-bold">Hacienda La esmeralda</span>
         </div>
 
         {/* Filtros */}

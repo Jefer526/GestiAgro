@@ -16,6 +16,7 @@ import {
   IconEye,
   IconEyeOff,
   IconX,
+  IconPlant2,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
@@ -134,6 +135,9 @@ const Ajustes_agro = () => {
           </button>
           <button onClick={() => navigate("/crearlote")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Crear Lote">
             <IconFrame className="text-white w-11 h-11" />
+          </button>
+          <button onClick={() => navigate("/produccionagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Crear Lote">
+            <IconPlant2 className="text-white w-11 h-11" />
           </button>
         </div>
 

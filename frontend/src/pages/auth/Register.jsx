@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import faviconBlanco from '../../assets/favicon-blanco.png';
+import faviconBlanco from "../../assets/favicon-blanco.png";
+
+// Ajusta esta base según tu backend (o usa tu apiClient centralizado)
+const API_BASE = "http://127.0.0.1:8000/api";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -8,44 +11,101 @@ const Register = () => {
   const [nombre, setNombre] = useState("");
   const [telefono, setTelefono] = useState("");
   const [email, setEmail] = useState("");
+  const [cargando, setCargando] = useState(false);
+
+  // errores por campo y general
+  const [errors, setErrors] = useState({ nombre: "", telefono: "", email: "", general: "" });
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    if (cargando) return;
+
+    // limpiar errores
+    setErrors({ nombre: "", telefono: "", email: "", general: "" });
 
     const datos = {
-      nombre_completo: nombre,
-      telefono: telefono,
-      email: email,
+      nombre: nombre.trim(),
+      telefono: telefono.trim(),
+      email: email.trim().toLowerCase(),
     };
 
+    // validación simple en cliente
+    if (!datos.nombre) {
+      setErrors((p) => ({ ...p, nombre: "El nombre es obligatorio." }));
+      return;
+    }
+    if (!datos.telefono) {
+      setErrors((p) => ({ ...p, telefono: "El teléfono es obligatorio." }));
+      return;
+    }
+    if (!datos.email) {
+      setErrors((p) => ({ ...p, email: "El correo es obligatorio." }));
+      return;
+    }
+
+    setCargando(true);
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/registro/", {
+      const url = `${API_BASE}/accounts/demo/signup/`;
+      const response = await fetch(url, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(datos),
       });
 
+      const raw = await response.text(); // obtener texto crudo
+      let data;
+      try {
+        data = JSON.parse(raw);
+      } catch {
+        data = raw;
+      }
+
       if (response.ok) {
+        // Si backend devuelve link para establecer contraseña → redirige
+        if (data?.set_password_url_demo) {
+  // Solo mostrar alerta y volver a inicio
+          setMostrarAlerta(true);
+          setTimeout(() => {
+            setMostrarAlerta(false);
+            navigate("/");
+          }, 2000);
+        return;
+        }
+        // Fallback: alerta y volver al inicio
         setMostrarAlerta(true);
         setTimeout(() => {
           setMostrarAlerta(false);
           navigate("/");
         }, 2000);
+        return;
+      }
+
+      // Manejo de errores detallado desde DRF
+      if (typeof data === "object" && data !== null) {
+        const nuevo = { nombre: "", telefono: "", email: "", general: "" };
+        if (data.nombre) nuevo.nombre = Array.isArray(data.nombre) ? data.nombre.join(" ") : String(data.nombre);
+        if (data.telefono) nuevo.telefono = Array.isArray(data.telefono) ? data.telefono.join(" ") : String(data.telefono);
+        if (data.email) nuevo.email = Array.isArray(data.email) ? data.email.join(" ") : String(data.email);
+        if (data.detail) nuevo.general = String(data.detail);
+
+        // Si no hay campos específicos, muestra todo como general
+        if (!nuevo.nombre && !nuevo.telefono && !nuevo.email && !nuevo.general) {
+          nuevo.general = JSON.stringify(data);
+        }
+        setErrors(nuevo);
       } else {
-        const error = await response.json();
-        alert("Error al registrar: " + (error.detail || "verifica los datos"));
+        setErrors((p) => ({ ...p, general: data || `Error HTTP ${response.status}` }));
       }
     } catch (error) {
       console.error("Error de red:", error);
-      alert("Error de red al registrar");
+      setErrors((p) => ({ ...p, general: "Error de red al registrar." }));
+    } finally {
+      setCargando(false);
     }
   };
 
   return (
     <div className="min-h-screen relative flex items-center justify-center bg-green-600">
-      
       {/* Alerta flotante */}
       {mostrarAlerta && (
         <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
@@ -85,6 +145,13 @@ const Register = () => {
           </div>
         </div>
 
+        {/* Error general */}
+        {errors.general && (
+          <div className="mb-4 text-red-600 bg-red-50 border border-red-200 px-4 py-2 rounded">
+            {errors.general}
+          </div>
+        )}
+
         <form onSubmit={handleRegister} className="space-y-6">
           <div>
             <label className="block mb-2 font-medium text-gray-800 text-base">
@@ -95,9 +162,13 @@ const Register = () => {
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
               placeholder="Ingrese su nombre"
-              className="w-full border text-lg border-gray-300 rounded-md px-4 py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all"
+              className={`w-full border text-lg rounded-md px-4 py-3 outline-none transition-all ${
+                errors.nombre ? "border-red-400 focus:ring-2 focus:ring-red-300"
+                                : "border-gray-300 focus:ring-2 focus:ring-green-400"
+              }`}
               required
             />
+            {errors.nombre && <p className="mt-1 text-sm text-red-600">{errors.nombre}</p>}
           </div>
 
           <div>
@@ -109,9 +180,13 @@ const Register = () => {
               value={telefono}
               onChange={(e) => setTelefono(e.target.value)}
               placeholder="Ingrese su número de teléfono"
-              className="w-full border text-lg border-gray-300 rounded-md px-4 py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all"
+              className={`w-full border text-lg rounded-md px-4 py-3 outline-none transition-all ${
+                errors.telefono ? "border-red-400 focus:ring-2 focus:ring-red-300"
+                                 : "border-gray-300 focus:ring-2 focus:ring-green-400"
+              }`}
               required
             />
+            {errors.telefono && <p className="mt-1 text-sm text-red-600">{errors.telefono}</p>}
           </div>
 
           <div>
@@ -123,16 +198,23 @@ const Register = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Ingrese su correo electrónico"
-              className="w-full border text-lg border-gray-300 rounded-md px-4 py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all"
+              className={`w-full border text-lg rounded-md px-4 py-3 outline-none transition-all ${
+                errors.email ? "border-red-400 focus:ring-2 focus:ring-red-300"
+                              : "border-gray-300 focus:ring-2 focus:ring-green-400"
+              }`}
               required
             />
+            {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
           </div>
 
           <button
             type="submit"
-            className="w-full bg-green-600 text-white py-3 rounded-lg text-lg font-semibold hover:bg-green-700 shadow-md transition-all"
+            disabled={cargando}
+            className={`w-full text-white py-3 rounded-lg text-lg font-semibold shadow-md transition-all ${
+              cargando ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"
+            }`}
           >
-            Registrarse
+            {cargando ? "Registrando..." : "Registrarse"}
           </button>
         </form>
       </div>

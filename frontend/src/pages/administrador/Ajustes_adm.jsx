@@ -1,3 +1,4 @@
+// src/pages/admin/Ajustes_adm.jsx
 import React, { useState, useRef, useEffect } from "react";
 import {
   IconHome,
@@ -13,6 +14,8 @@ import {
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
+// 👇 mismo cliente y endpoints usados en las otras pantallas
+import api, { accountsApi, ENDPOINTS } from "../../services/apiClient";
 
 const Ajustes_adm = () => {
   const navigate = useNavigate();
@@ -28,7 +31,9 @@ const Ajustes_adm = () => {
 
   // Tarjeta perfil (sidebar)
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const tarjetaRef = useRef(null);
+
   useEffect(() => {
     const handler = (e) => {
       if (tarjetaRef.current && !tarjetaRef.current.contains(e.target)) {
@@ -38,6 +43,39 @@ const Ajustes_adm = () => {
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
+
+  // ====== LOGOUT real (backend + limpieza + redirect) ======
+  const handleLogout = async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    try {
+      const refresh = localStorage.getItem("refresh");
+      try {
+        if (ENDPOINTS?.logout) {
+          await api.post(ENDPOINTS.logout, { refresh });
+        } else if (accountsApi?.logout) {
+          await accountsApi.logout({ refresh });
+        }
+      } catch (e) {
+        console.warn("Fallo en logout del backend, se cierra sesión localmente igual:", e);
+      }
+    } finally {
+      try {
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
+        sessionStorage.removeItem("access");
+        sessionStorage.removeItem("refresh");
+      } catch {}
+      try {
+        if (api?.defaults?.headers?.common) {
+          delete api.defaults.headers.common.Authorization;
+        }
+      } catch {}
+      setMostrarTarjeta(false);
+      setIsLoggingOut(false);
+      window.location.replace("/"); // o "/login" si prefieres
+    }
+  };
 
   // Modal Cambiar contraseña
   const [openPwd, setOpenPwd] = useState(false);
@@ -113,7 +151,7 @@ const Ajustes_adm = () => {
           </button>
         </div>
 
-        {/* Botón perfil */}
+        {/* Botón perfil — EXACTO al de las otras pantallas */}
         <div className="relative mb-6">
           <button
             onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
@@ -130,7 +168,8 @@ const Ajustes_adm = () => {
               <button
                 onClick={() => {
                   setMostrarTarjeta(false);
-                  navigate("/ajustesadm");
+                  // ya estás en ajustes; si quieres evitar reload, solo cerramos tarjeta
+                  // navigate("/ajustesadm");
                 }}
                 className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
               >
@@ -138,14 +177,14 @@ const Ajustes_adm = () => {
                 Ajustes
               </button>
               <button
-                onClick={() => {
-                  setMostrarTarjeta(false);
-                  alert("Cerrar sesión");
-                }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-red-50 text-red-600"
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className={`flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${
+                  isLoggingOut ? "opacity-60 cursor-not-allowed" : "text-red-600"
+                }`}
               >
                 <IconLogout className="w-5 h-5 mr-2 text-red-600" />
-                Cerrar sesión
+                {isLoggingOut ? "Cerrando..." : "Cerrar sesión"}
               </button>
             </div>
           )}
@@ -289,11 +328,7 @@ const Ajustes_adm = () => {
             </div>
 
             {/* Mensaje / Errores */}
-            {msg && (
-              <div className="mb-4 text-sm text-gray-700">
-                {msg}
-              </div>
-            )}
+            {msg && <div className="mb-4 text-sm text-gray-700">{msg}</div>}
 
             <button
               onClick={handleCambiarPwd}
@@ -308,4 +343,4 @@ const Ajustes_adm = () => {
   );
 };
 
-export default Ajustes_adm
+export default Ajustes_adm;
