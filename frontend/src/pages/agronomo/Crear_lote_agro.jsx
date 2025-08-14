@@ -18,6 +18,7 @@ import {
   IconTrash,
   IconTool,
   IconLogout,
+  IconPlant2,
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
@@ -48,7 +49,7 @@ const Crear_lote_agro = () => {
   const [mostrarTarjetaPerfil, setMostrarTarjetaPerfil] = useState(false);
   const tarjetaPerfilRef = useRef(null);
 
-  // Contenedor scrollable del sidebar para auto-scroll
+  // Contenedor scrollable del sidebar
   const iconListRef = useRef(null);
 
   useEffect(() => {
@@ -65,14 +66,11 @@ const Crear_lote_agro = () => {
     return () => document.removeEventListener("mousedown", clickFuera);
   }, []);
 
-  // Auto-scroll del contenedor de iconos para que el último no quede oculto
+  // Auto-scroll: lleva el contenedor al fondo si estás en /crearlote o /produccionagro
   useEffect(() => {
     if (!iconListRef.current) return;
-    if (location.pathname.includes("/crearlote")) {
-      iconListRef.current.scrollTo({
-        top: iconListRef.current.scrollHeight,
-        behavior: "instant",
-      });
+    if (/(\/crearlote|\/produccionagro)\b/.test(location.pathname)) {
+      iconListRef.current.scrollTo({ top: iconListRef.current.scrollHeight, behavior: "instant" });
     } else {
       iconListRef.current.scrollTo({ top: 0, behavior: "instant" });
     }
@@ -131,6 +129,23 @@ const Crear_lote_agro = () => {
     setPosicionTarjeta({ top: boton.bottom + window.scrollY + 4, left: boton.left + window.scrollX });
   };
 
+  // Pequeño componente para cada icono del sidebar (mantiene spacing y dibuja el indicador activo)
+  const SidebarItem = ({ to, title, Icon, active }) => (
+    <div className="relative">
+      {active && <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />}
+      <button
+        onClick={() => navigate(to)}
+        className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+        title={title}
+        aria-label={title}
+      >
+        <Icon className="text-white w-11 h-11" />
+      </button>
+    </div>
+  );
+
+  const isActive = (path) => location.pathname === path;
+
   return (
     <div className="flex">
       {/* Sidebar */}
@@ -140,47 +155,22 @@ const Crear_lote_agro = () => {
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11 mx-auto" />
         </div>
 
-        {/* Íconos con scroll */}
+        {/* Íconos con scroll (espaciado uniforme SIEMPRE) */}
         <div
           ref={iconListRef}
           className="flex-1 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only pb-24"
         >
-          <button onClick={() => navigate("/Homeagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Inicio">
-            <IconHome className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/Laboresagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Labores">
-            <IconClipboardList className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/Informesagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Informes">
-            <IconChartBar className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/Bodegaagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Bodega">
-            <IconBox className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/variablesclimaticas")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Variables climáticas">
-            <IconCloudRain className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/maquinariaequipos")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Maquinaria y equipos">
-            <IconTractor className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/manejopersonal")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Manejo personal">
-            <IconUsersGroup className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/crearfinca")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Gestión finca">
-            <IconPlant className="text-white w-11 h-11" />
-          </button>
-
-          {/* Gestión lote (activo) */}
-          <div className="relative">
-            <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            <button
-              onClick={() => navigate("/crearlote")}
-              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-              title="Gestión lote"
-            >
-              <IconFrame className="text-white w-11 h-11" />
-            </button>
-          </div>
+          <SidebarItem to="/Homeagro" title="Inicio" Icon={IconHome} active={false} />
+          <SidebarItem to="/Laboresagro" title="Labores" Icon={IconClipboardList} active={false} />
+          <SidebarItem to="/Informesagro" title="Informes" Icon={IconChartBar} active={false} />
+          <SidebarItem to="/Bodegaagro" title="Bodega" Icon={IconBox} active={false} />
+          <SidebarItem to="/variablesclimaticas" title="Variables climáticas" Icon={IconCloudRain} active={false} />
+          <SidebarItem to="/maquinariaequipos" title="Maquinaria y equipos" Icon={IconTractor} active={false} />
+          <SidebarItem to="/manejopersonal" title="Manejo personal" Icon={IconUsersGroup} active={false} />
+          <SidebarItem to="/crearfinca" title="Gestión finca" Icon={IconPlant} active={false} />
+          {/* Cada uno en su contenedor, con su indicador activo propio */}
+          <SidebarItem to="/crearlote" title="Gestión lote" Icon={IconFrame} active={isActive("/crearlote")} />
+          <SidebarItem to="/produccionagro" title="Producción" Icon={IconPlant2} active={isActive("/produccionagro")} />
         </div>
 
         {/* Perfil */}
@@ -195,7 +185,7 @@ const Crear_lote_agro = () => {
           {mostrarTarjetaPerfil && (
             <div
               ref={tarjetaPerfilRef}
-              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
+              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-grey-300 rounded-xl shadow-2xl py-3 z-50"
             >
               <button
                 onClick={() => {
@@ -300,7 +290,7 @@ const Crear_lote_agro = () => {
           <table className="min-w-full text-base bg-white text-center">
             <thead className="bg-green-600 text-white font-bold">
               <tr>
-                {columnas.map((col, idx) => (
+                {["finca", "lote", "coordenadas", "area", "cultivo"].map((col, idx) => (
                   <th key={idx} className="p-4 border">
                     <div className="flex items-center justify-center gap-2">
                       <span>{col.toUpperCase()}</span>
@@ -398,5 +388,9 @@ const Crear_lote_agro = () => {
 };
 
 export default Crear_lote_agro;
+
+
+
+
 
 

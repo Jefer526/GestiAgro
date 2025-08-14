@@ -13,6 +13,7 @@ import {
   IconFileDownload,
   IconLogout,
   IconTool,
+  IconPlant2,
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 import { useNavigate } from "react-router-dom";
@@ -20,8 +21,7 @@ import { useNavigate } from "react-router-dom";
 const Informes_agro = () => {
   const navigate = useNavigate();
 
-  // Nombre usuario para inicial
-  const nombreUsuario = "Juan Pérez"; // Cambiar por nombre real
+  const nombreUsuario = "Juan Pérez";
   const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
 
   const [filtros, setFiltros] = useState({
@@ -41,14 +41,7 @@ const Informes_agro = () => {
     setFiltros({ ...filtros, [name]: value });
   };
 
-  const toggleMenu = () => {
-    setMenuAbierto(!menuAbierto);
-  };
-
-  const cerrarSesion = () => {
-    console.log("Cerrando sesión...");
-    // Aquí puedes agregar lógica real
-  };
+  const toggleMenu = () => setMenuAbierto(!menuAbierto);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -57,16 +50,14 @@ const Informes_agro = () => {
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
-    <div className="flex">
-      {/* Sidebar */}
-      <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
-        {/* Logo fijo con sticky */}
+    <div className="min-h-screen bg-[#f6f6f6]">
+      {/* Sidebar fijo */}
+      <div className="fixed left-0 top-0 bottom-0 bg-green-600 w-28 flex flex-col items-center py-6 justify-between">
+        {/* Logo */}
         <div className="sticky top-0 mb-6 bg-green-600 z-10">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11 mx-auto" />
         </div>
@@ -78,63 +69,42 @@ const Informes_agro = () => {
             <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
             <button
               onClick={() => navigate("/Homeagro")}
-              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+            >
               <IconHome className="text-white w-11 h-11" />
             </button>
           </div>
 
-          {/* Navegación */}
-          <button
-            onClick={() => navigate("/Laboresagro")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
+          <button onClick={() => navigate("/Laboresagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconClipboardList className="text-white w-11 h-11" />
           </button>
-          <button
-            onClick={() => navigate("/Informesagro")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
+          <button onClick={() => navigate("/Informesagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconChartBar className="text-white w-11 h-11" />
           </button>
-          <button
-            onClick={() => navigate("/Bodegaagro")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
+          <button onClick={() => navigate("/Bodegaagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconBox className="text-white w-11 h-11" />
           </button>
-          <button
-            onClick={() => navigate("/variablesclimaticas")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
+          <button onClick={() => navigate("/variablesclimaticas")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconCloudRain className="text-white w-11 h-11" />
           </button>
-          <button
-            onClick={() => navigate("/maquinariaequipos")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
+          <button onClick={() => navigate("/maquinariaequipos")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconTractor className="text-white w-11 h-11" />
           </button>
-          <button
-            onClick={() => navigate("/manejopersonal")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
+          <button onClick={() => navigate("/manejopersonal")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconUsersGroup className="text-white w-11 h-11" />
           </button>
-          <button
-            onClick={() => navigate("/crearfinca")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
+          <button onClick={() => navigate("/crearfinca")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconPlant className="text-white w-11 h-11" />
           </button>
-          <button
-            onClick={() => navigate("/crearlote")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
+          <button onClick={() => navigate("/crearlote")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconFrame className="text-white w-11 h-11" />
+          </button>
+          <button onClick={() => navigate("/produccionagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+            <IconPlant2 className="text-white w-11 h-11" />
           </button>
         </div>
 
-        {/* Botón de perfil con tarjeta flotante */}
+        {/* Perfil */}
         <div className="relative mb-4">
           <button
             onClick={toggleMenu}
@@ -184,7 +154,7 @@ const Informes_agro = () => {
       </div>
 
       {/* Contenido */}
-      <div className="flex-1 flex justify-center items-center bg-[#f6f6f6] p-8 overflow-auto">
+      <div className="ml-28 flex justify-center items-center p-8 overflow-auto">
         <div className="bg-white border border-green-300 shadow-md p-10 rounded-xl w-full max-w-3xl space-y-6 text-black">
           <h1 className="text-3xl font-bold text-green-700">Informes</h1>
 
@@ -299,6 +269,10 @@ const Informes_agro = () => {
 };
 
 export default Informes_agro;
+
+
+
+
 
 
 

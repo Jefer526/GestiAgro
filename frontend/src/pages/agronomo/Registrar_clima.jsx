@@ -14,6 +14,7 @@ import {
   IconCheck,
   IconTool,
   IconLogout,
+  IconPlant2,
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 import { useNavigate } from "react-router-dom";
@@ -116,6 +117,18 @@ const Registrar_clima = () => {
             className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
           >
             <IconFrame className="text-white w-11 h-11" />
+          </button>
+          <button
+            onClick={() => navigate("/crearlote")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
+            <IconFrame className="text-white w-11 h-11" />
+          </button>
+          <button
+            onClick={() => navigate("/produccionagro")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
+            <IconPlant2 className="text-white w-11 h-11" />
           </button>
         </div>
 
