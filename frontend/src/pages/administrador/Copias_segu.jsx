@@ -15,12 +15,18 @@ import {
   IconLogout,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
+import api, { accountsApi, ENDPOINTS } from "../../services/apiClient";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
 const Copias_segu = () => {
   const navigate = useNavigate();
+
+  // Refs
   const filtroRef = useRef(null);
   const tarjetaRef = useRef(null);
+  const avatarBtnRef = useRef(null);
+
+  // Estado UI
   const [menuAbiertoId, setMenuAbiertoId] = useState(null);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const [filtroActivo, setFiltroActivo] = useState(null);
@@ -28,7 +34,11 @@ const Copias_segu = () => {
   const [busquedas, setBusquedas] = useState({});
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
+
+  // Tarjeta perfil
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
+  const [tarjetaPos, setTarjetaPos] = useState({ top: 0, left: 0 });
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const letraInicial = "J";
 
   const columnas = ["id", "fecha", "hora"];
@@ -40,6 +50,7 @@ const Copias_segu = () => {
     { id: 4, fecha: "2025-08-01", hora: "08:00" },
   ];
 
+  // ====== Filtros / orden ======
   const toggleFiltro = (campo, e) => {
     e.stopPropagation();
     const icono = e.currentTarget.getBoundingClientRect();
@@ -51,8 +62,8 @@ const Copias_segu = () => {
   };
 
   const mesesTexto = [
-    "enero", "febrero", "marzo", "abril", "mayo", "junio",
-    "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
+    "enero","febrero","marzo","abril","mayo","junio",
+    "julio","agosto","septiembre","octubre","noviembre","diciembre",
   ];
 
   const estructuraJerarquica = (fechas) => {
@@ -66,16 +77,12 @@ const Copias_segu = () => {
     });
     return estructura;
   };
-
   const estructuraFecha = estructuraJerarquica(copias.map((e) => e.fecha));
 
   const toggleValor = (campo, valor) => {
     const seleccionados = new Set(valoresSeleccionados[campo] || []);
     seleccionados.has(valor) ? seleccionados.delete(valor) : seleccionados.add(valor);
-    setValoresSeleccionados({
-      ...valoresSeleccionados,
-      [campo]: [...seleccionados],
-    });
+    setValoresSeleccionados({ ...valoresSeleccionados, [campo]: [...seleccionados] });
   };
 
   const limpiarFiltro = (campo) => {
@@ -84,13 +91,10 @@ const Copias_segu = () => {
     setValoresSeleccionados(actualizado);
   };
 
-  const ordenar = (campo, orden) => {
-    setOrdenCampo({ campo, orden });
-  };
+  const ordenar = (campo, orden) => setOrdenCampo({ campo, orden });
 
-  const handleBusqueda = (campo, texto) => {
+  const handleBusqueda = (campo, texto) =>
     setBusquedas({ ...busquedas, [campo]: texto });
-  };
 
   const datosFiltrados = copias
     .filter((item) =>
@@ -107,19 +111,20 @@ const Copias_segu = () => {
       return orden === "asc" ? av.localeCompare(bv) : bv.localeCompare(av);
     });
 
+  // ====== Menú por fila ======
   const handleMenuOpen = (id, e) => {
     e.stopPropagation();
     const rect = e.currentTarget.getBoundingClientRect();
     const espacioDisponibleDerecha = window.innerWidth - rect.right;
     const menuWidth = 160;
-    const left =
-      espacioDisponibleDerecha > menuWidth ? rect.right + 8 : rect.left - menuWidth - 8;
+    const left = espacioDisponibleDerecha > menuWidth ? rect.right + 8 : rect.left - menuWidth - 8;
     setTimeout(() => {
       setMenuAbiertoId(id);
       setMenuPosition({ x: left, y: rect.top });
     }, 0);
   };
 
+  // ====== Outside click (menús + filtros) ======
   useEffect(() => {
     const clickFuera = (e) => {
       if (!e.target.closest("#floating-menu") && !e.target.closest(".menu-trigger")) {
@@ -128,6 +133,7 @@ const Copias_segu = () => {
       if (filtroRef.current && !filtroRef.current.contains(e.target)) {
         setFiltroActivo(null);
       }
+      // Tarjeta: cierra si clic fuera
       if (tarjetaRef.current && !tarjetaRef.current.contains(e.target)) {
         setMostrarTarjeta(false);
       }
@@ -136,9 +142,67 @@ const Copias_segu = () => {
     return () => document.removeEventListener("mousedown", clickFuera);
   }, []);
 
+  // ====== Posicionar tarjeta (FIXED) como "bottom-16 left-14" del avatar ======
+  useEffect(() => {
+    if (!mostrarTarjeta || !avatarBtnRef.current || !tarjetaRef.current) return;
+
+    // 1) Posición provisional para poder medir tamaño real
+    setTarjetaPos({
+      top: -9999,
+      left: -9999,
+    });
+
+    // 2) Medir y ajustar en el siguiente frame
+    const id = requestAnimationFrame(() => {
+      const avatar = avatarBtnRef.current.getBoundingClientRect();
+      const card = tarjetaRef.current.getBoundingClientRect();
+
+      // Emula: bottom-16 (64px) y left-14 (56px) respecto al avatar
+      const top = avatar.bottom + window.scrollY - 64 - card.height;
+      const left = avatar.left + window.scrollX + 56;
+
+      setTarjetaPos({ top: Math.max(8, top), left: Math.max(8, left) });
+    });
+
+    return () => cancelAnimationFrame(id);
+  }, [mostrarTarjeta]);
+
+  // ====== LOGOUT real ======
+  const handleLogout = async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    try {
+      const refresh = localStorage.getItem("refresh");
+      try {
+        if (ENDPOINTS?.logout) {
+          await api.post(ENDPOINTS.logout, { refresh });
+        } else if (accountsApi?.logout) {
+          await accountsApi.logout({ refresh });
+        }
+      } catch (e) {
+        console.warn("Fallo en logout del backend, forzando cierre local:", e);
+      }
+    } finally {
+      try {
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
+        sessionStorage.removeItem("access");
+        sessionStorage.removeItem("refresh");
+      } catch {}
+      try {
+        if (api?.defaults?.headers?.common) {
+          delete api.defaults.headers.common.Authorization;
+        }
+      } catch {}
+      setMostrarTarjeta(false);
+      setIsLoggingOut(false);
+      window.location.replace("/");
+    }
+  };
+
   return (
     <div className="min-h-[100dvh] bg-gray-50">
-      {/* Sidebar fijo: ocupa todo el alto del viewport */}
+      {/* Sidebar fijo */}
       <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col items-center py-6 justify-between">
         <div className="flex flex-col items-center space-y-8">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
@@ -171,38 +235,56 @@ const Copias_segu = () => {
           </button>
         </div>
 
+        {/* Botón perfil */}
         <div className="relative mb-6">
           <button
-            onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
+            ref={avatarBtnRef}
+            onClick={(e) => {
+              e.stopPropagation();
+              setMostrarTarjeta((v) => !v);
+            }}
             className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
           >
             {letraInicial}
           </button>
-          {mostrarTarjeta && (
-            <div
-              ref={tarjetaRef}
-              className="absolute bottom-16 left-14 w-52 bg-white/95 border border-gray-200 rounded-xl shadow-2xl py-3 z-50"
-            >
-              <button
-                onClick={() => navigate("/ajustesadm")}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-              >
-                <IconSettings className="w-5 h-5 mr-2 text-green-600" />
-                Ajustes
-              </button>
-              <button
-                onClick={() => navigate("/")}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-red-50 text-red-600"
-              >
-                <IconLogout className="w-5 h-5 mr-2 text-red-600" />
-                Cerrar sesión
-              </button>
-            </div>
-          )}
         </div>
       </aside>
 
-      {/* Contenido principal: se desplaza a la derecha del sidebar */}
+      {/* Tarjeta de perfil — FIXED sobre todo (clickable total) */}
+      {mostrarTarjeta && (
+        <div
+          ref={tarjetaRef}
+          onMouseDown={(e) => e.stopPropagation()}
+          className="fixed w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-[9999]"
+          style={{ top: `${tarjetaPos.top}px`, left: `${tarjetaPos.left}px` }}
+        >
+          <button
+            type="button"
+            onClick={() => {
+              setMostrarTarjeta(false);
+              navigate("/ajustesadm");
+            }}
+            className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+          >
+            <IconSettings className="w-5 h-5 mr-2 text-green-600" />
+            <span className="flex-1">Ajustes</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            className={`flex items-center w-full text-left px-4 py-2 text-sm hover:bg-red-50 ${
+              isLoggingOut ? "opacity-60 cursor-not-allowed" : "text-red-600"
+            }`}
+          >
+            <IconLogout className="w-5 h-5 mr-2 text-red-600" />
+            {isLoggingOut ? "Cerrando..." : "Cerrar sesión"}
+          </button>
+        </div>
+      )}
+
+      {/* Contenido principal */}
       <main className="ml-28 min-h-[100dvh] p-8 overflow-auto relative">
         <h1 className="text-4xl font-bold text-green-600 mb-6">Copias de seguridad</h1>
 
@@ -246,7 +328,7 @@ const Copias_segu = () => {
             </tbody>
           </table>
 
-          {/* Filtro jerárquico solo para FECHA */}
+          {/* Filtro jerárquico para FECHA */}
           {filtroActivo === "fecha" && (
             <div
               ref={filtroRef}
@@ -262,9 +344,7 @@ const Copias_segu = () => {
                       <div key={mesTexto} className="ml-3">
                         <div className="text-green-600 font-medium">{mesTexto}</div>
                         {[...dias].map((dia) => {
-                          const fechaStr = `${anio}-${(
-                            mesesTexto.indexOf(mesTexto) + 1
-                          )
+                          const fechaStr = `${anio}-${(mesesTexto.indexOf(mesTexto) + 1)
                             .toString()
                             .padStart(2, "0")}-${dia}`;
                           return (
@@ -380,5 +460,3 @@ const Copias_segu = () => {
 };
 
 export default Copias_segu;
-
-

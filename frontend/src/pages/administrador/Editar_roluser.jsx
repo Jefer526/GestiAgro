@@ -1,3 +1,4 @@
+// src/pages/administrador/Editar_roluser.jsx
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import {
@@ -15,7 +16,9 @@ import {
   IconFilter,
   IconX,
   IconChevronDown,
+  IconLogout,
 } from "@tabler/icons-react";
+import api, { accountsApi, ENDPOINTS } from "../../services/apiClient";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
 const Editar_roluser = () => {
@@ -26,7 +29,6 @@ const Editar_roluser = () => {
   const [alertaVisible, setAlertaVisible] = useState(false);
   const [cargando, setCargando] = useState(true);
 
-  // Mock por defecto (si no llega state.usuario)
   const mockUsuario = {
     id: id || "42",
     nombre: "Juan Pérez",
@@ -45,10 +47,56 @@ const Editar_roluser = () => {
     permisos: [],
   });
 
-  // ---------- PASSWORD (solo frontend: simulado) ----------
+  // -------- Perfil (avatar + tarjeta) --------
+  const tarjetaRef = useRef(null);
+  const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  useEffect(() => {
+    const handler = (e) => {
+      if (tarjetaRef.current && !tarjetaRef.current.contains(e.target)) {
+        setMostrarTarjeta(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+  const letraInicial = (usuario?.nombre?.trim()?.[0] || "U").toUpperCase();
+
+  const handleLogout = async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    try {
+      const refresh = localStorage.getItem("refresh");
+      try {
+        if (ENDPOINTS?.logout) {
+          await api.post(ENDPOINTS.logout, { refresh });
+        } else if (accountsApi?.logout) {
+          await accountsApi.logout({ refresh });
+        }
+      } catch (e) {
+        console.warn("Fallo en logout del backend, cierre local forzado:", e);
+      }
+    } finally {
+      try {
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
+        sessionStorage.removeItem("access");
+        sessionStorage.removeItem("refresh");
+      } catch {}
+      try {
+        if (api?.defaults?.headers?.common) {
+          delete api.defaults.headers.common.Authorization;
+        }
+      } catch {}
+      setMostrarTarjeta(false);
+      setIsLoggingOut(false);
+      window.location.replace("/");
+    }
+  };
+
+  // ---------- PASSWORD ----------
   const [enviandoCorreo, setEnviandoCorreo] = useState(false);
   const [avisoPwd, setAvisoPwd] = useState("");
-
   const generarContrasenaFuerte = (len = 12) => {
     const may = "ABCDEFGHJKLMNPQRSTUVWXYZ";
     const min = "abcdefghijkmnopqrstuvwxyz";
@@ -60,9 +108,7 @@ const Editar_roluser = () => {
     for (let i = pwd.length; i < len; i++) pwd += pick(all);
     return pwd.split("").sort(() => Math.random() - 0.5).join("");
   };
-
   const manejarGenerarYEnviar = () => {
-    // Solo simulación en frontend (no se muestra la contraseña)
     generarContrasenaFuerte(12);
     setEnviandoCorreo(true);
     setAvisoPwd("");
@@ -73,9 +119,8 @@ const Editar_roluser = () => {
       );
     }, 1200);
   };
-  // --------------------------------------------------------
 
-  // ---------- Permisos (un solo campo con tarjeta) ----------
+  // ---------- Permisos ----------
   const pantallasDisponibles = [
     "Dashboard",
     "Usuarios",
@@ -89,36 +134,30 @@ const Editar_roluser = () => {
     "Reportes",
     "Ajustes",
   ];
-
   const [openPermisos, setOpenPermisos] = useState(false);
   const [permSearch, setPermSearch] = useState("");
   const [tempSeleccion, setTempSeleccion] = useState([]);
-
   const permisosBtnRef = useRef(null);
   const permisosCardRef = useRef(null);
   const [permPos, setPermPos] = useState({ top: 0, left: 0 });
-
   const filtrarPantallas = pantallasDisponibles.filter((p) =>
     p.toLowerCase().includes(permSearch.toLowerCase())
   );
 
-  // Posicionamiento robusto: mide tarjeta real, flip + clamp con zoom/scroll/resize
   const positionPermCard = () => {
     const btn = permisosBtnRef.current?.getBoundingClientRect();
     const card = permisosCardRef.current;
     if (!btn || !card) return;
-
     const cardW = card.offsetWidth || 360;
     const cardH = card.offsetHeight || 340;
-
     const viewportW = window.innerWidth;
     const viewportH = window.innerHeight;
-
     const espacioAbajo = viewportH - btn.bottom;
+
     let top =
       espacioAbajo > cardH
-        ? btn.bottom + window.scrollY + 8 // abajo
-        : btn.top + window.scrollY - cardH - 8; // arriba
+        ? btn.bottom + window.scrollY + 8
+        : btn.top + window.scrollY - cardH - 8;
 
     const minTop = window.scrollY + 8;
     const maxTop = window.scrollY + viewportH - cardH - 8;
@@ -143,18 +182,14 @@ const Editar_roluser = () => {
       });
     });
   };
-
   const cerrarPermisos = () => setOpenPermisos(false);
-
   const toggleTemp = (pantalla) => {
     setTempSeleccion((prev) =>
       prev.includes(pantalla) ? prev.filter((p) => p !== pantalla) : [...prev, pantalla]
     );
   };
-
   const seleccionarTodo = () => setTempSeleccion([...pantallasDisponibles]);
   const limpiarSeleccion = () => setTempSeleccion([]);
-
   const aplicarPermisos = () => {
     setUsuario((prev) => ({ ...prev, permisos: [...tempSeleccion] }));
     setOpenPermisos(false);
@@ -170,9 +205,8 @@ const Editar_roluser = () => {
       window.removeEventListener("scroll", handler);
     };
   }, [openPermisos]);
-  // ----------------------------------------------------------
 
-  // Prefill SOLO FRONTEND: toma state.usuario o usa mock
+  // Prefill
   useEffect(() => {
     const u = state?.usuario
       ? {
@@ -181,19 +215,13 @@ const Editar_roluser = () => {
           telefono: state.usuario.telefono || mockUsuario.telefono,
           email: state.usuario.email || mockUsuario.email,
           rol: state.usuario.rol?.id_rol || state.usuario.rol || mockUsuario.rol,
-          permisos: state.usuario.permisos || [], // 🔹 vacío si no hay permisos
+          permisos: state.usuario.permisos || [],
         }
-      : {
-          ...mockUsuario,
-          permisos: [], // 🔹 aunque usemos mock, permisos vacíos
-        };
-  
+      : { ...mockUsuario, permisos: [] };
     setUsuario(u);
     setCargando(false);
   }, [id, state]);
-  
 
-  // Guardado simulado (solo frontend)
   const handleSave = () => {
     setAlertaVisible(true);
     setTimeout(() => {
@@ -205,10 +233,9 @@ const Editar_roluser = () => {
   if (cargando) return <div className="p-6">Cargando...</div>;
 
   return (
-    // Usamos min-h-[100dvh] para asegurar alto total del viewport con zoom
-    <div className="min-h-[100dvh] bg-gray-50">
-      {/* Sidebar FIJO a la izquierda con altura del viewport dinámica */}
-      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col items-center py-6 justify-between">
+    <div className="min-h-[100dvh] bg-gray-50 flex">
+      {/* Sidebar */}
+      <aside className="w-28 h-[100dvh] bg-green-600 flex flex-col items-center py-6 justify-between fixed left-0 top-0">
         <div className="flex flex-col items-center space-y-8">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
           <button
@@ -236,16 +263,43 @@ const Editar_roluser = () => {
             <IconTool className="text-white w-11 h-11" />
           </button>
         </div>
-        <button
-          onClick={() => navigate("/ajustesadm")}
-          className="mb-6 hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-        >
-          <IconSettings className="text-white w-11 h-11" />
-        </button>
+
+        {/* Perfil */}
+        <div className="relative mb-6">
+          <button
+            onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
+            className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
+          >
+            {letraInicial}
+          </button>
+          {mostrarTarjeta && (
+            <div
+              ref={tarjetaRef}
+              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
+            >
+              <button
+                onClick={() => navigate("/ajustesadm")}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
+                <IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes
+              </button>
+              <button
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className={`flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${
+                  isLoggingOut ? "opacity-60 cursor-not-allowed" : "text-red-600"
+                }`}
+              >
+                <IconLogout className="w-5 h-5 mr-2 text-red-600" />
+                {isLoggingOut ? "Cerrando..." : "Cerrar sesión"}
+              </button>
+            </div>
+          )}
+        </div>
       </aside>
 
-      {/* Contenido principal desplazado a la derecha del sidebar fijo */}
-      <main className="ml-28 min-h-[100dvh] p-6 relative">
+      {/* Contenido */}
+      <main className="ml-28 flex-1 p-6">
         {alertaVisible && (
           <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[10000] bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
             <IconCheck className="w-5 h-5" /> Cambios guardados exitosamente
@@ -254,80 +308,65 @@ const Editar_roluser = () => {
 
         <button
           onClick={() => navigate("/admuser")}
-          className="absolute top-6 left-6 text-green-600 hover:text-green-800 flex items-center gap-1 font-semibold"
+          className="text-green-600 hover:text-green-800 flex items-center gap-1 font-semibold mb-6"
         >
           <IconArrowLeft className="w-5 h-5" /> Volver
         </button>
 
-        <div className="bg-white shadow-xl border-2 border-green-500 rounded-xl p-8 w-full max-w-5xl mx-auto mt-16">
-          <h1 className="text-3xl font-bold text-green-600 mb-6">
-            Editar usuarios y permisos
-          </h1>
-
+        {/* Formulario */}
+        <div className="bg-white shadow-xl border-2 border-green-500 rounded-xl p-8 max-w-5xl mx-auto">
           {/* Datos básicos */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            {/* Nombre */}
             <div>
-              <label className="block font-semibold text-gray-700 mb-1">
-                Nombre
-              </label>
+              <label className="block font-semibold text-gray-700 mb-1">Nombre</label>
               <input
                 type="text"
                 value={usuario.nombre}
                 onChange={(e) => setUsuario({ ...usuario, nombre: e.target.value })}
                 className="w-full p-3 rounded-md border border-gray-300 focus:ring-1 focus:ring-green-500 outline-none"
-                placeholder="Juan Pérez"
               />
             </div>
+            {/* Teléfono */}
             <div>
-              <label className="block font-semibold text-gray-700 mb-1">
-                Teléfono
-              </label>
+              <label className="block font-semibold text-gray-700 mb-1">Teléfono</label>
               <input
                 type="tel"
                 value={usuario.telefono}
                 onChange={(e) => setUsuario({ ...usuario, telefono: e.target.value })}
                 className="w-full p-3 rounded-md border border-gray-300 focus:ring-1 focus:ring-green-500 outline-none"
-                placeholder="+57 300 123 4567"
               />
             </div>
+            {/* Email */}
             <div>
-              <label className="block font-semibold text-gray-700 mb-1">
-                Correo
-              </label>
+              <label className="block font-semibold text-gray-700 mb-1">Correo</label>
               <input
                 type="email"
                 value={usuario.email}
                 onChange={(e) => setUsuario({ ...usuario, email: e.target.value })}
                 className="w-full p-3 rounded-md border border-gray-300 focus:ring-1 focus:ring-green-500 outline-none"
-                placeholder="juan.perez@empresa.com"
               />
             </div>
 
-            {/* Generar/enviar contraseña temporal (simulado) */}
-            <div className="flex flex-col">
+            {/* Contraseña temporal */}
+            <div>
               <label className="block font-semibold text-gray-700 mb-1">
                 Contraseña temporal
               </label>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={manejarGenerarYEnviar}
-                  disabled={enviandoCorreo}
-                  className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg font-semibold shadow"
-                >
-                  <IconWand className="w-5 h-5" />
-                  Generar y enviar al correo
-                </button>
-                {enviandoCorreo && (
-                  <span className="text-sm text-gray-600 flex items-center gap-1">
-                    <IconMail className="w-4 h-4" /> Enviando…
-                  </span>
-                )}
-              </div>
-              <p className="text-xs text-gray-500 mt-2">
-                La contraseña <strong>no se mostrará</strong> por seguridad. El
-                usuario la recibirá por correo.
-              </p>
+              <button
+                type="button"
+                onClick={manejarGenerarYEnviar}
+                disabled={enviandoCorreo}
+                className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg font-semibold shadow"
+              >
+                <IconWand className="w-5 h-5" />
+                Generar y enviar
+              </button>
+              {enviandoCorreo && (
+                <span className="ml-2 text-sm text-gray-600">
+                  <IconMail className="inline w-4 h-4" /> Enviando…
+                </span>
+              )}
               {avisoPwd && (
                 <p className="text-sm text-green-700 mt-2">{avisoPwd}</p>
               )}
@@ -336,9 +375,7 @@ const Editar_roluser = () => {
 
           {/* Rol */}
           <div className="mb-6">
-            <label className="block text-lg font-bold text-gray-800 mb-2">
-              Rol
-            </label>
+            <label className="block text-lg font-bold text-gray-800 mb-2">Rol</label>
             <select
               value={usuario.rol}
               onChange={(e) => setUsuario({ ...usuario, rol: e.target.value })}
@@ -351,13 +388,11 @@ const Editar_roluser = () => {
             </select>
           </div>
 
-          {/* Permisos: campo único con tarjeta de selección */}
+          {/* Permisos */}
           <div className="mb-6">
             <label className="text-lg font-bold text-gray-800 mb-2 flex items-center gap-1">
-              <IconShieldCheck className="w-5 h-5 text-green-600" /> Permisos
-              asignados
+              <IconShieldCheck className="w-5 h-5 text-green-600" /> Permisos asignados
             </label>
-
             <button
               ref={permisosBtnRef}
               type="button"
@@ -372,46 +407,13 @@ const Editar_roluser = () => {
               <IconChevronDown className="w-5 h-5 text-gray-500" />
             </button>
 
-            {/* Chips opcionales */}
-            {usuario.permisos.length > 0 && (
-              <div className="mt-2 flex flex-wrap gap-2">
-                {usuario.permisos.slice(0, 6).map((p) => (
-                  <span
-                    key={p}
-                    className="px-2 py-1 text-xs rounded-full bg-green-50 text-green-700 border border-green-200"
-                  >
-                    {p}
-                  </span>
-                ))}
-                {usuario.permisos.length > 6 && (
-                  <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-600 border">
-                    +{usuario.permisos.length - 6}
-                  </span>
-                )}
-              </div>
-            )}
-
             {openPermisos && (
               <div
                 ref={permisosCardRef}
                 className="fixed z-[9999] w-[360px] rounded-xl border shadow-xl bg-white p-3"
                 style={{ top: permPos.top, left: permPos.left }}
               >
-                {/* Encabezado con texto más grande */}
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2 font-semibold text-gray-800 text-base">
-                    <IconShieldCheck className="w-4 h-4 text-green-600" />
-                    Seleccionar permisos
-                  </div>
-                  <button
-                    onClick={cerrarPermisos}
-                    className="p-1 rounded hover:bg-gray-100"
-                  >
-                    <IconX className="w-4 h-4" />
-                  </button>
-                </div>
-
-                {/* Búsqueda con texto más grande */}
+                {/* Búsqueda */}
                 <div className="relative mb-2">
                   <IconFilter className="w-4 h-4 absolute left-2 top-1/2 -translate-y-1/2 text-gray-400" />
                   <input
@@ -422,52 +424,49 @@ const Editar_roluser = () => {
                   />
                 </div>
 
-                {/* Lista con altura adaptable y texto más grande */}
+                {/* Lista */}
                 <div className="max-h-[60vh] overflow-auto pr-1">
-                  {filtrarPantallas.length === 0 ? (
-                    <div className="text-sm text-gray-500 px-1 py-2">
-                      Sin resultados
-                    </div>
-                  ) : (
-                    filtrarPantallas.map((p) => (
-                      <label
-                        key={p}
-                        className="flex items-center gap-2 px-1 py-1 text-gray-700 text-base"
-                      >
-                        <input
-                          type="checkbox"
-                          className="accent-green-600"
-                          checked={tempSeleccion.includes(p)}
-                          onChange={() => toggleTemp(p)}
-                        />
-                        {p}
-                      </label>
-                    ))
-                  )}
+                  {filtrarPantallas.length === 0
+                    ? "Sin resultados"
+                    : filtrarPantallas.map((p) => (
+                        <label key={p} className="flex items-center gap-2 px-1 py-1">
+                          <input
+                            type="checkbox"
+                            className="accent-green-600"
+                            checked={tempSeleccion.includes(p)}
+                            onChange={() => toggleTemp(p)}
+                          />
+                          {p}
+                        </label>
+                      ))}
                 </div>
 
-                {/* Botones inferiores con texto más grande */}
-                <div className="mt-3 flex items-center justify-between">
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      onClick={seleccionarTodo}
-                      className="text-sm px-2 py-1 rounded border border-green-600 text-green-700 hover:bg-green-50"
-                    >
-                      Seleccionar todo
-                    </button>
-                    <button
-                      type="button"
-                      onClick={limpiarSeleccion}
-                      className="text-sm px-2 py-1 rounded border text-gray-700 hover:bg-gray-50"
-                    >
-                      Borrar
-                    </button>
-                  </div>
+                {/* Acciones */}
+                <div className="flex justify-between mt-3">
                   <button
-                    type="button"
+                    onClick={seleccionarTodo}
+                    className="text-sm px-2 py-1 rounded hover:bg-gray-100"
+                  >
+                    Seleccionar todo
+                  </button>
+                  <button
+                    onClick={limpiarSeleccion}
+                    className="text-sm px-2 py-1 rounded hover:bg-gray-100"
+                  >
+                    Limpiar
+                  </button>
+                </div>
+
+                <div className="mt-3 flex justify-end gap-2">
+                  <button
+                    onClick={cerrarPermisos}
+                    className="px-3 py-1 rounded-lg border hover:bg-gray-50"
+                  >
+                    Cancelar
+                  </button>
+                  <button
                     onClick={aplicarPermisos}
-                    className="text-sm px-3 py-1 rounded bg-green-600 text-white hover:bg-green-700"
+                    className="px-3 py-1 rounded-lg bg-green-600 text-white hover:bg-green-700"
                   >
                     Aplicar
                   </button>
@@ -479,7 +478,7 @@ const Editar_roluser = () => {
           <div className="flex justify-end">
             <button
               onClick={handleSave}
-              className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 font-semibold shadow-md"
+              className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold flex items-center gap-2 shadow-lg"
             >
               <IconDeviceFloppy className="w-5 h-5" /> Guardar cambios
             </button>
@@ -491,4 +490,3 @@ const Editar_roluser = () => {
 };
 
 export default Editar_roluser;
-

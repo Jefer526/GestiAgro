@@ -14,6 +14,8 @@ import {
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
+// 👇 cliente con interceptor y endpoints (igual que en Admin_usuarios)
+import api, { accountsApi, ENDPOINTS } from "../../services/apiClient";
 
 const Soporte_adm = () => {
   const navigate = useNavigate();
@@ -21,6 +23,7 @@ const Soporte_adm = () => {
   // -------- Perfil flotante --------
   const tarjetaRef = useRef(null);
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const letraInicial = "J";
 
   useEffect(() => {
@@ -33,6 +36,39 @@ const Soporte_adm = () => {
     return () => document.removeEventListener("mousedown", clickFueraTarjeta);
   }, []);
   // ---------------------------------
+
+  // ====== LOGOUT real (backend + limpieza + redirect) ======
+  const handleLogout = async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    try {
+      const refresh = localStorage.getItem("refresh");
+      try {
+        if (ENDPOINTS?.logout) {
+          await api.post(ENDPOINTS.logout, { refresh });
+        } else if (accountsApi?.logout) {
+          await accountsApi.logout({ refresh });
+        }
+      } catch (e) {
+        console.warn("Fallo en logout del backend, se cierra sesión localmente igual:", e);
+      }
+    } finally {
+      try {
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
+        sessionStorage.removeItem("access");
+        sessionStorage.removeItem("refresh");
+      } catch {}
+      try {
+        if (api?.defaults?.headers?.common) {
+          delete api.defaults.headers.common.Authorization;
+        }
+      } catch {}
+      setMostrarTarjeta(false);
+      setIsLoggingOut(false);
+      window.location.replace("/");
+    }
+  };
 
   // --------- Datos tabla ----------
   const tickets = [
@@ -68,7 +104,7 @@ const Soporte_adm = () => {
   const columnas = ["ticket", "asunto", "estado", "solicitadoPor", "fechaSolicitud"];
   // --------------------------------
 
-  // ------------- Filtros (igual a Hoja_vida) -------------
+  // ------------- Filtros -------------
   const filtroRef = useRef(null);
   const [filtroActivo, setFiltroActivo] = useState(null);
   const [filtroPosicion, setFiltroPosicion] = useState({ top: 0, left: 0, rightAlign: false });
@@ -77,7 +113,6 @@ const Soporte_adm = () => {
   const [busquedas, setBusquedas] = useState({});
 
   const getValoresUnicos = (campo) => {
-    // La fecha usa tarjeta especial, no devolvemos opciones aquí
     if (campo === "fechaSolicitud") return [];
     const search = (busquedas[campo] || "").toLowerCase();
     return [...new Set(tickets.map((t) => t[campo]?.toString() || ""))].filter((v) =>
@@ -88,7 +123,7 @@ const Soporte_adm = () => {
   const toggleFiltro = (campo, e) => {
     const icono = e.currentTarget.getBoundingClientRect();
     const anchoVentana = window.innerWidth;
-    const anchoTarjeta = 240; // aprox. w-60
+    const anchoTarjeta = 240;
     const espacioDerecha = anchoVentana - icono.right;
     const rightAlign = espacioDerecha < anchoTarjeta;
 
@@ -121,7 +156,6 @@ const Soporte_adm = () => {
     .filter((row) =>
       columnas.every((campo) => {
         if (campo === "fechaSolicitud") {
-          // si hay filtros de fecha aplicados
           const filtrosFecha = valoresSeleccionados["fechaSolicitud"];
           return !filtrosFecha || filtrosFecha.length === 0
             ? true
@@ -149,7 +183,7 @@ const Soporte_adm = () => {
     document.addEventListener("mousedown", clickFueraFiltro);
     return () => document.removeEventListener("mousedown", clickFueraFiltro);
   }, []);
-  // --------------------------------------------------------
+  // -----------------------------------
 
   const verDetalle = (row) => {
     navigate("/detallesticket", { state: { ticket: row } });
@@ -178,6 +212,7 @@ const Soporte_adm = () => {
           </div>
         </div>
 
+        {/* Perfil — EXACTO a Admin_usuarios */}
         <div className="relative mb-6">
           <button
             onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
@@ -190,11 +225,21 @@ const Soporte_adm = () => {
               ref={tarjetaRef}
               className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
             >
-              <button onClick={() => navigate("/ajustesadm")} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
+              <button
+                onClick={() => navigate("/ajustesadm")}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
                 <IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes
               </button>
-              <button onClick={() => navigate("/")} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600">
-                <IconLogout className="w-5 h-5 mr-2 text-red-600" /> Cerrar sesión
+              <button
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className={`flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${
+                  isLoggingOut ? "opacity-60 cursor-not-allowed" : "text-red-600"
+                }`}
+              >
+                <IconLogout className="w-5 h-5 mr-2 text-red-600" />
+                {isLoggingOut ? "Cerrando..." : "Cerrar sesión"}
               </button>
             </div>
           )}
@@ -229,7 +274,6 @@ const Soporte_adm = () => {
               {ticketsFiltrados.map((t) => (
                 <tr key={t.ticket} className="border-t hover:bg-gray-50">
                   <td className="p-3 border">{t.ticket}</td>
-                  {/* Asunto centrado */}
                   <td className="p-3 border text-center">{t.asunto}</td>
                   <td className="p-3 border">{t.estado}</td>
                   <td className="p-3 border">{t.solicitadoPor}</td>
@@ -305,7 +349,7 @@ const Soporte_adm = () => {
                   </div>
                 </>
               ) : (
-                // -------- Filtro de fecha igual a Hoja_vida --------
+                // -------- Filtro de fecha --------
                 <>
                   {Object.entries(
                     tickets.reduce((acc, { fechaSolicitud }) => {
@@ -342,7 +386,7 @@ const Soporte_adm = () => {
                     </div>
                   ))}
                 </>
-                // ----------------------------------------------------
+                // -------------------------------
               )}
 
               <button
@@ -360,5 +404,3 @@ const Soporte_adm = () => {
 };
 
 export default Soporte_adm;
-
-

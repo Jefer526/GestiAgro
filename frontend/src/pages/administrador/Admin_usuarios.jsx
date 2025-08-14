@@ -1,3 +1,4 @@
+// src/pages/Admin_usuarios.jsx
 import React, { useState, useRef, useEffect } from "react";
 import {
   IconUsers,
@@ -7,14 +8,15 @@ import {
   IconSettings,
   IconFilter,
   IconPencil,
-  IconTrash,
+  IconPower,
   IconDotsVertical,
   IconSortAscending2,
   IconSortDescending2,
   IconLogout,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+// 👇 usa el cliente con interceptor
+import api, { accountsApi, ENDPOINTS } from "../../services/apiClient";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
 const Admin_usuarios = () => {
@@ -31,15 +33,33 @@ const Admin_usuarios = () => {
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const letraInicial = "J";
 
-  const columnas = ["nombre_completo", "telefono", "rol", "email"];
+  const columnas = ["nombre_completo", "telefono", "rol", "email", "estado"];
 
+  // Cargar usuarios (usa accountsApi -> ya manda Bearer)
   useEffect(() => {
-    axios
-      .get("http://localhost:8000/api/usuarios/listar/")
-      .then((res) => setUsuarios(res.data))
-      .catch((err) => console.error("Error al obtener usuarios:", err));
+    (async () => {
+      try {
+        const res = await accountsApi.listUsers();
+        const lista = (res.data || []).map((u) => ({
+          id_usuario: u.id,
+          nombre_completo:
+            `${u.first_name || ""} ${u.last_name || ""}`.trim() || "(sin nombre)",
+          telefono: u.telefono || "",
+          rol: u.is_superuser ? "Superusuario" : u.is_staff ? "Administrador" : "Usuario",
+          email: u.email || "",
+          is_active: !!u.is_active,
+          estado: u.is_active ? "Activo" : "Inactivo",
+          _raw: u,
+        }));
+        setUsuarios(lista);
+      } catch (err) {
+        console.error("Error al obtener usuarios (accounts):", err);
+        alert("No se pudieron cargar los usuarios.");
+      }
+    })();
   }, []);
 
   const toggleFiltro = (campo, e) => {
@@ -54,20 +74,15 @@ const Admin_usuarios = () => {
 
   const getValoresUnicos = (campo) => {
     const search = (busquedas[campo] || "").toLowerCase();
-    return [...new Set(usuarios.map((e) => e[campo]?.toString()))].filter((v) =>
+    return [...new Set(usuarios.map((e) => (e[campo] ?? "").toString()))].filter((v) =>
       v.toLowerCase().includes(search)
     );
   };
 
   const toggleValor = (campo, valor) => {
     const seleccionados = new Set(valoresSeleccionados[campo] || []);
-    seleccionados.has(valor)
-      ? seleccionados.delete(valor)
-      : seleccionados.add(valor);
-    setValoresSeleccionados({
-      ...valoresSeleccionados,
-      [campo]: [...seleccionados],
-    });
+    seleccionados.has(valor) ? seleccionados.delete(valor) : seleccionados.add(valor);
+    setValoresSeleccionados({ ...valoresSeleccionados, [campo]: [...seleccionados] });
   };
 
   const limpiarFiltro = (campo) => {
@@ -76,41 +91,33 @@ const Admin_usuarios = () => {
     setValoresSeleccionados(actualizado);
   };
 
-  const ordenar = (campo, orden) => {
-    setOrdenCampo({ campo, orden });
-  };
+  const ordenar = (campo, orden) => setOrdenCampo({ campo, orden });
 
-  const handleBusqueda = (campo, texto) => {
+  const handleBusqueda = (campo, texto) =>
     setBusquedas({ ...busquedas, [campo]: texto });
-  };
 
   const datosFiltrados = usuarios
     .filter((item) =>
-      columnas.every((campo) =>
-        !valoresSeleccionados[campo] ||
-        valoresSeleccionados[campo].length === 0
-          ? true
-          : valoresSeleccionados[campo].includes(item[campo]?.toString())
-      )
+      columnas.every((campo) => {
+        const vals = valoresSeleccionados[campo];
+        if (!vals || vals.length === 0) return true;
+        return vals.includes((item[campo] ?? "").toString());
+      })
     )
     .sort((a, b) => {
       if (!ordenCampo) return 0;
       const { campo, orden } = ordenCampo;
-      return orden === "asc"
-        ? a[campo]?.toString().localeCompare(b[campo]?.toString())
-        : b[campo]?.toString().localeCompare(a[campo]?.toString());
+      const av = (a[campo] ?? "").toString();
+      const bv = (b[campo] ?? "").toString();
+      return orden === "asc" ? av.localeCompare(bv) : bv.localeCompare(av);
     });
 
   const handleMenuOpen = (id_usuario, event) => {
     event.stopPropagation();
     const rect = event.currentTarget.getBoundingClientRect();
     const espacioDisponibleDerecha = window.innerWidth - rect.right;
-    const menuWidth = 160;
-    const left =
-      espacioDisponibleDerecha > menuWidth
-        ? rect.right + 8
-        : rect.left - menuWidth - 8;
-
+    const menuWidth = 180;
+    const left = espacioDisponibleDerecha > menuWidth ? rect.right + 8 : rect.left - menuWidth - 8;
     setTimeout(() => {
       setMenuAbiertoId(id_usuario);
       setMenuPosition({ x: left, y: rect.top });
@@ -118,10 +125,7 @@ const Admin_usuarios = () => {
   };
 
   const handleClickOutside = (e) => {
-    if (
-      !e.target.closest("#floating-menu") &&
-      !e.target.closest(".menu-trigger")
-    ) {
+    if (!e.target.closest("#floating-menu") && !e.target.closest(".menu-trigger")) {
       setMenuAbiertoId(null);
     }
   };
@@ -151,23 +155,66 @@ const Admin_usuarios = () => {
     return () => document.removeEventListener("mousedown", clickFueraTarjeta);
   }, []);
 
-  const handleEliminar = async (id_usuario) => {
-    const confirmar = window.confirm(
-      "¿Estás seguro de que deseas eliminar este usuario?"
-    );
-    if (!confirmar) return;
+  // ====== LOGOUT real ======
+  const handleLogout = async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    try {
+      const refresh = localStorage.getItem("refresh");
+      // Intenta usar ENDPOINTS.logout o accountsApi.logout si existe
+      try {
+        if (ENDPOINTS?.logout) {
+          await api.post(ENDPOINTS.logout, { refresh });
+        } else if (accountsApi?.logout) {
+          await accountsApi.logout({ refresh });
+        }
+      } catch (e) {
+        // Si el backend responde 401/403/500, igual limpiamos cliente
+        console.warn("Fallo en logout del backend, se forza cierre de sesión local:", e);
+      }
+    } finally {
+      // Limpieza local SIEMPRE
+      try {
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
+        sessionStorage.removeItem("access");
+        sessionStorage.removeItem("refresh");
+      } catch {}
+      // quita Authorization del cliente con interceptor por si quedó seteado
+      try {
+        if (api?.defaults?.headers?.common) {
+          delete api.defaults.headers.common.Authorization;
+        }
+      } catch {}
+      setMostrarTarjeta(false);
+      setIsLoggingOut(false);
+      // Redirección fuerte para que no haya "logout fantasma"
+      window.location.replace("/");
+    }
+  };
+
+  // Activar / Inactivar (PATCH toggle) usando el cliente 'api'
+  const handleToggleActivo = async (id_usuario) => {
+    const u = usuarios.find((x) => x.id_usuario === id_usuario);
+    if (!u) return;
+    const accion = u.is_active ? "inactivar" : "activar";
+    const ok = window.confirm(`¿Seguro que deseas ${accion} este usuario?`);
+    if (!ok) return;
 
     try {
-      await axios.delete(
-        `http://localhost:8000/api/usuarios/eliminar/${id_usuario}/`
-      );
+      const res = await api.patch(`${ENDPOINTS.users}${id_usuario}/toggle-active/`, {});
+      const nuevoActivo = !!res.data?.is_active;
       setUsuarios((prev) =>
-        prev.filter((u) => u.id_usuario !== id_usuario)
+        prev.map((it) =>
+          it.id_usuario === id_usuario
+            ? { ...it, is_active: nuevoActivo, estado: nuevoActivo ? "Activo" : "Inactivo" }
+            : it
+        )
       );
       setMenuAbiertoId(null);
-    } catch (error) {
-      console.error("Error al eliminar usuario:", error);
-      alert("No se pudo eliminar el usuario.");
+    } catch (err) {
+      console.error("Error al cambiar estado:", err);
+      alert("No se pudo cambiar el estado del usuario.");
     }
   };
 
@@ -221,11 +268,14 @@ const Admin_usuarios = () => {
                 <IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes
               </button>
               <button
-                onClick={() => navigate("/")}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className={`flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${
+                  isLoggingOut ? "opacity-60 cursor-not-allowed" : "text-red-600"
+                }`}
               >
-                <IconLogout className="w-5 h-5 mr-2 text-red-600" /> Cerrar
-                sesión
+                <IconLogout className="w-5 h-5 mr-2 text-red-600" />
+                {isLoggingOut ? "Cerrando..." : "Cerrar sesión"}
               </button>
             </div>
           )}
@@ -234,19 +284,20 @@ const Admin_usuarios = () => {
 
       {/* Contenido */}
       <div className="flex-1 p-10 overflow-auto">
-        <h1 className="text-4xl font-bold text-green-600 mb-6">
-          Gestionar usuarios
-        </h1>
+        <h1 className="text-4xl font-bold text-green-600 mb-6">Gestionar usuarios</h1>
+
         <div className="overflow-x-auto shadow-md rounded-lg relative">
           <table className="min-w-full text-base bg-white text-center">
             <thead className="bg-green-600 text-white">
               <tr>
-                {columnas.map((col, idx) => (
+                {["NOMBRE_COMPLETO", "TELEFONO", "ROL", "EMAIL", "ESTADO"].map((titulo, idx) => (
                   <th key={idx} className="p-4 border">
                     <div className="flex items-center justify-center gap-2">
-                      <span>{col.toUpperCase()}</span>
+                      <span>{titulo}</span>
                       <button
-                        onClick={(e) => toggleFiltro(col, e)}
+                        onClick={(e) =>
+                          toggleFiltro(["nombre_completo", "telefono", "rol", "email", "estado"][idx], e)
+                        }
                         className="z-10"
                         onMouseDown={(e) => e.stopPropagation()}
                       >
@@ -258,13 +309,23 @@ const Admin_usuarios = () => {
                 <th className="p-4 border">OPCIONES</th>
               </tr>
             </thead>
+
             <tbody>
               {datosFiltrados.map((u) => (
-                <tr key={u.email} className="border-t hover:bg-gray-50">
+                <tr key={u.id_usuario} className="border-t hover:bg-gray-50">
                   <td className="p-4 border">{u.nombre_completo}</td>
                   <td className="p-4 border">{u.telefono}</td>
-                  <td className="p-4 border">{u.rol || "Sin asignar"}</td>
+                  <td className="p-4 border">{u.rol}</td>
                   <td className="p-4 border">{u.email}</td>
+                  <td className="p-4 border">
+                    <span
+                      className={`px-2 py-1 rounded text-sm ${
+                        u.is_active ? "bg-green-100 text-green-700" : "bg-gray-200 text-gray-700"
+                      }`}
+                    >
+                      {u.estado}
+                    </span>
+                  </td>
                   <td className="p-4 border">
                     <button
                       onClick={(e) => handleMenuOpen(u.id_usuario, e)}
@@ -284,9 +345,7 @@ const Admin_usuarios = () => {
               className="fixed bg-white text-black shadow-md border rounded z-[9999] p-3 w-60 text-left text-sm"
               style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
             >
-              <div className="font-semibold mb-2">
-                Filtrar por {filtroActivo}
-              </div>
+              <div className="font-semibold mb-2">Filtrar por {filtroActivo}</div>
               <button
                 onClick={() => ordenar(filtroActivo, "asc")}
                 className="text-green-700 flex items-center gap-1 mb-1 capitalize"
@@ -304,23 +363,18 @@ const Admin_usuarios = () => {
                 placeholder="Buscar..."
                 className="w-full border border-gray-300 px-2 py-1 rounded mb-2 text-sm"
                 value={busquedas[filtroActivo] || ""}
-                onChange={(e) => handleBusqueda(filtroActivo, e.target.value)}
+                onChange={(e) => setBusquedas({ ...busquedas, [filtroActivo]: e.target.value })}
               />
               <div className="flex flex-col max-h-40 overflow-y-auto">
                 {getValoresUnicos(filtroActivo).map((val, idx) => (
-                  <label
-                    key={idx}
-                    className="flex items-center gap-2 mb-1 capitalize"
-                  >
+                  <label key={idx} className="flex items-center gap-2 mb-1 capitalize">
                     <input
                       type="checkbox"
-                      checked={(
-                        valoresSeleccionados[filtroActivo] || []
-                      ).includes(val)}
+                      checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
                       onChange={() => toggleValor(filtroActivo, val)}
                       className="accent-green-600"
                     />
-                    {val.charAt(0).toUpperCase() + val.slice(1)}
+                    {val || "(vacío)"}
                   </label>
                 ))}
               </div>
@@ -336,21 +390,23 @@ const Admin_usuarios = () => {
           {menuAbiertoId !== null && (
             <div
               id="floating-menu"
-              className="fixed bg-white border border-gray-200 rounded shadow-lg w-40 z-[9999]"
+              className="fixed bg-white border border-gray-200 rounded shadow-lg w-48 z-[9999]"
               style={{ top: menuPosition.y, left: menuPosition.x }}
             >
               <button
                 onClick={() => navigate(`/editar-roluser/${menuAbiertoId}`)}
                 className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100"
               >
-                <IconPencil className="w-4 h-4 text-blue-600" /> Editar Rol y
-                Permisos
+                <IconPencil className="w-4 h-4 text-blue-600" /> Editar Rol y Permisos
               </button>
               <button
-                onClick={() => handleEliminar(menuAbiertoId)}
-                className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                onClick={() => handleToggleActivo(menuAbiertoId)}
+                className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100"
               >
-                <IconTrash className="w-4 h-4" /> Eliminar
+                <IconPower className="w-4 h-4 text-gray-700" />
+                {usuarios.find((x) => x.id_usuario === menuAbiertoId)?.is_active
+                  ? "Inactivar"
+                  : "Activar"}
               </button>
             </div>
           )}

@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
-
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -136,3 +136,28 @@ class SetPasswordAPIView(APIView):
                 {"message": "Contraseña establecida correctamente."},
                 status=status.HTTP_200_OK,
             )
+
+class UsersListView(generics.ListAPIView):
+    queryset = User.objects.all().order_by('id')
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAdminUser]  # o IsAuthenticated
+    authentication_classes = [JWTAuthentication]
+    ''
+class AccountsUserToggleActiveAPIView(APIView):
+    permission_classes = [permissions.IsAdminUser]  # evita que cualquiera lo use
+
+    def patch(self, request, pk):
+        """Alterna is_active o lo fija explícitamente si viene en el body."""
+        try:
+            user = User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            return Response({"detail": "Usuario no encontrado"}, status=404)
+
+        # si mandan {"is_active": false/true} lo aplicamos; si no, toggl-eamos
+        is_active = request.data.get("is_active")
+        if isinstance(is_active, bool):
+            user.is_active = is_active
+        else:
+            user.is_active = not user.is_active
+        user.save()
+        return Response({"id": user.id, "is_active": user.is_active}, status=200)

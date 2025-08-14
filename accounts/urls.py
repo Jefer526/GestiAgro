@@ -1,6 +1,6 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
-from .views import RegisterView, MeView, LogoutView, DemoSignupAPIView, SetPasswordAPIView
+from .views import RegisterView, MeView, LogoutView, DemoSignupAPIView, SetPasswordAPIView, AccountsUserToggleActiveAPIView, UsersListView
 from .views_auth import EmailLoginView  # 👈 usa esta
 
 urlpatterns = [
@@ -12,4 +12,7 @@ urlpatterns = [
     path("token/", EmailLoginView.as_view(), name="token_obtain_pair"),  # /api/token/
     path("demo/signup/", DemoSignupAPIView.as_view(), name="demo-signup"),
     path("password/set/", SetPasswordAPIView.as_view(), name="password-set"),
+    path("users/<int:pk>/toggle-active/", AccountsUserToggleActiveAPIView.as_view(),
+         name="accounts-users-toggle-active"),
+    path('users/', UsersListView.as_view(), name='users-list'),
 ]

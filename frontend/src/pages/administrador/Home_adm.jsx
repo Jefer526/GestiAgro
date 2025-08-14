@@ -1,3 +1,4 @@
+// src/pages/administrador/Home_adm.jsx
 import React, { useState, useRef, useEffect } from "react";
 import {
   IconUsers,
@@ -10,11 +11,13 @@ import {
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
-import { logout } from "../../services/apiClient"; // 👈 importar
+// 👇 usa el mismo cliente que Admin_usuarios
+import api, { accountsApi, ENDPOINTS } from "../../services/apiClient";
 
 const Home_adm = () => {
   const navigate = useNavigate();
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const tarjetaRef = useRef(null);
 
   const letraInicial = "J"; // TODO: cámbialo luego por la inicial real del usuario
@@ -29,10 +32,39 @@ const Home_adm = () => {
     return () => document.removeEventListener("mousedown", manejarClickFuera);
   }, []);
 
+  // ====== LOGOUT idéntico a Admin_usuarios ======
   const handleLogout = async () => {
-    setMostrarTarjeta(false);
-    await logout();                 // 👈 limpia en servidor (si puede) y localStorage
-    navigate("/login", { replace: true });
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    try {
+      const refresh = localStorage.getItem("refresh");
+      try {
+        if (ENDPOINTS?.logout) {
+          await api.post(ENDPOINTS.logout, { refresh });
+        } else if (accountsApi?.logout) {
+          await accountsApi.logout({ refresh });
+        }
+      } catch (e) {
+        console.warn("Fallo en logout del backend, cierre local forzado:", e);
+      }
+    } finally {
+      // Limpieza local SIEMPRE
+      try {
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
+        sessionStorage.removeItem("access");
+        sessionStorage.removeItem("refresh");
+      } catch {}
+      try {
+        if (api?.defaults?.headers?.common) {
+          delete api.defaults.headers.common.Authorization;
+        }
+      } catch {}
+      setMostrarTarjeta(false);
+      setIsLoggingOut(false);
+      // Redirección fuerte para evitar "logout fantasma"
+      window.location.replace("/"); // si prefieres ir directo al login: replace("/login")
+    }
   };
 
   const cards = [
@@ -110,7 +142,7 @@ const Home_adm = () => {
           </button>
         </div>
 
-        {/* Perfil */}
+        {/* Perfil — EXACTO al de Admin_usuarios */}
         <div className="relative mb-6">
           <button
             onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
@@ -126,7 +158,7 @@ const Home_adm = () => {
           {mostrarTarjeta && (
             <div
               ref={tarjetaRef}
-              className="absolute bottom-16 left-14 w-56 bg-white/95 border border-gray-200 rounded-xl shadow-2xl py-3 z-50 backdrop-blur"
+              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
             >
               <button
                 onClick={() => navigate("/ajustesadm")}
@@ -136,11 +168,14 @@ const Home_adm = () => {
                 Ajustes
               </button>
               <button
-                onClick={handleLogout} // 👈 aquí
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-red-50 text-red-600"
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className={`flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${
+                  isLoggingOut ? "opacity-60 cursor-not-allowed" : "text-red-600"
+                }`}
               >
                 <IconLogout className="w-5 h-5 mr-2 text-red-600" />
-                Cerrar sesión
+                {isLoggingOut ? "Cerrando..." : "Cerrar sesión"}
               </button>
             </div>
           )}
