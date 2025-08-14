@@ -134,11 +134,25 @@ class AccountsUserToggleActiveAPIView(APIView):
         except User.DoesNotExist:
             return Response({"detail": "Usuario no encontrado"}, status=404)
 
+        # 🚫 Bloqueo para superusuarios
+        if user.is_superuser and request.data.get("is_active") is False:
+            return Response(
+                {"detail": "No se puede desactivar un superusuario."},
+                status=400
+            )
+        if user.is_superuser and not request.data.get("is_active") and user.is_active:
+            # Caso toggle (sin is_active explícito) → también bloquear
+            return Response(
+                {"detail": "No se puede desactivar un superusuario."},
+                status=400
+            )
+
         is_active = request.data.get("is_active")
         if isinstance(is_active, bool):
             user.is_active = is_active
         else:
             user.is_active = not user.is_active
+
         user.save()
         return Response({"id": user.id, "is_active": user.is_active}, status=200)
 

@@ -191,32 +191,46 @@ const Admin_usuarios = () => {
   };
 
   // Activar / Inactivar usuario
-  const handleToggleActivo = async (id_usuario) => {
-    const u = usuarios.find((x) => x.id_usuario === id_usuario);
-    if (!u) return;
-    const accion = u.is_active ? "inactivar" : "activar";
-    const ok = window.confirm(`¿Seguro que deseas ${accion} este usuario?`);
-    if (!ok) return;
+const handleToggleActivo = async (id_usuario) => {
+  const u = usuarios.find((x) => x.id_usuario === id_usuario);
+  if (!u) return;
 
-    try {
-      const res = await api.patch(
-        `${ENDPOINTS.users}${id_usuario}/toggle-active/`,
-        {}
-      );
-      const nuevoActivo = !!res.data?.is_active;
-      setUsuarios((prev) =>
-        prev.map((it) =>
-          it.id_usuario === id_usuario
-            ? { ...it, is_active: nuevoActivo, estado: nuevoActivo ? "Activo" : "Inactivo" }
-            : it
-        )
-      );
-      setMenuAbiertoId(null);
-    } catch (err) {
-      console.error("Error al cambiar estado:", err);
-      alert("No se pudo cambiar el estado del usuario.");
-    }
-  };
+  // 🚫 Protección: no permitir desactivar superusuario
+  if (u.is_superuser) {
+    alert("No puedes desactivar al superusuario principal.");
+    return;
+  }
+
+  const accion = u.is_active ? "inactivar" : "activar";
+  const ok = window.confirm(`¿Seguro que deseas ${accion} este usuario?`);
+  if (!ok) return;
+
+  try {
+    const res = await api.patch(
+      `${ENDPOINTS.users}${id_usuario}/toggle-active/`,
+      {}
+    );
+    const nuevoActivo = !!res.data?.is_active;
+    setUsuarios((prev) =>
+      prev.map((it) =>
+        it.id_usuario === id_usuario
+          ? { ...it, is_active: nuevoActivo, estado: nuevoActivo ? "Activo" : "Inactivo" }
+          : it
+      )
+    );
+    setMenuAbiertoId(null);
+  } catch (err) {
+    console.error("Error al cambiar estado:", err);
+
+    if (err.response?.data?.detail) {
+    alert(err.response.data.detail);
+  } else {
+    alert("No se pudo cambiar el estado del usuario.");
+  }
+
+  }
+};
+
 
   return (
     <div className="flex">
@@ -437,8 +451,8 @@ const Admin_usuarios = () => {
               >
                 <IconPower className="w-4 h-4 text-gray-700" />
                 {usuarios.find((x) => x.id_usuario === menuAbiertoId)?.is_active
-                  ? "Activar"
-                  : "Inactivar"}
+                  ? "Inactivar"
+                  : "Activar"}
               </button>
             </div>
           )}
