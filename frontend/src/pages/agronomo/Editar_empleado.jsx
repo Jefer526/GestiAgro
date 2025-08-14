@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import {
   IconHome, IconClipboardList, IconChartBar, IconCloudRain,
   IconTractor, IconSettings, IconBox, IconUsersGroup,
-  IconPlant, IconFrame, IconArrowLeft, IconCheck, IconTool, IconLogout, IconSearch,
+  IconPlant, IconFrame, IconArrowLeft, IconCheck, IconTool, IconLogout, IconSearch, IconPlant2,
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
@@ -101,6 +101,7 @@ const Editar_empleado = () => {
           <button onClick={() => navigate("/manejopersonal")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconUsersGroup className="text-white w-11 h-11" /></button>
           <button onClick={() => navigate("/crearfinca")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconPlant className="text-white w-11 h-11" /></button>
           <button onClick={() => navigate("/crearlote")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconFrame className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/produccionagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconPlant2 className="text-white w-11 h-11" /></button>
         </div>
 
         <div className="relative mb-4">

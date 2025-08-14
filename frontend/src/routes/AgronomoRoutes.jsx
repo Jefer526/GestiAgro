@@ -24,6 +24,7 @@ import Editar_lote from "../pages/agronomo/Editar_lote";
 import Soporte_agro from "../pages/agronomo/Soporte_agro";
 import Ajustes_agro from "../pages/agronomo/Ajustes_agro";
 import Detalle_mantenimiento from "../pages/agronomo/Detalle_mantenimiento";
+import Produccion_agro from "../pages/agronomo/Produccion_agro";
 
 
 const agronomoRoutes = [
@@ -52,6 +53,7 @@ const agronomoRoutes = [
   <Route key="soporte-agro" path="/soporteagro" element={<Soporte_agro />} />,
   <Route key="ajustes-agro" path="/ajustesagro" element={<Ajustes_agro />} />,
   <Route key="detalle-mantenimiento" path="/detalle_mantenimiento" element={<Detalle_mantenimiento />} />,
+  <Route key="produccion-agro" path="/produccionagro" element={<Produccion_agro />} />,
   
 ];
 
