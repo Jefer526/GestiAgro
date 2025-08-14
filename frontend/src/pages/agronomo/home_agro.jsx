@@ -13,6 +13,7 @@ import {
   IconTool,
   IconLogout,
   IconChevronRight,
+  IconPlant2,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
@@ -114,6 +115,16 @@ const Home_agro = () => {
       iconBg: "bg-white/70",
       text: "text-rose-700",
     },
+    {
+      icon: <IconPlant2 className="w-8 h-8" />,
+      label: "Producción",
+      desc: "Gestión y registro de producción agrícola",
+      ruta: "/produccionagro",
+      gradient: "from-green-500/20 to-yellow-500/20",
+      ring: "ring-green-300/40",
+      iconBg: "bg-white/70",
+      text: "text-green-700",
+    },
   ];
 
   return (
@@ -160,7 +171,11 @@ const Home_agro = () => {
           <button onClick={() => navigate("/crearlote")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconFrame className="text-white w-11 h-11" />
           </button>
+          <button onClick={() => navigate("/produccionagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+            <IconPlant2 className="text-white w-11 h-11" />
+          </button>
         </div>
+
 
         {/* Perfil */}
         <div className="relative mb-4 mt-auto">

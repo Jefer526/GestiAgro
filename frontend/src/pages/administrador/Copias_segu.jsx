@@ -247,42 +247,29 @@ const Copias_segu = () => {
           >
             {letraInicial}
           </button>
+          {mostrarTarjeta && (
+            <div
+              ref={tarjetaRef}
+              className="absolute bottom-16 left-14 w-52 bg-white/95 border border-gray-200 rounded-xl shadow-2xl py-3 z-50"
+            >
+              <button
+                onClick={() => navigate("/ajustesadm")}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
+                <IconSettings className="w-5 h-5 mr-2 text-green-600" />
+                Ajustes
+              </button>
+              <button
+                onClick={() => navigate("/")}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-red-50 text-red-600"
+              >
+                <IconLogout className="w-5 h-5 mr-2 text-red-600" />
+                Cerrar sesión
+              </button>
+            </div>
+          )}
         </div>
       </aside>
-
-      {/* Tarjeta de perfil — FIXED sobre todo (clickable total) */}
-      {mostrarTarjeta && (
-        <div
-          ref={tarjetaRef}
-          onMouseDown={(e) => e.stopPropagation()}
-          className="fixed w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-[9999]"
-          style={{ top: `${tarjetaPos.top}px`, left: `${tarjetaPos.left}px` }}
-        >
-          <button
-            type="button"
-            onClick={() => {
-              setMostrarTarjeta(false);
-              navigate("/ajustesadm");
-            }}
-            className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-          >
-            <IconSettings className="w-5 h-5 mr-2 text-green-600" />
-            <span className="flex-1">Ajustes</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={handleLogout}
-            disabled={isLoggingOut}
-            className={`flex items-center w-full text-left px-4 py-2 text-sm hover:bg-red-50 ${
-              isLoggingOut ? "opacity-60 cursor-not-allowed" : "text-red-600"
-            }`}
-          >
-            <IconLogout className="w-5 h-5 mr-2 text-red-600" />
-            {isLoggingOut ? "Cerrando..." : "Cerrar sesión"}
-          </button>
-        </div>
-      )}
 
       {/* Contenido principal */}
       <main className="ml-28 min-h-[100dvh] p-8 overflow-auto relative">

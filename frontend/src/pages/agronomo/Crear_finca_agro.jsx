@@ -1,5 +1,6 @@
+// src/pages/agronomo/Crear_finca_agro.jsx
 import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   IconHome,
   IconClipboardList,
@@ -18,14 +19,20 @@ import {
   IconMapPin,
   IconTool,
   IconLogout,
+  IconPlant2,
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
 const Crear_finca_agro = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
   const filtroRef = useRef(null);
   const [mostrarTarjetaPerfil, setMostrarTarjetaPerfil] = useState(false);
   const tarjetaPerfilRef = useRef(null);
+
+  // Contenedor scrollable del sidebar para auto-scroll
+  const iconListRef = useRef(null);
 
   const columnas = ["nombre", "ubicacion", "coordenadas", "area"];
 
@@ -62,12 +69,12 @@ const Crear_finca_agro = () => {
 
   const getValoresUnicos = (campo) => {
     const search = (busquedas[campo] || "").toLowerCase();
-    return [...new Set(fincas.map(e => e[campo]?.toString()))].filter(v => v.toLowerCase().includes(search));
+    return [...new Set(fincas.map((e) => e[campo]?.toString()))].filter((v) => v.toLowerCase().includes(search));
   };
 
   const datosFiltrados = fincas
-    .filter(item =>
-      columnas.every(campo =>
+    .filter((item) =>
+      columnas.every((campo) =>
         !valoresSeleccionados[campo] || valoresSeleccionados[campo].length === 0
           ? true
           : valoresSeleccionados[campo].includes(item[campo]?.toString())
@@ -115,6 +122,19 @@ const Crear_finca_agro = () => {
     return () => document.removeEventListener("mousedown", clickFuera);
   }, []);
 
+  // Auto-scroll: si estamos en /crearfinca, baja para que el último ícono no se esconda
+  useEffect(() => {
+    if (!iconListRef.current) return;
+    if (location.pathname.includes("/crearfinca")) {
+      iconListRef.current.scrollTo({
+        top: iconListRef.current.scrollHeight,
+        behavior: "instant",
+      });
+    } else {
+      iconListRef.current.scrollTo({ top: 0, behavior: "instant" });
+    }
+  }, [location.pathname]);
+
   return (
     <div className="flex">
       {/* Sidebar */}
@@ -125,70 +145,90 @@ const Crear_finca_agro = () => {
         </div>
 
         {/* Iconos con scroll */}
-        <div className="flex-1 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only">
-          {/* Icono activo */}
-          <div className="relative">
-            <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            <button
-              onClick={() => navigate("/Homeagro")}
-              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-              <IconHome className="text-white w-11 h-11" />
-            </button>
-          </div>
+        <div
+          ref={iconListRef}
+          className="flex-1 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only pb-24"
+        >
+          <button
+            onClick={() => navigate("/Homeagro")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+            title="Inicio"
+          >
+            <IconHome className="text-white w-11 h-11" />
+          </button>
 
-          {/* Navegación */}
           <button
             onClick={() => navigate("/Laboresagro")}
             className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+            title="Labores"
           >
             <IconClipboardList className="text-white w-11 h-11" />
           </button>
           <button
             onClick={() => navigate("/Informesagro")}
             className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+            title="Informes"
           >
             <IconChartBar className="text-white w-11 h-11" />
           </button>
           <button
             onClick={() => navigate("/Bodegaagro")}
             className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+            title="Bodega"
           >
             <IconBox className="text-white w-11 h-11" />
           </button>
           <button
             onClick={() => navigate("/variablesclimaticas")}
             className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+            title="Variables climáticas"
           >
             <IconCloudRain className="text-white w-11 h-11" />
           </button>
           <button
             onClick={() => navigate("/maquinariaequipos")}
             className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+            title="Maquinaria y equipos"
           >
             <IconTractor className="text-white w-11 h-11" />
           </button>
           <button
             onClick={() => navigate("/manejopersonal")}
             className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+            title="Manejo de Personal"
           >
             <IconUsersGroup className="text-white w-11 h-11" />
           </button>
-          <button
-            onClick={() => navigate("/crearfinca")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
-            <IconPlant className="text-white w-11 h-11" />
-          </button>
+
+          {/* Gestión finca (activo) */}
+          <div className="relative">
+            <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            <button
+              onClick={() => navigate("/crearfinca")}
+              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+              title="Gestión finca"
+            >
+              <IconPlant className="text-white w-11 h-11" />
+            </button>
+          </div>
+
           <button
             onClick={() => navigate("/crearlote")}
             className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+            title="Gestión lote"
           >
             <IconFrame className="text-white w-11 h-11" />
+          </button>
+          <button
+            onClick={() => navigate("/produccionagro")}
+            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+          >
+            <IconPlant2 className="text-white w-11 h-11" />
           </button>
         </div>
 
         {/* Botón perfil con menú flotante */}
-        <div className="relative mb-4">
+        <div className="relative mb-4 mt-auto">
           <button
             onClick={() => setMostrarTarjetaPerfil(!mostrarTarjetaPerfil)}
             className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
@@ -240,6 +280,7 @@ const Crear_finca_agro = () => {
       {/* Contenido principal */}
       <div className="flex-1 p-10 overflow-auto">
         <h1 className="text-3xl font-bold text-green-700 mb-6">Crear finca</h1>
+
         <div className="bg-white border  border-gray-200 shadow-gray-300 shadow-md p-6 rounded-lg mb-10 max-w-4xl">
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -397,6 +438,7 @@ const Crear_finca_agro = () => {
 };
 
 export default Crear_finca_agro;
+
 
 
 
