@@ -39,7 +39,19 @@ const Home_agro = () => {
     return () => document.removeEventListener("mousedown", clickFueraTarjeta);
   }, []);
 
+<<<<<<< HEAD
   // Opciones de tarjetas del panel
+=======
+  // 🔹 Función para cerrar sesión
+  const handleLogout = () => {
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
+    localStorage.removeItem("user"); // si guardas datos de usuario
+    sessionStorage.clear(); // por si usas sessionStorage
+    navigate("/login");
+  };
+
+>>>>>>> d3d306c5d4cdd9e62c051796d7aacac87687d14a
   const opciones = [
     {
       icon: <IconClipboardList className="w-8 h-8" />,
@@ -214,7 +226,11 @@ const Home_agro = () => {
               <button onClick={() => navigate("/soporteagro")} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
                 <IconTool className="w-5 h-5 mr-2 text-green-600" /> Soporte
               </button>
-              <button onClick={() => navigate("/login")} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600">
+              {/* 🔹 Cerrar sesión con limpieza de datos */}
+              <button
+                onClick={handleLogout}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
+              >
                 <IconLogout className="w-5 h-5 mr-2 text-red-600" /> Cerrar sesión
               </button>
             </div>
@@ -263,5 +279,8 @@ const Home_agro = () => {
 };
 
 export default Home_agro;
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> d3d306c5d4cdd9e62c051796d7aacac87687d14a

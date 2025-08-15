@@ -36,6 +36,29 @@ const Home_mayo = () => {
     return () => document.removeEventListener("mousedown", manejarClickFuera);
   }, []);
 
+  // Función para cerrar sesión
+  const handleLogout = async () => {
+    setMostrarTarjeta(false);
+    try {
+      const refresh = localStorage.getItem("refresh");
+      if (refresh) {
+        await fetch(`${import.meta.env.VITE_API_URL}/api/auth/logout/`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ refresh_token: refresh }),
+        });
+      }
+    } catch (err) {
+      console.error("Error cerrando sesión:", err);
+    }
+    // Limpiar datos locales
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
+    localStorage.removeItem("rememberedEmail"); // opcional
+    // Redirigir al login
+    navigate("/login");
+  };
+
   const cards = [
     {
       icon: <IconClipboardList className="w-8 h-8" />,
@@ -108,15 +131,15 @@ const Home_mayo = () => {
       text: "text-green-700",
     },
   ];
-  
+
   return (
     <div className="min-h-[100dvh] bg-gray-50">
-      {/* Sidebar fijo con z alto */}
+      {/* Sidebar fijo */}
       <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col items-center py-6 justify-between z-[200]">
         <div className="flex flex-col items-center space-y-8">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
 
-          {/* HOME con indicador */}
+          {/* HOME */}
           <div className="relative">
             <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
             <button
@@ -129,7 +152,7 @@ const Home_mayo = () => {
             </button>
           </div>
 
-          {/* Íconos resto */}
+          {/* Menú */}
           <button onClick={() => navigate("/registrolabores")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconClipboardList className="text-white w-11 h-11" />
           </button>
@@ -150,7 +173,7 @@ const Home_mayo = () => {
           </button>
         </div>
 
-        {/* Perfil con tarjeta (z super alto) */}
+        {/* Perfil */}
         <div className="relative mb-6">
           <button
             onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
@@ -183,7 +206,7 @@ const Home_mayo = () => {
                 Soporte
               </button>
               <button
-                onClick={() => { setMostrarTarjeta(false); navigate("/login"); }}
+                onClick={handleLogout}
                 className="flex items-center w-full text-left px-4 py-2 hover:bg-red-50 text-red-600"
               >
                 <IconLogout className="w-5 h-5 mr-2 text-red-600" />
@@ -194,11 +217,10 @@ const Home_mayo = () => {
         </div>
       </aside>
 
-      {/* Contenido principal */}
+      {/* Contenido */}
       <main className="ml-28 min-h-[100dvh] p-10 relative">
         <h1 className="text-4xl font-bold text-green-700 mb-6">Panel principal</h1>
 
-        {/* Bienvenida en gradiente */}
         <div className="bg-gradient-to-r from-green-600 to-emerald-500 text-white px-6 py-5 rounded-2xl w-full max-w-3xl mb-10 shadow-lg">
           <p className="text-3xl font-semibold">¡Bienvenido!</p>
           <p className="opacity-90 text-lg">
@@ -206,7 +228,6 @@ const Home_mayo = () => {
           </p>
         </div>
 
-        {/* Tarjetas principales */}
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {cards.map(
             ({ icon, label, desc, route, gradient, ring, iconBg, text }, i) => (
@@ -220,11 +241,9 @@ const Home_mayo = () => {
                   "ring-0 hover:ring-0 focus:ring-emerald-600/40",
                 ].join(" ")}
               >
-                {/* Fondo sutil en gradiente */}
                 <div
                   className={`absolute inset-0 pointer-events-none bg-gradient-to-br ${gradient} opacity-70`}
                 />
-                {/* Glow/ring suave */}
                 <div className={`absolute inset-0 pointer-events-none ${ring}`} />
 
                 <div className="relative flex items-center gap-4">

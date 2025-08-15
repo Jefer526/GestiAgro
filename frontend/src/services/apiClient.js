@@ -85,6 +85,9 @@ export const ENDPOINTS = {
   users: "/api/accounts/users/",
   userDetail: (id) => `/api/accounts/users/${id}/`,
   sendTempPassword: (id) => `/api/accounts/users/${id}/send-temp-password/`,
+  changePassword: "/api/auth/password/change/",
+  getRoles: "/api/accounts/roles/",         // Lista global de roles
+  getMyRoles: "/api/auth/my-roles/",        // Roles del usuario logueado
 };
 
 // ===== Métodos de autenticación =====
@@ -127,6 +130,8 @@ export const accountsApi = {
   updateUser: (id, data) => api.put(ENDPOINTS.userDetail(id), data),   // PUT completo
   patchUser: (id, data) => api.patch(ENDPOINTS.userDetail(id), data),  // PATCH parcial
   sendTempPassword: (id) => api.post(ENDPOINTS.sendTempPassword(id)),  // Contraseña temporal
+  getRoles: () => api.get(ENDPOINTS.getRoles),                         // Lista global de roles
+  getMyRoles: () => api.get(ENDPOINTS.getMyRoles),                     // Roles del usuario logueado
 };
 
 export default api;

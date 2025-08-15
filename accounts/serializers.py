@@ -7,6 +7,8 @@ User = get_user_model()
 
 class UserSerializer(serializers.ModelSerializer):
     tiene_password = serializers.SerializerMethodField()
+    nombre = serializers.SerializerMethodField()  # ← Agregado
+    rol = serializers.CharField()  # Asegúrate de tenerlo en tu modelo
 
     class Meta:
         model = User
@@ -16,8 +18,9 @@ class UserSerializer(serializers.ModelSerializer):
             "email",
             "first_name",
             "last_name",
+            "nombre",         # ← nuevo campo visible para el frontend
             "telefono",
-            "rol",            # 👈 agregado aquí
+            "rol",
             "is_active",
             "is_superuser",
             "is_staff",
@@ -26,6 +29,11 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_tiene_password(self, obj):
         return obj.has_usable_password()
+
+    def get_nombre(self, obj):
+        full_name = f"{obj.first_name} {obj.last_name}".strip()
+        return full_name if full_name else obj.username
+
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -111,6 +119,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             "last_name",
             "email",
             "telefono",
+            "rol",  # Asegúrate de que este campo exista en tu modelo
             "is_active",
             "is_superuser",
             "is_staff",
