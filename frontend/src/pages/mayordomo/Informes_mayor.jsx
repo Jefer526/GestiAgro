@@ -70,6 +70,13 @@ const Informes_mayor = () => {
           <button onClick={() => navigate("/historial_labores")} className="hover:bg-white/10 p-2 rounded-lg transition">
             <IconHistory className="text-white w-11 h-11" />
           </button>
+          <button onClick={() => navigate("/cuaderno_campom")} className="hover:bg-white/10 p-2 rounded-lg transition">
+            <IconBook className="text-white w-11 h-11" />
+          </button>
+          <button onClick={() => navigate("/produccion_mayor")} className="hover:bg-white/10 p-2 rounded-lg transition">
+            <IconPlant2 className="text-white w-11 h-11" />
+          </button>
+          
           <button onClick={() => navigate("/bodega_insumos")} className="hover:bg-white/10 p-2 rounded-lg transition">
             <IconBox className="text-white w-11 h-11" />
           </button>
@@ -87,14 +94,6 @@ const Informes_mayor = () => {
 
           <button onClick={() => navigate("/equipos_mayordomo")} className="hover:bg-white/10 p-2 rounded-lg transition">
             <IconTractor className="text-white w-11 h-11" />
-          </button>
-
-          {/* Nuevos iconos */}
-          <button onClick={() => navigate("/produccion_mayor")} className="hover:bg-white/10 p-2 rounded-lg transition">
-            <IconPlant2 className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/cuaderno_campom")} className="hover:bg-white/10 p-2 rounded-lg transition">
-            <IconBook className="text-white w-11 h-11" />
           </button>
         </div>
 

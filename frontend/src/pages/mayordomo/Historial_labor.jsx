@@ -117,7 +117,12 @@ const Historial_labor = () => {
               <IconHistory className="text-white w-11 h-11" />
             </button>
           </div>
-
+          <button onClick={() => navigate("/cuaderno_campom")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+            <IconBook className="text-white w-11 h-11" />
+          </button>
+          <button onClick={() => navigate("/produccion_mayor")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+            <IconPlant2 className="text-white w-11 h-11" />
+          </button>
           <button onClick={() => navigate("/bodega_insumos")} className="hover:bg-white/10 p-2 rounded-lg">
             <IconBox className="text-white w-11 h-11" />
           </button>
@@ -130,12 +135,7 @@ const Historial_labor = () => {
           <button onClick={() => navigate("/equipos_mayordomo")} className="hover:bg-white/10 p-2 rounded-lg">
             <IconTractor className="text-white w-11 h-11" />
           </button>
-          <button onClick={() => navigate("/produccion_mayor")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconPlant2 className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/cuaderno_campom")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconBook className="text-white w-11 h-11" />
-          </button>
+          
         </div>
 
 
