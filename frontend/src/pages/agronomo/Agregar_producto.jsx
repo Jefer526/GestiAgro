@@ -87,7 +87,6 @@ const Agregar_producto = () => {
         </div>
 
         {/* Navegación aa*/}
-        {/* Navegación aa*/}
         <div className="flex-1 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only">
           {/* Icono activo */}
           <div className="relative">
