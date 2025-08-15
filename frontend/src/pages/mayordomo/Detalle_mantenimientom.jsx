@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   IconHome,
   IconClipboardList,
@@ -10,18 +11,47 @@ import {
   IconSettings,
   IconTool,
   IconLogout,
-  IconArrowLeft,
-  IconCheck,
+  IconChevronLeft,
   IconPlant2,
-  IconBook
+  IconBook,
 } from "@tabler/icons-react";
-import { useNavigate, useLocation } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
-const Registrar_vclima = () => {
+const Detalle_mantenimientom = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const [alertaVisible, setAlertaVisible] = useState(false);
+  const location = useLocation(); // viene desde Hoja_vida -> navigate("/detalle_mantenimiento", { state: item })
+  const state = location.state;
+
+  // Fallback si entran directo a la ruta
+  const fallback = {
+    idMaquina: "1",
+    prev: true,
+    correcc: false,
+    maquina: "Tractor John Deere",
+    referencia: "JD 5055E",
+    ubicacion: "La Esmeralda",
+    estado: "Óptimo",
+    fecha: "2025-08-01",
+    tipo: "Mantenimiento Preventivo",
+    descripcion: `Se realizó un mantenimiento preventivo completo que incluyó el cambio de aceite del motor, filtros de aire y combustible, revisión del sistema hidráulico y lubricación de todas las articulaciones. También se inspeccionó el sistema eléctrico, se verificó la presión de neumáticos y se realizó una limpieza general para evitar acumulación de suciedad en partes móviles.
+
+El mantenimiento correctivo no fue necesario, ya que no se detectaron fallas críticas durante la revisión.`,
+    realizadoPor: "Carlos Rodríguez",
+  };
+
+  // Si llega state (según tu comentario, es el item directo), lo mezclamos con fallback
+  const data = { ...fallback, ...(state && typeof state === "object" ? state : {}) };
+
+  // Si no viene "tipo", lo inferimos a partir de prev/correcc
+  const tipoInferido =
+    data.tipo ??
+    (data.prev && data.correcc
+      ? "Preventivo y Correctivo"
+      : data.prev
+      ? "Preventivo"
+      : data.correcc
+      ? "Correctivo"
+      : "—");
 
   // Perfil
   const nombreUsuario = "Juan Pérez";
@@ -29,39 +59,27 @@ const Registrar_vclima = () => {
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
   const tarjetaRef = useRef(null);
 
-  // Cerrar tarjeta al hacer clic fuera
   useEffect(() => {
-    const handler = (e) => {
+    const manejarClickFuera = (e) => {
       if (tarjetaRef.current && !tarjetaRef.current.contains(e.target)) {
         setMostrarTarjeta(false);
       }
     };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
+    document.addEventListener("mousedown", manejarClickFuera);
+    return () => document.removeEventListener("mousedown", manejarClickFuera);
   }, []);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setAlertaVisible(true);
-    setTimeout(() => {
-      setAlertaVisible(false);
-      navigate("/variables_climaticasm");
-    }, 2000);
-  };
-
   return (
-    <div className="min-h-[100dvh] bg-[#f6f6f6]">
-      {/* Sidebar fijo */}
-      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col justify-between z-[200]">
-        
+    <div className="min-h-dvh bg-gray-50">
+      {/* SIDEBAR FIJO */}
+      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col justify-between">
         {/* Logo fijo */}
         <div className="pt-6 flex justify-center">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
         </div>
 
-        {/* Zona de iconos con scroll */}
+        {/* Íconos con scroll */}
         <div className="flex-1 flex flex-col items-center space-y-8 mt-6 overflow-y-auto scrollbar-hide-only">
-
           {/* Home */}
           <div className="relative">
             {location.pathname === "/homemayordomo" && (
@@ -69,20 +87,20 @@ const Registrar_vclima = () => {
             )}
             <button
               onClick={() => navigate("/homemayordomo")}
-              className="hover:bg-white/10 p-2 rounded-lg transition"
+              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
             >
               <IconHome className="text-white w-11 h-11" />
             </button>
           </div>
 
-          {/* Registro Labores */}
+          {/* Registro labores */}
           <div className="relative">
             {location.pathname === "/registrolabores" && (
               <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
             )}
             <button
               onClick={() => navigate("/registrolabores")}
-              className="hover:bg-white/10 p-2 rounded-lg transition"
+              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
             >
               <IconClipboardList className="text-white w-11 h-11" />
             </button>
@@ -95,7 +113,7 @@ const Registrar_vclima = () => {
             )}
             <button
               onClick={() => navigate("/historial_labores")}
-              className="hover:bg-white/10 p-2 rounded-lg transition"
+              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
             >
               <IconHistory className="text-white w-11 h-11" />
             </button>
@@ -108,20 +126,20 @@ const Registrar_vclima = () => {
             )}
             <button
               onClick={() => navigate("/bodega_insumos")}
-              className="hover:bg-white/10 p-2 rounded-lg transition"
+              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
             >
               <IconBox className="text-white w-11 h-11" />
             </button>
           </div>
 
-          {/* Variables climáticas ACTIVO */}
+          {/* Variables climáticas */}
           <div className="relative">
-            {location.pathname === "/registrar_climam" && (
+            {location.pathname === "/variables_climaticasm" && (
               <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
             )}
             <button
               onClick={() => navigate("/variables_climaticasm")}
-              className="hover:bg-white/10 p-2 rounded-lg transition"
+              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
             >
               <IconCloudRain className="text-white w-11 h-11" />
             </button>
@@ -134,7 +152,7 @@ const Registrar_vclima = () => {
             )}
             <button
               onClick={() => navigate("/informes_mayordomo")}
-              className="hover:bg-white/10 p-2 rounded-lg transition"
+              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
             >
               <IconChartBar className="text-white w-11 h-11" />
             </button>
@@ -147,7 +165,7 @@ const Registrar_vclima = () => {
             )}
             <button
               onClick={() => navigate("/equipos_mayordomo")}
-              className="hover:bg-white/10 p-2 rounded-lg transition"
+              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
             >
               <IconTractor className="text-white w-11 h-11" />
             </button>
@@ -160,20 +178,20 @@ const Registrar_vclima = () => {
             )}
             <button
               onClick={() => navigate("/produccion_mayor")}
-              className="hover:bg-white/10 p-2 rounded-lg transition"
+              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
             >
               <IconPlant2 className="text-white w-11 h-11" />
             </button>
           </div>
 
-          {/* Cuaderno de campo */}
+          {/* Cuaderno de Campo */}
           <div className="relative">
             {location.pathname === "/cuaderno_campom" && (
               <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
             )}
             <button
               onClick={() => navigate("/cuaderno_campom")}
-              className="hover:bg-white/10 p-2 rounded-lg transition"
+              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
             >
               <IconBook className="text-white w-11 h-11" />
             </button>
@@ -191,23 +209,32 @@ const Registrar_vclima = () => {
           {mostrarTarjeta && (
             <div
               ref={tarjetaRef}
-              className="absolute bottom-16 left-14 w-52 bg-white/95 backdrop-blur border-2 border-gray-300 rounded-xl shadow-2xl py-3"
+              className="absolute bottom-16 left-14 w-56 bg-white/95 border border-gray-200 rounded-xl shadow-2xl py-3 z-[10000] backdrop-blur"
             >
               <button
-                onClick={() => { setMostrarTarjeta(false); navigate("/ajustesmayordomo"); }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                onClick={() => {
+                  setMostrarTarjeta(false);
+                  navigate("/ajustesmayordomo");
+                }}
+                className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100"
               >
                 <IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes
               </button>
               <button
-                onClick={() => { setMostrarTarjeta(false); navigate("/soportemayordomo"); }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                onClick={() => {
+                  setMostrarTarjeta(false);
+                  navigate("/soportemayordomo");
+                }}
+                className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100"
               >
                 <IconTool className="w-5 h-5 mr-2 text-green-600" /> Soporte
               </button>
               <button
-                onClick={() => { setMostrarTarjeta(false); navigate("/login"); }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
+                onClick={() => {
+                  setMostrarTarjeta(false);
+                  navigate("/login");
+                }}
+                className="flex items-center w-full text-left px-4 py-2 hover:bg-red-50 text-red-600"
               >
                 <IconLogout className="w-5 h-5 mr-2 text-red-600" /> Cerrar sesión
               </button>
@@ -216,71 +243,56 @@ const Registrar_vclima = () => {
         </div>
       </aside>
 
-      {/* Contenido principal */}
-      <main className="ml-28 min-h-[100dvh] flex flex-col items-center pt-8 relative">
-        {alertaVisible && (
-          <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 z-[11000] font-semibold text-base">
-            <IconCheck className="w-5 h-5" /> Variables registradas exitosamente
-          </div>
-        )}
-
-        {/* Volver */}
+      {/* Contenido principal (desplazado por sidebar fijo) */}
+      <div className="ml-28 px-10 py-8 bg-gray-50">
         <button
-          type="button"
-          onClick={() => navigate("/variables_climaticasm")}
-          className="flex items-center text-green-600 text-lg mb-6 self-start ml-12 hover:underline"
+          onClick={() => navigate(-1)}
+          className="flex items-center text-green-600 font-medium mb-6"
         >
-          <IconArrowLeft className="w-5 h-5 mr-1" /> Volver
+          <IconChevronLeft className="w-5 h-5 mr-2" /> Volver
         </button>
 
-        {/* Formulario */}
-        <form
-          onSubmit={handleSubmit}
-          className="bg-white border border-green-300 shadow-md p-10 rounded-xl w-full max-w-2xl space-y-6 text-black"
-        >
-          <h2 className="text-3xl font-bold text-green-700 text-center">
-            Registrar variables climáticas
-          </h2>
-          <p className="text-center text-green-700 font-semibold text-lg">
-            Hacienda La Esmeralda
-          </p>
+        <div className="bg-white border border-green-300 rounded-xl shadow-md p-8 w-[900px] max-w-full mx-auto">
+          <h1 className="text-2xl font-bold text-green-600 mb-6">
+            Detalle de Mantenimiento
+          </h1>
 
-          <div>
-            <label className="block font-bold mb-1">Fecha</label>
-            <input type="date" className="border px-4 py-2 rounded w-full text-lg" required />
-          </div>
+          <div className="space-y-4 text-base">
+            <p>
+              <strong>Código equipo:</strong> {data.idMaquina}
+            </p>
+            <p>
+              <strong>Máquina:</strong> {data.maquina}
+            </p>
+            <p>
+              <strong>Referencia:</strong> {data.referencia}
+            </p>
+            <p>
+              <strong>Ubicación:</strong> {data.ubicacion}
+            </p>
+            <p>
+              <strong>Estado:</strong> {data.estado}
+            </p>
+            <p>
+              <strong>Fecha:</strong> {data.fecha}
+            </p>
+            <p>
+              <strong>Tipo de mantenimiento:</strong> {tipoInferido}
+            </p>
 
-          <div>
-            <label className="block font-bold mb-1">Precipitación (mm)</label>
-            <input type="text" placeholder="Ej: 10" className="border px-4 py-2 rounded w-full text-lg" />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block font-bold mb-1">Temperatura mínima (°C)</label>
-              <input type="text" placeholder="Ej: 16°" className="border px-4 py-2 rounded w-full text-lg" />
+              <strong>Descripción:</strong>
+              <p className="mt-1 text-justify">{data.descripcion}</p>
             </div>
-            <div>
-              <label className="block font-bold mb-1">Temperatura máxima (°C)</label>
-              <input type="text" placeholder="Ej: 29°" className="border px-4 py-2 rounded w-full text-lg" />
-            </div>
-          </div>
 
-          <div>
-            <label className="block font-bold mb-1">Humedad relativa (%)</label>
-            <input type="text" placeholder="Ej: 85%" className="border px-4 py-2 rounded w-full text-lg" />
+            <p>
+              <strong>Realizado por:</strong> {data.realizadoPor}
+            </p>
           </div>
-
-          <div className="text-center">
-            <button className="bg-green-600 text-white px-8 py-3 rounded hover:bg-green-700 text-lg">
-              Registrar
-            </button>
-          </div>
-        </form>
-      </main>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default Registrar_vclima;
-
+export default Detalle_mantenimientom;

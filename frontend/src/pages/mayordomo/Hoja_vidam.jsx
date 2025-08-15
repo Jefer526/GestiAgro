@@ -13,6 +13,9 @@ import {
   IconLogout,
   IconChevronLeft,
   IconFilter,
+  IconPlant2,
+  IconBook,
+  IconEye
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
@@ -120,20 +123,18 @@ const Hoja_vidam = () => {
     );
   };
 
-  // --- Filtro de fecha agrupado por año > mes > día (corregido) ---
   const renderFiltroFecha = () => {
-    // Construir estructura { [año]: { [mesNum]: Set(días) } }
     const estructura = historial.reduce((acc, { fecha }) => {
       const d = new Date(fecha + "T00:00:00");
       const y = d.getFullYear();
-      const m = d.getMonth() + 1; // 1-12
+      const m = d.getMonth() + 1;
       const day = d.getDate();
 
       if (!acc[y]) acc[y] = {};
       if (!acc[y][m]) acc[y][m] = new Set();
       acc[y][m].add(day);
       return acc;
-    }, /** @type {Record<number, Record<number, Set<number>>>} */ ({}));
+    }, {});
 
     const monthName = (m) =>
       new Date(2000, m - 1, 1).toLocaleString("default", { month: "long" });
@@ -195,69 +196,126 @@ const Hoja_vidam = () => {
 
   return (
     <div className="min-h-dvh bg-gray-50">
-      {/* SIDEBAR FIJO A PANTALLA COMPLETA (cubre alto total aun con zoom) */}
-      <aside className="fixed inset-y-0 left-0 w-28 bg-green-600 flex flex-col items-center py-6 justify-between z-40">
-        <div className="flex flex-col items-center space-y-8">
+      {/* SIDEBAR FIJO */}
+      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col justify-between">
+        {/* Logo fijo */}
+        <div className="pt-6 flex justify-center">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
+        </div>
 
-          <button onClick={() => navigate("/homemayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconHome className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/registrolabores")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconClipboardList className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/historial_labores")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconHistory className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/bodega_insumos")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconBox className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/variables_climaticasm")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconCloudRain className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/informes_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconChartBar className="text-white w-11 h-11" />
-          </button>
+        {/* Íconos con scroll */}
+        <div className="flex-1 flex flex-col items-center space-y-8 mt-6 overflow-y-auto scrollbar-hide-only">
+          {/* Home */}
+          <div className="relative">
+            {location.pathname === "/homemayordomo" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/homemayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              <IconHome className="text-white w-11 h-11" />
+            </button>
+          </div>
 
-          {/* Indicador en el ítem activo */}
-          <div className="relative w-full flex justify-center">
-            <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full z-10" />
-            <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          {/* Registro labores */}
+          <div className="relative">
+            {location.pathname === "/registrolabores" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/registrolabores")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              <IconClipboardList className="text-white w-11 h-11" />
+            </button>
+          </div>
+
+          {/* Historial labores */}
+          <div className="relative">
+            {location.pathname === "/historial_labores" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/historial_labores")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              <IconHistory className="text-white w-11 h-11" />
+            </button>
+          </div>
+
+          {/* Bodega */}
+          <div className="relative">
+            {location.pathname === "/bodega_insumos" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/bodega_insumos")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              <IconBox className="text-white w-11 h-11" />
+            </button>
+          </div>
+
+          {/* Variables climáticas */}
+          <div className="relative">
+            {location.pathname === "/variables_climaticasm" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/variables_climaticasm")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              <IconCloudRain className="text-white w-11 h-11" />
+            </button>
+          </div>
+
+          {/* Informes */}
+          <div className="relative">
+            {location.pathname === "/informes_mayordomo" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/informes_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              <IconChartBar className="text-white w-11 h-11" />
+            </button>
+          </div>
+
+          {/* Maquinaria */}
+          <div className="relative">
+            {location.pathname === "/hoja_vidam" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/equipos_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
               <IconTractor className="text-white w-11 h-11" />
+            </button>
+          </div>
+
+          {/* Producción */}
+          <div className="relative">
+            {location.pathname === "/produccion_mayor" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/produccion_mayor")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              <IconPlant2 className="text-white w-11 h-11" />
+            </button>
+          </div>
+
+          {/* Cuaderno de Campo */}
+          <div className="relative">
+            {location.pathname === "/cuaderno_campom" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/cuaderno_campom")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              <IconBook className="text-white w-11 h-11" />
             </button>
           </div>
         </div>
 
         {/* Perfil */}
-        <div className="relative mb-6">
+        <div className="relative mb-6 flex justify-center">
           <button
             onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
             className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
           >
             {letraInicial}
           </button>
-
           {mostrarTarjeta && (
             <div
               ref={tarjetaRef}
-              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
+              className="absolute bottom-16 left-14 w-56 bg-white/95 border border-gray-200 rounded-xl shadow-2xl py-3 z-[10000] backdrop-blur"
             >
-              <button
-                onClick={() => { setMostrarTarjeta(false); navigate("/ajustesmayordomo"); }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-              >
+              <button onClick={() => { setMostrarTarjeta(false); navigate("/ajustesmayordomo"); }} className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100">
                 <IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes
               </button>
-              <button
-                onClick={() => { setMostrarTarjeta(false); navigate("/soportemayordomo"); }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-              >
+              <button onClick={() => { setMostrarTarjeta(false); navigate("/soportemayordomo"); }} className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100">
                 <IconTool className="w-5 h-5 mr-2 text-green-600" /> Soporte
               </button>
-              <button
-                onClick={() => { setMostrarTarjeta(false); navigate("/login"); }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
-              >
+              <button onClick={() => { setMostrarTarjeta(false); navigate("/login"); }} className="flex items-center w-full text-left px-4 py-2 hover:bg-red-50 text-red-600">
                 <IconLogout className="w-5 h-5 mr-2 text-red-600" /> Cerrar sesión
               </button>
             </div>
@@ -265,11 +323,10 @@ const Hoja_vidam = () => {
         </div>
       </aside>
 
-      {/* CONTENIDO: compensar el ancho del sidebar */}
+      {/* CONTENIDO */}
       <main className="pl-28 min-h-dvh">
         <div className="px-10 py-8 overflow-auto">
           <h2 className="text-3xl font-bold text-green-600 mb-6">Hoja de vida</h2>
-
           <button
             onClick={() => navigate("/equipos_mayordomo")}
             className="flex items-center text-green-600 hover:text-green-800 mb-6"
@@ -291,7 +348,9 @@ const Hoja_vidam = () => {
           </div>
 
           {/* Historial */}
-          <h2 className="text-2xl font-bold text-green-600 mb-4">Historial de mantenimiento</h2>
+          <h2 className="text-2xl font-bold text-green-600 mb-4">
+            Historial de mantenimiento
+          </h2>
           <div className="overflow-x-auto relative">
             <table className="w-full bg-white border border-gray-300 text-base text-center">
               <thead className="bg-green-600 text-white font-bold text-base">
@@ -302,9 +361,10 @@ const Hoja_vidam = () => {
                     { campo: "correcc", titulo: "MANTENIMIENTO CORREC" },
                     { campo: "descripcion", titulo: "DESCRIPCIÓN" },
                     { campo: "realizado", titulo: "REALIZADO POR" },
+                    { campo: "detalle", titulo: "DETALLE" }, // 👈 Nueva columna
                   ].map(({ campo, titulo }) => (
                     <th key={campo} className="p-3 border text-center">
-                      {campo !== "descripcion" ? (
+                      {campo !== "descripcion" && campo !== "detalle" ? (
                         <div className="flex justify-center items-center gap-2">
                           {titulo}
                           <button onClick={(e) => toggleFiltro(campo, e)}>
@@ -321,11 +381,24 @@ const Hoja_vidam = () => {
               <tbody>
                 {datosFiltrados.map((item, index) => (
                   <tr key={index} className="hover:bg-gray-50">
-                    <td className="p-3 border text-center">{item.fecha}</td>
-                    <td className="p-3 border text-center">{item.prev ? "Sí" : "No"}</td>
-                    <td className="p-3 border text-center">{item.correcc ? "Sí" : "No"}</td>
-                    <td className="p-3 border text-center">{item.descripcion}</td>
-                    <td className="p-3 border text-center">{item.realizado}</td>
+                    <td className="p-3 border">{item.fecha}</td>
+                    <td className="p-3 border">{item.prev ? "Sí" : "No"}</td>
+                    <td className="p-3 border">{item.correcc ? "Sí" : "No"}</td>
+                    <td className="p-3 border">{item.descripcion}</td>
+                    <td className="p-3 border">{item.realizado}</td>
+
+                    {/* Columna Detalle centrada */}
+                    <td className="p-3 border">
+                      <div className="flex justify-center">
+                        <button
+                          onClick={() => navigate("/detalle_mantenimientom", { state: item })}
+                          className="flex items-center gap-2 px-3 py-1 rounded-md bg-blue-100 text-blue-700 hover:bg-blue-200 transition"
+                        >
+                          <IconEye className="w-4 h-4" />
+                          <span className="text-sm font-medium">Detalle</span>
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -335,6 +408,7 @@ const Hoja_vidam = () => {
             {filtroActivo &&
               (filtroActivo === "fecha" ? renderFiltroFecha() : renderFiltroSimple(filtroActivo))}
           </div>
+
 
           {/* Botones finales */}
           <div className="flex justify-center gap-10 mt-10">

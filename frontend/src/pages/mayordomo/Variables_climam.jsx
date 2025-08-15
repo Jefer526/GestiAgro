@@ -11,7 +11,9 @@ import {
   IconTool,
   IconLogout,
   IconTemperature,
-  IconDroplet
+  IconDroplet,
+  IconPlant2,
+  IconBook
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
@@ -71,10 +73,15 @@ const Variables_climam = () => {
 
   return (
     <div className="min-h-[100dvh] bg-gray-50">
-      {/* Sidebar fijo: ocupa todo el alto del viewport */}
-      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col items-center py-6 justify-between">
-        <div className="flex flex-col items-center space-y-8">
+      {/* Sidebar fijo con logo arriba y scroll en iconos */}
+      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col justify-between z-[200]">
+        {/* Logo fijo */}
+        <div className="pt-6 flex justify-center">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
+        </div>
+
+        {/* Iconos con scroll oculto */}
+        <div className="flex-1 flex flex-col items-center space-y-8 mt-6 overflow-y-auto scrollbar-hide-only">
           <button onClick={() => navigate("/homemayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconHome className="text-white w-11 h-11" />
           </button>
@@ -87,22 +94,35 @@ const Variables_climam = () => {
           <button onClick={() => navigate("/bodega_insumos")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconBox className="text-white w-11 h-11" />
           </button>
-          <div className="relative w-full flex justify-center">
-            <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full z-10" />
-            <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+
+          {/* Activo - Variables Climáticas */}
+          <div className="relative">
+            <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            <button
+              onClick={() => navigate("/variables_climaticasm")}
+              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+            >
               <IconCloudRain className="text-white w-11 h-11" />
             </button>
           </div>
+
           <button onClick={() => navigate("/informes_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconChartBar className="text-white w-11 h-11" />
           </button>
           <button onClick={() => navigate("/equipos_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconTractor className="text-white w-11 h-11" />
           </button>
+          {/* Nuevos iconos */}
+          <button onClick={() => navigate("/produccion_mayor")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+            <IconPlant2 className="text-white w-11 h-11" />
+          </button>
+          <button onClick={() => navigate("/cuaderno_campom")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+            <IconBook className="text-white w-11 h-11" />
+          </button>
         </div>
 
-        {/* Perfil */}
-        <div className="relative mb-6">
+        {/* Perfil fijo abajo */}
+        <div className="relative mb-6 flex justify-center">
           <button
             onClick={() => setMostrarTarjeta((v) => !v)}
             className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
@@ -111,8 +131,6 @@ const Variables_climam = () => {
           >
             {letraInicial}
           </button>
-
-          {/* Tarjeta flotante */}
           {mostrarTarjeta && (
             <div
               ref={tarjetaRef}
@@ -144,7 +162,7 @@ const Variables_climam = () => {
         </div>
       </aside>
 
-      {/* Contenido principal desplazado por el sidebar */}
+      {/* Contenido principal */}
       <main className="ml-28 min-h-[100dvh] p-10 overflow-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-green-700">Variables climáticas</h1>
@@ -184,7 +202,7 @@ const Variables_climam = () => {
           </button>
         </div>
 
-        {/* Tarjetas (colores vivos, sin animaciones) */}
+        {/* Tarjetas */}
         <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
           {[
             {
@@ -229,11 +247,9 @@ const Variables_climam = () => {
               className={`relative overflow-hidden rounded-2xl bg-white border shadow-md px-6 py-5 ring-1 ${c.ring}`}
             >
               <div className="flex items-center gap-4">
-                {/* Ícono */}
                 <div className={`${c.iconBg} ${c.iconText} rounded-xl p-3 shadow-sm border`}>
                   {c.icon}
                 </div>
-                {/* Texto */}
                 <div>
                   <p className="text-sm text-slate-500">{c.title}</p>
                   <div className="flex items-baseline gap-1">

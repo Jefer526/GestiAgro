@@ -11,6 +11,8 @@ import {
   IconTool,
   IconLogout,
   IconFileDownload,
+  IconPlant2,
+  IconBook
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
@@ -27,7 +29,6 @@ const Informes_mayor = () => {
     labor: "",
   });
 
-  // Datos perfil
   const nombreUsuario = "Juan Pérez";
   const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
@@ -50,10 +51,16 @@ const Informes_mayor = () => {
 
   return (
     <div className="min-h-[100dvh] bg-[#f6f6f6]">
-      {/* Sidebar fijo */}
-      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col items-center py-6 justify-between">
-        <div className="flex flex-col items-center space-y-8">
+      {/* Sidebar con favicon fijo y scroll en íconos */}
+      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col justify-between">
+        
+        {/* Favicon fijo */}
+        <div className="pt-6 flex justify-center">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
+        </div>
+
+        {/* Íconos con scroll */}
+        <div className="flex-1 flex flex-col items-center space-y-8 mt-6 overflow-y-auto scrollbar-hide-only">
           <button onClick={() => navigate("/homemayordomo")} className="hover:bg-white/10 p-2 rounded-lg transition">
             <IconHome className="text-white w-11 h-11" />
           </button>
@@ -69,19 +76,30 @@ const Informes_mayor = () => {
           <button onClick={() => navigate("/variables_climaticasm")} className="hover:bg-white/10 p-2 rounded-lg transition">
             <IconCloudRain className="text-white w-11 h-11" />
           </button>
-          <div className="relative w-full flex justify-center">
+
+          {/* Icono activo */}
+          <div className="relative">
             <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full z-10" />
             <button className="hover:bg-white/10 p-2 rounded-lg transition">
               <IconChartBar className="text-white w-11 h-11" />
             </button>
           </div>
+
           <button onClick={() => navigate("/equipos_mayordomo")} className="hover:bg-white/10 p-2 rounded-lg transition">
             <IconTractor className="text-white w-11 h-11" />
           </button>
+
+          {/* Nuevos iconos */}
+          <button onClick={() => navigate("/produccion_mayor")} className="hover:bg-white/10 p-2 rounded-lg transition">
+            <IconPlant2 className="text-white w-11 h-11" />
+          </button>
+          <button onClick={() => navigate("/cuaderno_campom")} className="hover:bg-white/10 p-2 rounded-lg transition">
+            <IconBook className="text-white w-11 h-11" />
+          </button>
         </div>
 
-        {/* Perfil */}
-        <div className="relative mb-6">
+        {/* Perfil fijo abajo */}
+        <div className="relative mb-6 flex justify-center">
           <button
             onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
             className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
