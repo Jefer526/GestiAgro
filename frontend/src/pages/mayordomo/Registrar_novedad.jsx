@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   IconHome,
   IconClipboardList,
@@ -20,6 +20,8 @@ import {
   IconFilter,
   IconSortAscending2,
   IconSortDescending2,
+  IconPlant2,
+  IconBook
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
@@ -28,13 +30,13 @@ const MENU_MARGIN_PX = 8;
 
 const registrar_novedadm = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   // === Datos base + columnas para filtros ===
   const columnas = ["id", "maquina", "referencia", "estado"];
   const [maquinas, setMaquinas] = useState([
-    // estado: "" (no marcado) o "Averiado"
-    { id: 1, maquina: "Tractor",  referencia: "JD 5055",    estado: "" },
-    { id: 2, maquina: "Guadaña",  referencia: "Stihl MS 450", estado: "" },
+    { id: 1, maquina: "Tractor", referencia: "JD 5055", estado: "" },
+    { id: 2, maquina: "Guadaña", referencia: "Stihl MS 450", estado: "" },
     { id: 3, maquina: "Podadora", referencia: "Stihl BR 130", estado: "" },
   ]);
 
@@ -87,7 +89,7 @@ const registrar_novedadm = () => {
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
   const tarjetaRef = useRef(null);
 
-  // === Menú contextual (overlay con portal) ===
+  // === Menú contextual ===
   const [menuIndex, setMenuIndex] = useState(null);
   const menuRef = useRef(null);
   const [menuPos, setMenuPos] = useState({ top: 0, left: 0 });
@@ -112,20 +114,12 @@ const registrar_novedadm = () => {
 
   const closeMenu = () => setMenuIndex(null);
 
-  // Cerrar tarjeta perfil al hacer click fuera
+  // Cerrar tarjetas y menús
   useEffect(() => {
     const manejarClickFuera = (e) => {
       if (tarjetaRef.current && !tarjetaRef.current.contains(e.target)) {
         setMostrarTarjeta(false);
       }
-    };
-    document.addEventListener("mousedown", manejarClickFuera);
-    return () => document.removeEventListener("mousedown", manejarClickFuera);
-  }, []);
-
-  // Cerrar menú contextual y popover de filtros al hacer click fuera
-  useEffect(() => {
-    const clickFuera = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
         closeMenu();
       }
@@ -133,11 +127,10 @@ const registrar_novedadm = () => {
         setFiltroActivo(null);
       }
     };
-    document.addEventListener("mousedown", clickFuera);
-    return () => document.removeEventListener("mousedown", clickFuera);
+    document.addEventListener("mousedown", manejarClickFuera);
+    return () => document.removeEventListener("mousedown", manejarClickFuera);
   }, []);
 
-  // Acciones: SOLO “Averiado”; desmarcar vuelve a ""
   const handleEstadoChange = (index, marcarAveriado) => {
     const nuevas = [...maquinas];
     nuevas[index].estado = marcarAveriado ? "Averiado" : "";
@@ -145,7 +138,6 @@ const registrar_novedadm = () => {
   };
 
   const handleGuardar = () => {
-    console.log("Estados actualizados:", maquinas);
     setAlertaVisible(true);
     setTimeout(() => {
       setAlertaVisible(false);
@@ -153,7 +145,6 @@ const registrar_novedadm = () => {
     }, 2000);
   };
 
-  // Badge de AVERIADO (rojo si marcado, gris si no)
   const EstadoAveriadoBadge = ({ isAveriado }) => {
     const classes = isAveriado
       ? "bg-red-50 text-red-700 ring-red-200"
@@ -167,7 +158,6 @@ const registrar_novedadm = () => {
     );
   };
 
-  // === Aplicar filtros y orden ===
   const datosFiltrados = maquinas
     .filter((item) =>
       columnas.every((campo) =>
@@ -184,89 +174,147 @@ const registrar_novedadm = () => {
         : (b[campo] ?? "").toString().localeCompare((a[campo] ?? "").toString());
     });
 
-  // === Portal del menú contextual (overlay) ===
-  const MenuOverlay = ({ children }) => {
-    return createPortal(children, document.body);
-  };
+  const MenuOverlay = ({ children }) => createPortal(children, document.body);
+
+  // Función para botón de sidebar con indicador
+  const SidebarButton = ({ to, icon: IconComp, title }) => (
+    <div className="relative w-full flex justify-center">
+      {location.pathname === to && (
+        <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+      )}
+      <button
+        onClick={() => navigate(to)}
+        className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+        title={title}
+      >
+        <IconComp className="text-white w-11 h-11" />
+      </button>
+    </div>
+  );
 
   return (
     <div className="min-h-dvh bg-gray-50">
-      {/* SIDEBAR FIJO A PANTALLA COMPLETA */}
-      <aside className="fixed inset-y-0 left-0 w-28 bg-green-600 flex flex-col items-center py-6 justify-between z-40">
-        <div className="flex flex-col items-center space-y-8">
+      {/* Sidebar fijo */}
+      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col justify-between">
+        {/* Logo fijo */}
+        <div className="pt-6 flex justify-center">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
+        </div>
 
-          <button onClick={() => navigate("/homemayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconHome className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/registrolabores")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconClipboardList className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/historial_labores")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconHistory className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/bodega_insumos")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconBox className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/variables_climaticasm")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconCloudRain className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/informes_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconChartBar className="text-white w-11 h-11" />
-          </button>
+        {/* Íconos con scroll */}
+        <div className="flex-1 flex flex-col items-center space-y-8 mt-6 overflow-y-auto scrollbar-hide-only">
+          {/* Home */}
+          <div className="relative">
+            {location.pathname === "/homemayordomo" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/homemayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              <IconHome className="text-white w-11 h-11" />
+            </button>
+          </div>
 
-          {/* Indicador e ícono activo */}
-          <div className="relative w-full flex justify-center">
-            <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full z-10" />
-            <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+          {/* Registro labores */}
+          <div className="relative">
+            {location.pathname === "/registrolabores" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/registrolabores")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              <IconClipboardList className="text-white w-11 h-11" />
+            </button>
+          </div>
+
+          {/* Historial labores */}
+          <div className="relative">
+            {location.pathname === "/historial_labores" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/historial_labores")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              <IconHistory className="text-white w-11 h-11" />
+            </button>
+          </div>
+
+          {/* Bodega */}
+          <div className="relative">
+            {location.pathname === "/bodega_insumos" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/bodega_insumos")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              <IconBox className="text-white w-11 h-11" />
+            </button>
+          </div>
+
+          {/* Variables climáticas */}
+          <div className="relative">
+            {location.pathname === "/variables_climaticasm" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/variables_climaticasm")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              <IconCloudRain className="text-white w-11 h-11" />
+            </button>
+          </div>
+
+          {/* Informes */}
+          <div className="relative">
+            {location.pathname === "/informes_mayordomo" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/informes_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              <IconChartBar className="text-white w-11 h-11" />
+            </button>
+          </div>
+
+          {/* Maquinaria */}
+          <div className="relative">
+            {location.pathname === "/registrar_novedadm" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/equipos_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
               <IconTractor className="text-white w-11 h-11" />
+            </button>
+          </div>
+
+          {/* Producción */}
+          <div className="relative">
+            {location.pathname === "/produccion_mayor" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/produccion_mayor")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              <IconPlant2 className="text-white w-11 h-11" />
+            </button>
+          </div>
+
+          {/* Cuaderno de Campo */}
+          <div className="relative">
+            {location.pathname === "/cuaderno_campom" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/cuaderno_campom")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              <IconBook className="text-white w-11 h-11" />
             </button>
           </div>
         </div>
 
-        {/* Perfil con tarjeta */}
-        <div className="relative mb-6">
+        {/* Perfil */}
+        <div className="relative mb-6 flex justify-center">
           <button
             onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
             className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
           >
             {letraInicial}
           </button>
-
           {mostrarTarjeta && (
             <div
               ref={tarjetaRef}
-              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
+              className="absolute bottom-16 left-14 w-56 bg-white/95 border border-gray-200 rounded-xl shadow-2xl py-3 z-[10000] backdrop-blur"
             >
-              <button
-                onClick={() => {
-                  setMostrarTarjeta(false);
-                  navigate("/ajustesmayordomo");
-                }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-              >
-                <IconSettings className="w-5 h-5 mr-2 text-green-600" />
-                Ajustes
+              <button onClick={() => { setMostrarTarjeta(false); navigate("/ajustesmayordomo"); }} className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100">
+                <IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes
               </button>
-              <button
-                onClick={() => {
-                  setMostrarTarjeta(false);
-                  navigate("/soportemayordomo");
-                }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-              >
-                <IconTool className="w-5 h-5 mr-2 text-green-600" />
-                Soporte
+              <button onClick={() => { setMostrarTarjeta(false); navigate("/soportemayordomo"); }} className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100">
+                <IconTool className="w-5 h-5 mr-2 text-green-600" /> Soporte
               </button>
-              <button
-                onClick={() => {
-                  setMostrarTarjeta(false);
-                  navigate("/login");
-                }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
-              >
-                <IconLogout className="w-5 h-5 mr-2 text-red-600" />
-                Cerrar sesión
+              <button onClick={() => { setMostrarTarjeta(false); navigate("/login"); }} className="flex items-center w-full text-left px-4 py-2 hover:bg-red-50 text-red-600">
+                <IconLogout className="w-5 h-5 mr-2 text-red-600" /> Cerrar sesión
               </button>
             </div>
           )}

@@ -1,3 +1,4 @@
+// src/pages/agronomo/Home_agro.jsx
 import React, { useState, useRef, useEffect } from "react";
 import {
   IconHome,
@@ -14,16 +15,20 @@ import {
   IconLogout,
   IconChevronRight,
   IconPlant2,
+  IconBook,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
 const Home_agro = () => {
   const navigate = useNavigate();
+
+  // Estado tarjeta perfil
   const tarjetaRef = useRef(null);
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
   const letraInicial = "J";
 
+  // Cierra tarjeta si se hace click fuera
   useEffect(() => {
     const clickFueraTarjeta = (e) => {
       if (tarjetaRef.current && !tarjetaRef.current.contains(e.target)) {
@@ -34,6 +39,9 @@ const Home_agro = () => {
     return () => document.removeEventListener("mousedown", clickFueraTarjeta);
   }, []);
 
+<<<<<<< HEAD
+  // Opciones de tarjetas del panel
+=======
   // 🔹 Función para cerrar sesión
   const handleLogout = () => {
     localStorage.removeItem("access");
@@ -43,6 +51,7 @@ const Home_agro = () => {
     navigate("/login");
   };
 
+>>>>>>> d3d306c5d4cdd9e62c051796d7aacac87687d14a
   const opciones = [
     {
       icon: <IconClipboardList className="w-8 h-8" />,
@@ -134,20 +143,30 @@ const Home_agro = () => {
       iconBg: "bg-white/70",
       text: "text-green-700",
     },
+    {
+      icon: <IconBook className="w-8 h-8" />,
+      label: "Cuaderno de Campo",
+      desc: "Registro de anotaciones, observaciones y fotos de campo.",
+      ruta: "/cuadernocampo",
+      gradient: "from-green-700/20 to-amber-600/20",
+      ring: "ring-green-400/40",
+      iconBg: "bg-white/80",
+      text: "text-green-800",
+    },
   ];
 
   return (
     <div className="flex">
       {/* Sidebar */}
       <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
-        {/* Logo fijo */}
+        {/* Logo */}
         <div className="mb-6">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
         </div>
 
-        {/* Iconos con scroll */}
+        {/* Navegación */}
         <div className="flex-1 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only">
-          {/* Icono activo */}
+          {/* Activo */}
           <div className="relative">
             <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
             <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
@@ -155,7 +174,7 @@ const Home_agro = () => {
             </button>
           </div>
 
-          {/* Navegación */}
+          {/* Menú */}
           <button onClick={() => navigate("/Laboresagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconClipboardList className="text-white w-11 h-11" />
           </button>
@@ -182,6 +201,9 @@ const Home_agro = () => {
           </button>
           <button onClick={() => navigate("/produccionagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconPlant2 className="text-white w-11 h-11" />
+          </button>
+          <button onClick={() => navigate("/cuadernocampo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+            <IconBook className="text-white w-11 h-11" />
           </button>
         </div>
 
@@ -218,6 +240,7 @@ const Home_agro = () => {
 
       {/* Contenido principal */}
       <div className="flex-1 p-10">
+        {/* Título */}
         <h1 className="text-3xl font-bold text-green-700 mb-6">Panel principal</h1>
 
         {/* Banner */}
@@ -232,12 +255,7 @@ const Home_agro = () => {
             <button
               key={i}
               onClick={() => navigate(ruta)}
-              className={[
-                "group relative overflow-hidden rounded-2xl border border-transparent",
-                "bg-white shadow-lg px-5 py-8 min-h-[160px] text-left transition-all",
-                "hover:-translate-y-0.5 hover:shadow-xl focus:outline-none focus:ring-2",
-                "ring-0 hover:ring-0 focus:ring-emerald-600/40",
-              ].join(" ")}
+              className="group relative overflow-hidden rounded-2xl border border-transparent bg-white shadow-lg px-5 py-8 min-h-[160px] text-left transition-all hover:-translate-y-0.5 hover:shadow-xl focus:outline-none focus:ring-2 ring-0 hover:ring-0 focus:ring-emerald-600/40"
             >
               <div className={`absolute inset-0 pointer-events-none bg-gradient-to-br ${gradient} opacity-70`} />
               <div className={`absolute inset-0 pointer-events-none ${ring}`} />
@@ -261,3 +279,8 @@ const Home_agro = () => {
 };
 
 export default Home_agro;
+<<<<<<< HEAD
+
+
+=======
+>>>>>>> d3d306c5d4cdd9e62c051796d7aacac87687d14a

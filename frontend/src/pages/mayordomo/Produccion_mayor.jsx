@@ -1,83 +1,130 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import {
-  IconHome,
-  IconClipboardList,
-  IconHistory,
-  IconChartBar,
-  IconBox,
-  IconCloudRain,
-  IconTractor,
-  IconSettings,
-  IconTool,
-  IconLogout,
-  IconChevronLeft,
-  IconPlant2,
-  IconBook,
-  IconCheck
+    IconHome,
+    IconClipboardList,
+    IconHistory,
+    IconChartBar,
+    IconBox,
+    IconCloudRain,
+    IconTractor,
+    IconSettings,
+    IconTool,
+    IconLogout,
+    IconBook,
+    IconCamera,
+    IconPlant2
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels";
+import { useNavigate, useLocation } from "react-router-dom";
 
-const Registrar_novedad_hoja = () => {
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend, ChartDataLabels);
+
+const Produccion_mayor = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const [finca, setFinca] = useState("Todas");
+  const [periodo, setPeriodo] = useState("Mes");
+  const [cultivo, setCultivo] = useState("Todos");
+  const [variedad, setVariedad] = useState("Todas");
+  const [lote, setLote] = useState("Todos");
+
+  // Datos de enero a junio
+  const data = {
+    labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio"],
+    datasets: [
+      {
+        label: "Kilogramos",
+        data: [8000, 9000, 7500, 10000, 9500, 8700],
+        backgroundColor: (context) => {
+          const chart = context.chart;
+          const { ctx, chartArea } = chart;
+          if (!chartArea) return null;
+          const gradient = ctx.createLinearGradient(0, 0, 0, chartArea.bottom);
+          gradient.addColorStop(0, "rgba(34,197,94,0.8)");
+          gradient.addColorStop(1, "rgba(34,197,94,0.3)");
+          return gradient;
+        },
+        borderRadius: 0,
+        borderWidth: 1,
+        borderColor: "rgba(34,197,94,1)",
+      },
+    ],
+  };
+
+  const opcionesChart = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        enabled: true,
+        mode: "index",
+        intersect: false,
+      },
+      datalabels: {
+        color: "#1f2937",
+        anchor: "end",
+        align: "start",
+        offset: -20,
+        font: { weight: "bold" },
+        formatter: (value) => `${value} kg`, // ✅ Corregido template literal
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        suggestedMax: 11000,
+        ticks: { color: "#374151" },
+      },
+      x: { ticks: { color: "#374151" } },
+    },
+  };
+
+  // Usuario y tarjeta perfil
   const nombreUsuario = "Juan Pérez";
   const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
-
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
   const tarjetaRef = useRef(null);
 
-  const [alertaVisible, setAlertaVisible] = useState(false);
-
-  const [formData, setFormData] = useState({
-    codigoequipo: "",
-    maquina: "",
-    referencia: "",
-    ubicacion: "",
-    estado: "",
-    fecha: "",
-    tipo: "",
-    descripcion: "",
-    realizadoPor: "",
-  });
+  // Auto-scroll del contenedor de íconos
+  const iconListRef = useRef(null);
 
   useEffect(() => {
-    const handler = (e) => {
+    const manejarClickFuera = (e) => {
       if (tarjetaRef.current && !tarjetaRef.current.contains(e.target)) {
         setMostrarTarjeta(false);
       }
     };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
+    document.addEventListener("mousedown", manejarClickFuera);
+    return () => document.removeEventListener("mousedown", manejarClickFuera);
   }, []);
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Datos registrados:", formData);
-    setAlertaVisible(true);
-    setTimeout(() => {
-      setAlertaVisible(false);
-      navigate("/hoja_vidam");
-    }, 2000);
-  };
+  useEffect(() => {
+    if (!iconListRef.current) return;
+    if (location.pathname.includes("/produccionagro")) {
+      iconListRef.current.scrollTo({
+        top: iconListRef.current.scrollHeight,
+        behavior: "auto", // ✅ Cambiado "instant" → "auto"
+      });
+    } else {
+      iconListRef.current.scrollTo({ top: 0, behavior: "auto" });
+    }
+  }, [location.pathname]);
 
   return (
-    <div className="relative">
-      {/* ALERTA */}
-      {alertaVisible && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold z-[10000] transition-all duration-300">
-          <IconCheck className="w-5 h-5" />
-          Registrado exitosamente
-        </div>
-      )}
-
-      {/* SIDEBAR */}
+    <div className="min-h-[100dvh] bg-[#f6f6f6] flex">
+      {/* Sidebar fijo */}
       <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col justify-between">
         {/* Logo fijo */}
         <div className="pt-6 flex justify-center">
@@ -148,7 +195,7 @@ const Registrar_novedad_hoja = () => {
 
           {/* Maquinaria */}
           <div className="relative">
-            {location.pathname === "/registrar_novedad_hoja" && (
+            {location.pathname === "/registrar_novedadm" && (
               <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
             )}
             <button onClick={() => navigate("/equipos_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
@@ -204,85 +251,85 @@ const Registrar_novedad_hoja = () => {
         </div>
       </aside>
 
-      {/* CONTENIDO */}
-      <main className="ml-28 min-h-[100dvh] bg-gray-50 px-10 py-8 relative">
-        <button
-          onClick={() => navigate("/hoja_vidam")}
-          className="flex items-center text-green-600 font-medium mb-4"
-        >
-          <IconChevronLeft className="w-5 h-5 mr-2" />
-          Volver
-        </button>
 
-        <div className="bg-white border border-green-300 rounded-xl shadow-md p-8 w-[800px] mx-auto">
-          <h1 className="text-2xl font-bold text-green-600 mb-6">Registro novedad</h1>
+      {/* Contenido principal */}
+      <main className="ml-28 p-10 overflow-auto w-full">
+        <h1 className="text-3xl font-bold text-green-700 mb-6">Producción agrícola</h1>
 
-          <form onSubmit={handleSubmit} className="space-y-4 text-base">
-            <div className="grid grid-cols-2 gap-5">
-              <div>
-                <label className="block font-semibold mb-1">Código Equipo:</label>
-                <input name="codigoequipo" value={formData.codigoequipo} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-1.5" />
-              </div>
-              <div>
-                <label className="block font-semibold mb-1">Referencia:</label>
-                <input name="referencia" value={formData.referencia} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-1.5" />
-              </div>
-              <div>
-                <label className="block font-semibold mb-1">Máquina:</label>
-                <input name="maquina" value={formData.maquina} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-1.5" />
-              </div>
-              <div>
-                <label className="block font-semibold mb-1">Ubicación:</label>
-                <select name="ubicacion" value={formData.ubicacion} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-1.5">
-                  <option value="">Selecciona</option>
-                  <option>Bodega</option>
-                  <option>La Esmeralda</option>
-                  <option>La Carolina</option>
-                </select>
-              </div>
-              <div>
-                <label className="block font-semibold mb-1">Estado:</label>
-                <select name="estado" value={formData.estado} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-1.5">
-                  <option value="">Selecciona</option>
-                  <option>Óptimo</option>
-                  <option>En operación</option>
-                  <option>Mantenimiento</option>
-                  <option>Averiado</option>
-                </select>
-              </div>
-              <div>
-                <label className="block font-semibold mb-1">Fecha:</label>
-                <input type="date" name="fecha" value={formData.fecha} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-1.5" />
-              </div>
-              <div className="col-span-2">
-                <label className="block font-semibold mb-1">Tipo de novedad:</label>
-                <select name="tipo" value={formData.tipo} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-1.5">
-                  <option value="">Selecciona una opción</option>
-                  <option>Mantenimiento</option>
-                  <option>Reparación</option>
-                </select>
-              </div>
-            </div>
-            <div>
-              <label className="block font-semibold mb-1">Descripción:</label>
-              <textarea name="descripcion" value={formData.descripcion} onChange={handleChange} rows="3" className="w-full border border-gray-300 rounded px-3 py-2" />
-            </div>
-            <div>
-              <label className="block font-semibold mb-1">Realizado por:</label>
-              <input name="realizadoPor" value={formData.realizadoPor} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-1.5" />
-            </div>
-            <div className="flex justify-center mt-4">
-              <button type="submit" className="bg-green-600 text-white px-8 py-2 rounded-lg hover:bg-green-700 font-semibold">
-                Guardar
-              </button>
-            </div>
-          </form>
+        {/* Filtros */}
+        <div className="mb-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div>
+            <label className="font-semibold mr-2">Finca:</label>
+            <select value={finca} onChange={(e) => setFinca(e.target.value)} className="border border-gray-300 rounded px-4 py-1 w-full">
+              <option>Todas</option>
+              <option>La Esmeralda</option>
+              <option>La Carolina</option>
+            </select>
+          </div>
+          <div>
+            <label className="font-semibold mr-2">Cultivo:</label>
+            <select value={cultivo} onChange={(e) => setCultivo(e.target.value)} className="border border-gray-300 rounded px-4 py-1 w-full">
+              <option>Todos</option>
+              <option>Café</option>
+              <option>Cacao</option>
+            </select>
+          </div>
+          <div>
+            <label className="font-semibold mr-2">Variedad:</label>
+            <select value={variedad} onChange={(e) => setVariedad(e.target.value)} className="border border-gray-300 rounded px-4 py-1 w-full">
+              <option>Todas</option>
+              <option>Variedad A</option>
+              <option>Variedad B</option>
+            </select>
+          </div>
+          <div>
+            <label className="font-semibold mr-2">Lote:</label>
+            <select value={lote} onChange={(e) => setLote(e.target.value)} className="border border-gray-300 rounded px-4 py-1 w-full">
+              <option>Todos</option>
+              <option>Lote 1</option>
+              <option>Lote 2</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Periodo */}
+        <div className="mb-6">
+          <label className="font-semibold mr-2">Filtrar por:</label>
+          <select value={periodo} onChange={(e) => setPeriodo(e.target.value)} className="border border-gray-300 rounded px-4 py-1 w-60">
+            <option>Día</option>
+            <option>Mes</option>
+            <option>Año</option>
+          </select>
+        </div>
+
+        {/* Fechas */}
+        <div className="mb-8 flex flex-wrap items-center gap-4">
+          <label className="font-semibold">Fecha:</label>
+          <span>Desde</span>
+          <input type="date" className="border border-gray-300 px-3 py-1 rounded w-48" />
+          <span>Hasta</span>
+          <input type="date" className="border border-gray-300 px-3 py-1 rounded w-48" />
+        </div>
+
+        {/* Gráfica */}
+        <div className="w-full h-[400px] bg-white p-4 rounded-xl shadow relative">
+          <div className="absolute top-2 left-1/2 -translate-x-1/2 flex items-center">
+            <div
+              className="w-5 h-3 mr-2"
+              style={{
+                background: "linear-gradient(to bottom, rgba(34,197,94,0.8), rgba(34,197,94,0.3))",
+                border: "1px solid rgba(34,197,94,1)",
+              }}
+            ></div>
+            <span className="text-gray-700 font-medium">Kilogramos</span>
+          </div>
+          <div className="h-[350px]">
+            <Bar data={data} options={opcionesChart} />
+          </div>
         </div>
       </main>
     </div>
   );
 };
 
-export default Registrar_novedad_hoja;
-
-
+export default Produccion_mayor;

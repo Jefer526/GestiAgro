@@ -1,3 +1,4 @@
+// src/pages/Detalle_mantenimiento.jsx
 import React, { useRef, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
@@ -15,14 +16,15 @@ import {
   IconTool,
   IconLogout,
   IconPlant2,
+  IconBook,
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
 const Detalle_mantenimiento = () => {
   const navigate = useNavigate();
-  const { state } = useLocation(); // viene desde Hoja_vida -> navigate("/detalle_mantenimiento", { state: item })
+  const { state } = useLocation(); // Datos recibidos desde Hoja_vida
 
-  // Datos que llegan desde la tabla (fallbacks si entran directo a la ruta)
+  // Datos por defecto si no vienen desde navegaci√≥n
   const data = {
     idMaquina: "1",
     prev: true,
@@ -39,7 +41,7 @@ El mantenimiento correctivo no fue necesario, ya que no se detectaron fallas cr√
     realizadoPor: "Carlos Rodr√≠guez",
   };
 
-  // Si no viene "tipo", lo inferimos a partir de prev/correcc
+  // Determinar tipo de mantenimiento
   const tipoInferido =
     data.tipo ||
     (data.prev && data.correcc
@@ -50,12 +52,13 @@ El mantenimiento correctivo no fue necesario, ya que no se detectaron fallas cr√
       ? "Correctivo"
       : "‚Äî");
 
-  // Perfil
+  // Estado y refs para tarjeta de perfil
   const nombreUsuario = "Juan P√©rez";
   const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
   const tarjetaRef = useRef(null);
 
+  // Cerrar tarjeta al hacer click fuera
   useEffect(() => {
     const manejarClickFuera = (e) => {
       if (tarjetaRef.current && !tarjetaRef.current.contains(e.target)) {
@@ -70,11 +73,14 @@ El mantenimiento correctivo no fue necesario, ya que no se detectaron fallas cr√
     <div className="flex">
       {/* Sidebar */}
       <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
+        {/* Logo */}
         <div className="sticky top-0 mb-6 bg-green-600 z-10">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11 mx-auto" />
         </div>
 
+        {/* Navegaci√≥n */}
         <div className="flex-1 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only">
+          {/* Activo */}
           <div className="relative">
             <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
             <button
@@ -111,9 +117,12 @@ El mantenimiento correctivo no fue necesario, ya que no se detectaron fallas cr√
           <button onClick={() => navigate("/produccionagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconPlant2 className="text-white w-11 h-11" />
           </button>
+          <button onClick={() => navigate("/cuadernocampo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+            <IconBook className="text-white w-11 h-11" />
+          </button>
         </div>
 
-        {/* Perfil */}
+        {/* Perfil con tarjeta */}
         <div className="relative mb-4">
           <button
             onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
@@ -164,10 +173,12 @@ El mantenimiento correctivo no fue necesario, ya que no se detectaron fallas cr√
 
       {/* Contenido principal */}
       <div className="flex-1 px-10 py-8 bg-gray-50">
+        {/* Bot√≥n volver */}
         <button onClick={() => navigate(-1)} className="flex items-center text-green-600 font-medium mb-6">
           <IconArrowLeft className="w-5 h-5 mr-2" /> Volver
         </button>
 
+        {/* Detalle */}
         <div className="bg-white border border-green-300 rounded-xl shadow-md p-8 w-[900px] mx-auto">
           <h1 className="text-2xl font-bold text-green-600 mb-6">Detalle de Mantenimiento</h1>
 
@@ -194,6 +205,7 @@ El mantenimiento correctivo no fue necesario, ya que no se detectaron fallas cr√
 };
 
 export default Detalle_mantenimiento;
+
 
 
 

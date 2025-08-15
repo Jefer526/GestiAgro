@@ -11,13 +11,17 @@ import {
   IconFilter,
   IconTool,
   IconLogout,
+  IconPlant2,
+  IconBook
 } from "@tabler/icons-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useRef, useEffect, useMemo } from "react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
 const Detalle_produc = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
   const filtroRef = useRef(null);
   const [filtroActivo, setFiltroActivo] = useState(null);
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
@@ -42,8 +46,8 @@ const Detalle_produc = () => {
   // Movimientos (mock)
   const movimientos = [
     { fecha: "2025-06-15", tipo: "Entrada", lote: "El Vaquero", cantidad: 50, um: "Kg" },
-    { fecha: "2025-06-16", tipo: "Salida",  lote: 1,            cantidad: 10, um: "Kg" },
-    { fecha: "2025-06-17", tipo: "Salida",  lote: 2,            cantidad: 25, um: "Kg" },
+    { fecha: "2025-06-16", tipo: "Salida", lote: 1, cantidad: 10, um: "Kg" },
+    { fecha: "2025-06-17", tipo: "Salida", lote: 2, cantidad: 25, um: "Kg" },
   ];
 
   // Ordenar por fecha asc y calcular saldo acumulado
@@ -126,54 +130,120 @@ const Detalle_produc = () => {
     );
   };
 
-  // Saldo actual (último registro)
   const saldoActual = movimientosConSaldo.length
     ? movimientosConSaldo[movimientosConSaldo.length - 1].saldo
     : 0;
 
   return (
     <div className="min-h-[100dvh] bg-white">
-      {/* Sidebar fijo: siempre a alto completo */}
-      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col items-center py-6 justify-between">
-        <div className="flex flex-col items-center space-y-8">
+      {/* Sidebar fijo */}
+      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col justify-between z-[200]">
+        {/* Logo */}
+        <div className="pt-6 flex justify-center">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
-          <button onClick={() => navigate("/homemayordomo")} className="hover:bg-white/10 p-2 rounded-lg">
-            <IconHome className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/registrolabores")} className="hover:bg-white/10 p-2 rounded-lg">
-            <IconClipboardList className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/historial_labores")} className="hover:bg-white/10 p-2 rounded-lg">
-            <IconHistory className="text-white w-11 h-11" />
-          </button>
-          <div className="relative w-full flex justify-center">
-            <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full z-10" />
-            <button className="hover:bg-white/10 p-2 rounded-lg">
+        </div>
+
+        {/* Íconos */}
+        <div className="flex-1 flex flex-col items-center space-y-8 mt-6 overflow-y-auto scrollbar-hide-only">
+          {/* Home */}
+          <div className="relative">
+            {location.pathname === "/homemayordomo" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/homemayordomo")} className="hover:bg-white/10 p-2 rounded-lg">
+              <IconHome className="text-white w-11 h-11" />
+            </button>
+          </div>
+
+          {/* Registro labores */}
+          <div className="relative">
+            {location.pathname === "/registrolabores" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/registrolabores")} className="hover:bg-white/10 p-2 rounded-lg">
+              <IconClipboardList className="text-white w-11 h-11" />
+            </button>
+          </div>
+
+          {/* Historial labores */}
+          <div className="relative">
+            {location.pathname === "/historial_labores" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/historial_labores")} className="hover:bg-white/10 p-2 rounded-lg">
+              <IconHistory className="text-white w-11 h-11" />
+            </button>
+          </div>
+
+          {/* Bodega */}
+          <div className="relative">
+            {location.pathname === "/detalle_producto" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/detalle_producto")} className="hover:bg-white/10 p-2 rounded-lg">
               <IconBox className="text-white w-11 h-11" />
             </button>
           </div>
-          <button onClick={() => navigate("/variables_climaticasm")} className="hover:bg-white/10 p-2 rounded-lg">
-            <IconCloudRain className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/informes_mayordomo")} className="hover:bg-white/10 p-2 rounded-lg">
-            <IconChartBar className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/equipos_mayordomo")} className="hover:bg-white/10 p-2 rounded-lg">
-            <IconTractor className="text-white w-11 h-11" />
-          </button>
+
+          {/* Variables climáticas */}
+          <div className="relative">
+            {location.pathname === "/variables_climaticasm" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/variables_climaticasm")} className="hover:bg-white/10 p-2 rounded-lg">
+              <IconCloudRain className="text-white w-11 h-11" />
+            </button>
+          </div>
+
+          {/* Informes */}
+          <div className="relative">
+            {location.pathname === "/informes_mayordomo" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/informes_mayordomo")} className="hover:bg-white/10 p-2 rounded-lg">
+              <IconChartBar className="text-white w-11 h-11" />
+            </button>
+          </div>
+
+          {/* Equipos */}
+          <div className="relative">
+            {location.pathname === "/equipos_mayordomo" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/equipos_mayordomo")} className="hover:bg-white/10 p-2 rounded-lg">
+              <IconTractor className="text-white w-11 h-11" />
+            </button>
+          </div>
+
+          {/* Producción */}
+          <div className="relative">
+            {location.pathname === "/produccion_mayor" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/produccion_mayor")} className="hover:bg-white/10 p-2 rounded-lg">
+              <IconPlant2 className="text-white w-11 h-11" />
+            </button>
+          </div>
+
+          {/* Cuaderno de campo */}
+          <div className="relative">
+            {location.pathname === "/cuaderno_campom" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/cuaderno_campom")} className="hover:bg-white/10 p-2 rounded-lg">
+              <IconBook className="text-white w-11 h-11" />
+            </button>
+          </div>
         </div>
 
         {/* Perfil */}
-        <div className="relative mb-6">
+        <div className="relative mb-6 flex justify-center">
           <button
             onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
             className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
-            aria-haspopup="true"
-            aria-expanded={mostrarTarjeta}
           >
             {letraInicial}
           </button>
-
           {mostrarTarjeta && (
             <div
               ref={tarjetaRef}
@@ -216,7 +286,7 @@ const Detalle_produc = () => {
 
         <h1 className="text-3xl font-bold text-green-700 mb-6">Detalle del producto</h1>
 
-        {/* Recuadro de info del producto — sin Cantidad/UM; con Saldo */}
+        {/* Recuadro de info */}
         <div className="border border-gray-400 rounded-lg p-6 text-lg grid grid-cols-2 gap-y-2 max-w-3xl mb-10">
           <div><span className="font-bold">Producto:</span> Urea</div>
           <div><span className="font-bold">Ingrediente activo:</span> Nitrógeno 46%</div>
@@ -229,6 +299,7 @@ const Detalle_produc = () => {
 
         <h2 className="text-2xl font-bold text-green-700 mb-4">Movimiento del producto</h2>
 
+        {/* Tabla */}
         <div className="relative bg-white border border-gray-300 rounded-xl overflow-auto">
           <table className="w-full text-base text-center">
             <thead className="bg-green-600 text-white">
@@ -266,51 +337,52 @@ const Detalle_produc = () => {
 
           {/* Filtros */}
           {filtroActivo && (
-            filtroActivo === "fecha" ? (
-              <div
-                ref={filtroRef}
-                className="fixed bg-white text-black shadow-md border rounded z-[10000] p-3 w-64 text-left text-sm"
-                style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
-              >
-                <div className="font-semibold mb-2">Filtrar por Fecha</div>
-                {Object.entries(
-                  movimientosConSaldo.reduce((acc, { fecha }) => {
-                    const [y, m, d] = fecha.split("-");
-                    const monthName = new Date(`${y}-${m}-01`).toLocaleString("default", { month: "long" });
-                    acc[y] = acc[y] || {};
-                    acc[y][monthName] = acc[y][monthName] || new Set();
-                    acc[y][monthName].add(d);
-                    return acc;
-                  }, {})
-                ).map(([year, months]) => (
-                  <div key={year} className="mb-2">
-                    <div className="font-medium">{year}</div>
-                    {Object.entries(months).map(([month, days]) => (
-                      <div key={month} className="ml-4">
-                        <div className="font-medium">{month}</div>
-                        {[...days].map((day) => {
-                          const fullDate = `${year}-${String(new Date(`${month} 1, ${year}`).getMonth()+1).padStart(2,"0")}-${day}`;
-                          return (
-                            <label key={day} className="ml-6 flex items-center gap-2">
-                              <input
-                                type="checkbox"
-                                checked={(valoresSeleccionados["fecha"] || []).includes(fullDate)}
-                                onChange={() => toggleValor("fecha", fullDate)}
-                                className="accent-green-600"
-                              />
-                              {day}
-                            </label>
-                          );
-                        })}
-                      </div>
-                    ))}
-                  </div>
-                ))}
-                <button onClick={() => limpiarFiltro("fecha")} className="text-blue-600 hover:underline text-xs mt-2">
-                  Borrar filtro
-                </button>
-              </div>
-            ) : renderFiltroSimple(filtroActivo)
+            filtroActivo === "fecha"
+              ? /* Filtro fecha */
+                <div
+                  ref={filtroRef}
+                  className="fixed bg-white text-black shadow-md border rounded z-[10000] p-3 w-64 text-left text-sm"
+                  style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
+                >
+                  <div className="font-semibold mb-2">Filtrar por Fecha</div>
+                  {Object.entries(
+                    movimientosConSaldo.reduce((acc, { fecha }) => {
+                      const [y, m, d] = fecha.split("-");
+                      const monthName = new Date(`${y}-${m}-01`).toLocaleString("default", { month: "long" });
+                      acc[y] = acc[y] || {};
+                      acc[y][monthName] = acc[y][monthName] || new Set();
+                      acc[y][monthName].add(d);
+                      return acc;
+                    }, {})
+                  ).map(([year, months]) => (
+                    <div key={year} className="mb-2">
+                      <div className="font-medium">{year}</div>
+                      {Object.entries(months).map(([month, days]) => (
+                        <div key={month} className="ml-4">
+                          <div className="font-medium">{month}</div>
+                          {[...days].map((day) => {
+                            const fullDate = `${year}-${String(new Date(`${month} 1, ${year}`).getMonth() + 1).padStart(2, "0")}-${day}`;
+                            return (
+                              <label key={day} className="ml-6 flex items-center gap-2">
+                                <input
+                                  type="checkbox"
+                                  checked={(valoresSeleccionados["fecha"] || []).includes(fullDate)}
+                                  onChange={() => toggleValor("fecha", fullDate)}
+                                  className="accent-green-600"
+                                />
+                                {day}
+                              </label>
+                            );
+                          })}
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                  <button onClick={() => limpiarFiltro("fecha")} className="text-blue-600 hover:underline text-xs mt-2">
+                    Borrar filtro
+                  </button>
+                </div>
+              : renderFiltroSimple(filtroActivo)
           )}
         </div>
 

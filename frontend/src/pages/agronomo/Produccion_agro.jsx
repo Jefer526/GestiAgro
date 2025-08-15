@@ -1,3 +1,4 @@
+// src/pages/agronomo/Produccion_agro.jsx
 import React, { useState, useRef, useEffect } from "react";
 import {
   IconHome,
@@ -13,6 +14,7 @@ import {
   IconTool,
   IconLogout,
   IconPlant2,
+  IconBook,
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 import { Bar } from "react-chartjs-2";
@@ -33,13 +35,14 @@ const Produccion_agro = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Filtros
   const [finca, setFinca] = useState("Todas");
   const [periodo, setPeriodo] = useState("Mes");
   const [cultivo, setCultivo] = useState("Todos");
   const [variedad, setVariedad] = useState("Todas");
   const [lote, setLote] = useState("Todos");
 
-  // Datos de enero a junio
+  // Datos de producción
   const data = {
     labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio"],
     datasets: [
@@ -55,7 +58,7 @@ const Produccion_agro = () => {
           gradient.addColorStop(1, "rgba(34,197,94,0.3)");
           return gradient;
         },
-        borderRadius: 8,
+        borderRadius: 0,
         borderWidth: 1,
         borderColor: "rgba(34,197,94,1)",
       },
@@ -67,40 +70,51 @@ const Produccion_agro = () => {
     maintainAspectRatio: false,
     plugins: {
       legend: { display: false },
+      tooltip: {
+        enabled: true,
+        mode: "index",
+        intersect: false,
+      },
       datalabels: {
         color: "#1f2937",
         anchor: "end",
-        align: "end",
+        align: "start",
+        offset: -20,
         font: { weight: "bold" },
         formatter: (value) => `${value} kg`,
       },
     },
     scales: {
-      y: { beginAtZero: true, ticks: { color: "#374151" } },
+      y: {
+        beginAtZero: true,
+        suggestedMax: 11000,
+        ticks: { color: "#374151" },
+      },
       x: { ticks: { color: "#374151" } },
     },
   };
 
-  // Usuario y tarjeta perfil
+  // Perfil
   const nombreUsuario = "Juan Pérez";
   const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
-  const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
-  const tarjetaRef = useRef(null);
+  const [mostrarTarjetaPerfil, setMostrarTarjetaPerfil] = useState(false);
+  const tarjetaPerfilRef = useRef(null);
 
-  // Contenedor scrollable del sidebar (para auto-scroll)
+  // Ref para scroll automático
   const iconListRef = useRef(null);
 
+  // Cierra tarjeta de perfil al hacer clic fuera
   useEffect(() => {
     const manejarClickFuera = (e) => {
-      if (tarjetaRef.current && !tarjetaRef.current.contains(e.target)) {
-        setMostrarTarjeta(false);
+      if (tarjetaPerfilRef.current && !tarjetaPerfilRef.current.contains(e.target)) {
+        setMostrarTarjetaPerfil(false);
       }
     };
     document.addEventListener("mousedown", manejarClickFuera);
     return () => document.removeEventListener("mousedown", manejarClickFuera);
   }, []);
 
-  // Auto-scroll del contenedor de íconos: en /produccionagro baja al fondo (ícono activo está abajo)
+  // Auto-scroll del sidebar
   useEffect(() => {
     if (!iconListRef.current) return;
     if (location.pathname.includes("/produccionagro")) {
@@ -117,12 +131,12 @@ const Produccion_agro = () => {
     <div className="min-h-screen">
       {/* Sidebar */}
       <div className="fixed left-0 top-0 bottom-0 bg-green-600 w-28 flex flex-col items-center py-6 justify-between">
-        {/* Logo (sticky) */}
+        {/* Logo */}
         <div className="sticky top-0 mb-6 bg-green-600 z-10">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11 mx-auto" />
         </div>
 
-        {/* Navegación (scrollable) */}
+        {/* Navegación */}
         <div
           ref={iconListRef}
           className="flex-1 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only pb-24"
@@ -154,52 +168,77 @@ const Produccion_agro = () => {
           <button onClick={() => navigate("/crearlote")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Gestión lote">
             <IconFrame className="text-white w-11 h-11" />
           </button>
-
-          {/* Producción agrícola – ACTIVO en esta vista */}
-          <div className="relative">
-            <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            <button
-              onClick={() => navigate("/produccionagro")}
-              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-              title="Producción agrícola"
-            >
-              <IconPlant2 className="text-white w-11 h-11" />
-            </button>
-          </div>
+          <button
+            onClick={() => navigate("/produccionagro")}
+            className={`hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition ${
+              location.pathname.includes("/produccionagro") ? "relative" : ""
+            }`}
+            title="Producción agrícola"
+          >
+            {location.pathname.includes("/produccionagro") && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <IconPlant2 className="text-white w-11 h-11" />
+          </button>
+          <button onClick={() => navigate("/cuadernocampo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Cuaderno de campo">
+            <IconBook className="text-white w-11 h-11" />
+          </button>
         </div>
 
         {/* Perfil */}
-        <div className="relative mb-4">
+        <div className="relative mb-4 mt-auto">
           <button
-            onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
+            onClick={() => setMostrarTarjetaPerfil(!mostrarTarjetaPerfil)}
             className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
           >
             {letraInicial}
           </button>
-          {mostrarTarjeta && (
+
+          {mostrarTarjetaPerfil && (
             <div
-              ref={tarjetaRef}
-              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
+              ref={tarjetaPerfilRef}
+              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-grey-300 rounded-xl shadow-2xl py-3 z-50"
             >
-              <button onClick={() => navigate("/ajustesagro")} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
-                <IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes
+              <button
+                onClick={() => {
+                  setMostrarTarjetaPerfil(false);
+                  navigate("/ajustesagro");
+                }}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
+                <IconSettings className="w-5 h-5 mr-2 text-green-600" />
+                Ajustes
               </button>
-              <button onClick={() => navigate("/soporteagro")} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
-                <IconTool className="w-5 h-5 mr-2 text-green-600" /> Soporte
+              <button
+                onClick={() => {
+                  setMostrarTarjetaPerfil(false);
+                  navigate("/soporteagro");
+                }}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
+                <IconTool className="w-5 h-5 mr-2 text-green-600" />
+                Soporte
               </button>
-              <button onClick={() => navigate("/login")} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600">
-                <IconLogout className="w-5 h-5 mr-2 text-red-600" /> Cerrar sesión
+              <button
+                onClick={() => {
+                  setMostrarTarjetaPerfil(false);
+                  navigate("/login");
+                }}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
+              >
+                <IconLogout className="w-5 h-5 mr-2 text-red-600" />
+                Cerrar sesión
               </button>
             </div>
           )}
         </div>
       </div>
 
-      {/* Contenido principal */}
-      <div className="ml-28 p-10 overflow-auto">
+      {/* Contenido */}
+      <div className="ml-28 p-10 overflow-auto bg-gray-50 min-h-screen">
         <h1 className="text-3xl font-bold text-green-700 mb-6">Producción agrícola</h1>
 
-        {/* Fila 1: 4 filtros principales */}
+        {/* Filtros */}
         <div className="mb-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
             <label className="font-semibold mr-2">Finca:</label>
@@ -209,7 +248,6 @@ const Produccion_agro = () => {
               <option>La Carolina</option>
             </select>
           </div>
-          
           <div>
             <label className="font-semibold mr-2">Cultivo:</label>
             <select value={cultivo} onChange={(e) => setCultivo(e.target.value)} className="border border-gray-300 rounded px-4 py-1 w-full">
@@ -218,7 +256,6 @@ const Produccion_agro = () => {
               <option>Cacao</option>
             </select>
           </div>
-          
           <div>
             <label className="font-semibold mr-2">Variedad:</label>
             <select value={variedad} onChange={(e) => setVariedad(e.target.value)} className="border border-gray-300 rounded px-4 py-1 w-full">
@@ -227,7 +264,6 @@ const Produccion_agro = () => {
               <option>Variedad B</option>
             </select>
           </div>
-          
           <div>
             <label className="font-semibold mr-2">Lote:</label>
             <select value={lote} onChange={(e) => setLote(e.target.value)} className="border border-gray-300 rounded px-4 py-1 w-full">
@@ -238,7 +274,7 @@ const Produccion_agro = () => {
           </div>
         </div>
 
-        {/* Fila 2: Filtrar por */}
+        {/* Filtrar por */}
         <div className="mb-6">
           <label className="font-semibold mr-2">Filtrar por:</label>
           <select value={periodo} onChange={(e) => setPeriodo(e.target.value)} className="border border-gray-300 rounded px-4 py-1 w-60">
@@ -248,7 +284,7 @@ const Produccion_agro = () => {
           </select>
         </div>
 
-        {/* Fila 3: Fechas */}
+        {/* Fechas */}
         <div className="mb-8 flex flex-wrap items-center gap-4">
           <label className="font-semibold">Fecha:</label>
           <span>Desde</span>
@@ -258,8 +294,22 @@ const Produccion_agro = () => {
         </div>
 
         {/* Gráfica */}
-        <div className="w-full h-[400px] bg-white p-4 rounded-xl shadow">
-          <Bar data={data} options={opcionesChart} />
+        <div className="w-full h-[400px] bg-white p-6 rounded-xl shadow-md mt-6">
+          {/* Leyenda */}
+          <div className="mb-4 flex items-center justify-center">
+            <div
+              className="w-5 h-3 mr-2"
+              style={{
+                background: "linear-gradient(to bottom, rgba(34,197,94,0.8), rgba(34,197,94,0.3))",
+                border: "1px solid rgba(34,197,94,1)",
+              }}
+            ></div>
+            <span className="text-gray-700 font-medium">Kilogramos</span>
+          </div>
+          {/* Chart */}
+          <div className="h-[320px]">
+            <Bar data={data} options={opcionesChart} />
+          </div>
         </div>
       </div>
     </div>
@@ -267,5 +317,6 @@ const Produccion_agro = () => {
 };
 
 export default Produccion_agro;
+
 
 

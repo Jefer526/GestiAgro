@@ -14,6 +14,8 @@ import {
   IconPlus,
   IconSearch,
   IconCheck,
+  IconPlant2,
+  IconBook
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
@@ -21,20 +23,18 @@ import faviconBlanco from "../../assets/favicon-blanco.png";
 const Regis_labores = () => {
   const navigate = useNavigate();
 
-  // Sección 1: trabajadores de la misma finca
+  // Estado de filas
   const [filasLocal, setFilasLocal] = useState([{}]);
-  // Sección 2: trabajadores de otra finca
   const [filasOtraFinca, setFilasOtraFinca] = useState([]);
 
   const [alertaVisible, setAlertaVisible] = useState(false);
 
-  // Datos perfil
-  const nombreUsuario = "Juan Pérez"; // reemplazar con nombre real
+  // Perfil
+  const nombreUsuario = "Juan Pérez";
   const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
   const tarjetaRef = useRef(null);
 
-  // Cerrar tarjeta al hacer clic fuera
   useEffect(() => {
     const handler = (e) => {
       if (tarjetaRef.current && !tarjetaRef.current.contains(e.target)) {
@@ -45,7 +45,7 @@ const Regis_labores = () => {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Agregar / eliminar filas por sección
+  // Funciones tabla
   const añadirFilaLocal = () => setFilasLocal((prev) => [...prev, {}]);
   const añadirFilaOtra = () => setFilasOtraFinca((prev) => [...prev, {}]);
   const eliminarFilaLocal = (idx) =>
@@ -63,10 +63,16 @@ const Regis_labores = () => {
 
   return (
     <div className="min-h-[100dvh] bg-white">
-      {/* Sidebar fijo: siempre alto total del viewport */}
-      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col items-center py-6 justify-between">
-        <div className="flex flex-col items-center space-y-8">
+      {/* Sidebar fijo */}
+      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col justify-between z-[200]">
+        {/* Favicon fijo */}
+        <div className="pt-6 flex justify-center">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
+        </div>
+
+        {/* Íconos con scroll */}
+        <div className="flex-1 flex flex-col items-center space-y-8 mt-6 overflow-y-auto scrollbar-hide-only">
+          {/* HOME */}
           <button
             onClick={() => navigate("/homemayordomo")}
             className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
@@ -75,9 +81,9 @@ const Regis_labores = () => {
             <IconHome className="text-white w-11 h-11" />
           </button>
 
-          {/* Opción activa con indicador */}
-          <div className="relative w-full flex justify-center">
-            <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full z-10" />
+          {/* Registrar labores (activo) */}
+          <div className="relative">
+            <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
             <button
               onClick={() => navigate("/registrolabores")}
               className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
@@ -87,45 +93,18 @@ const Regis_labores = () => {
             </button>
           </div>
 
-          <button
-            onClick={() => navigate("/historial_labores")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-            title="Historial labores"
-          >
-            <IconHistory className="text-white w-11 h-11" />
-          </button>
-          <button
-            onClick={() => navigate("/bodega_insumos")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-            title="Bodega"
-          >
-            <IconBox className="text-white w-11 h-11" />
-          </button>
-          <button
-            onClick={() => navigate("/variables_climaticasm")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-            title="Variables climáticas"
-          >
-            <IconCloudRain className="text-white w-11 h-11" />
-          </button>
-          <button
-            onClick={() => navigate("/informes_mayordomo")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-            title="Informes"
-          >
-            <IconChartBar className="text-white w-11 h-11" />
-          </button>
-          <button
-            onClick={() => navigate("/equipos_mayordomo")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-            title="Maquinaria"
-          >
-            <IconTractor className="text-white w-11 h-11" />
-          </button>
+          <button onClick={() => navigate("/historial_labores")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconHistory className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/bodega_insumos")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconBox className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/variables_climaticasm")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconCloudRain className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/informes_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconChartBar className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/equipos_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconTractor className="text-white w-11 h-11" /></button>
+          {/* Nuevos íconos */}
+          <button onClick={() => navigate("/produccion_mayor")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconPlant2 className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/cuaderno_campom")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconBook className="text-white w-11 h-11" /></button>
         </div>
 
-        {/* Perfil */}
-        <div className="relative mb-6">
+        {/* Perfil fijo abajo */}
+        <div className="relative mb-6 flex justify-center">
           <button
             onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
             className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
@@ -133,42 +112,14 @@ const Regis_labores = () => {
           >
             {letraInicial}
           </button>
-
           {mostrarTarjeta && (
             <div
               ref={tarjetaRef}
               className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
             >
-              <button
-                onClick={() => {
-                  setMostrarTarjeta(false);
-                  navigate("/ajustesmayordomo");
-                }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-              >
-                <IconSettings className="w-5 h-5 mr-2 text-green-600" />
-                Ajustes
-              </button>
-              <button
-                onClick={() => {
-                  setMostrarTarjeta(false);
-                  navigate("/soportemayordomo");
-                }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-              >
-                <IconTool className="w-5 h-5 mr-2 text-green-600" />
-                Soporte
-              </button>
-              <button
-                onClick={() => {
-                  setMostrarTarjeta(false);
-                  navigate("/login");
-                }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
-              >
-                <IconLogout className="w-5 h-5 mr-2 text-red-600" />
-                Cerrar sesión
-              </button>
+              <button onClick={() => { setMostrarTarjeta(false); navigate("/ajustesmayordomo"); }} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"><IconSettings className="w-5 h-5 mr-2 text-green-600" />Ajustes</button>
+              <button onClick={() => { setMostrarTarjeta(false); navigate("/soportemayordomo"); }} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"><IconTool className="w-5 h-5 mr-2 text-green-600" />Soporte</button>
+              <button onClick={() => { setMostrarTarjeta(false); navigate("/login"); }} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"><IconLogout className="w-5 h-5 mr-2 text-red-600" />Cerrar sesión</button>
             </div>
           )}
         </div>
