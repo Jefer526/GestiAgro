@@ -15,6 +15,7 @@ import {
   IconTool,
   IconLogout,
   IconPlant2,
+  IconBook,
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 import { useNavigate } from "react-router-dom";
@@ -22,9 +23,15 @@ import { useNavigate } from "react-router-dom";
 const Agregar_producto = () => {
   const navigate = useNavigate();
 
-  const nombreUsuario = "Juan Pérez"; // Cambiar por el nombre real del usuario
+  /* ----------------------------------
+     📌 DATOS USUARIO
+  ---------------------------------- */
+  const nombreUsuario = "Juan Pérez";
   const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
 
+  /* ----------------------------------
+     📌 ESTADOS
+  ---------------------------------- */
   const [producto, setProducto] = useState({
     categoria: "",
     nombre: "",
@@ -33,11 +40,13 @@ const Agregar_producto = () => {
     unidad: "Kg",
   });
 
-  const [alertaVisible, setAlertaVisible] = useState(false); // 👈 estado de alerta
+  const [alertaVisible, setAlertaVisible] = useState(false);
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
   const tarjetaRef = useRef(null);
 
-  // Cierra la tarjeta si se hace clic fuera
+  /* ----------------------------------
+     📌 EFECTOS
+  ---------------------------------- */
   useEffect(() => {
     const manejarClickFuera = (e) => {
       if (tarjetaRef.current && !tarjetaRef.current.contains(e.target)) {
@@ -48,6 +57,9 @@ const Agregar_producto = () => {
     return () => document.removeEventListener("mousedown", manejarClickFuera);
   }, []);
 
+  /* ----------------------------------
+     📌 HANDLERS
+  ---------------------------------- */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProducto({ ...producto, [name]: value });
@@ -55,92 +67,72 @@ const Agregar_producto = () => {
 
   const handleGuardar = () => {
     console.log("Producto guardado:", producto);
-    setAlertaVisible(true); // Mostrar alerta
+    setAlertaVisible(true);
     setTimeout(() => {
       setAlertaVisible(false);
-      navigate("/bodegaagro"); // Redirigir después de 2s
+      navigate("/bodegaagro");
     }, 2000);
   };
 
+  /* ----------------------------------
+     📌 RENDER
+  ---------------------------------- */
   return (
     <div className="flex">
-      {/* Sidebar */}
+      {/* ---------------------- SIDEBAR ---------------------- */}
       <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
-        {/* Logo fijo con sticky */}
+        {/* Logo */}
         <div className="sticky top-0 mb-6 bg-green-600 z-10">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11 mx-auto" />
         </div>
 
-        {/* Iconos con scroll */}
+        {/* Navegación */}
         <div className="flex-1 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only">
           {/* Icono activo */}
           <div className="relative">
             <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
             <button
               onClick={() => navigate("/Homeagro")}
-              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+            >
               <IconHome className="text-white w-11 h-11" />
             </button>
           </div>
 
-          {/* Navegación */}
-          <button
-            onClick={() => navigate("/Laboresagro")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
+          {/* Botones menú */}
+          <button onClick={() => navigate("/Laboresagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconClipboardList className="text-white w-11 h-11" />
           </button>
-          <button
-            onClick={() => navigate("/Informesagro")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
+          <button onClick={() => navigate("/Informesagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconChartBar className="text-white w-11 h-11" />
           </button>
-          <button
-            onClick={() => navigate("/Bodegaagro")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
+          <button onClick={() => navigate("/Bodegaagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconBox className="text-white w-11 h-11" />
           </button>
-          <button
-            onClick={() => navigate("/variablesclimaticas")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
+          <button onClick={() => navigate("/variablesclimaticas")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconCloudRain className="text-white w-11 h-11" />
           </button>
-          <button
-            onClick={() => navigate("/maquinariaequipos")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
+          <button onClick={() => navigate("/maquinariaequipos")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconTractor className="text-white w-11 h-11" />
           </button>
-          <button
-            onClick={() => navigate("/manejopersonal")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
+          <button onClick={() => navigate("/manejopersonal")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconUsersGroup className="text-white w-11 h-11" />
           </button>
-          <button
-            onClick={() => navigate("/crearfinca")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
+          <button onClick={() => navigate("/crearfinca")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconPlant className="text-white w-11 h-11" />
           </button>
-          <button
-            onClick={() => navigate("/crearlote")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
+          <button onClick={() => navigate("/crearlote")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconFrame className="text-white w-11 h-11" />
           </button>
-          <button
-            onClick={() => navigate("/produccionagro")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
+          <button onClick={() => navigate("/produccionagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconPlant2 className="text-white w-11 h-11" />
+          </button>
+          <button onClick={() => navigate("/cuadernocampo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+            <IconBook className="text-white w-11 h-11" />
           </button>
         </div>
 
-        {/* Perfil con tarjeta */}
+        {/* Perfil */}
         <div className="relative mb-4 flex justify-center">
           <button
             onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
@@ -189,7 +181,7 @@ const Agregar_producto = () => {
         </div>
       </div>
 
-      {/* Contenido */}
+      {/* ---------------------- CONTENIDO PRINCIPAL ---------------------- */}
       <div className="flex-1 p-10 overflow-y-auto bg-gray-50 relative">
         {/* Alerta */}
         {alertaVisible && (
@@ -198,10 +190,15 @@ const Agregar_producto = () => {
           </div>
         )}
 
-        <button onClick={() => navigate("/bodegaagro")} className="flex items-center text-green-600 font-semibold mb-6 text-lg hover:underline">
+        {/* Botón volver */}
+        <button
+          onClick={() => navigate("/bodegaagro")}
+          className="flex items-center text-green-600 font-semibold mb-6 text-lg hover:underline"
+        >
           <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
         </button>
 
+        {/* Formulario */}
         <div className="bg-white shadow-md border border-green-300 p-8 rounded-xl w-full max-w-2xl mx-auto space-y-6">
           <h2 className="text-2xl font-bold text-green-700">Agregar producto</h2>
 
@@ -267,6 +264,7 @@ const Agregar_producto = () => {
             </select>
           </div>
 
+          {/* Botones acción */}
           <div className="flex justify-center space-x-6">
             <button
               onClick={handleGuardar}
@@ -288,3 +286,4 @@ const Agregar_producto = () => {
 };
 
 export default Agregar_producto;
+

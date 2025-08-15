@@ -15,6 +15,7 @@ import {
   IconTemperature,
   IconDroplet,
   IconPlant2,
+  IconBook,
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 import { Bar } from "react-chartjs-2";
@@ -148,6 +149,10 @@ const Variables_climaticas = () => {
           <button 
             onClick={() => navigate("/produccionagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconPlant2 className="text-white w-11 h-11" />
+          </button>
+          <button 
+            onClick={() => navigate("/cuadernocampo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+            <IconBook className="text-white w-11 h-11" />
           </button>
         </div>
 
@@ -324,9 +329,9 @@ const Variables_climaticas = () => {
         </section>
 
         {/* Gráfica */}
-        <div className="w-full h-[500px]">
-          <Bar data={data} options={opcionesChart} />
-        </div>
+        <div className="w-full h-[500px] bg-white p-6 rounded-xl shadow-md mt-6">
+            <Bar data={data} options={opcionesChart} />
+          </div>
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+// src/pages/agronomo/Informes_agro.jsx
 import React, { useState, useRef, useEffect } from "react";
 import {
   IconHome,
@@ -14,6 +15,7 @@ import {
   IconLogout,
   IconTool,
   IconPlant2,
+  IconBook,
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 import { useNavigate } from "react-router-dom";
@@ -21,9 +23,11 @@ import { useNavigate } from "react-router-dom";
 const Informes_agro = () => {
   const navigate = useNavigate();
 
+  // Perfil usuario
   const nombreUsuario = "Juan Pérez";
   const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
 
+  // Estado filtros
   const [filtros, setFiltros] = useState({
     fechaInicio: "",
     fechaFin: "",
@@ -33,16 +37,20 @@ const Informes_agro = () => {
     labor: "",
   });
 
+  // Estado menú perfil
   const [menuAbierto, setMenuAbierto] = useState(false);
   const menuRef = useRef(null);
 
+  // Cambios en los filtros
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFiltros({ ...filtros, [name]: value });
   };
 
+  // Toggle menú perfil
   const toggleMenu = () => setMenuAbierto(!menuAbierto);
 
+  // Cierra menú al hacer click fuera
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -57,24 +65,24 @@ const Informes_agro = () => {
     <div className="min-h-screen bg-[#f6f6f6]">
       {/* Sidebar fijo */}
       <div className="fixed left-0 top-0 bottom-0 bg-green-600 w-28 flex flex-col items-center py-6 justify-between">
+        
         {/* Logo */}
         <div className="sticky top-0 mb-6 bg-green-600 z-10">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11 mx-auto" />
         </div>
 
-        {/* Iconos con scroll */}
+        {/* Menú de iconos */}
         <div className="flex-1 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only">
+
           {/* Icono activo */}
           <div className="relative">
             <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            <button
-              onClick={() => navigate("/Homeagro")}
-              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-            >
+            <button onClick={() => navigate("/Homeagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
               <IconHome className="text-white w-11 h-11" />
             </button>
           </div>
 
+          {/* Otros iconos */}
           <button onClick={() => navigate("/Laboresagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconClipboardList className="text-white w-11 h-11" />
           </button>
@@ -102,9 +110,12 @@ const Informes_agro = () => {
           <button onClick={() => navigate("/produccionagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconPlant2 className="text-white w-11 h-11" />
           </button>
+          <button onClick={() => navigate("/cuadernocampo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+            <IconBook className="text-white w-11 h-11" />
+          </button>
         </div>
 
-        {/* Perfil */}
+        {/* Perfil usuario */}
         <div className="relative mb-4">
           <button
             onClick={toggleMenu}
@@ -118,150 +129,94 @@ const Informes_agro = () => {
               ref={menuRef}
               className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
             >
-              <button
-                onClick={() => {
-                  setMenuAbierto(false);
-                  navigate("/ajustesagro");
-                }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-              >
-                <IconSettings className="w-5 h-5 mr-2 text-green-600" />
-                Ajustes
+              <button onClick={() => { setMenuAbierto(false); navigate("/ajustesagro"); }} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
+                <IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes
               </button>
-              <button
-                onClick={() => {
-                  setMenuAbierto(false);
-                  navigate("/soporteagro");
-                }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-              >
-                <IconTool className="w-5 h-5 mr-2 text-green-600" />
-                Soporte
+              <button onClick={() => { setMenuAbierto(false); navigate("/soporteagro"); }} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
+                <IconTool className="w-5 h-5 mr-2 text-green-600" /> Soporte
               </button>
-              <button
-                onClick={() => {
-                  setMenuAbierto(false);
-                  navigate("/login");
-                }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
-              >
-                <IconLogout className="w-5 h-5 mr-2 text-red-600" />
-                Cerrar sesión
+              <button onClick={() => { setMenuAbierto(false); navigate("/login"); }} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600">
+                <IconLogout className="w-5 h-5 mr-2 text-red-600" /> Cerrar sesión
               </button>
             </div>
           )}
         </div>
       </div>
 
-      {/* Contenido */}
+      {/* Contenido principal */}
       <div className="ml-28 flex justify-center items-center p-8 overflow-auto">
         <div className="bg-white border border-green-300 shadow-md p-10 rounded-xl w-full max-w-3xl space-y-6 text-black">
+
           <h1 className="text-3xl font-bold text-green-700">Informes</h1>
 
+          {/* Filtro fecha */}
           <div>
             <p className="font-bold text-lg mb-2">Fecha</p>
             <div className="flex items-center gap-3">
-              <input
-                type="date"
-                name="fechaInicio"
-                value={filtros.fechaInicio}
-                onChange={handleChange}
-                className="border p-3 rounded w-full text-lg"
-              />
+              <input type="date" name="fechaInicio" value={filtros.fechaInicio} onChange={handleChange} className="border p-3 rounded w-full text-lg" />
               <span className="font-semibold text-xl">a</span>
-              <input
-                type="date"
-                name="fechaFin"
-                value={filtros.fechaFin}
-                onChange={handleChange}
-                className="border p-3 rounded w-full text-lg"
-              />
+              <input type="date" name="fechaFin" value={filtros.fechaFin} onChange={handleChange} className="border p-3 rounded w-full text-lg" />
             </div>
           </div>
 
+          {/* Filtro finca */}
           <div>
             <p className="font-bold text-lg mb-2">Finca</p>
-            <select
-              name="finca"
-              value={filtros.finca}
-              onChange={handleChange}
-              className="w-full border p-4 rounded text-lg"
-            >
-              <option value="" disabled hidden>
-                Selecciona una finca
-              </option>
+            <select name="finca" value={filtros.finca} onChange={handleChange} className="w-full border p-4 rounded text-lg">
+              <option value="" disabled hidden>Selecciona una finca</option>
               <option value="La Esmeralda">La Esmeralda</option>
               <option value="Las Palmas">Las Palmas</option>
               <option value="La Carolina">La Carolina</option>
             </select>
           </div>
 
+          {/* Filtro lote */}
           <div>
             <p className="font-bold text-lg mb-2">Lote</p>
-            <select
-              name="lote"
-              value={filtros.lote}
-              onChange={handleChange}
-              className="w-full border p-4 rounded text-lg"
-            >
-              <option value="" disabled hidden>
-                Selecciona un lote
-              </option>
+            <select name="lote" value={filtros.lote} onChange={handleChange} className="w-full border p-4 rounded text-lg">
+              <option value="" disabled hidden>Selecciona un lote</option>
               <option value="Lote 1">Lote 1</option>
               <option value="Lote 2">Lote 2</option>
               <option value="Lote 3">Lote 3</option>
             </select>
           </div>
 
+          {/* Filtro tipo */}
           <div>
             <p className="font-bold text-lg mb-2">Tipo de reporte</p>
-            <select
-              name="tipo"
-              value={filtros.tipo}
-              onChange={handleChange}
-              className="w-full border p-4 rounded text-lg"
-            >
-              <option value="" disabled hidden>
-                Selecciona un tipo
-              </option>
+            <select name="tipo" value={filtros.tipo} onChange={handleChange} className="w-full border p-4 rounded text-lg">
+              <option value="" disabled hidden>Selecciona un tipo</option>
               <option value="Fertilización">Fertilización</option>
               <option value="Siembra">Siembra</option>
             </select>
           </div>
 
+          {/* Filtro labor */}
           <div>
             <p className="font-bold text-lg mb-2">Labor</p>
-            <select
-              name="labor"
-              value={filtros.labor}
-              onChange={handleChange}
-              className="w-full border p-4 rounded text-lg"
-            >
-              <option value="" disabled hidden>
-                Selecciona una labor
-              </option>
+            <select name="labor" value={filtros.labor} onChange={handleChange} className="w-full border p-4 rounded text-lg">
+              <option value="" disabled hidden>Selecciona una labor</option>
               <option value="Siembra">Siembra</option>
               <option value="Desyerba guadaña">Desyerba guadaña</option>
               <option value="Recolección">Recolección</option>
             </select>
           </div>
 
+          {/* Botón generar */}
           <div className="flex justify-center">
-            <button className="bg-green-600 text-white px-8 py-3 rounded hover:bg-green-700 text-lg">
-              Generar
+            <button className="bg-green-600 text-white px-8 py-3 rounded hover:bg-green-700 text-lg">Generar</button>
+          </div>
+
+          {/* Exportar */}
+          <div className="flex justify-center space-x-6 text-base">
+            <button className="text-green-600 hover:underline flex items-center gap-1">
+              <IconFileDownload className="w-5 h-5" /> Exportar PDF
+            </button>
+            <button className="text-green-600 hover:underline flex items-center gap-1">
+              <IconFileDownload className="w-5 h-5" /> Exportar Excel
             </button>
           </div>
 
-          <div className="flex justify-center space-x-6 text-base">
-            <button className="text-green-600 hover:underline flex items-center gap-1">
-              <IconFileDownload className="w-5 h-5" />
-              Exportar PDF
-            </button>
-            <button className="text-green-600 hover:underline flex items-center gap-1">
-              <IconFileDownload className="w-5 h-5" />
-              Exportar Excel
-            </button>
-          </div>
         </div>
       </div>
     </div>
@@ -269,6 +224,7 @@ const Informes_agro = () => {
 };
 
 export default Informes_agro;
+
 
 
 

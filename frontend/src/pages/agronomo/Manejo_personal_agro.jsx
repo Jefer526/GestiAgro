@@ -17,6 +17,7 @@ import {
   IconTool,
   IconLogout,
   IconPlant2,
+  IconBook,
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
@@ -24,20 +25,20 @@ const Manejo_personal_agro = () => {
   const navigate = useNavigate();
   const filtroRef = useRef(null);
 
-  // Nombre usuario ejemplo, puedes traerlo desde contexto o props
+  // Datos de usuario
   const nombreUsuario = "Juan Pérez";
   const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
 
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
   const tarjetaRef = useRef(null);
 
+  // Cierra la tarjeta de perfil al hacer clic fuera
   useEffect(() => {
-    // Cerrar tarjeta de perfil si se clickea fuera
     const manejarClickFuera = (e) => {
       if (
         tarjetaRef.current &&
         !tarjetaRef.current.contains(e.target) &&
-        e.target.id !== "btnPerfil" // para evitar que se cierre al click en botón
+        e.target.id !== "btnPerfil"
       ) {
         setMostrarTarjeta(false);
       }
@@ -46,26 +47,14 @@ const Manejo_personal_agro = () => {
     return () => document.removeEventListener("mousedown", manejarClickFuera);
   }, []);
 
+  // Datos de empleados
   const empleados = [
-    {
-      id: "01", nombre: "Juan Pérez", cargo: "Gerente", estado: "Activo",
-      telefono: "3124567890", finca: "La Esmeralda", acceso: "Completo"
-    },
-    {
-      id: "02", nombre: "Pedro Ramírez", cargo: "Ing Agrónomo", estado: "Activo",
-      telefono: "3201112233", finca: "La Carolina", acceso: "Limitado"
-    },
-    {
-      id: "03", nombre: "Ana González", cargo: "Mayordomo", estado: "Inactivo",
-      telefono: "3119876543", finca: "Las Palmas", acceso: "Sin acceso"
-    },
-    {
-      id: "04", nombre: "María Rojas", cargo: "Operario de campo", estado: "Activo",
-      telefono: "3188888888", finca: "La Carolina", acceso: "Limitado"
-    },
+    { id: "01", nombre: "Juan Pérez", cargo: "Gerente", estado: "Activo", telefono: "3124567890", finca: "La Esmeralda", acceso: "Completo" },
+    { id: "02", nombre: "Pedro Ramírez", cargo: "Ing Agrónomo", estado: "Activo", telefono: "3201112233", finca: "La Carolina", acceso: "Limitado" },
+    { id: "03", nombre: "Ana González", cargo: "Mayordomo", estado: "Inactivo", telefono: "3119876543", finca: "Las Palmas", acceso: "Sin acceso" },
+    { id: "04", nombre: "María Rojas", cargo: "Operario de campo", estado: "Activo", telefono: "3188888888", finca: "La Carolina", acceso: "Limitado" },
   ];
 
-  // ➜ Agregamos "telefono" para que tenga filtro; quitamos "acceso"
   const columnas = ["id", "nombre", "cargo", "estado", "finca", "telefono"];
   const [filtroActivo, setFiltroActivo] = useState(null);
   const [filtroPosicion, setFiltroPosicion] = useState({ top: 0, left: 0 });
@@ -73,9 +62,9 @@ const Manejo_personal_agro = () => {
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
 
-  // Constantes para tamaño del panel de filtro
-  const PANEL_W = 240; // w-60 = 15rem = 240px
-  const PANEL_H = 320; // alto estimado suficiente
+  // Tamaño del panel de filtro
+  const PANEL_W = 240;
+  const PANEL_H = 320;
 
   const getValoresUnicos = (campo) => {
     const search = (busquedas[campo] || "").toLowerCase();
@@ -84,21 +73,18 @@ const Manejo_personal_agro = () => {
     );
   };
 
-  // ⤵️ Reemplazo: misma firma, calcula posición segura sin salirse de la pantalla
+  // Muestra el filtro en una posición segura
   const toggleFiltro = (campo, e) => {
     const r = e.currentTarget.getBoundingClientRect();
     const scrollX = window.scrollX || window.pageXOffset;
     const scrollY = window.scrollY || window.pageYOffset;
 
-    // Por defecto, abrir debajo y alineado al icono
     let top = r.bottom + scrollY + 4;
     let left = r.left + scrollX;
 
-    // Si se sale por la derecha, muévelo hacia la izquierda
     const maxLeft = window.innerWidth - PANEL_W - 8 + scrollX;
     if (left > maxLeft) left = Math.max(8 + scrollX, maxLeft);
 
-    // Si se sale por abajo, ábrelo hacia arriba
     const maxTop = window.innerHeight - PANEL_H - 8 + scrollY;
     if (top > maxTop) top = r.top + scrollY - PANEL_H - 8;
 
@@ -142,6 +128,7 @@ const Manejo_personal_agro = () => {
         : b[campo]?.toString().localeCompare(a[campo]?.toString());
     });
 
+  // Cierra panel de filtro al hacer clic fuera
   useEffect(() => {
     const clickFuera = (e) => {
       if (filtroRef.current && !filtroRef.current.contains(e.target)) {
@@ -156,81 +143,35 @@ const Manejo_personal_agro = () => {
     <div className="flex">
       {/* Sidebar */}
       <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
-        {/* Logo fijo con sticky */}
         <div className="sticky top-0 mb-6 bg-green-600 z-10">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11 mx-auto" />
         </div>
 
-        {/* Iconos con scroll */}
+        {/* Menú navegación */}
         <div className="flex-1 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only">
-          {/* Icono activo */}
           <div className="relative">
             <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
             <button
               onClick={() => navigate("/Homeagro")}
-              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+            >
               <IconHome className="text-white w-11 h-11" />
             </button>
           </div>
 
-          {/* Navegación */}
-          <button
-            onClick={() => navigate("/Laboresagro")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
-            <IconClipboardList className="text-white w-11 h-11" />
-          </button>
-          <button
-            onClick={() => navigate("/Informesagro")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
-            <IconChartBar className="text-white w-11 h-11" />
-          </button>
-          <button
-            onClick={() => navigate("/Bodegaagro")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
-            <IconBox className="text-white w-11 h-11" />
-          </button>
-          <button
-            onClick={() => navigate("/variablesclimaticas")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
-            <IconCloudRain className="text-white w-11 h-11" />
-          </button>
-          <button
-            onClick={() => navigate("/maquinariaequipos")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
-            <IconTractor className="text-white w-11 h-11" />
-          </button>
-          <button
-            onClick={() => navigate("/manejopersonal")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
-            <IconUsersGroup className="text-white w-11 h-11" />
-          </button>
-          <button
-            onClick={() => navigate("/crearfinca")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
-            <IconPlant className="text-white w-11 h-11" />
-          </button>
-          <button
-            onClick={() => navigate("/crearlote")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
-            <IconFrame className="text-white w-11 h-11" />
-          </button>
-          <button
-            onClick={() => navigate("/produccionagro")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
-            <IconPlant2 className="text-white w-11 h-11" />
-          </button>
+          <button onClick={() => navigate("/Laboresagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconClipboardList className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/Informesagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconChartBar className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/Bodegaagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconBox className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/variablesclimaticas")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconCloudRain className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/maquinariaequipos")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconTractor className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/manejopersonal")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconUsersGroup className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/crearfinca")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconPlant className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/crearlote")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconFrame className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/produccionagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconPlant2 className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/cuadernocampo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconBook className="text-white w-11 h-11" /></button>
         </div>
 
-        {/* Botón perfil con tarjeta flotante */}
+        {/* Perfil */}
         <div className="relative mb-4 flex justify-center">
           <button
             id="btnPerfil"
@@ -245,27 +186,9 @@ const Manejo_personal_agro = () => {
               ref={tarjetaRef}
               className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
             >
-              <button
-                onClick={() => { setMostrarTarjeta(false); navigate("/ajustesagro"); }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-              >
-                <IconSettings className="w-5 h-5 mr-2 text-green-600" />
-                Ajustes
-              </button>
-              <button
-                onClick={() => { setMostrarTarjeta(false); navigate("/soporteagro"); }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-              >
-                <IconTool className="w-5 h-5 mr-2 text-green-600" />
-                Soporte
-              </button>
-              <button
-                onClick={() => { setMostrarTarjeta(false); navigate("/login"); }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
-              >
-                <IconLogout className="w-5 h-5 mr-2 text-red-600" />
-                Cerrar sesión
-              </button>
+              <button onClick={() => { setMostrarTarjeta(false); navigate("/ajustesagro"); }} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"><IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes</button>
+              <button onClick={() => { setMostrarTarjeta(false); navigate("/soporteagro"); }} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"><IconTool className="w-5 h-5 mr-2 text-green-600" /> Soporte</button>
+              <button onClick={() => { setMostrarTarjeta(false); navigate("/login"); }} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"><IconLogout className="w-5 h-5 mr-2 text-red-600" /> Cerrar sesión</button>
             </div>
           )}
         </div>
@@ -275,6 +198,7 @@ const Manejo_personal_agro = () => {
       <div className="flex-1 p-10 overflow-auto">
         <h1 className="text-3xl font-bold text-green-600 mb-6">Manejo personal</h1>
 
+        {/* Tabla de empleados */}
         <div className="overflow-x-auto rounded-lg shadow-lg relative">
           <table className="min-w-full text-base bg-white text-center">
             <thead className="bg-green-600 text-white font-bold">
@@ -282,7 +206,6 @@ const Manejo_personal_agro = () => {
                 {columnas.map((col, idx) => (
                   <th key={idx} className="p-4 border">
                     <div className="flex items-center justify-center gap-2">
-                      {/* Mostramos TELÉFONO con acento */}
                       <span>{col === "telefono" ? "TELÉFONO" : col.toUpperCase()}</span>
                       <button onClick={(e) => toggleFiltro(col, e)}>
                         <IconFilter className="w-4 h-4" />
@@ -306,6 +229,7 @@ const Manejo_personal_agro = () => {
             </tbody>
           </table>
 
+          {/* Panel de filtros */}
           {filtroActivo && (
             <div
               ref={filtroRef}
@@ -348,13 +272,12 @@ const Manejo_personal_agro = () => {
           )}
         </div>
 
+        {/* Botones de acciones */}
         <div className="flex justify-center gap-8 mt-8">
-          <button onClick={() => navigate("/registrarempleado")}
-           className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 text-lg font-semibold">
+          <button onClick={() => navigate("/registrarempleado")} className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 text-lg font-semibold">
             Registrar empleado
           </button>
-          <button onClick={() => navigate("/editarempleado")}
-          className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 text-lg font-semibold">
+          <button onClick={() => navigate("/editarempleado")} className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 text-lg font-semibold">
             Editar empleado
           </button>
           <button className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 text-lg font-semibold">

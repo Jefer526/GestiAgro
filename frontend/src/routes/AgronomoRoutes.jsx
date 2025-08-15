@@ -27,6 +27,7 @@ import Soporte_agro from "../pages/agronomo/Soporte_agro";
 import Ajustes_agro from "../pages/agronomo/Ajustes_agro";
 import Detalle_mantenimiento from "../pages/agronomo/Detalle_mantenimiento";
 import Produccion_agro from "../pages/agronomo/Produccion_agro";
+import Cuaderno_campo_agro from "../pages/agronomo/Cuaderno_campo_agro";
 
 const agronomoRoutes = [
   <Route key="home" path="/Homeagro" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Home_agro /></ProtectedRoute>} />,
