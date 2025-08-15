@@ -46,25 +46,30 @@ const Editar_roluser = () => {
   const [avisoPwd, setAvisoPwd] = useState("");
 
   const manejarGenerarYEnviar = async () => {
-    try {
-      setEnviandoCorreo(true);
-      setAvisoPwd("");
-      const { data } = await accountsApi.sendTempPassword(usuario.id);
-      setUsuario((prev) => ({
-        ...prev,
-        tiene_password: data.tiene_password,
-      }));
-      setAvisoPwd("Contraseña temporal generada y enviada al correo.");
-      setTimeout(() => setAvisoPwd(""), 4000);
-    } catch (error) {
-      console.error("Error al generar contraseña:", error);
-      setAvisoPwd("Error al enviar la contraseña temporal.");
-      setTimeout(() => setAvisoPwd(""), 4000);
-    } finally {
-      setEnviandoCorreo(false);
-    }
-  };
+  try {
+    setEnviandoCorreo(true);
+    setAvisoPwd("");
 
+    // Llamada a la API para generar y enviar la contraseña
+    await accountsApi.sendTempPassword(usuario.id);
+
+    // 🔹 Forzar el cambio inmediato en el estado
+    setUsuario((prev) => ({
+      ...prev,
+      tiene_password: true,
+    }));
+
+    // Mensaje de confirmación
+    setAvisoPwd("Contraseña temporal generada y enviada al correo.");
+    setTimeout(() => setAvisoPwd(""), 4000);
+  } catch (error) {
+    console.error("Error al generar contraseña:", error);
+    setAvisoPwd("Error al enviar la contraseña temporal.");
+    setTimeout(() => setAvisoPwd(""), 4000);
+  } finally {
+    setEnviandoCorreo(false);
+  }
+};
   // Función para normalizar texto y quitar tildes
   const normalizarRol = (rol) => {
     if (!rol) return "";
@@ -302,13 +307,7 @@ const Editar_roluser = () => {
               <option value="agronomo">Agrónomo</option>
               <option value="mayordomo">Mayordomo</option>
             </select>
-            <button
-              type="button"
-              onClick={() => alert("Aquí se añadirá otro rol")}
-              className="mt-3 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold shadow"
-            >
-              <IconPlus className="w-5 h-5" /> Añadir otro rol
-            </button>
+            
           </div>
 
           {/* Guardar */}
