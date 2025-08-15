@@ -21,23 +21,6 @@ import Cuaderno_campom from "../pages/mayordomo/Cuaderno_campom";
 import Detalle_mantenimientom from "../pages/mayordomo/Detalle_mantenimientom";
 
 const mayordomoRoutes = [
-<<<<<<< HEAD
-  <Route key="home" path="/homemayordomo" element={<ProtectedRoute allowedRoles={["admin", "mayordomo"]}><Home_mayo /></ProtectedRoute>} />,
-  <Route key="registro-labores" path="/registrolabores" element={<ProtectedRoute allowedRoles={["admin", "mayordomo"]}><Regis_labores /></ProtectedRoute>} />,
-  <Route key="historial-labores" path="/historial_labores" element={<ProtectedRoute allowedRoles={["admin", "mayordomo"]}><Historial_labor /></ProtectedRoute>} />,
-  <Route key="bodega-insumos" path="/bodega_insumos" element={<ProtectedRoute allowedRoles={["admin", "mayordomo"]}><Bodega_insu /></ProtectedRoute>} />,
-  <Route key="detalle-producto" path="/detalle_producto" element={<ProtectedRoute allowedRoles={["admin", "mayordomo"]}><Detalle_produc /></ProtectedRoute>} />,
-  <Route key="variables-clima" path="/variables_climaticasm" element={<ProtectedRoute allowedRoles={["admin", "mayordomo"]}><Variables_climam /></ProtectedRoute>} />,
-  <Route key="registrar-clima" path="/registrar_climam" element={<ProtectedRoute allowedRoles={["admin", "mayordomo"]}><Registrar_vclima /></ProtectedRoute>} />,
-  <Route key="informes-mayor" path="/informes_mayordomo" element={<ProtectedRoute allowedRoles={["admin", "mayordomo"]}><Informes_mayor /></ProtectedRoute>} />,
-  <Route key="equipos" path="/equipos_mayordomo" element={<ProtectedRoute allowedRoles={["admin", "mayordomo"]}><Equipos_mayor /></ProtectedRoute>} />,
-  <Route key="hoja-vida" path="/hoja_vidam" element={<ProtectedRoute allowedRoles={["admin", "mayordomo"]}><Hoja_vidam /></ProtectedRoute>} />,
-  <Route key="registrar-novedadhoja" path="/registrar_novedad_hoja" element={<ProtectedRoute allowedRoles={["admin", "mayordomo"]}><Registrar_novedad_hoja /></ProtectedRoute>} />,
-  <Route key="historial-trabajo" path="/historial_trabajom" element={<ProtectedRoute allowedRoles={["admin", "mayordomo"]}><Historial_trabajom /></ProtectedRoute>} />,
-  <Route key="regisnovedad" path="/registrar_novedadm" element={<ProtectedRoute allowedRoles={["admin", "mayordomo"]}><Registrar_novedad /></ProtectedRoute>} />,
-  <Route key="soporte-mayordomo" path="/soportemayordomo" element={<ProtectedRoute allowedRoles={["admin", "mayordomo"]}><Soporte_mayordomo /></ProtectedRoute>} />,
-  <Route key="ajustes-mayordomo" path="/ajustesmayordomo" element={<ProtectedRoute allowedRoles={["admin", "mayordomo"]}><Ajustes_mayordomo /></ProtectedRoute>} />,
-=======
   <Route key="home" path="/homemayordomo" element={<Home_mayo />} />,
   <Route key="registro-labores" path="/registrolabores" element={<Regis_labores />} />,
   <Route key="historial-labores" path="/historial_labores" element={<Historial_labor />} />,
@@ -56,7 +39,6 @@ const mayordomoRoutes = [
   <Route key="Produccion-mayor" path="/produccion_mayor" element={<Produccion_mayor />} />,
   <Route key="cuaderno-campom" path="/cuaderno_campom" element={<Cuaderno_campom />} />,
   <Route key="detalle-mantenimientom" path="/detalle_mantenimientom" element={<Detalle_mantenimientom />} />,
->>>>>>> Leonardo
 ];
 
 export default mayordomoRoutes;

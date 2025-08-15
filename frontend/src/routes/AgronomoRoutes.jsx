@@ -56,6 +56,7 @@ const agronomoRoutes = [
   <Route key="ajustes-agro" path="/ajustesagro" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Ajustes_agro /></ProtectedRoute>} />,
   <Route key="detalle-mantenimiento" path="/detalle_mantenimiento" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Detalle_mantenimiento /></ProtectedRoute>} />,
   <Route key="produccion-agro" path="/produccionagro" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Produccion_agro /></ProtectedRoute>} />,
+  <Route key="cuaderno-campo-agro" path="/cuadernocampo" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Cuaderno_campo_agro /></ProtectedRoute>} />,
 ];
 
 export default agronomoRoutes;

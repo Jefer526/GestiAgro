@@ -39,9 +39,6 @@ const Home_agro = () => {
     return () => document.removeEventListener("mousedown", clickFueraTarjeta);
   }, []);
 
-<<<<<<< HEAD
-  // Opciones de tarjetas del panel
-=======
   // 🔹 Función para cerrar sesión
   const handleLogout = () => {
     localStorage.removeItem("access");
@@ -51,7 +48,6 @@ const Home_agro = () => {
     navigate("/login");
   };
 
->>>>>>> d3d306c5d4cdd9e62c051796d7aacac87687d14a
   const opciones = [
     {
       icon: <IconClipboardList className="w-8 h-8" />,
@@ -279,8 +275,3 @@ const Home_agro = () => {
 };
 
 export default Home_agro;
-<<<<<<< HEAD
-
-
-=======
->>>>>>> d3d306c5d4cdd9e62c051796d7aacac87687d14a
