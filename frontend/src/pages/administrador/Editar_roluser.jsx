@@ -46,41 +46,6 @@ const Editar_roluser = () => {
   const [avisoPwd, setAvisoPwd] = useState("");
 
   const manejarGenerarYEnviar = async () => {
-<<<<<<< HEAD
-  try {
-    setEnviandoCorreo(true);
-    setAvisoPwd("");
-
-    // Llamada a la API para generar y enviar la contraseña
-    await accountsApi.sendTempPassword(usuario.id);
-
-    // 🔹 Forzar el cambio inmediato en el estado
-    setUsuario((prev) => ({
-      ...prev,
-      tiene_password: true,
-    }));
-
-    // Mensaje de confirmación
-    setAvisoPwd("Contraseña temporal generada y enviada al correo.");
-    setTimeout(() => setAvisoPwd(""), 4000);
-  } catch (error) {
-    console.error("Error al generar contraseña:", error);
-    setAvisoPwd("Error al enviar la contraseña temporal.");
-    setTimeout(() => setAvisoPwd(""), 4000);
-  } finally {
-    setEnviandoCorreo(false);
-  }
-};
-  // Función para normalizar texto y quitar tildes
-  const normalizarRol = (rol) => {
-    if (!rol) return "";
-    return rol
-      .toString()
-      .trim()
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, ""); // Quitar tildes
-=======
     try {
       setEnviandoCorreo(true);
       setAvisoPwd("");
@@ -98,7 +63,6 @@ const Editar_roluser = () => {
     } finally {
       setEnviandoCorreo(false);
     }
->>>>>>> 5c861172 (Gestion de roles corregida)
   };
 
   // Función para normalizar texto y quitar tildes

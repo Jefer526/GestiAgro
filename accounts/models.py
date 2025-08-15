@@ -30,6 +30,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     nombre = models.CharField(max_length=150)
     telefono = models.CharField(max_length=20, blank=True, null=True)
 <<<<<<< HEAD
+<<<<<<< HEAD
     rol = models.CharField(max_length=20, choices=ROLES, default="agronomo")
     is_demo = models.BooleanField(default=True)
 
@@ -56,6 +57,24 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     ),    default='agronomo',)
    
 >>>>>>> 5c861172 (Gestion de roles corregida)
+=======
+    rol = models.CharField(max_length=20, choices=ROLES, default="agronomo")
+    is_demo = models.BooleanField(default=True)
+
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["nombre"]
+
+    objects = CustomUserManager()
+
+    def save(self, *args, **kwargs):
+        # Si es demo pero ya tiene contraseña usable, lo marcamos como no demo
+        if self.is_demo and self.has_usable_password():
+            self.is_demo = False
+        super().save(*args, **kwargs)
+>>>>>>> a07fe04b (Limpieza apps y BD)
 
     def __str__(self):
         return f"{self.nombre} ({self.rol})"
