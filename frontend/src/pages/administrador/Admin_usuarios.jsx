@@ -37,6 +37,33 @@ const Admin_usuarios = () => {
 
   const columnas = ["nombre_completo", "telefono", "rol", "email", "estado"];
 
+  // Función para capitalizar
+  // Función para capitalizar con excepciones
+const capitalizar = (texto) => {
+  if (!texto) return "";
+
+  const excepciones = {
+    agronomo: "Agrónomo",
+    mayordomo: "Mayordomo",
+    admin: "Admin",
+    administrador: "Administrador",
+    superusuario: "Superusuario",
+    usuario: "Usuario",
+  };
+
+  const normalizado = texto.toLowerCase().trim();
+  if (excepciones[normalizado]) {
+    return excepciones[normalizado];
+  }
+
+  return texto
+    .split(" ")
+    .map((p) => p.charAt(0).toUpperCase() + p.slice(1).toLowerCase())
+    .join(" ");
+};
+
+
+
   // Cargar usuarios
   useEffect(() => {
     (async () => {
@@ -47,12 +74,20 @@ const Admin_usuarios = () => {
           nombre_completo:
             `${u.first_name || ""} ${u.last_name || ""}`.trim() || "(sin nombre)",
           telefono: u.telefono || "",
-          rol: u.is_superuser ? "Superusuario" : u.is_staff ? "Administrador" : "Usuario",
+          rol: capitalizar(
+            u.rol ||
+              (u.is_superuser
+                ? "superusuario"
+                : u.is_staff
+                ? "administrador"
+                : "usuario")
+          ),
           email: u.email || "",
           is_active: !!u.is_active,
           estado: u.is_active ? "Activo" : "Inactivo",
           _raw: u,
         }));
+
         setUsuarios(lista);
       } catch (err) {
         console.error("Error al obtener usuarios (accounts):", err);
@@ -73,15 +108,20 @@ const Admin_usuarios = () => {
 
   const getValoresUnicos = (campo) => {
     const search = (busquedas[campo] || "").toLowerCase();
-    return [...new Set(usuarios.map((e) => (e[campo] ?? "").toString()))].filter((v) =>
-      v.toLowerCase().includes(search)
+    return [...new Set(usuarios.map((e) => (e[campo] ?? "").toString()))].filter(
+      (v) => v.toLowerCase().includes(search)
     );
   };
 
   const toggleValor = (campo, valor) => {
     const seleccionados = new Set(valoresSeleccionados[campo] || []);
-    seleccionados.has(valor) ? seleccionados.delete(valor) : seleccionados.add(valor);
-    setValoresSeleccionados({ ...valoresSeleccionados, [campo]: [...seleccionados] });
+    seleccionados.has(valor)
+      ? seleccionados.delete(valor)
+      : seleccionados.add(valor);
+    setValoresSeleccionados({
+      ...valoresSeleccionados,
+      [campo]: [...seleccionados],
+    });
   };
 
   const limpiarFiltro = (campo) => {
@@ -91,9 +131,6 @@ const Admin_usuarios = () => {
   };
 
   const ordenar = (campo, orden) => setOrdenCampo({ campo, orden });
-
-  const handleBusqueda = (campo, texto) =>
-    setBusquedas({ ...busquedas, [campo]: texto });
 
   const datosFiltrados = usuarios
     .filter((item) =>
@@ -191,45 +228,36 @@ const Admin_usuarios = () => {
   };
 
   // Activar / Inactivar usuario
-const handleToggleActivo = async (id_usuario) => {
-  const u = usuarios.find((x) => x.id_usuario === id_usuario);
-  if (!u) return;
+  const handleToggleActivo = async (id_usuario) => {
+    const u = usuarios.find((x) => x.id_usuario === id_usuario);
+    if (!u) return;
+    if (u.is_superuser) {
+      alert("No puedes desactivar al superusuario principal.");
+      return;
+    }
+    const accion = u.is_active ? "inactivar" : "activar";
+    const ok = window.confirm(`¿Seguro que deseas ${accion} este usuario?`);
+    if (!ok) return;
+    try {
+      const res = await api.patch(
+        `${ENDPOINTS.users}${id_usuario}/toggle-active/`,
+        {}
+      );
+      const nuevoActivo = !!res.data?.is_active;
+      setUsuarios((prev) =>
+        prev.map((it) =>
+          it.id_usuario === id_usuario
+            ? { ...it, is_active: nuevoActivo, estado: nuevoActivo ? "Activo" : "Inactivo" }
+            : it
+        )
+      );
+      setMenuAbiertoId(null);
+    } catch (err) {
+      console.error("Error al cambiar estado:", err);
+      alert(err.response?.data?.detail || "No se pudo cambiar el estado del usuario.");
+    }
+  };
 
-  // 🚫 Protección: no permitir desactivar superusuario
-  if (u.is_superuser) {
-    alert("No puedes desactivar al superusuario principal.");
-    return;
-  }
-
-  const accion = u.is_active ? "inactivar" : "activar";
-  const ok = window.confirm(`¿Seguro que deseas ${accion} este usuario?`);
-  if (!ok) return;
-
-  try {
-    const res = await api.patch(
-      `${ENDPOINTS.users}${id_usuario}/toggle-active/`,
-      {}
-    );
-    const nuevoActivo = !!res.data?.is_active;
-    setUsuarios((prev) =>
-      prev.map((it) =>
-        it.id_usuario === id_usuario
-          ? { ...it, is_active: nuevoActivo, estado: nuevoActivo ? "Activo" : "Inactivo" }
-          : it
-      )
-    );
-    setMenuAbiertoId(null);
-  } catch (err) {
-    console.error("Error al cambiar estado:", err);
-
-    if (err.response?.data?.detail) {
-    alert(err.response.data.detail);
-  } else {
-    alert("No se pudo cambiar el estado del usuario.");
-  }
-
-  }
-};
 
 
   return (

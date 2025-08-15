@@ -34,6 +34,15 @@ const Home_agro = () => {
     return () => document.removeEventListener("mousedown", clickFueraTarjeta);
   }, []);
 
+  // 🔹 Función para cerrar sesión
+  const handleLogout = () => {
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
+    localStorage.removeItem("user"); // si guardas datos de usuario
+    sessionStorage.clear(); // por si usas sessionStorage
+    navigate("/login");
+  };
+
   const opciones = [
     {
       icon: <IconClipboardList className="w-8 h-8" />,
@@ -176,7 +185,6 @@ const Home_agro = () => {
           </button>
         </div>
 
-
         {/* Perfil */}
         <div className="relative mb-4 mt-auto">
           <button
@@ -196,7 +204,11 @@ const Home_agro = () => {
               <button onClick={() => navigate("/soporteagro")} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
                 <IconTool className="w-5 h-5 mr-2 text-green-600" /> Soporte
               </button>
-              <button onClick={() => navigate("/login")} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600">
+              {/* 🔹 Cerrar sesión con limpieza de datos */}
+              <button
+                onClick={handleLogout}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
+              >
                 <IconLogout className="w-5 h-5 mr-2 text-red-600" /> Cerrar sesión
               </button>
             </div>
@@ -208,7 +220,7 @@ const Home_agro = () => {
       <div className="flex-1 p-10">
         <h1 className="text-3xl font-bold text-green-700 mb-6">Panel principal</h1>
 
-        {/* Banner igual a Home_adm */}
+        {/* Banner */}
         <div className="bg-gradient-to-r from-green-600 to-emerald-500 text-white px-6 py-5 rounded-2xl w-full max-w-3xl mb-10 shadow-lg">
           <p className="text-3xl font-semibold">¡Bienvenido!</p>
           <p className="opacity-90 text-lg">Accede rápidamente a las secciones.</p>
@@ -249,4 +261,3 @@ const Home_agro = () => {
 };
 
 export default Home_agro;
-
