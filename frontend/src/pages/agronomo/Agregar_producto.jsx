@@ -86,7 +86,8 @@ const Agregar_producto = () => {
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11 mx-auto" />
         </div>
 
-        {/* Navegación */}
+        {/* Navegación aa*/}
+        {/* Navegación aa*/}
         <div className="flex-1 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only">
           {/* Icono activo */}
           <div className="relative">
