@@ -12,7 +12,9 @@ import {
   IconLogout,
   IconBook,
   IconPlant2,
-  IconLock
+  IconLock,
+  IconCheck,
+  IconAlertTriangle
 } from "@tabler/icons-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
@@ -30,10 +32,17 @@ const Ajustes_mayordomo = () => {
   // Estados
   const [notificaciones, setNotificaciones] = useState(true);
   const [modoOscuro, setModoOscuro] = useState(false);
-  const [nuevaContrasena, setNuevaContrasena] = useState("");
-
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
   const tarjetaRef = useRef(null);
+
+  // Estados para cambio de contraseña
+  const [mostrarCambioPass, setMostrarCambioPass] = useState(false);
+  const [actualPass, setActualPass] = useState("");
+  const [nuevaPass, setNuevaPass] = useState("");
+  const [confirmarPass, setConfirmarPass] = useState("");
+
+  // Alerta flotante
+  const [alerta, setAlerta] = useState({ visible: false, tipo: "", mensaje: "" });
 
   useEffect(() => {
     const manejarClickFuera = (e) => {
@@ -45,14 +54,48 @@ const Ajustes_mayordomo = () => {
     return () => document.removeEventListener("mousedown", manejarClickFuera);
   }, []);
 
-  const handleCambiarContrasena = () => {
-    if (!nuevaContrasena.trim()) return;
-    alert("Contraseña cambiada (demo).");
-    setNuevaContrasena("");
+  const mostrarAlerta = (tipo, mensaje) => {
+    setAlerta({ visible: true, tipo, mensaje });
+    setTimeout(() => {
+      setAlerta({ visible: false, tipo: "", mensaje: "" });
+    }, 2000);
+  };
+
+  const guardarCambioContrasena = () => {
+    if (!actualPass.trim() || !nuevaPass.trim() || !confirmarPass.trim()) {
+      mostrarAlerta("error", "Por favor, completa todos los campos.");
+      return;
+    }
+    if (nuevaPass !== confirmarPass) {
+      mostrarAlerta("error", "La nueva contraseña y la confirmación no coinciden.");
+      return;
+    }
+    // Aquí iría la lógica para enviar al backend
+    mostrarAlerta("exito", "Contraseña cambiada con éxito");
+    setActualPass("");
+    setNuevaPass("");
+    setConfirmarPass("");
+    setMostrarCambioPass(false);
   };
 
   return (
     <div className="min-h-[100dvh] bg-[#f6f6f6]">
+      {/* Alerta flotante siempre visible por encima */}
+      {alerta.visible && (
+        <div
+          className={`fixed top-3 left-1/2 -translate-x-1/2 z-[99999] px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold transition-all duration-300 ${
+            alerta.tipo === "exito" ? "bg-green-600 text-white" : "bg-red-600 text-white"
+          }`}
+        >
+          {alerta.tipo === "exito" ? (
+            <IconCheck className="w-5 h-5" />
+          ) : (
+            <IconAlertTriangle className="w-5 h-5" />
+          )}
+          {alerta.mensaje}
+        </div>
+      )}
+
       {/* Sidebar */}
       <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col justify-between">
         {/* Logo */}
@@ -66,12 +109,12 @@ const Ajustes_mayordomo = () => {
             { path: "/homemayordomo", icon: IconHome },
             { path: "/registrolabores", icon: IconClipboardList },
             { path: "/historial_labores", icon: IconHistory },
+            { path: "/cuaderno_campom", icon: IconBook },
+            { path: "/produccion_mayor", icon: IconPlant2 },
             { path: "/bodega_insumos", icon: IconBox },
             { path: "/variables_climaticasm", icon: IconCloudRain },
             { path: "/informes_mayordomo", icon: IconChartBar },
-            { path: "/equipos_mayordomo", icon: IconTractor },
-            { path: "/produccion_mayor", icon: IconPlant2 },
-            { path: "/cuaderno_campom", icon: IconBook }
+            { path: "/equipos_mayordomo", icon: IconTractor }
           ].map(({ path, icon: IconComp }) => (
             <div className="relative" key={path}>
               {location.pathname === path && (
@@ -131,24 +174,15 @@ const Ajustes_mayordomo = () => {
             </div>
           </div>
 
-          {/* Cambiar contraseña */}
+          {/* Botón para abrir modal de cambio de contraseña */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Cambiar contraseña</label>
-            <div className="flex space-x-2">
-              <input
-                type="password"
-                placeholder="Nueva contraseña"
-                value={nuevaContrasena}
-                onChange={(e) => setNuevaContrasena(e.target.value)}
-                className="flex-1 border border-gray-300 rounded px-4 py-2"
-              />
-              <button
-                onClick={handleCambiarContrasena}
-                className="bg-green-600 text-white px-4 rounded hover:bg-green-700 flex items-center"
-              >
-                <IconLock className="w-5 h-5 mr-1" /> Cambiar
-              </button>
-            </div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
+            <button
+              onClick={() => setMostrarCambioPass(true)}
+              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 flex items-center"
+            >
+              <IconLock className="w-5 h-5 mr-1" /> Cambiar contraseña
+            </button>
           </div>
 
           {/* Notificaciones */}
@@ -174,8 +208,53 @@ const Ajustes_mayordomo = () => {
           </div>
         </div>
       </main>
+
+      {/* Modal cambio de contraseña */}
+      {mostrarCambioPass && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[20000]">
+          <div className="bg-white rounded-xl p-6 w-full max-w-sm shadow-lg">
+            <h2 className="text-xl font-semibold text-green-600 mb-4">Cambiar contraseña</h2>
+            <input
+              type="password"
+              placeholder="Contraseña actual"
+              value={actualPass}
+              onChange={(e) => setActualPass(e.target.value)}
+              className="w-full border border-gray-300 rounded px-4 py-2 mb-3"
+            />
+            <input
+              type="password"
+              placeholder="Nueva contraseña"
+              value={nuevaPass}
+              onChange={(e) => setNuevaPass(e.target.value)}
+              className="w-full border border-gray-300 rounded px-4 py-2 mb-3"
+            />
+            <input
+              type="password"
+              placeholder="Confirmar nueva contraseña"
+              value={confirmarPass}
+              onChange={(e) => setConfirmarPass(e.target.value)}
+              className="w-full border border-gray-300 rounded px-4 py-2 mb-4"
+            />
+            <div className="flex justify-end space-x-2">
+              <button
+                onClick={() => setMostrarCambioPass(false)}
+                className="px-4 py-2 rounded border border-gray-300 hover:bg-gray-100"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={guardarCambioContrasena}
+                className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+              >
+                Guardar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 export default Ajustes_mayordomo;
+
