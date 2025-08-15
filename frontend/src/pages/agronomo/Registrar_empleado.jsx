@@ -16,19 +16,20 @@ import {
   IconTool,
   IconLogout,
   IconPlant2,
+  IconBook,
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
 const Registrar_empleado = () => {
   const navigate = useNavigate();
   const [alertaVisible, setAlertaVisible] = useState(false);
-
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
   const tarjetaRef = useRef(null);
 
   const nombreUsuario = "Juan Pérez";
   const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
 
+  // Cierra la tarjeta si se hace clic fuera
   useEffect(() => {
     const manejarClickFuera = (e) => {
       if (tarjetaRef.current && !tarjetaRef.current.contains(e.target)) {
@@ -52,10 +53,12 @@ const Registrar_empleado = () => {
     <div className="flex">
       {/* Sidebar */}
       <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
+        {/* Logo */}
         <div className="sticky top-0 mb-6 bg-green-600 z-10">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11 mx-auto" />
         </div>
 
+        {/* Navegación */}
         <div className="flex-1 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only">
           <div className="relative">
             <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
@@ -94,8 +97,12 @@ const Registrar_empleado = () => {
           <button onClick={() => navigate("/produccionagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
             <IconPlant2 className="text-white w-11 h-11" />
           </button>
+          <button onClick={() => navigate("/cuadernocampo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+            <IconBook className="text-white w-11 h-11" />
+          </button>
         </div>
 
+        {/* Perfil */}
         <div className="relative mb-4 flex justify-center">
           <button
             onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
@@ -116,8 +123,7 @@ const Registrar_empleado = () => {
                 }}
                 className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
               >
-                <IconSettings className="w-5 h-5 mr-2 text-green-600" />
-                Ajustes
+                <IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes
               </button>
               <button
                 onClick={() => {
@@ -126,8 +132,7 @@ const Registrar_empleado = () => {
                 }}
                 className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
               >
-                <IconTool className="w-5 h-5 mr-2 text-green-600" />
-                Soporte
+                <IconTool className="w-5 h-5 mr-2 text-green-600" /> Soporte
               </button>
               <button
                 onClick={() => {
@@ -136,15 +141,14 @@ const Registrar_empleado = () => {
                 }}
                 className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
               >
-                <IconLogout className="w-5 h-5 mr-2 text-red-600" />
-                Cerrar sesión
+                <IconLogout className="w-5 h-5 mr-2 text-red-600" /> Cerrar sesión
               </button>
             </div>
           )}
         </div>
       </div>
 
-      {/* Contenido principal */}
+      {/* Contenido */}
       <div className="flex-1 p-10 overflow-auto relative bg-gray-50">
         {alertaVisible && (
           <div className="fixed top-3 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
@@ -152,6 +156,7 @@ const Registrar_empleado = () => {
           </div>
         )}
 
+        {/* Botón volver */}
         <button
           onClick={() => navigate("/manejopersonal")}
           className="flex items-center text-green-700 font-semibold mb-6 hover:underline"
@@ -159,28 +164,18 @@ const Registrar_empleado = () => {
           <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
         </button>
 
-        {/* MISMO ancho que Actualizar_estado */}
+        {/* Formulario */}
         <div className="bg-white border-2 border-green-200 rounded-lg w-full max-w-4xl md:max-w-[56rem] mx-auto px-8 py-8 shadow-lg">
           <h1 className="text-3xl font-bold text-green-600 mb-6">Registrar empleado</h1>
 
           <form onSubmit={manejarGuardar} className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block font-bold text-gray-700 mb-2">Nombre completo</label>
-              <input
-                type="text"
-                className="w-full border rounded px-4 py-3"
-                placeholder="Juan Pérez"
-                required
-              />
+              <input type="text" className="w-full border rounded px-4 py-3" placeholder="Juan Pérez" required />
             </div>
             <div>
               <label className="block font-bold text-gray-700 mb-2">Cargo</label>
-              <input
-                type="text"
-                className="w-full border rounded px-4 py-3"
-                placeholder="Operario de campo"
-                required
-              />
+              <input type="text" className="w-full border rounded px-4 py-3" placeholder="Operario de campo" required />
             </div>
             <div>
               <label className="block font-bold text-gray-700 mb-2">Estado</label>
@@ -201,19 +196,11 @@ const Registrar_empleado = () => {
             </div>
             <div>
               <label className="block font-bold text-gray-700 mb-2">Teléfono</label>
-              <input
-                type="text"
-                className="w-full border rounded px-4 py-3"
-                placeholder="3124567890"
-                required
-              />
+              <input type="text" className="w-full border rounded px-4 py-3" placeholder="3124567890" required />
             </div>
 
             <div className="md:col-span-2 flex justify-center mt-4">
-              <button
-                type="submit"
-                className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg text-lg font-semibold"
-              >
+              <button type="submit" className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg text-lg font-semibold">
                 Guardar empleado
               </button>
             </div>
@@ -225,6 +212,7 @@ const Registrar_empleado = () => {
 };
 
 export default Registrar_empleado;
+
 
 
 

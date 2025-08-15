@@ -17,6 +17,7 @@ import {
   IconEyeOff,
   IconX,
   IconPlant2,
+  IconBook,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
@@ -24,17 +25,23 @@ import faviconBlanco from "../../assets/favicon-blanco.png";
 const Ajustes_agro = () => {
   const navigate = useNavigate();
 
-  // Perfil (mock)
+  /* ----------------------------------
+     📌 DATOS USUARIO (mock)
+  ---------------------------------- */
   const [nombreUsuario] = useState("Juan Pérez");
   const [rolUsuario] = useState("Ing. Agrónomo");
   const [correoUsuario] = useState("juan.perez@gestiagro.com");
   const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
 
-  // Preferencias
+  /* ----------------------------------
+     📌 PREFERENCIAS
+  ---------------------------------- */
   const [notificaciones, setNotificaciones] = useState(true);
   const [modoOscuro, setModoOscuro] = useState(false);
 
-  // Tarjeta perfil (sidebar)
+  /* ----------------------------------
+     📌 TARJETA PERFIL (sidebar)
+  ---------------------------------- */
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
   const tarjetaRef = useRef(null);
   useEffect(() => {
@@ -47,7 +54,9 @@ const Ajustes_agro = () => {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Modal Cambiar contraseña
+  /* ----------------------------------
+     📌 MODAL CAMBIAR CONTRASEÑA
+  ---------------------------------- */
   const [openPwd, setOpenPwd] = useState(false);
   const [show1, setShow1] = useState(false);
   const [show2, setShow2] = useState(false);
@@ -87,31 +96,26 @@ const Ajustes_agro = () => {
     }, 1200);
   };
 
+  /* ----------------------------------
+     📌 RENDER
+  ---------------------------------- */
   return (
     <div className="flex">
-      {/* Sidebar — idéntico al de las otras pantallas */}
+      {/* ---------------------- SIDEBAR ---------------------- */}
       <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
-        {/* Logo fijo */}
+        {/* Logo */}
         <div className="sticky top-0 mb-6 bg-green-600 z-10">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11 mx-auto" />
         </div>
 
-        {/* Iconos con scroll */}
+        {/* Navegación */}
         <div className="flex-1 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only">
-          {/* Indicador (puedes moverlo a Ajustes si prefieres) */}
           <div className="relative">
             <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            <button
-              onClick={() => navigate("/Homeagro")}
-              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-              aria-label="Inicio"
-              title="Inicio"
-            >
+            <button onClick={() => navigate("/Homeagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Inicio">
               <IconHome className="text-white w-11 h-11" />
             </button>
           </div>
-
-          {/* Navegación */}
           <button onClick={() => navigate("/Laboresagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Labores">
             <IconClipboardList className="text-white w-11 h-11" />
           </button>
@@ -136,19 +140,19 @@ const Ajustes_agro = () => {
           <button onClick={() => navigate("/crearlote")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Crear Lote">
             <IconFrame className="text-white w-11 h-11" />
           </button>
-          <button onClick={() => navigate("/produccionagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Crear Lote">
+          <button onClick={() => navigate("/produccionagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Producción">
             <IconPlant2 className="text-white w-11 h-11" />
+          </button>
+          <button onClick={() => navigate("/cuadernocampo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Cuaderno de Campo">
+            <IconBook className="text-white w-11 h-11" />
           </button>
         </div>
 
-        {/* Perfil al fondo */}
+        {/* Perfil */}
         <div className="relative mb-4 mt-auto">
           <button
             onClick={() => setMostrarTarjeta((v) => !v)}
             className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
-            aria-haspopup="menu"
-            aria-expanded={mostrarTarjeta}
-            title="Perfil"
           >
             {letraInicial}
           </button>
@@ -156,27 +160,14 @@ const Ajustes_agro = () => {
             <div
               ref={tarjetaRef}
               className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
-              role="menu"
             >
-              <button
-                onClick={() => navigate("/ajustesagro")}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-                role="menuitem"
-              >
+              <button onClick={() => navigate("/ajustesagro")} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
                 <IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes
               </button>
-              <button
-                onClick={() => navigate("/soporteagro")}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-                role="menuitem"
-              >
+              <button onClick={() => navigate("/soporteagro")} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
                 <IconTool className="w-5 h-5 mr-2 text-green-600" /> Soporte
               </button>
-              <button
-                onClick={() => navigate("/")}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-red-50 text-red-600"
-                role="menuitem"
-              >
+              <button onClick={() => navigate("/")} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-red-50 text-red-600">
                 <IconLogout className="w-5 h-5 mr-2 text-red-600" /> Cerrar sesión
               </button>
             </div>
@@ -184,7 +175,7 @@ const Ajustes_agro = () => {
         </div>
       </div>
 
-      {/* Contenido principal */}
+      {/* ---------------------- CONTENIDO PRINCIPAL ---------------------- */}
       <div className="flex-1 p-8">
         <h1 className="text-3xl font-bold text-green-600 mb-6">Perfil de la cuenta</h1>
 
@@ -207,50 +198,35 @@ const Ajustes_agro = () => {
               onClick={() => setOpenPwd(true)}
               className="inline-flex items-center gap-2 bg-green-600 text-white px-5 py-3 rounded-xl font-semibold hover:opacity-90"
             >
-              <IconLock className="w-5 h-5" />
-              Cambiar contraseña
+              <IconLock className="w-5 h-5" /> Cambiar contraseña
             </button>
           </div>
 
-          {/* Notificaciones */}
+          {/* Preferencias */}
           <div className="flex items-center justify-between">
             <label className="text-gray-700">Notificaciones</label>
-            <input
-              type="checkbox"
-              checked={notificaciones}
-              onChange={() => setNotificaciones(!notificaciones)}
-              className="h-5 w-5 accent-green-600"
-            />
+            <input type="checkbox" checked={notificaciones} onChange={() => setNotificaciones(!notificaciones)} className="h-5 w-5 accent-green-600" />
           </div>
 
-          {/* Tema oscuro */}
           <div className="flex items-center justify-between">
             <label className="text-gray-700">Tema oscuro</label>
-            <input
-              type="checkbox"
-              checked={modoOscuro}
-              onChange={() => setModoOscuro(!modoOscuro)}
-              className="h-5 w-5 accent-green-600"
-            />
+            <input type="checkbox" checked={modoOscuro} onChange={() => setModoOscuro(!modoOscuro)} className="h-5 w-5 accent-green-600" />
           </div>
         </div>
       </div>
 
-      {/* Modal Cambiar Contraseña */}
+      {/* ---------------------- MODAL CAMBIAR CONTRASEÑA ---------------------- */}
       {openPwd && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 px-4" aria-modal="true" role="dialog">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 px-4">
           <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl text-green-600 font-bold">Cambia tu contraseña</h2>
-              <button
-                onClick={() => { setOpenPwd(false); resetPwdForm(); }}
-                className="p-2 rounded-lg hover:bg-gray-100"
-                aria-label="Cerrar"
-              >
+              <button onClick={() => { setOpenPwd(false); resetPwdForm(); }} className="p-2 rounded-lg hover:bg-gray-100">
                 <IconX className="w-5 h-5" />
               </button>
             </div>
 
+            {/* Inputs */}
             <label className="block text-gray-600 mb-1">Contraseña actual</label>
             <div className="relative mb-4">
               <input
@@ -293,8 +269,10 @@ const Ajustes_agro = () => {
               </button>
             </div>
 
+            {/* Mensaje */}
             {msg && <div className="mb-4 text-sm text-gray-700">{msg}</div>}
 
+            {/* Botón */}
             <button onClick={handleCambiarPwd} className="w-full bg-green-600 text-white py-3 rounded-xl font-semibold hover:opacity-90">
               Cambiar contraseña
             </button>
@@ -306,4 +284,5 @@ const Ajustes_agro = () => {
 };
 
 export default Ajustes_agro;
+
 

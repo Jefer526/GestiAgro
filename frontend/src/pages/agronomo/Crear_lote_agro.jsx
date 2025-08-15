@@ -19,6 +19,7 @@ import {
   IconTool,
   IconLogout,
   IconPlant2,
+  IconBook,
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
@@ -26,32 +27,36 @@ const Crear_lote_agro = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // --- Datos base ---
   const [lotes, setLotes] = useState([
     { finca: "La Esmeralda", lote: "1", coordenadas: "2.42,-75.20", area: "3 ha", cultivo: "Macadamia" },
     { finca: "Las Palmas", lote: "2", coordenadas: "2.45,-75.22", area: "2.5 ha", cultivo: "Aguacate" },
   ]);
   const [formData, setFormData] = useState({ finca: "", lote: "", coordenadas: "", area: "", cultivo: "" });
 
+  // --- Filtros y búsqueda ---
   const [filtroActivo, setFiltroActivo] = useState(null);
   const [busquedas, setBusquedas] = useState({});
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
 
+  // --- Posiciones y visibilidad ---
   const [posicionTarjeta, setPosicionTarjeta] = useState({});
   const [visibleTarjeta, setVisibleTarjeta] = useState(null);
   const filtroRef = useRef(null);
 
   const columnas = ["finca", "lote", "coordenadas", "area", "cultivo"];
 
-  // Perfil
+  // --- Perfil de usuario ---
   const nombreUsuario = "Juan Pérez";
   const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
   const [mostrarTarjetaPerfil, setMostrarTarjetaPerfil] = useState(false);
   const tarjetaPerfilRef = useRef(null);
 
-  // Contenedor scrollable del sidebar
+  // --- Scroll del sidebar ---
   const iconListRef = useRef(null);
 
+  // Cerrar tarjetas y filtros al hacer click fuera
   useEffect(() => {
     const clickFuera = (e) => {
       if (filtroRef.current && !filtroRef.current.contains(e.target)) {
@@ -66,7 +71,7 @@ const Crear_lote_agro = () => {
     return () => document.removeEventListener("mousedown", clickFuera);
   }, []);
 
-  // Auto-scroll: lleva el contenedor al fondo si estás en /crearlote o /produccionagro
+  // Scroll automático según ruta
   useEffect(() => {
     if (!iconListRef.current) return;
     if (/(\/crearlote|\/produccionagro)\b/.test(location.pathname)) {
@@ -76,6 +81,7 @@ const Crear_lote_agro = () => {
     }
   }, [location.pathname]);
 
+  // --- Manejadores ---
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const agregarLote = () => {
@@ -129,7 +135,7 @@ const Crear_lote_agro = () => {
     setPosicionTarjeta({ top: boton.bottom + window.scrollY + 4, left: boton.left + window.scrollX });
   };
 
-  // Pequeño componente para cada icono del sidebar (mantiene spacing y dibuja el indicador activo)
+  // --- Componente ítem del sidebar ---
   const SidebarItem = ({ to, title, Icon, active }) => (
     <div className="relative">
       {active && <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />}
@@ -148,14 +154,14 @@ const Crear_lote_agro = () => {
 
   return (
     <div className="flex">
-      {/* Sidebar */}
+      {/* --- Sidebar --- */}
       <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
         {/* Logo */}
         <div className="sticky top-0 mb-6 bg-green-600 z-10">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11 mx-auto" />
         </div>
 
-        {/* Íconos con scroll (espaciado uniforme SIEMPRE) */}
+        {/* Lista de iconos */}
         <div
           ref={iconListRef}
           className="flex-1 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only pb-24"
@@ -168,9 +174,9 @@ const Crear_lote_agro = () => {
           <SidebarItem to="/maquinariaequipos" title="Maquinaria y equipos" Icon={IconTractor} active={false} />
           <SidebarItem to="/manejopersonal" title="Manejo personal" Icon={IconUsersGroup} active={false} />
           <SidebarItem to="/crearfinca" title="Gestión finca" Icon={IconPlant} active={false} />
-          {/* Cada uno en su contenedor, con su indicador activo propio */}
           <SidebarItem to="/crearlote" title="Gestión lote" Icon={IconFrame} active={isActive("/crearlote")} />
           <SidebarItem to="/produccionagro" title="Producción" Icon={IconPlant2} active={isActive("/produccionagro")} />
+          <SidebarItem to="/cuadernocampo" title="Cuaderno campo" Icon={IconBook} active={isActive("/cuadernocampo")} />
         </div>
 
         {/* Perfil */}
@@ -222,62 +228,32 @@ const Crear_lote_agro = () => {
         </div>
       </div>
 
-      {/* Contenido */}
+      {/* --- Contenido principal --- */}
       <div className="flex-1 p-10 overflow-auto">
         <h1 className="text-3xl font-bold text-green-700 mb-6">Crear lote</h1>
 
-        {/* Formulario */}
+        {/* Formulario de creación */}
         <div className="bg-white border border-gray-200 shadow-gray-300 p-6 rounded-lg shadow-md mb-10 max-w-5xl">
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
               <label className="font-bold block mb-1">Finca</label>
-              <input
-                name="finca"
-                value={formData.finca}
-                onChange={handleChange}
-                placeholder="Nombre finca"
-                className="w-full p-2 border rounded"
-              />
+              <input name="finca" value={formData.finca} onChange={handleChange} placeholder="Nombre finca" className="w-full p-2 border rounded" />
             </div>
             <div>
               <label className="font-bold block mb-1">Número de lote</label>
-              <input
-                name="lote"
-                value={formData.lote}
-                onChange={handleChange}
-                placeholder="Número"
-                className="w-full p-2 border rounded"
-              />
+              <input name="lote" value={formData.lote} onChange={handleChange} placeholder="Número" className="w-full p-2 border rounded" />
             </div>
             <div>
               <label className="font-bold block mb-1">Coordenadas</label>
-              <input
-                name="coordenadas"
-                value={formData.coordenadas}
-                onChange={handleChange}
-                placeholder="Coordenadas"
-                className="w-full p-2 border rounded"
-              />
+              <input name="coordenadas" value={formData.coordenadas} onChange={handleChange} placeholder="Coordenadas" className="w-full p-2 border rounded" />
             </div>
             <div>
               <label className="font-bold block mb-1">Área lote</label>
-              <input
-                name="area"
-                value={formData.area}
-                onChange={handleChange}
-                placeholder="Área"
-                className="w-full p-2 border rounded"
-              />
+              <input name="area" value={formData.area} onChange={handleChange} placeholder="Área" className="w-full p-2 border rounded" />
             </div>
-            <div className="col-span-1">
+            <div>
               <label className="font-bold block mb-1">Cultivo</label>
-              <input
-                name="cultivo"
-                value={formData.cultivo}
-                onChange={handleChange}
-                placeholder="Tipo cultivo"
-                className="w-full p-2 border rounded"
-              />
+              <input name="cultivo" value={formData.cultivo} onChange={handleChange} placeholder="Tipo cultivo" className="w-full p-2 border rounded" />
             </div>
           </div>
           <button onClick={agregarLote} className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
@@ -285,15 +261,15 @@ const Crear_lote_agro = () => {
           </button>
         </div>
 
-        {/* Tabla */}
+        {/* Tabla de lotes */}
         <div className="overflow-x-auto rounded-lg shadow-lg relative">
           <table className="min-w-full text-base bg-white text-center">
             <thead className="bg-green-600 text-white font-bold">
               <tr>
-                {["finca", "lote", "coordenadas", "area", "cultivo"].map((col, idx) => (
+                {columnas.map((col, idx) => (
                   <th key={idx} className="p-4 border">
                     <div className="flex items-center justify-center gap-2">
-                      <span>{col.toUpperCase()}</span>
+                      {col.toUpperCase()}
                       <button onClick={(e) => toggleFiltro(col, e)}>
                         <IconFilter className="w-4 h-4" />
                       </button>
@@ -377,6 +353,7 @@ const Crear_lote_agro = () => {
           )}
         </div>
 
+        {/* Botón guardar cambios */}
         <div className="flex justify-center mt-6">
           <button className="bg-green-600 text-white text-lg px-6 py-3 rounded-lg hover:bg-green-700 font-bold">
             Guardar cambios
@@ -388,6 +365,7 @@ const Crear_lote_agro = () => {
 };
 
 export default Crear_lote_agro;
+
 
 
 

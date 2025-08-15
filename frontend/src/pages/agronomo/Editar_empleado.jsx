@@ -1,12 +1,15 @@
+// src/pages/agronomo/Editar_empleado.jsx
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   IconHome, IconClipboardList, IconChartBar, IconCloudRain,
   IconTractor, IconSettings, IconBox, IconUsersGroup,
-  IconPlant, IconFrame, IconArrowLeft, IconCheck, IconTool, IconLogout, IconSearch, IconPlant2,
+  IconPlant, IconFrame, IconArrowLeft, IconCheck, IconTool,
+  IconLogout, IconSearch, IconPlant2, IconBook,
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
+// Datos iniciales de ejemplo
 const empleadosIniciales = [
   { id: "01", nombre: "Juan Pérez", cargo: "Gerente", estado: "Activo", finca: "La Esmeralda", telefono: "3124567890" },
   { id: "02", nombre: "Pedro Ramírez", cargo: "Ing Agrónomo", estado: "Activo", finca: "La Carolina", telefono: "3201112233" },
@@ -20,18 +23,29 @@ const ESTADOS = ["Activo", "Inactivo", "Vacaciones", "Suspendido"];
 const Editar_empleado = () => {
   const navigate = useNavigate();
 
+  // Estados principales
   const [empleados, setEmpleados] = useState(empleadosIniciales);
   const [seleccionadoId, setSeleccionadoId] = useState(empleados[0]?.id || "");
   const [form, setForm] = useState(() => {
     const e = empleados[0] || {};
-    return { id: e.id || "", nombre: e.nombre || "", cargo: e.cargo || "", estado: e.estado || ESTADOS[0], finca: e.finca || FINCAS[0], telefono: e.telefono || "" };
+    return {
+      id: e.id || "",
+      nombre: e.nombre || "",
+      cargo: e.cargo || "",
+      estado: e.estado || ESTADOS[0],
+      finca: e.finca || FINCAS[0],
+      telefono: e.telefono || "",
+    };
   });
 
+  // Buscador
   const [q, setQ] = useState("");
   const [openSug, setOpenSug] = useState(false);
   const sugRef = useRef(null);
   useEffect(() => {
-    const h = (e) => { if (sugRef.current && !sugRef.current.contains(e.target)) setOpenSug(false); };
+    const h = (e) => {
+      if (sugRef.current && !sugRef.current.contains(e.target)) setOpenSug(false);
+    };
     document.addEventListener("mousedown", h);
     return () => document.removeEventListener("mousedown", h);
   }, []);
@@ -41,6 +55,7 @@ const Editar_empleado = () => {
     return s.includes(q.trim().toLowerCase());
   });
 
+  // Perfil usuario
   const nombreUsuario = "Juan Pérez";
   const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
   const [mostrarTarjetaPerfil, setMostrarTarjetaPerfil] = useState(false);
@@ -55,6 +70,7 @@ const Editar_empleado = () => {
     return () => document.removeEventListener("mousedown", clickFuera);
   }, []);
 
+  // Cargar datos de empleado seleccionado
   const cargarEmpleado = (id) => {
     const e = empleados.find((x) => x.id === id);
     if (!e) return;
@@ -62,11 +78,13 @@ const Editar_empleado = () => {
     setForm({ id: e.id, nombre: e.nombre, cargo: e.cargo, estado: e.estado, finca: e.finca, telefono: e.telefono });
   };
 
+  // Manejo de cambios en formulario
   const onChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Guardar cambios
   const [alertaVisible, setAlertaVisible] = useState(false);
   const guardarCambios = (e) => {
     e.preventDefault();
@@ -82,10 +100,12 @@ const Editar_empleado = () => {
     <div className="flex">
       {/* Sidebar */}
       <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
+        {/* Logo */}
         <div className="sticky top-0 mb-6 bg-green-600 z-10">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11 mx-auto" />
         </div>
 
+        {/* Menú */}
         <div className="flex-1 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only">
           <div className="relative">
             <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
@@ -102,8 +122,10 @@ const Editar_empleado = () => {
           <button onClick={() => navigate("/crearfinca")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconPlant className="text-white w-11 h-11" /></button>
           <button onClick={() => navigate("/crearlote")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconFrame className="text-white w-11 h-11" /></button>
           <button onClick={() => navigate("/produccionagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconPlant2 className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/cuadernocampo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconBook className="text-white w-11 h-11" /></button>
         </div>
 
+        {/* Perfil */}
         <div className="relative mb-4">
           <button
             id="btnPerfil"
@@ -114,10 +136,7 @@ const Editar_empleado = () => {
           </button>
 
           {mostrarTarjetaPerfil && (
-            <div
-              ref={tarjetaPerfilRef}
-              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
-            >
+            <div ref={tarjetaPerfilRef} className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50">
               <button onClick={() => { setMostrarTarjetaPerfil(false); navigate("/ajustesagro"); }} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
                 <IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes
               </button>
@@ -132,21 +151,23 @@ const Editar_empleado = () => {
         </div>
       </div>
 
-      {/* Contenido */}
+      {/* Contenido principal */}
       <div className="flex-1 p-10 overflow-auto relative bg-gray-50">
+        {/* Alerta de éxito */}
         {alertaVisible && (
           <div className="fixed top-3 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
             <IconCheck className="w-5 h-5" /> Cambios guardados exitosamente
           </div>
         )}
 
+        {/* Botón volver */}
         <div className="mb-4">
           <button onClick={() => navigate("/manejopersonal")} className="flex items-center text-green-700 font-semibold mb-6 hover:underline">
             <IconArrowLeft className="w-5 h-5 mr-2" /> Volver
           </button>
         </div>
 
-        {/* Recuadro con título */}
+        {/* Formulario de edición */}
         <div className="bg-white border-2 border-green-200 rounded-lg max-w-4xl mx-auto px-8 py-8 shadow-lg">
           <h1 className="text-3xl font-bold text-green-600 mb-8">Editar datos de empleado</h1>
 
@@ -183,7 +204,7 @@ const Editar_empleado = () => {
             </div>
           </div>
 
-          {/* Formulario */}
+          {/* Campos del formulario */}
           <form onSubmit={guardarCambios} className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
               <label className="block font-bold text-gray-700 mb-2">ID</label>
@@ -219,6 +240,7 @@ const Editar_empleado = () => {
               <input name="telefono" type="text" className="w-full border rounded px-4 py-3" value={form.telefono} onChange={onChange} required />
             </div>
 
+            {/* Botón guardar */}
             <div className="md:col-span-2 flex justify-center mt-2">
               <button type="submit" className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 text-lg font-semibold">
                 Guardar cambios
@@ -232,6 +254,7 @@ const Editar_empleado = () => {
 };
 
 export default Editar_empleado;
+
 
 
 
