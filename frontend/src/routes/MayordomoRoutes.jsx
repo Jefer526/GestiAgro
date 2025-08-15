@@ -14,6 +14,9 @@ import Historial_trabajom from "../pages/mayordomo/Historial_trabajom";
 import Registrar_novedad from "../pages/mayordomo/Registrar_novedad";
 import Soporte_mayordomo from "../pages/mayordomo/Soporte_mayordomo";
 import Ajustes_mayordomo from "../pages/mayordomo/Ajustes_mayordomo";
+import Produccion_mayor from "../pages/mayordomo/Produccion_mayor";
+import Cuaderno_campom from "../pages/mayordomo/Cuaderno_campom";
+import Detalle_mantenimientom from "../pages/mayordomo/Detalle_mantenimientom";
 
 const mayordomoRoutes = [
   <Route key="home" path="/homemayordomo" element={<Home_mayo />} />,
@@ -31,6 +34,9 @@ const mayordomoRoutes = [
   <Route key="regisnovedad" path="/registrar_novedadm" element={<Registrar_novedad />} />,
   <Route key="soporte-mayordomo" path="/soportemayordomo" element={<Soporte_mayordomo />} />,
   <Route key="ajustes-mayordomo" path="/ajustesmayordomo" element={<Ajustes_mayordomo />} />,
+  <Route key="Produccion-mayor" path="/produccion_mayor" element={<Produccion_mayor />} />,
+  <Route key="cuaderno-campom" path="/cuaderno_campom" element={<Cuaderno_campom />} />,
+  <Route key="detalle-mantenimientom" path="/detalle_mantenimientom" element={<Detalle_mantenimientom />} />,
 ];
 
 export default mayordomoRoutes;

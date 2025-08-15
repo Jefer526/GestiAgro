@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   IconHome,
   IconClipboardList,
@@ -11,34 +10,28 @@ import {
   IconSettings,
   IconTool,
   IconLogout,
-  IconChevronLeft,
-  IconPlant2,
+  IconCamera,
   IconBook,
-  IconCheck
+  IconPlant2
 } from "@tabler/icons-react";
+import { useNavigate } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
-const Registrar_novedad_hoja = () => {
+const Cuaderno_campom = () => {
   const navigate = useNavigate();
+
+  const [filtros, setFiltros] = useState({
+    fecha: "",
+    finca: "",
+    lote: "",
+    anotaciones: "",
+  });
+
+  // Datos perfil
   const nombreUsuario = "Juan Pérez";
   const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
-
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
   const tarjetaRef = useRef(null);
-
-  const [alertaVisible, setAlertaVisible] = useState(false);
-
-  const [formData, setFormData] = useState({
-    codigoequipo: "",
-    maquina: "",
-    referencia: "",
-    ubicacion: "",
-    estado: "",
-    fecha: "",
-    tipo: "",
-    descripcion: "",
-    realizadoPor: "",
-  });
 
   useEffect(() => {
     const handler = (e) => {
@@ -51,33 +44,17 @@ const Registrar_novedad_hoja = () => {
   }, []);
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setFiltros({ ...filtros, [name]: value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Datos registrados:", formData);
-    setAlertaVisible(true);
-    setTimeout(() => {
-      setAlertaVisible(false);
-      navigate("/hoja_vidam");
-    }, 2000);
+  const handleTomarFoto = () => {
+    alert("Función para tomar foto en desarrollo 📸");
   };
 
   return (
-    <div className="relative">
-      {/* ALERTA */}
-      {alertaVisible && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold z-[10000] transition-all duration-300">
-          <IconCheck className="w-5 h-5" />
-          Registrado exitosamente
-        </div>
-      )}
-
-      {/* SIDEBAR */}
+    <div className="min-h-[100dvh] bg-[#f6f6f6]">
+      {/* Sidebar fijo */}
       <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col justify-between">
         {/* Logo fijo */}
         <div className="pt-6 flex justify-center">
@@ -148,7 +125,7 @@ const Registrar_novedad_hoja = () => {
 
           {/* Maquinaria */}
           <div className="relative">
-            {location.pathname === "/registrar_novedad_hoja" && (
+            {location.pathname === "/registrar_novedadm" && (
               <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
             )}
             <button onClick={() => navigate("/equipos_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
@@ -204,85 +181,78 @@ const Registrar_novedad_hoja = () => {
         </div>
       </aside>
 
-      {/* CONTENIDO */}
-      <main className="ml-28 min-h-[100dvh] bg-gray-50 px-10 py-8 relative">
-        <button
-          onClick={() => navigate("/hoja_vidam")}
-          className="flex items-center text-green-600 font-medium mb-4"
-        >
-          <IconChevronLeft className="w-5 h-5 mr-2" />
-          Volver
-        </button>
 
-        <div className="bg-white border border-green-300 rounded-xl shadow-md p-8 w-[800px] mx-auto">
-          <h1 className="text-2xl font-bold text-green-600 mb-6">Registro novedad</h1>
+      {/* Contenido */}
+      <main className="ml-28 min-h-[100dvh] flex justify-center items-center p-8 overflow-auto">
+        <div className="bg-white border border-green-300 shadow-md p-10 rounded-xl w-full max-w-3xl space-y-6 text-black">
+          <h1 className="text-3xl font-bold text-green-700">Cuaderno de Campo</h1>
 
-          <form onSubmit={handleSubmit} className="space-y-4 text-base">
-            <div className="grid grid-cols-2 gap-5">
-              <div>
-                <label className="block font-semibold mb-1">Código Equipo:</label>
-                <input name="codigoequipo" value={formData.codigoequipo} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-1.5" />
-              </div>
-              <div>
-                <label className="block font-semibold mb-1">Referencia:</label>
-                <input name="referencia" value={formData.referencia} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-1.5" />
-              </div>
-              <div>
-                <label className="block font-semibold mb-1">Máquina:</label>
-                <input name="maquina" value={formData.maquina} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-1.5" />
-              </div>
-              <div>
-                <label className="block font-semibold mb-1">Ubicación:</label>
-                <select name="ubicacion" value={formData.ubicacion} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-1.5">
-                  <option value="">Selecciona</option>
-                  <option>Bodega</option>
-                  <option>La Esmeralda</option>
-                  <option>La Carolina</option>
-                </select>
-              </div>
-              <div>
-                <label className="block font-semibold mb-1">Estado:</label>
-                <select name="estado" value={formData.estado} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-1.5">
-                  <option value="">Selecciona</option>
-                  <option>Óptimo</option>
-                  <option>En operación</option>
-                  <option>Mantenimiento</option>
-                  <option>Averiado</option>
-                </select>
-              </div>
-              <div>
-                <label className="block font-semibold mb-1">Fecha:</label>
-                <input type="date" name="fecha" value={formData.fecha} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-1.5" />
-              </div>
-              <div className="col-span-2">
-                <label className="block font-semibold mb-1">Tipo de novedad:</label>
-                <select name="tipo" value={formData.tipo} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-1.5">
-                  <option value="">Selecciona una opción</option>
-                  <option>Mantenimiento</option>
-                  <option>Reparación</option>
-                </select>
-              </div>
-            </div>
-            <div>
-              <label className="block font-semibold mb-1">Descripción:</label>
-              <textarea name="descripcion" value={formData.descripcion} onChange={handleChange} rows="3" className="w-full border border-gray-300 rounded px-3 py-2" />
-            </div>
-            <div>
-              <label className="block font-semibold mb-1">Realizado por:</label>
-              <input name="realizadoPor" value={formData.realizadoPor} onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-1.5" />
-            </div>
-            <div className="flex justify-center mt-4">
-              <button type="submit" className="bg-green-600 text-white px-8 py-2 rounded-lg hover:bg-green-700 font-semibold">
-                Guardar
-              </button>
-            </div>
-          </form>
+          <div>
+            <p className="font-bold text-lg mb-2">Fecha</p>
+            <input
+              type="date"
+              name="fecha"
+              value={filtros.fecha}
+              onChange={handleChange}
+              className="border p-3 rounded w-full text-lg"
+            />
+          </div>
+
+          <div>
+            <p className="font-bold text-lg mb-2">Finca</p>
+            <select
+              name="finca"
+              value={filtros.finca}
+              onChange={handleChange}
+              className="w-full border p-4 rounded text-lg"
+            >
+              <option value="" disabled hidden>Selecciona una finca</option>
+              <option value="La Esmeralda">La Esmeralda</option>
+              <option value="Las Palmas">Las Palmas</option>
+              <option value="La Carolina">La Carolina</option>
+            </select>
+          </div>
+
+          <div>
+            <p className="font-bold text-lg mb-2">Lote</p>
+            <select
+              name="lote"
+              value={filtros.lote}
+              onChange={handleChange}
+              className="w-full border p-4 rounded text-lg"
+            >
+              <option value="" disabled hidden>Selecciona un lote</option>
+              <option value="Lote 1">Lote 1</option>
+              <option value="Lote 2">Lote 2</option>
+              <option value="Lote 3">Lote 3</option>
+            </select>
+          </div>
+
+          <div>
+            <p className="font-bold text-lg mb-2">Ingresar anotaciones</p>
+            <textarea
+              name="anotaciones"
+              value={filtros.anotaciones}
+              onChange={handleChange}
+              rows={5}
+              className="w-full border p-4 rounded text-lg"
+              placeholder="Escribe tus observaciones o detalles aquí..."
+            />
+          </div>
+
+          <div className="flex justify-center">
+            <button
+              onClick={handleTomarFoto}
+              className="bg-green-600 text-white px-8 py-3 rounded hover:bg-green-700 text-lg flex items-center gap-2"
+            >
+              <IconCamera className="w-5 h-5" />
+              Tomar foto
+            </button>
+          </div>
         </div>
       </main>
     </div>
   );
 };
 
-export default Registrar_novedad_hoja;
-
-
+export default Cuaderno_campom;

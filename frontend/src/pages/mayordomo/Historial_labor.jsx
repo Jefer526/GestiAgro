@@ -12,6 +12,8 @@ import {
   IconFilter,
   IconSortAscending2,
   IconSortDescending2,
+  IconPlant2,
+  IconBook
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
@@ -54,11 +56,6 @@ const Historial_labor = () => {
 
   const toggleExpandido = (index) => setExpandido(expandido === index ? null : index);
 
-  const getValoresUnicos = (campo) => {
-    const search = (busquedas[campo] || "").toLowerCase();
-    return [...new Set(datos.map((d) => d[campo]))].filter((v) => String(v).toLowerCase().includes(search));
-  };
-
   const toggleFiltro = (campo, event) => {
     const icono = event.currentTarget.getBoundingClientRect();
     setFiltroActivo(filtroActivo === campo ? null : campo);
@@ -95,34 +92,32 @@ const Historial_labor = () => {
         : String(b[campo]).localeCompare(String(a[campo]));
     });
 
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (filtroRef.current && !filtroRef.current.contains(e.target)) {
-        setFiltroActivo(null);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
   return (
     <div className="min-h-[100dvh] bg-white">
-      {/* Sidebar fijo */}
-      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col items-center py-6 justify-between">
-        <div className="flex flex-col items-center space-y-8">
+      {/* Sidebar con favicon fijo y scroll en iconos */}
+      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col justify-between">
+        {/* Favicon fijo */}
+        <div className="pt-6 flex justify-center">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
+        </div>
+
+        {/* Íconos con scroll y scrollbar oculto */}
+        <div className="flex-1 flex flex-col items-center space-y-8 mt-6 overflow-y-auto scrollbar-hide-only">
           <button onClick={() => navigate("/homemayordomo")} className="hover:bg-white/10 p-2 rounded-lg">
             <IconHome className="text-white w-11 h-11" />
           </button>
           <button onClick={() => navigate("/registrolabores")} className="hover:bg-white/10 p-2 rounded-lg">
             <IconClipboardList className="text-white w-11 h-11" />
           </button>
-          <div className="relative w-full flex justify-center">
-            <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full z-10" />
+
+          {/* Icono activo con indicador */}
+          <div className="relative">
+            <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
             <button className="hover:bg-white/10 p-2 rounded-lg">
               <IconHistory className="text-white w-11 h-11" />
             </button>
           </div>
+
           <button onClick={() => navigate("/bodega_insumos")} className="hover:bg-white/10 p-2 rounded-lg">
             <IconBox className="text-white w-11 h-11" />
           </button>
@@ -135,10 +130,17 @@ const Historial_labor = () => {
           <button onClick={() => navigate("/equipos_mayordomo")} className="hover:bg-white/10 p-2 rounded-lg">
             <IconTractor className="text-white w-11 h-11" />
           </button>
+          <button onClick={() => navigate("/produccion_mayor")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+            <IconPlant2 className="text-white w-11 h-11" />
+          </button>
+          <button onClick={() => navigate("/cuaderno_campom")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+            <IconBook className="text-white w-11 h-11" />
+          </button>
         </div>
 
-        {/* Perfil */}
-        <div className="relative mb-6">
+
+        {/* Perfil fijo abajo */}
+        <div className="relative mb-6 flex justify-center">
           <button
             onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
             className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
@@ -168,7 +170,7 @@ const Historial_labor = () => {
         </div>
       </aside>
 
-      {/* Contenido principal desplazado */}
+      {/* Contenido principal */}
       <main className="ml-28 p-10">
         <h1 className="text-3xl font-bold text-green-700 mb-6">Historial labores finca: La Esmeralda</h1>
         <div className="bg-white border border-gray-300 rounded-xl overflow-auto">
@@ -211,3 +213,4 @@ const Historial_labor = () => {
 };
 
 export default Historial_labor;
+

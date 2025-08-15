@@ -13,15 +13,18 @@ import {
   IconFilter,
   IconSortAscending2,
   IconSortDescending2,
+  IconPlant2,
+  IconBook
 } from "@tabler/icons-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 import { useRef, useEffect, useState } from "react";
 
 const Bodega_insu = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // -------- Sidebar / Perfil (SE MANTIENE IGUAL) --------
+  // -------- Sidebar / Perfil --------
   const nombreUsuario = "Juan Pérez";
   const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
@@ -37,7 +40,7 @@ const Bodega_insu = () => {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // -------- CONTENIDO COPIADO DESDE Bodega_agro --------
+  // -------- Datos de la tabla --------
   const datos = [
     { categoria: "Fertilizante", producto: "Urea", ingrediente: "Nitrogeno 46%", cantidad: 300, um: "Kg" },
     { categoria: "Insecticida", producto: "Galeon", ingrediente: "Tiametoxam", cantidad: 5, um: "Lt" },
@@ -111,82 +114,134 @@ const Bodega_insu = () => {
 
   return (
     <div className="min-h-[100dvh] bg-gray-50">
-      {/* Sidebar fijo (MANTENIDO DE Bodega_insu) */}
-      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col items-center py-6 justify-between">
-        <div className="flex flex-col items-center space-y-8">
+      {/* Sidebar fijo */}
+      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col justify-between">
+        {/* Logo fijo */}
+        <div className="pt-6 flex justify-center">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
-          <button onClick={() => navigate("/homemayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconHome className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/registrolabores")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconClipboardList className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/historial_labores")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconHistory className="text-white w-11 h-11" />
-          </button>
+        </div>
 
-          {/* Indicador en Bodega */}
-          <div className="relative w-full flex justify-center">
-            <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full z-10" />
-            <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+        {/* Íconos con scroll */}
+        <div className="flex-1 flex flex-col items-center space-y-8 mt-6 overflow-y-auto scrollbar-hide-only">
+          {/* Home */}
+          <div className="relative">
+            {location.pathname === "/homemayordomo" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/homemayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              <IconHome className="text-white w-11 h-11" />
+            </button>
+          </div>
+
+          {/* Registro labores */}
+          <div className="relative">
+            {location.pathname === "/registrolabores" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/registrolabores")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              <IconClipboardList className="text-white w-11 h-11" />
+            </button>
+          </div>
+
+          {/* Historial labores */}
+          <div className="relative">
+            {location.pathname === "/historial_labores" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/historial_labores")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              <IconHistory className="text-white w-11 h-11" />
+            </button>
+          </div>
+
+          {/* Bodega */}
+          <div className="relative">
+            {location.pathname === "/bodega_insumos" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/bodega_insumos")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
               <IconBox className="text-white w-11 h-11" />
             </button>
           </div>
 
-          <button onClick={() => navigate("/variables_climaticasm")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconCloudRain className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/informes_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconChartBar className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/equipos_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconTractor className="text-white w-11 h-11" />
-          </button>
+          {/* Variables climáticas */}
+          <div className="relative">
+            {location.pathname === "/variables_climaticasm" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/variables_climaticasm")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              <IconCloudRain className="text-white w-11 h-11" />
+            </button>
+          </div>
+
+          {/* Informes */}
+          <div className="relative">
+            {location.pathname === "/informes_mayordomo" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/informes_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              <IconChartBar className="text-white w-11 h-11" />
+            </button>
+          </div>
+
+          {/* Maquinaria */}
+          <div className="relative">
+            {location.pathname === "/equipos_mayordomo" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/equipos_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              <IconTractor className="text-white w-11 h-11" />
+            </button>
+          </div>
+
+          {/* Producción */}
+          <div className="relative">
+            {location.pathname === "/produccion_mayor" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/produccion_mayor")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              <IconPlant2 className="text-white w-11 h-11" />
+            </button>
+          </div>
+
+          {/* Cuaderno de Campo */}
+          <div className="relative">
+            {location.pathname === "/cuaderno_campom" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/cuaderno_campom")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
+              <IconBook className="text-white w-11 h-11" />
+            </button>
+          </div>
         </div>
 
         {/* Perfil */}
-        <div className="relative mb-6">
+        <div className="relative mb-6 flex justify-center">
           <button
             onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
             className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
-            aria-haspopup="true"
-            aria-expanded={mostrarTarjeta}
           >
             {letraInicial}
           </button>
-
           {mostrarTarjeta && (
             <div
               ref={tarjetaRef}
               className="absolute bottom-16 left-14 w-56 bg-white/95 border border-gray-200 rounded-xl shadow-2xl py-3 z-[10000] backdrop-blur"
             >
-              <button
-                onClick={() => { setMostrarTarjeta(false); navigate("/ajustesmayordomo"); }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-              >
-                <IconSettings className="w-5 h-5 mr-2 text-green-600" />
-                Ajustes
+              <button onClick={() => { setMostrarTarjeta(false); navigate("/ajustesmayordomo"); }} className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100">
+                <IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes
               </button>
-              <button
-                onClick={() => { setMostrarTarjeta(false); navigate("/soportemayordomo"); }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-              >
-                <IconTool className="w-5 h-5 mr-2 text-green-600" />
-                Soporte
+              <button onClick={() => { setMostrarTarjeta(false); navigate("/soportemayordomo"); }} className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100">
+                <IconTool className="w-5 h-5 mr-2 text-green-600" /> Soporte
               </button>
-              <button
-                onClick={() => { setMostrarTarjeta(false); navigate("/login"); }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-red-50 text-red-600"
-              >
-                <IconLogout className="w-5 h-5 mr-2 text-red-600" />
-                Cerrar sesión
+              <button onClick={() => { setMostrarTarjeta(false); navigate("/login"); }} className="flex items-center w-full text-left px-4 py-2 hover:bg-red-50 text-red-600">
+                <IconLogout className="w-5 h-5 mr-2 text-red-600" /> Cerrar sesión
               </button>
             </div>
           )}
         </div>
       </aside>
 
-      {/* Contenido principal (COPIADO del agro y adaptado) */}
+      {/* Contenido principal */}
       <main className="ml-28 min-h-[100dvh] p-10">
         <h1 className="text-3xl font-bold text-green-700 mb-6">Bodega de insumos</h1>
 
@@ -200,7 +255,7 @@ const Bodega_insu = () => {
           </select>
         </div>
 
-        {/* Tabla con filtros/orden (igual a agro) */}
+        {/* Tabla */}
         <div className="bg-white border border-gray-300 rounded-xl overflow-auto relative">
           <table className="w-full text-base text-center">
             <thead className="bg-green-600 text-white font-bold">
@@ -240,7 +295,7 @@ const Bodega_insu = () => {
             </tbody>
           </table>
 
-          {/* Tarjeta de filtros */}
+          {/* Filtros */}
           {filtroActivo && (
             <div
               ref={filtroRef}
@@ -285,7 +340,7 @@ const Bodega_insu = () => {
           )}
         </div>
 
-        {/* Botones inferiores: SOLO Exportar (se elimina Agregar producto) */}
+        {/* Botón exportar */}
         <div className="flex justify-center mt-10">
           <button className="bg-green-600 text-white px-8 py-2 rounded-md hover:bg-green-700 text-lg font-semibold">
             Exportar
