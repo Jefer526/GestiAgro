@@ -1,17 +1,8 @@
+// src/pages/mayordomo/Registrar_novedadm.jsx
 import React, { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
-  IconHome,
-  IconClipboardList,
-  IconHistory,
-  IconChartBar,
-  IconBox,
-  IconCloudRain,
-  IconTractor,
-  IconSettings,
-  IconTool,
-  IconLogout,
   IconChevronLeft,
   IconCheck,
   IconDotsVertical,
@@ -20,17 +11,16 @@ import {
   IconFilter,
   IconSortAscending2,
   IconSortDescending2,
-  IconPlant2,
-  IconBook
 } from "@tabler/icons-react";
-import faviconBlanco from "../../assets/favicon-blanco.png";
+
+// 👇 Importa el layout del Mayordomo
+import LayoutMayordomo from "../../layouts/LayoutMayordomo";
 
 const MENU_WIDTH_PX = 288; // w-72
 const MENU_MARGIN_PX = 8;
 
-const registrar_novedadm = () => {
+const Registrar_novedadm = () => {
   const navigate = useNavigate();
-  const location = useLocation();
 
   // === Datos base + columnas para filtros ===
   const columnas = ["id", "maquina", "referencia", "estado"];
@@ -83,12 +73,6 @@ const registrar_novedadm = () => {
   // === Alerta guardar ===
   const [alertaVisible, setAlertaVisible] = useState(false);
 
-  // === Perfil ===
-  const nombreUsuario = "Juan Pérez";
-  const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
-  const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
-  const tarjetaRef = useRef(null);
-
   // === Menú contextual ===
   const [menuIndex, setMenuIndex] = useState(null);
   const menuRef = useRef(null);
@@ -114,12 +98,9 @@ const registrar_novedadm = () => {
 
   const closeMenu = () => setMenuIndex(null);
 
-  // Cerrar tarjetas y menús
+  // Cerrar menús y filtros
   useEffect(() => {
     const manejarClickFuera = (e) => {
-      if (tarjetaRef.current && !tarjetaRef.current.contains(e.target)) {
-        setMostrarTarjeta(false);
-      }
       if (menuRef.current && !menuRef.current.contains(e.target)) {
         closeMenu();
       }
@@ -176,353 +157,204 @@ const registrar_novedadm = () => {
 
   const MenuOverlay = ({ children }) => createPortal(children, document.body);
 
-  // Función para botón de sidebar con indicador
-  const SidebarButton = ({ to, icon: IconComp, title }) => (
-    <div className="relative w-full flex justify-center">
-      {location.pathname === to && (
-        <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-      )}
-      <button
-        onClick={() => navigate(to)}
-        className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-        title={title}
-      >
-        <IconComp className="text-white w-11 h-11" />
-      </button>
-    </div>
-  );
-
   return (
-    <div className="min-h-dvh bg-gray-50">
-      {/* Sidebar fijo */}
-      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col justify-between">
-        {/* Logo fijo */}
-        <div className="pt-6 flex justify-center">
-          <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
+    <LayoutMayordomo>
+      {/* Alerta flotante */}
+      {alertaVisible && (
+        <div className="fixed top-3 left-1/2 -translate-x-1/2 z-[1000] bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
+          <IconCheck className="w-5 h-5" /> Estados actualizados exitosamente
         </div>
+      )}
 
-        {/* Íconos con scroll */}
-        <div className="flex-1 flex flex-col items-center space-y-8 mt-6 overflow-y-auto scrollbar-hide-only">
-          {/* Home */}
-          <div className="relative">
-            {location.pathname === "/homemayordomo" && (
-              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            )}
-            <button onClick={() => navigate("/homemayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-              <IconHome className="text-white w-11 h-11" />
-            </button>
-          </div>
+      <button
+        onClick={() => navigate("/equipos_mayordomo")}
+        className="flex items-center text-green-600 font-semibold mb-6 text-lg hover:underline"
+      >
+        <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
+      </button>
 
-          {/* Registro labores */}
-          <div className="relative">
-            {location.pathname === "/registrolabores" && (
-              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            )}
-            <button onClick={() => navigate("/registrolabores")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-              <IconClipboardList className="text-white w-11 h-11" />
-            </button>
-          </div>
+      <h2 className="text-3xl font-bold text-green-700 mb-4">
+        Registrar novedad de máquina
+      </h2>
 
-          {/* Historial labores */}
-          <div className="relative">
-            {location.pathname === "/historial_labores" && (
-              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            )}
-            <button onClick={() => navigate("/historial_labores")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-              <IconHistory className="text-white w-11 h-11" />
-            </button>
-          </div>
+      {/* Tabla con filtros */}
+      <div className="overflow-x-auto rounded-lg shadow-lg relative bg-white">
+        <table className="min-w-full text-base">
+          <thead className="bg-green-600 text-white font-bold text-center">
+            <tr>
+              {columnas.map((col, idx) => (
+                <th key={idx} className="p-4 border">
+                  <div className="flex items-center justify-center gap-2">
+                    <span>{col.toUpperCase()}</span>
+                    <button onClick={(e) => toggleFiltro(col, e)}>
+                      <IconFilter className="w-4 h-4" />
+                    </button>
+                  </div>
+                </th>
+              ))}
+            </tr>
+          </thead>
 
-          {/* Cuaderno de Campo */}
-          <div className="relative">
-            {location.pathname === "/cuaderno_campom" && (
-              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            )}
-            <button onClick={() => navigate("/cuaderno_campom")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-              <IconBook className="text-white w-11 h-11" />
-            </button>
-          </div>
-          
-          {/* Producción */}
-          <div className="relative">
-            {location.pathname === "/produccion_mayor" && (
-              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            )}
-            <button onClick={() => navigate("/produccion_mayor")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-              <IconPlant2 className="text-white w-11 h-11" />
-            </button>
-          </div>
-
-          
-
-          {/* Bodega */}
-          <div className="relative">
-            {location.pathname === "/bodega_insumos" && (
-              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            )}
-            <button onClick={() => navigate("/bodega_insumos")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-              <IconBox className="text-white w-11 h-11" />
-            </button>
-          </div>
-
-          {/* Variables climáticas */}
-          <div className="relative">
-            {location.pathname === "/variables_climaticasm" && (
-              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            )}
-            <button onClick={() => navigate("/variables_climaticasm")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-              <IconCloudRain className="text-white w-11 h-11" />
-            </button>
-          </div>
-
-          {/* Informes */}
-          <div className="relative">
-            {location.pathname === "/informes_mayordomo" && (
-              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            )}
-            <button onClick={() => navigate("/informes_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-              <IconChartBar className="text-white w-11 h-11" />
-            </button>
-          </div>
-
-          {/* Maquinaria */}
-          <div className="relative">
-            {location.pathname === "/registrar_novedadm" && (
-              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            )}
-            <button onClick={() => navigate("/equipos_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-              <IconTractor className="text-white w-11 h-11" />
-            </button>
-          </div>
-        </div>
-
-        {/* Perfil */}
-        <div className="relative mb-6 flex justify-center">
-          <button
-            onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
-            className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
-          >
-            {letraInicial}
-          </button>
-          {mostrarTarjeta && (
-            <div
-              ref={tarjetaRef}
-              className="absolute bottom-16 left-14 w-56 bg-white/95 border border-gray-200 rounded-xl shadow-2xl py-3 z-[10000] backdrop-blur"
-            >
-              <button onClick={() => { setMostrarTarjeta(false); navigate("/ajustesmayordomo"); }} className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100">
-                <IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes
-              </button>
-              <button onClick={() => { setMostrarTarjeta(false); navigate("/soportemayordomo"); }} className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100">
-                <IconTool className="w-5 h-5 mr-2 text-green-600" /> Soporte
-              </button>
-              <button onClick={() => { setMostrarTarjeta(false); navigate("/login"); }} className="flex items-center w-full text-left px-4 py-2 hover:bg-red-50 text-red-600">
-                <IconLogout className="w-5 h-5 mr-2 text-red-600" /> Cerrar sesión
-              </button>
-            </div>
-          )}
-        </div>
-      </aside>
-
-      {/* CONTENIDO: se compensa el ancho del sidebar con pl-28 */}
-      <main className="pl-28 min-h-dvh">
-        <div className="p-10 overflow-auto relative">
-          {/* Alerta flotante */}
-          {alertaVisible && (
-            <div className="fixed top-3 left-1/2 -translate-x-1/2 z-[1000] bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
-              <IconCheck className="w-5 h-5" /> Estados actualizados exitosamente
-            </div>
-          )}
-
-          <button
-            onClick={() => navigate("/equipos_mayordomo")}
-            className="flex items-center text-green-600 font-semibold mb-6 text-lg hover:underline"
-          >
-            <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
-          </button>
-
-          <h2 className="text-3xl font-bold text-green-700 mb-4">
-            Registrar novedad de máquina
-          </h2>
-
-          {/* Tabla con filtros */}
-          <div className="overflow-x-auto rounded-lg shadow-lg relative bg-white">
-            <table className="min-w-full text-base">
-              <thead className="bg-green-600 text-white font-bold text-center">
-                <tr>
-                  {columnas.map((col, idx) => (
-                    <th key={idx} className="p-4 border">
-                      <div className="flex items-center justify-center gap-2">
-                        <span>{col.toUpperCase()}</span>
-                        <button onClick={(e) => toggleFiltro(col, e)}>
-                          <IconFilter className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </th>
-                  ))}
+          <tbody className="text-center">
+            {datosFiltrados.map((m, index) => {
+              const isAveriado = m.estado === "Averiado";
+              return (
+                <tr key={m.id} className="hover:bg-gray-100">
+                  <td className="p-4 border">{m.id}</td>
+                  <td className="p-4 border">{m.maquina}</td>
+                  <td className="p-4 border">{m.referencia}</td>
+                  <td className="p-4 border">
+                    <div className="inline-flex items-center gap-2">
+                      <EstadoAveriadoBadge isAveriado={isAveriado} />
+                      <button
+                        onClick={(e) => openMenu(index, e)}
+                        className={`inline-flex items-center justify-center w-9 h-9 rounded-lg border shadow-sm transition
+                          ${
+                            isAveriado
+                              ? "border-red-200 bg-red-50 text-red-600 hover:bg-red-100"
+                              : "border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100"
+                          }`}
+                      >
+                        <IconDotsVertical className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </td>
                 </tr>
-              </thead>
+              );
+            })}
+          </tbody>
+        </table>
 
-              <tbody className="text-center">
-                {datosFiltrados.map((m, index) => {
-                  const isAveriado = m.estado === "Averiado";
-                  return (
-                    <tr key={m.id} className="hover:bg-gray-100">
-                      <td className="p-4 border">{m.id}</td>
-                      <td className="p-4 border">{m.maquina}</td>
-                      <td className="p-4 border">{m.referencia}</td>
-                      <td className="p-4 border">
-                        <div className="inline-flex items-center gap-2">
-                          <EstadoAveriadoBadge isAveriado={isAveriado} />
-                          <button
-                            onClick={(e) => openMenu(index, e)}
-                            className={`inline-flex items-center justify-center w-9 h-9 rounded-lg border shadow-sm transition
-                              ${
-                                isAveriado
-                                  ? "border-red-200 bg-red-50 text-red-600 hover:bg-red-100"
-                                  : "border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100"
-                              }`}
-                          >
-                            <IconDotsVertical className="w-5 h-5" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+        {/* Popover de filtros */}
+        {filtroActivo && (
+          <div
+            ref={filtroRef}
+            className="fixed bg-white text-black shadow-md border rounded z-[1100] p-3 w-60 text-left text-sm"
+            style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
+          >
+            <div className="font-semibold mb-2">
+              Filtrar por{" "}
+              {filtroActivo.charAt(0).toUpperCase() + filtroActivo.slice(1)}
+            </div>
 
-            {/* Popover de filtros */}
-            {filtroActivo && (
-              <div
-                ref={filtroRef}
-                className="fixed bg-white text-black shadow-md border rounded z-[1100] p-3 w-60 text-left text-sm"
-                style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
-              >
-                <div className="font-semibold mb-2">
-                  Filtrar por{" "}
-                  {filtroActivo.charAt(0).toUpperCase() + filtroActivo.slice(1)}
-                </div>
-
-                <button
-                  onClick={() => ordenar(filtroActivo, "asc")}
-                  className="text-green-700 flex items-center gap-1 mb-1 capitalize"
-                >
-                  <IconSortAscending2 className="w-4 h-4" /> Ordenar A → Z
-                </button>
-                <button
-                  onClick={() => ordenar(filtroActivo, "desc")}
-                  className="text-green-700 flex items-center gap-1 mb-2 capitalize"
-                >
-                  <IconSortDescending2 className="w-4 h-4" /> Ordenar Z → A
-                </button>
-
-                <input
-                  type="text"
-                  placeholder="Buscar..."
-                  className="w-full border border-gray-300 px-2 py-1 rounded mb-2 text-sm"
-                  value={busquedas[filtroActivo] || ""}
-                  onChange={(e) => handleBusqueda(filtroActivo, e.target.value)}
-                />
-
-                <div className="flex flex-col max-h-40 overflow-y-auto">
-                  {getValoresUnicos(filtroActivo).map((val, idx) => (
-                    <label
-                      key={idx}
-                      className="flex items-center gap-2 mb-1 capitalize"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
-                        onChange={() => toggleValor(filtroActivo, val)}
-                        className="accent-green-600"
-                      />
-                      {val === "" ? "—" : val}
-                    </label>
-                  ))}
-                </div>
-
-                <button
-                  onClick={() => limpiarFiltro(filtroActivo)}
-                  className="text-blue-600 hover:underline text-xs capitalize mt-2"
-                >
-                  Borrar filtro
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Menú contextual en PORTAL (overlay real) */}
-          {menuIndex !== null && (
-            <MenuOverlay>
-              <div
-                ref={menuRef}
-                className="fixed w-72 bg-white border border-gray-100 rounded-2xl shadow-2xl p-2 z-[1200]"
-                style={{ top: menuPos.top, left: menuPos.left }}
-              >
-                <div className="px-3 pt-2 pb-1 text-xs font-medium text-gray-500">
-                  Selecciona una opción
-                </div>
-
-                {/* Marcar como AVERIADO (si NO está marcado) */}
-                {maquinas[menuIndex]?.estado !== "Averiado" && (
-                  <button
-                    onClick={() => {
-                      handleEstadoChange(menuIndex, true);
-                      closeMenu();
-                    }}
-                    className="w-full flex items-center gap-3 px-3 py-3 rounded-xl transition text-left hover:bg-gray-100"
-                  >
-                    <div className="shrink-0 inline-flex items-center justify-center w-8 h-8 rounded-lg border">
-                      <IconCircleCheck className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <div className="text-sm font-semibold">Marcar como averiado</div>
-                      <div className="text-xs text-gray-500">
-                        El equipo quedará en estado “Averiado”.
-                      </div>
-                    </div>
-                  </button>
-                )}
-
-                {/* DESMARCAR AVERIADO (si está marcado) */}
-                {maquinas[menuIndex]?.estado === "Averiado" && (
-                  <button
-                    onClick={() => {
-                      handleEstadoChange(menuIndex, false);
-                      closeMenu();
-                    }}
-                    className="w-full flex items-center gap-3 px-3 py-3 rounded-xl transition text-left hover:bg-gray-100"
-                  >
-                    <div className="shrink-0 inline-flex items-center justify-center w-8 h-8 rounded-lg border">
-                      <IconCircleCheck className="w-5 h-5 text-green-600" />
-                    </div>
-                    <div>
-                      <div className="text-sm font-semibold text-green-700">
-                        Desmarcar averiado
-                      </div>
-                      <div className="text-xs text-gray-500">
-                        El equipo dejará de estar marcado.
-                      </div>
-                    </div>
-                  </button>
-                )}
-              </div>
-            </MenuOverlay>
-          )}
-
-          <div className="flex justify-end mt-4">
             <button
-              onClick={handleGuardar}
-              className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold"
+              onClick={() => ordenar(filtroActivo, "asc")}
+              className="text-green-700 flex items-center gap-1 mb-1 capitalize"
             >
-              Guardar
+              <IconSortAscending2 className="w-4 h-4" /> Ordenar A → Z
+            </button>
+            <button
+              onClick={() => ordenar(filtroActivo, "desc")}
+              className="text-green-700 flex items-center gap-1 mb-2 capitalize"
+            >
+              <IconSortDescending2 className="w-4 h-4" /> Ordenar Z → A
+            </button>
+
+            <input
+              type="text"
+              placeholder="Buscar..."
+              className="w-full border border-gray-300 px-2 py-1 rounded mb-2 text-sm"
+              value={busquedas[filtroActivo] || ""}
+              onChange={(e) => handleBusqueda(filtroActivo, e.target.value)}
+            />
+
+            <div className="flex flex-col max-h-40 overflow-y-auto">
+              {getValoresUnicos(filtroActivo).map((val, idx) => (
+                <label
+                  key={idx}
+                  className="flex items-center gap-2 mb-1 capitalize"
+                >
+                  <input
+                    type="checkbox"
+                    checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
+                    onChange={() => toggleValor(filtroActivo, val)}
+                    className="accent-green-600"
+                  />
+                  {val === "" ? "—" : val}
+                </label>
+              ))}
+            </div>
+
+            <button
+              onClick={() => limpiarFiltro(filtroActivo)}
+              className="text-blue-600 hover:underline text-xs capitalize mt-2"
+            >
+              Borrar filtro
             </button>
           </div>
-        </div>
-      </main>
-    </div>
+        )}
+      </div>
+
+      {/* Menú contextual en PORTAL */}
+      {menuIndex !== null && (
+        <MenuOverlay>
+          <div
+            ref={menuRef}
+            className="fixed w-72 bg-white border border-gray-100 rounded-2xl shadow-2xl p-2 z-[1200]"
+            style={{ top: menuPos.top, left: menuPos.left }}
+          >
+            <div className="px-3 pt-2 pb-1 text-xs font-medium text-gray-500">
+              Selecciona una opción
+            </div>
+
+            {/* Marcar como AVERIADO */}
+            {maquinas[menuIndex]?.estado !== "Averiado" && (
+              <button
+                onClick={() => {
+                  handleEstadoChange(menuIndex, true);
+                  closeMenu();
+                }}
+                className="w-full flex items-center gap-3 px-3 py-3 rounded-xl transition text-left hover:bg-gray-100"
+              >
+                <div className="shrink-0 inline-flex items-center justify-center w-8 h-8 rounded-lg border">
+                  <IconCircleCheck className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-sm font-semibold">Marcar como averiado</div>
+                  <div className="text-xs text-gray-500">
+                    El equipo quedará en estado “Averiado”.
+                  </div>
+                </div>
+              </button>
+            )}
+
+            {/* DESMARCAR AVERIADO */}
+            {maquinas[menuIndex]?.estado === "Averiado" && (
+              <button
+                onClick={() => {
+                  handleEstadoChange(menuIndex, false);
+                  closeMenu();
+                }}
+                className="w-full flex items-center gap-3 px-3 py-3 rounded-xl transition text-left hover:bg-gray-100"
+              >
+                <div className="shrink-0 inline-flex items-center justify-center w-8 h-8 rounded-lg border">
+                  <IconCircleCheck className="w-5 h-5 text-green-600" />
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-green-700">
+                    Desmarcar averiado
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    El equipo dejará de estar marcado.
+                  </div>
+                </div>
+              </button>
+            )}
+          </div>
+        </MenuOverlay>
+      )}
+
+      <div className="flex justify-end mt-4">
+        <button
+          onClick={handleGuardar}
+          className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold"
+        >
+          Guardar
+        </button>
+      </div>
+    </LayoutMayordomo>
   );
 };
 
-export default registrar_novedadm;
+export default Registrar_novedadm;
+
