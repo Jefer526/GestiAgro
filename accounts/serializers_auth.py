@@ -8,16 +8,12 @@ class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
     # Indicamos que el campo de login es 'email'
     username_field = "email"
 
-    # 👇 Definimos explícitamente los campos que el serializer debe esperar
     email = serializers.EmailField(write_only=True)
     password = PasswordField(write_only=True)
 
     def validate(self, attrs):
         email = attrs.get("email")
         password = attrs.get("password")
-
-        # (debug opcional)
-        # print(">>> EmailTokenObtainPairSerializer activo", {"email": email})
 
         try:
             user = User.objects.get(email__iexact=email)
@@ -29,5 +25,17 @@ class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
         if not user.is_active:
             raise serializers.ValidationError({"detail": "Usuario inactivo."})
 
-        # Delegamos a la clase base pasando username real para generar tokens
-        return super().validate({"username": user.username, "password": password})
+        # Llamamos al padre para generar tokens
+        data = super().validate({"username": user.username, "password": password})
+
+        # Agregamos datos del usuario en la respuesta
+        data["user"] = {
+            "id": user.id,
+            "email": user.email,
+            "nombre": getattr(user, "nombre", ""),
+            "rol": getattr(user, "rol", ""),
+            "is_superuser": user.is_superuser,
+            "is_staff": user.is_staff,
+            "is_active": user.is_active,
+        }
+        return data

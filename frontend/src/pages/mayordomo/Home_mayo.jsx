@@ -17,6 +17,9 @@ import {
 import { useNavigate } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
+// 🔹 Importa el mismo cliente API y endpoints que usas en Admin_usuarios
+import api, { accountsApi, ENDPOINTS } from "../../services/apiClient";
+
 const Home_mayo = () => {
   const navigate = useNavigate();
 
@@ -25,6 +28,7 @@ const Home_mayo = () => {
 
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
   const tarjetaRef = useRef(null);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
     const manejarClickFuera = (e) => {
@@ -36,27 +40,38 @@ const Home_mayo = () => {
     return () => document.removeEventListener("mousedown", manejarClickFuera);
   }, []);
 
-  // Función para cerrar sesión
+  // ====== LOGOUT replicado ======
   const handleLogout = async () => {
-    setMostrarTarjeta(false);
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
     try {
       const refresh = localStorage.getItem("refresh");
-      if (refresh) {
-        await fetch(`${import.meta.env.VITE_API_URL}/api/auth/logout/`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ refresh_token: refresh }),
-        });
+      try {
+        if (ENDPOINTS?.logout) {
+          await api.post(ENDPOINTS.logout, { refresh });
+        } else if (accountsApi?.logout) {
+          await accountsApi.logout({ refresh });
+        }
+      } catch (e) {
+        console.warn("Fallo en logout del backend:", e);
       }
-    } catch (err) {
-      console.error("Error cerrando sesión:", err);
+    } finally {
+      try {
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
+        sessionStorage.removeItem("access");
+        sessionStorage.removeItem("refresh");
+        localStorage.removeItem("rememberedEmail");
+      } catch {}
+      try {
+        if (api?.defaults?.headers?.common) {
+          delete api.defaults.headers.common.Authorization;
+        }
+      } catch {}
+      setMostrarTarjeta(false);
+      setIsLoggingOut(false);
+      window.location.replace("/login");
     }
-    // Limpiar datos locales
-    localStorage.removeItem("access");
-    localStorage.removeItem("refresh");
-    localStorage.removeItem("rememberedEmail"); // opcional
-    // Redirigir al login
-    navigate("/login");
   };
 
   const cards = [
@@ -140,8 +155,6 @@ const Home_mayo = () => {
       iconBg: "bg-white/70",
       text: "text-slate-700",
     },
-    
-    
   ];
 
   return (
@@ -198,7 +211,16 @@ const Home_mayo = () => {
             >
               <button onClick={() => { setMostrarTarjeta(false); navigate("/ajustesmayordomo"); }} className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100"><IconSettings className="w-5 h-5 mr-2 text-green-600" />Ajustes</button>
               <button onClick={() => { setMostrarTarjeta(false); navigate("/soportemayordomo"); }} className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100"><IconTool className="w-5 h-5 mr-2 text-green-600" />Soporte</button>
-              <button onClick={() => { setMostrarTarjeta(false); navigate("/login"); }} className="flex items-center w-full text-left px-4 py-2 hover:bg-red-50 text-red-600"><IconLogout className="w-5 h-5 mr-2 text-red-600" />Cerrar sesión</button>
+              <button
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className={`flex items-center w-full text-left px-4 py-2 hover:bg-gray-100 ${
+                  isLoggingOut ? "opacity-60 cursor-not-allowed" : "text-red-600"
+                }`}
+              >
+                <IconLogout className="w-5 h-5 mr-2 text-red-600" />
+                {isLoggingOut ? "Cerrando..." : "Cerrar sesión"}
+              </button>
             </div>
           )}
         </div>

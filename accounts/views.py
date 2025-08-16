@@ -1,4 +1,3 @@
-# accounts/views.py
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractBaseUser
@@ -10,6 +9,7 @@ from django.core.mail import send_mail
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -23,8 +23,28 @@ from .serializers import (
     UserUpdateSerializer,
     UserRoleUpdateSerializer,
 )
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 User = get_user_model()
+
+# ===== Login extendido (tokens + usuario) =====
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        data["user"] = {
+            "id": self.user.id,
+            "email": self.user.email,
+            "nombre": getattr(self.user, "nombre", ""),
+            "rol": getattr(self.user, "rol", ""),
+            "is_superuser": self.user.is_superuser,
+            "is_staff": self.user.is_staff,
+            "is_active": self.user.is_active,
+        }
+        return data
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
+
 
 # ===== Registro normal (con contraseña) =====
 class RegisterView(generics.CreateAPIView):
@@ -248,7 +268,6 @@ class SendTemporaryPasswordAPIView(APIView):
         return Response(
             {
                 "detail": "Contraseña temporal enviada por correo."
-                # En DEBUG podrías devolver también: "temp_password": temp_password
             },
             status=status.HTTP_200_OK
         )
@@ -277,8 +296,8 @@ class UpdateUserRoleView(generics.UpdateAPIView):
         instance.rol = nuevo_rol
         instance.save()
 
-        # Retornamos los datos actualizados del usuario
         return Response(UserSerializer(instance).data, status=status.HTTP_200_OK)
+
 
 # ===== Listado de roles =====
 class RolesListView(APIView):
@@ -292,11 +311,11 @@ class RolesListView(APIView):
             {"id": 3, "nombre": "Mayordomo"},
         ]
         return Response(roles, status=status.HTTP_200_OK)
-    
+
+
 class MyRolesView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
         user = request.user
-        # Convertimos el rol a lista para que el frontend pueda manejar varios
         return Response([user.get_rol_display()])

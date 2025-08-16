@@ -25,9 +25,22 @@ const Login = () => {
     }
 
     if (localStorage.getItem("access")) {
-      navigate("/seleccion-rol", { replace: true });
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (user) redirectByRole(user);
     }
   }, [navigate]);
+
+  const redirectByRole = (user) => {
+    if (user.is_superuser) {
+      navigate("/seleccion-rol", { replace: true });
+    } else if (user.rol === "agronomo") {
+      navigate("/homeagro", { replace: true });
+    } else if (user.rol === "mayordomo") {
+      navigate("/homemayordomo", { replace: true });
+    } else {
+      navigate("/", { replace: true }); // fallback
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -47,16 +60,23 @@ const Login = () => {
 
     setLoading(true);
     try {
-      await login(emailTrim, password);
+      const response = await login(emailTrim, password);
+      const { access, refresh, user } = response.data; // 👈 asegúrate de que tu backend lo devuelva así
 
-      // Guardar o eliminar correo según checkbox
+      // guardar tokens y usuario
+      localStorage.setItem("access", access);
+      localStorage.setItem("refresh", refresh);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      // guardar o eliminar correo según checkbox
       if (rememberEmail) {
         localStorage.setItem("rememberedEmail", emailTrim);
       } else {
         localStorage.removeItem("rememberedEmail");
       }
 
-      navigate("/seleccion-rol", { replace: true });
+      // redirigir según rol
+      redirectByRole(user);
     } catch (err) {
       setErrorMsg(err.message || "Error al iniciar sesión.");
     } finally {

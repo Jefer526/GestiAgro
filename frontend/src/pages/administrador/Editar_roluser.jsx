@@ -45,25 +45,32 @@ const Editar_roluser = () => {
   const [enviandoCorreo, setEnviandoCorreo] = useState(false);
   const [avisoPwd, setAvisoPwd] = useState("");
 
+
   const manejarGenerarYEnviar = async () => {
-    try {
-      setEnviandoCorreo(true);
-      setAvisoPwd("");
-      const { data } = await accountsApi.sendTempPassword(usuario.id);
-      setUsuario((prev) => ({
-        ...prev,
-        tiene_password: data.tiene_password,
-      }));
-      setAvisoPwd("Contraseña temporal generada y enviada al correo.");
-      setTimeout(() => setAvisoPwd(""), 4000);
-    } catch (error) {
-      console.error("Error al generar contraseña:", error);
-      setAvisoPwd("Error al enviar la contraseña temporal.");
-      setTimeout(() => setAvisoPwd(""), 4000);
-    } finally {
-      setEnviandoCorreo(false);
-    }
-  };
+  try {
+    setEnviandoCorreo(true);
+    setAvisoPwd("");
+
+    // Llamada a la API para generar y enviar la contraseña
+    await accountsApi.sendTempPassword(usuario.id);
+
+    // 🔹 Forzar el cambio inmediato en el estado
+    setUsuario((prev) => ({
+      ...prev,
+      tiene_password: true,
+    }));
+
+    // Mensaje de confirmación
+    setAvisoPwd("Contraseña temporal generada y enviada al correo.");
+    setTimeout(() => setAvisoPwd(""), 4000);
+  } catch (error) {
+    console.error("Error al generar contraseña:", error);
+    setAvisoPwd("Error al enviar la contraseña temporal.");
+    setTimeout(() => setAvisoPwd(""), 4000);
+  } finally {
+    setEnviandoCorreo(false);
+  }
+};
 
   // Función para normalizar texto y quitar tildes
   const normalizarRol = (rol) => {

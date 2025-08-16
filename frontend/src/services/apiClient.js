@@ -27,111 +27,78 @@ const processQueue = (error, token = null) => {
 };
 
 api.interceptors.response.use(
-  (res) => res,
+  (response) => response,
   async (error) => {
-    const original = error.config;
-    const status = error?.response?.status;
+    const originalRequest = error.config;
 
-    if (status !== 401 || original._retry) {
-      return Promise.reject(error);
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        return new Promise(function (resolve, reject) {
+          queue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers["Authorization"] = "Bearer " + token;
+            return api(originalRequest);
+          })
+          .catch((err) => Promise.reject(err));
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        const refresh = localStorage.getItem("refresh");
+        if (!refresh) throw new Error("No refresh token");
+
+        const res = await axios.post(`${API}/accounts/token/refresh/`, { refresh });
+        const newAccess = res.data.access;
+
+        localStorage.setItem("access", newAccess);
+        api.defaults.headers["Authorization"] = "Bearer " + newAccess;
+        processQueue(null, newAccess);
+
+        return api(originalRequest);
+      } catch (err) {
+        processQueue(err, null);
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
+        localStorage.removeItem("user");
+        window.location.href = "/login";
+        return Promise.reject(err);
+      } finally {
+        isRefreshing = false;
+      }
     }
 
-    original._retry = true;
-
-    if (isRefreshing) {
-      return new Promise((resolve, reject) => {
-        queue.push({
-          resolve: (token) => {
-            original.headers.Authorization = `Bearer ${token}`;
-            resolve(api(original));
-          },
-          reject,
-        });
-      });
-    }
-
-    isRefreshing = true;
-
-    try {
-      const refresh = localStorage.getItem("refresh");
-      if (!refresh) throw new Error("No refresh token");
-
-      const { data } = await axios.post(`${API}/api/token/refresh/`, { refresh });
-      const newAccess = data.access;
-
-      localStorage.setItem("access", newAccess);
-      api.defaults.headers.Authorization = `Bearer ${newAccess}`;
-      processQueue(null, newAccess);
-
-      original.headers.Authorization = `Bearer ${newAccess}`;
-      return api(original);
-    } catch (err) {
-      processQueue(err, null);
-      localStorage.removeItem("access");
-      localStorage.removeItem("refresh");
-      return Promise.reject(err);
-    } finally {
-      isRefreshing = false;
-    }
+    return Promise.reject(error);
   }
 );
 
-// ===== Endpoints =====
+// ===== ENDPOINTS centralizados =====
 export const ENDPOINTS = {
-  login: "/api/token/",
-  refresh: "/api/token/refresh/",
-  me: "/api/auth/me/",
-  logout: "/api/auth/logout/",
-  users: "/api/accounts/users/",
-  userDetail: (id) => `/api/accounts/users/${id}/`,
-  sendTempPassword: (id) => `/api/accounts/users/${id}/send-temp-password/`,
-  changePassword: "/api/auth/password/change/",
-  getRoles: "/api/accounts/roles/",         // Lista global de roles
-  getMyRoles: "/api/auth/my-roles/",        // Roles del usuario logueado
+  login: "api/accounts/token/",
+  me: "api/accounts/me/",
+  logout: "api/accounts/logout/",
 };
 
-// ===== Métodos de autenticación =====
-export const login = async (email, password) => {
-  try {
-    const { data } = await axios.post(`${API}${ENDPOINTS.login}`, { email, password });
-    localStorage.setItem("access", data.access);
-    localStorage.setItem("refresh", data.refresh);
-    return data;
-  } catch (error) {
-    if (error.response?.data?.detail) {
-      throw new Error(error.response.data.detail);
-    }
-    throw new Error("Error de conexión con el servidor.");
-  }
-};
+// ===== Funciones de autenticación =====
+export const login = (email, password) =>
+  api.post(ENDPOINTS.login, { email, password });
 
-export const me = async () => {
-  const { data } = await api.get(ENDPOINTS.me);
-  return data;
-};
+export const getMe = () => api.get(ENDPOINTS.me);
 
-export const logout = async () => {
-  try {
-    const refresh = localStorage.getItem("refresh");
-    if (refresh) {
-      await api.post(ENDPOINTS.logout, { refresh_token: refresh });
-    }
-  } catch (_) {
-    // Silenciar errores
-  } finally {
-    localStorage.removeItem("access");
-    localStorage.removeItem("refresh");
-  }
-};
+export const logout = () => api.post(ENDPOINTS.logout);
 
-// ===== Módulo accounts =====
+// ===== Alias retrocompatible =====
 export const accountsApi = {
-  listUsers: () => api.get(ENDPOINTS.users),
-  updateUser: (id, data) => api.put(ENDPOINTS.userDetail(id), data),   // PUT completo
-  patchUser: (id, data) => api.patch(ENDPOINTS.userDetail(id), data),  // PATCH parcial
-  sendTempPassword: (id) => api.post(ENDPOINTS.sendTempPassword(id)),  // Contraseña temporal
-  getRoles: () => api.get(ENDPOINTS.getRoles),                         // Lista global de roles
-  getMyRoles: () => api.get(ENDPOINTS.getMyRoles),                     // Roles del usuario logueado
+  listUsers: () => api.get("/api/accounts/users/"),
+  getUser: (id) => api.get(`/api/accounts/users/${id}/`),
+  updateUser: (id, data) => api.put(`/api/accounts/users/${id}/`, data),
+  toggleActive: (id) => api.post(`/api/accounts/users/${id}/toggle-active/`),
+  updateRole: (id, data) => api.put(`/api/accounts/update-role/${id}/`, data),
 };
 
+// ===== Export principal =====
 export default api;
+
+
