@@ -1,3 +1,4 @@
+// src/routes/AdminRoutes.jsx
 import { Route } from "react-router-dom";
 import ProtectedRoute from "../components/ProtectedRoute";
 
@@ -13,7 +14,7 @@ import Ajustes_adm from "../pages/administrador/Ajustes_adm";
 const adminRoutes = [
   <Route
     key="home"
-    path="/Homeadm"
+    path="/homeadm"
     element={
       <ProtectedRoute allowedRoles={["admin"]}>
         <Home_adm />
@@ -22,7 +23,7 @@ const adminRoutes = [
   />,
   <Route
     key="usuarios"
-    path="/Admuser"
+    path="/admuser"
     element={
       <ProtectedRoute allowedRoles={["admin"]}>
         <Admin_usuarios />
@@ -76,7 +77,7 @@ const adminRoutes = [
   />,
   <Route
     key="ajustes"
-    path="/Ajustesadm"
+    path="/ajustesadm"
     element={
       <ProtectedRoute allowedRoles={["admin"]}>
         <Ajustes_adm />
