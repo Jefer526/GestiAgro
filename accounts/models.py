@@ -29,8 +29,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     nombre = models.CharField(max_length=150)
     telefono = models.CharField(max_length=20, blank=True, null=True)
-<<<<<<< HEAD
-<<<<<<< HEAD
+
     rol = models.CharField(max_length=20, choices=ROLES, default="agronomo")
     is_demo = models.BooleanField(default=True)
 
@@ -47,7 +46,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         if self.is_demo and self.has_usable_password():
             self.is_demo = False
         super().save(*args, **kwargs)
-=======
+
     is_demo = models.BooleanField(default=True)  # True hasta que defina contraseña
 
     rol = models.CharField(max_length=20, choices=(
@@ -56,8 +55,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         ('mayordomo', 'Mayordomo'),
     ),    default='agronomo',)
    
->>>>>>> 5c861172 (Gestion de roles corregida)
-=======
+
     rol = models.CharField(max_length=20, choices=ROLES, default="agronomo")
     is_demo = models.BooleanField(default=True)
 
@@ -74,7 +72,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         if self.is_demo and self.has_usable_password():
             self.is_demo = False
         super().save(*args, **kwargs)
->>>>>>> a07fe04b (Limpieza apps y BD)
+
 
     def __str__(self):
         return f"{self.nombre} ({self.rol})"
