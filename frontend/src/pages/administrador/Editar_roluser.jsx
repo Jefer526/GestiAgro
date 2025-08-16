@@ -10,10 +10,9 @@ import {
   IconCloudUpload,
   IconTool,
   IconSettings,
-  IconWand,
-  IconMail,
   IconLogout,
   IconPlus,
+  IconKey,
 } from "@tabler/icons-react";
 import { accountsApi } from "../../services/apiClient";
 import faviconBlanco from "../../assets/favicon-blanco.png";
@@ -59,20 +58,47 @@ const Editar_roluser = () => {
       setTimeout(() => setAvisoPwd(""), 4000);
     } catch (error) {
       console.error("Error al generar contraseña:", error);
-      alert("Hubo un error al enviar la contraseña temporal.");
+      setAvisoPwd("Error al enviar la contraseña temporal.");
+      setTimeout(() => setAvisoPwd(""), 4000);
     } finally {
       setEnviandoCorreo(false);
     }
   };
 
+  // Función para normalizar texto y quitar tildes
+  const normalizarRol = (rol) => {
+    if (!rol) return "";
+    return rol
+      .toString()
+      .trim()
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, ""); // Quitar tildes
+  };
+
   useEffect(() => {
     if (state?.usuario) {
+      console.log("📌 Datos recibidos en Editar_roluser:", state.usuario);
+
+      let rolAsignado = "";
+      if (typeof state.usuario.rol === "string") {
+        rolAsignado = normalizarRol(state.usuario.rol);
+      } else if (Array.isArray(state.usuario.rol)) {
+        rolAsignado = normalizarRol(state.usuario.rol[0]);
+      } else if (
+        state.usuario.rol &&
+        typeof state.usuario.rol === "object" &&
+        state.usuario.rol !== null
+      ) {
+        rolAsignado = normalizarRol(state.usuario.rol.nombre);
+      }
+
       setUsuario({
         id: state.usuario.id,
         nombre: state.usuario.nombre_completo,
         telefono: state.usuario.telefono,
         email: state.usuario.email,
-        rol: state.usuario.rol || "",
+        rol: rolAsignado,
         tiene_password: state.usuario.tiene_password ?? true,
       });
     }
@@ -85,7 +111,7 @@ const Editar_roluser = () => {
         nombre: usuario.nombre,
         telefono: usuario.telefono,
         email: usuario.email,
-        rol: usuario.rol, // ← aquí ya es admin/agronomo/mayordomo
+        rol: usuario.rol,
       });
 
       setAlertaVisible(true);
@@ -181,7 +207,7 @@ const Editar_roluser = () => {
         {/* Formulario */}
         <div className="bg-white shadow-xl border-2 border-green-500 rounded-xl p-8 max-w-5xl mx-auto">
           <h2 className="text-2xl font-bold text-green-700 mb-8">
-            Editar rol de usuario
+            Editar roles y usuarios
           </h2>
 
           {/* Datos */}
@@ -199,6 +225,7 @@ const Editar_roluser = () => {
                 className="w-full p-3 rounded-md border border-gray-300 focus:ring-1 focus:ring-green-500 outline-none"
               />
             </div>
+
             <div>
               <label className="block font-semibold text-gray-700 mb-1">
                 Teléfono
@@ -212,6 +239,7 @@ const Editar_roluser = () => {
                 className="w-full p-3 rounded-md border border-gray-300 focus:ring-1 focus:ring-green-500 outline-none"
               />
             </div>
+
             <div>
               <label className="block font-semibold text-gray-700 mb-1">
                 Correo
@@ -224,6 +252,38 @@ const Editar_roluser = () => {
                 }
                 className="w-full p-3 rounded-md border border-gray-300 focus:ring-1 focus:ring-green-500 outline-none"
               />
+            </div>
+
+            {/* Botón Generar Contraseña */}
+            <div>
+              <label className="block font-semibold text-gray-700 mb-1">
+                Contraseña temporal
+              </label>
+              <button
+                type="button"
+                onClick={manejarGenerarYEnviar}
+                disabled={usuario.tiene_password || enviandoCorreo}
+                className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-semibold shadow text-white ${
+                  usuario.tiene_password
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-green-600 hover:bg-green-700"
+                }`}
+              >
+                <IconKey className="w-5 h-5" />
+                {enviandoCorreo ? "Enviando..." : "Generar y enviar"}
+              </button>
+              {avisoPwd && (
+                <p className="mt-1 text-sm text-green-600 font-medium">{avisoPwd}</p>
+              )}
+              {usuario.tiene_password ? (
+                <p className="mt-1 text-xs text-blue-600">
+                  Este usuario ya tiene contraseña asignada.
+                </p>
+              ) : (
+                <p className="mt-1 text-xs text-red-600">
+                  Este usuario no tiene contraseña asignada.
+                </p>
+              )}
             </div>
           </div>
 
@@ -242,15 +302,10 @@ const Editar_roluser = () => {
               <option value="agronomo">Agrónomo</option>
               <option value="mayordomo">Mayordomo</option>
             </select>
-            <button
-              type="button"
-              onClick={() => alert("Aquí se añadirá otro rol")}
-              className="mt-3 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold shadow"
-            >
-              <IconPlus className="w-5 h-5" /> Añadir otro rol
-            </button>
+            
           </div>
 
+          {/* Guardar */}
           <div className="mt-8">
             <button
               type="button"

@@ -5,35 +5,27 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 
 User = get_user_model()
 
+
 class UserSerializer(serializers.ModelSerializer):
     tiene_password = serializers.SerializerMethodField()
-    nombre = serializers.SerializerMethodField()  # ← Agregado
-    rol = serializers.CharField()  # Asegúrate de tenerlo en tu modelo
 
     class Meta:
         model = User
         fields = [
             "id",
-            "username",
             "email",
-            "first_name",
-            "last_name",
-            "nombre",         # ← nuevo campo visible para el frontend
+            "nombre",
             "telefono",
             "rol",
             "is_active",
             "is_superuser",
             "is_staff",
+            "is_demo",
             "tiene_password",
         ]
 
     def get_tiene_password(self, obj):
         return obj.has_usable_password()
-
-    def get_nombre(self, obj):
-        full_name = f"{obj.first_name} {obj.last_name}".strip()
-        return full_name if full_name else obj.username
-
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -41,17 +33,18 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["username", "email", "password", "first_name", "last_name", "telefono"]
+        fields = ["email", "nombre", "telefono", "password"]
 
     def create(self, validated_data):
         password = validated_data.pop("password")
         user = User(**validated_data)
         user.set_password(password)
+        user.is_demo = False  # Si se registra con contraseña, no es demo
         user.save()
         return user
 
 
-# --- Alta de DEMO sin contraseña ---
+# --- Alta de usuario DEMO (sin contraseña) ---
 class DemoSignupSerializer(serializers.Serializer):
     nombre = serializers.CharField(max_length=255)
     telefono = serializers.CharField(max_length=20, allow_blank=True, required=False)
@@ -63,16 +56,13 @@ class DemoSignupSerializer(serializers.Serializer):
         return value
 
     def create(self, data):
-        email = data["email"].lower()
         user = User(
-            username=email,
-            email=email,
-            first_name=data["nombre"],
+            email=data["email"].lower(),
+            nombre=data["nombre"],
             telefono=data.get("telefono", ""),
+            is_demo=True,
+            is_active=True
         )
-        if hasattr(user, "is_demo"):
-            user.is_demo = True
-        user.is_active = True
         user.set_unusable_password()
         user.save()
         return user
@@ -100,30 +90,28 @@ class SetPasswordSerializer(serializers.Serializer):
     def create(self, data):
         user = data["user"]
         user.set_password(data["new_password"])
-        if hasattr(user, "is_demo"):
-            user.is_demo = False
+        if user.is_demo:
+            user.is_demo = False  # Una vez que se asigna contraseña, deja de ser demo
         user.save()
         return user
 
 
 class UserUpdateSerializer(serializers.ModelSerializer):
-    nombre = serializers.CharField(source='first_name', required=False)
     tiene_password = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = [
             "id",
-            "username",
-            "nombre",
-            "last_name",
             "email",
+            "nombre",
             "telefono",
-            "rol",  # Asegúrate de que este campo exista en tu modelo
+            "rol",
             "is_active",
             "is_superuser",
             "is_staff",
-            "tiene_password",  # 👈 agregado aquí también
+            "is_demo",
+            "tiene_password",
         ]
         extra_kwargs = {
             "email": {"required": False}
@@ -131,7 +119,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
 
     def get_tiene_password(self, obj):
         return obj.has_usable_password()
-    
+
 
 class UserRoleUpdateSerializer(serializers.ModelSerializer):
     class Meta:

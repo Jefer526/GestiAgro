@@ -72,7 +72,7 @@ const capitalizar = (texto) => {
         const lista = (res.data || []).map((u) => ({
           id_usuario: u.id,
           nombre_completo:
-            `${u.first_name || ""} ${u.last_name || ""}`.trim() || "(sin nombre)",
+            u.nombre?.trim() || "(sin nombre)",
           telefono: u.telefono || "",
           rol: capitalizar(
             u.rol ||
