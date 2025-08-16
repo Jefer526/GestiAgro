@@ -28,6 +28,7 @@ import Ajustes_agro from "../pages/agronomo/Ajustes_agro";
 import Detalle_mantenimiento from "../pages/agronomo/Detalle_mantenimiento";
 import Produccion_agro from "../pages/agronomo/Produccion_agro";
 import Cuaderno_campo_agro from "../pages/agronomo/Cuaderno_campo_agro";
+import Registrarticketag from "../pages/agronomo/registrarticketag"; // 👈 nuevo
 
 const agronomoRoutes = [
   <Route key="home" path="/Homeagro" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Home_agro /></ProtectedRoute>} />,
@@ -53,6 +54,7 @@ const agronomoRoutes = [
   <Route key="crear-lote" path="/crearlote" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Crear_lote_agro /></ProtectedRoute>} />,
   <Route key="editar-lote" path="/editarlote" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Editar_lote /></ProtectedRoute>} />,
   <Route key="soporte-agro" path="/soporteagro" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Soporte_agro /></ProtectedRoute>} />,
+  <Route key="registrar-ticket-agro" path="/registrarticketag" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Registrarticketag /></ProtectedRoute>} />,
   <Route key="ajustes-agro" path="/ajustesagro" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Ajustes_agro /></ProtectedRoute>} />,
   <Route key="detalle-mantenimiento" path="/detalle_mantenimiento" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Detalle_mantenimiento /></ProtectedRoute>} />,
   <Route key="produccion-agro" path="/produccionagro" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Produccion_agro /></ProtectedRoute>} />,

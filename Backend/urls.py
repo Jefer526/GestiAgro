@@ -11,4 +11,5 @@ urlpatterns = [
     path("api/", include("accounts.urls")),          # para /api/token/
     path("api/auth/", include("accounts.urls")),     # para /api/auth/logout/
     path('api/accounts/', include('accounts.urls')),
+    path("soporte/", include("soporte.urls")),
 ]
