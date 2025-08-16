@@ -81,6 +81,26 @@ const Home_mayo = () => {
       text: "text-sky-700",
     },
     {
+      icon: <IconBook className="w-8 h-8" />,
+      label: "Cuaderno de Campo",
+      desc: "Registro de anotaciones, observaciones y fotos de campo.",
+      route: "/cuaderno_campom",
+      gradient: "from-green-700/20 to-amber-600/20",
+      ring: "ring-green-400/40",
+      iconBg: "bg-white/80",
+      text: "text-green-800",
+    },
+    {
+      icon: <IconPlant2 className="w-8 h-8" />,
+      label: "Producción",
+      desc: "Gestión y registro de producción agrícola (En desarrollo).",
+      route: "/equipos_mayordomo",
+      gradient: "from-green-500/20 to-yellow-500/20",
+      ring: "ring-green-300/40",
+      iconBg: "bg-white/70",
+      text: "text-green-700",
+    },
+    {
       icon: <IconBox className="w-8 h-8" />,
       label: "Bodega",
       desc: "Insumos y existencias.",
@@ -120,26 +140,8 @@ const Home_mayo = () => {
       iconBg: "bg-white/70",
       text: "text-slate-700",
     },
-    {
-      icon: <IconPlant2 className="w-8 h-8" />,
-      label: "Producción",
-      desc: "Gestión y registro de producción agrícola (En desarrollo).",
-      route: "/equipos_mayordomo",
-      gradient: "from-green-500/20 to-yellow-500/20",
-      ring: "ring-green-300/40",
-      iconBg: "bg-white/70",
-      text: "text-green-700",
-    },
-    {
-      icon: <IconBook className="w-8 h-8" />,
-      label: "Cuaderno de Campo",
-      desc: "Registro de anotaciones, observaciones y fotos de campo.",
-      route: "/cuaderno_campom",
-      gradient: "from-green-700/20 to-amber-600/20",
-      ring: "ring-green-400/40",
-      iconBg: "bg-white/80",
-      text: "text-green-800",
-    }
+    
+    
   ];
 
   return (
@@ -169,12 +171,13 @@ const Home_mayo = () => {
           {/* Íconos resto */}
           <button onClick={() => navigate("/registrolabores")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconClipboardList className="text-white w-11 h-11" /></button>
           <button onClick={() => navigate("/historial_labores")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconHistory className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/cuaderno_campom")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconBook className="text-white w-11 h-11" /></button>
+          <button onClick={() => navigate("/produccion_mayor")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconPlant2 className="text-white w-11 h-11" /></button>
           <button onClick={() => navigate("/bodega_insumos")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconBox className="text-white w-11 h-11" /></button>
           <button onClick={() => navigate("/variables_climaticasm")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconCloudRain className="text-white w-11 h-11" /></button>
           <button onClick={() => navigate("/informes_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconChartBar className="text-white w-11 h-11" /></button>
           <button onClick={() => navigate("/equipos_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconTractor className="text-white w-11 h-11" /></button>
-          <button onClick={() => navigate("/produccion_mayor")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconPlant2 className="text-white w-11 h-11" /></button>
-          <button onClick={() => navigate("/cuaderno_campom")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconBook className="text-white w-11 h-11" /></button>
+          
         </div>
         {/* Perfil */}
         <div className="relative mb-6 flex justify-center">
