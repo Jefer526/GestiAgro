@@ -1,44 +1,18 @@
+// src/pages/mayordomo/Bodega_insu.jsx
+import React, { useState, useRef, useEffect } from "react";
 import {
-  IconHome,
-  IconClipboardList,
-  IconHistory,
-  IconChartBar,
-  IconBox,
-  IconCloudRain,
-  IconTractor,
-  IconSettings,
-  IconTool,
-  IconLogout,
   IconEye,
   IconFilter,
   IconSortAscending2,
   IconSortDescending2,
-  IconPlant2,
-  IconBook
 } from "@tabler/icons-react";
-import { useNavigate, useLocation } from "react-router-dom";
-import faviconBlanco from "../../assets/favicon-blanco.png";
-import { useRef, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+// ✅ Importa el layout del Mayordomo
+import LayoutMayordomo from "../../layouts/LayoutMayordomo";
 
 const Bodega_insu = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-
-  // -------- Sidebar / Perfil --------
-  const nombreUsuario = "Juan Pérez";
-  const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
-  const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
-  const tarjetaRef = useRef(null);
-
-  useEffect(() => {
-    const handler = (e) => {
-      if (tarjetaRef.current && !tarjetaRef.current.contains(e.target)) {
-        setMostrarTarjeta(false);
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
 
   // -------- Datos de la tabla --------
   const datos = [
@@ -113,241 +87,111 @@ const Bodega_insu = () => {
   }, []);
 
   return (
-    <div className="min-h-[100dvh] bg-gray-50">
-      {/* Sidebar fijo */}
-      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col justify-between">
-        {/* Logo fijo */}
-        <div className="pt-6 flex justify-center">
-          <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
-        </div>
+    <LayoutMayordomo>
+      <h1 className="text-3xl font-bold text-green-700 mb-6">Bodega de insumos</h1>
 
-        {/* Íconos con scroll */}
-        <div className="flex-1 flex flex-col items-center space-y-8 mt-6 overflow-y-auto scrollbar-hide-only">
-          {/* Home */}
-          <div className="relative">
-            {location.pathname === "/homemayordomo" && (
-              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            )}
-            <button onClick={() => navigate("/homemayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-              <IconHome className="text-white w-11 h-11" />
-            </button>
-          </div>
+      {/* Selector de finca */}
+      <div className="mb-6 max-w-md">
+        <label className="block font-semibold mb-2 text-lg">Finca</label>
+        <select className="border border-gray-400 rounded-md p-2 w-full text-lg">
+          <option>La Esmeralda</option>
+          <option>Las Palmas</option>
+          <option>La Carolina</option>
+        </select>
+      </div>
 
-          {/* Registro labores */}
-          <div className="relative">
-            {location.pathname === "/registrolabores" && (
-              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            )}
-            <button onClick={() => navigate("/registrolabores")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-              <IconClipboardList className="text-white w-11 h-11" />
-            </button>
-          </div>
-
-          {/* Historial labores */}
-          <div className="relative">
-            {location.pathname === "/historial_labores" && (
-              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            )}
-            <button onClick={() => navigate("/historial_labores")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-              <IconHistory className="text-white w-11 h-11" />
-            </button>
-          </div>
-
-          {/* Cuaderno de Campo */}
-          <div className="relative">
-            {location.pathname === "/cuaderno_campom" && (
-              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            )}
-            <button onClick={() => navigate("/cuaderno_campom")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-              <IconBook className="text-white w-11 h-11" />
-            </button>
-          </div>
-          
-          {/* Producción */}
-          <div className="relative">
-            {location.pathname === "/produccion_mayor" && (
-              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            )}
-            <button onClick={() => navigate("/produccion_mayor")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-              <IconPlant2 className="text-white w-11 h-11" />
-            </button>
-          </div>
-
-          {/* Bodega */}
-          <div className="relative">
-            {location.pathname === "/bodega_insumos" && (
-              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            )}
-            <button onClick={() => navigate("/bodega_insumos")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-              <IconBox className="text-white w-11 h-11" />
-            </button>
-          </div>
-
-          {/* Variables climáticas */}
-          <div className="relative">
-            {location.pathname === "/variables_climaticasm" && (
-              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            )}
-            <button onClick={() => navigate("/variables_climaticasm")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-              <IconCloudRain className="text-white w-11 h-11" />
-            </button>
-          </div>
-
-          {/* Informes */}
-          <div className="relative">
-            {location.pathname === "/informes_mayordomo" && (
-              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            )}
-            <button onClick={() => navigate("/informes_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-              <IconChartBar className="text-white w-11 h-11" />
-            </button>
-          </div>
-
-          {/* Maquinaria */}
-          <div className="relative">
-            {location.pathname === "/equipos_mayordomo" && (
-              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            )}
-            <button onClick={() => navigate("/equipos_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-              <IconTractor className="text-white w-11 h-11" />
-            </button>
-          </div>
-        </div>
-
-        {/* Perfil */}
-        <div className="relative mb-6 flex justify-center">
-          <button
-            onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
-            className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
-          >
-            {letraInicial}
-          </button>
-          {mostrarTarjeta && (
-            <div
-              ref={tarjetaRef}
-              className="absolute bottom-16 left-14 w-56 bg-white/95 border border-gray-200 rounded-xl shadow-2xl py-3 z-[10000] backdrop-blur"
-            >
-              <button onClick={() => { setMostrarTarjeta(false); navigate("/ajustesmayordomo"); }} className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100">
-                <IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes
-              </button>
-              <button onClick={() => { setMostrarTarjeta(false); navigate("/soportemayordomo"); }} className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100">
-                <IconTool className="w-5 h-5 mr-2 text-green-600" /> Soporte
-              </button>
-              <button onClick={() => { setMostrarTarjeta(false); navigate("/login"); }} className="flex items-center w-full text-left px-4 py-2 hover:bg-red-50 text-red-600">
-                <IconLogout className="w-5 h-5 mr-2 text-red-600" /> Cerrar sesión
-              </button>
-            </div>
-          )}
-        </div>
-      </aside>
-
-      {/* Contenido principal */}
-      <main className="ml-28 min-h-[100dvh] p-10">
-        <h1 className="text-3xl font-bold text-green-700 mb-6">Bodega de insumos</h1>
-
-        {/* Selector de finca */}
-        <div className="mb-6 max-w-md">
-          <label className="block font-semibold mb-2 text-lg">Finca</label>
-          <select className="border border-gray-400 rounded-md p-2 w-full text-lg">
-            <option>La Esmeralda</option>
-            <option>Las Palmas</option>
-            <option>La Carolina</option>
-          </select>
-        </div>
-
-        {/* Tabla */}
-        <div className="bg-white border border-gray-300 rounded-xl overflow-auto relative">
-          <table className="w-full text-base text-center">
-            <thead className="bg-green-600 text-white font-bold">
-              <tr>
-                {columnas.map((col, idx) => (
-                  <th key={idx} className="px-4 py-3 border border-gray-300">
-                    <div className="flex items-center gap-2 justify-center">
-                      {col.toUpperCase()}
-                      <button onClick={(e) => toggleFiltro(col, e)}>
-                        <IconFilter className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </th>
-                ))}
-                <th className="px-4 py-3 border border-gray-300">DETALLE</th>
-              </tr>
-            </thead>
-            <tbody>
-              {datosFiltrados.map((d, i) => (
-                <tr key={i} className="border-b border-gray-200">
-                  <td className="px-4 py-2 border">{d.categoria}</td>
-                  <td className="px-4 py-2 border">{d.producto}</td>
-                  <td className="px-4 py-2 border">{d.ingrediente}</td>
-                  <td className="px-4 py-2 border">{d.cantidad}</td>
-                  <td className="px-4 py-2 border">{d.um}</td>
-                  <td className="px-4 py-2 border text-center">
-                    <button
-                      onClick={() => navigate("/detalle_producto")}
-                      className="bg-blue-100 text-blue-800 px-4 py-1 rounded-full text-sm font-medium flex items-center gap-1 justify-center mx-auto"
-                    >
-                      <IconEye className="w-4 h-4" />
-                      Detalle
+      {/* Tabla */}
+      <div className="bg-white border border-gray-300 rounded-xl overflow-auto relative">
+        <table className="w-full text-base text-center">
+          <thead className="bg-green-600 text-white font-bold">
+            <tr>
+              {columnas.map((col, idx) => (
+                <th key={idx} className="px-4 py-3 border border-gray-300">
+                  <div className="flex items-center gap-2 justify-center">
+                    {col.toUpperCase()}
+                    <button onClick={(e) => toggleFiltro(col, e)}>
+                      <IconFilter className="w-4 h-4" />
                     </button>
-                  </td>
-                </tr>
+                  </div>
+                </th>
               ))}
-            </tbody>
-          </table>
+              <th className="px-4 py-3 border border-gray-300">DETALLE</th>
+            </tr>
+          </thead>
+          <tbody>
+            {datosFiltrados.map((d, i) => (
+              <tr key={i} className="border-b border-gray-200">
+                <td className="px-4 py-2 border">{d.categoria}</td>
+                <td className="px-4 py-2 border">{d.producto}</td>
+                <td className="px-4 py-2 border">{d.ingrediente}</td>
+                <td className="px-4 py-2 border">{d.cantidad}</td>
+                <td className="px-4 py-2 border">{d.um}</td>
+                <td className="px-4 py-2 border text-center">
+                  <button
+                    onClick={() => navigate("/detalle_producto")}
+                    className="bg-blue-100 text-blue-800 px-4 py-1 rounded-full text-sm font-medium flex items-center gap-1 justify-center mx-auto"
+                  >
+                    <IconEye className="w-4 h-4" />
+                    Detalle
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
 
-          {/* Filtros */}
-          {filtroActivo && (
-            <div
-              ref={filtroRef}
-              className="fixed bg-white text-black shadow-md border rounded z-[10000] p-3 w-60 text-left text-sm"
-              style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
-            >
-              <div className="font-semibold mb-2">
-                Filtrar por {filtroActivo.charAt(0).toUpperCase() + filtroActivo.slice(1)}
-              </div>
-              <button onClick={() => ordenar(filtroActivo, "asc")} className="text-green-700 flex items-center gap-1 mb-1">
-                <IconSortAscending2 className="w-4 h-4" />
-                Ordenar A → Z
-              </button>
-              <button onClick={() => ordenar(filtroActivo, "desc")} className="text-green-700 flex items-center gap-1 mb-2">
-                <IconSortDescending2 className="w-4 h-4" />
-                Ordenar Z → A
-              </button>
-              <input
-                type="text"
-                placeholder="Buscar..."
-                className="w-full border border-gray-300 px-2 py-1 rounded mb-2 text-sm"
-                value={busquedas[filtroActivo] || ""}
-                onChange={(e) => handleBusqueda(filtroActivo, e.target.value)}
-              />
-              <div className="flex flex-col max-h-40 overflow-y-auto">
-                {getValoresUnicos(filtroActivo).map((val, idx) => (
-                  <label key={idx} className="flex items-center gap-2 mb-1">
-                    <input
-                      type="checkbox"
-                      checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
-                      onChange={() => toggleValor(filtroActivo, val)}
-                      className="accent-green-600"
-                    />
-                    {val.charAt(0).toUpperCase() + val.slice(1)}
-                  </label>
-                ))}
-              </div>
-              <button onClick={() => limpiarFiltro(filtroActivo)} className="text-blue-600 hover:underline text-xs mt-2">
-                Borrar filtro
-              </button>
+        {/* Filtros */}
+        {filtroActivo && (
+          <div
+            ref={filtroRef}
+            className="fixed bg-white text-black shadow-md border rounded z-[10000] p-3 w-60 text-left text-sm"
+            style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
+          >
+            <div className="font-semibold mb-2">
+              Filtrar por {filtroActivo.charAt(0).toUpperCase() + filtroActivo.slice(1)}
             </div>
-          )}
-        </div>
+            <button onClick={() => ordenar(filtroActivo, "asc")} className="text-green-700 flex items-center gap-1 mb-1">
+              <IconSortAscending2 className="w-4 h-4" />
+              Ordenar A → Z
+            </button>
+            <button onClick={() => ordenar(filtroActivo, "desc")} className="text-green-700 flex items-center gap-1 mb-2">
+              <IconSortDescending2 className="w-4 h-4" />
+              Ordenar Z → A
+            </button>
+            <input
+              type="text"
+              placeholder="Buscar..."
+              className="w-full border border-gray-300 px-2 py-1 rounded mb-2 text-sm"
+              value={busquedas[filtroActivo] || ""}
+              onChange={(e) => handleBusqueda(filtroActivo, e.target.value)}
+            />
+            <div className="flex flex-col max-h-40 overflow-y-auto">
+              {getValoresUnicos(filtroActivo).map((val, idx) => (
+                <label key={idx} className="flex items-center gap-2 mb-1">
+                  <input
+                    type="checkbox"
+                    checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
+                    onChange={() => toggleValor(filtroActivo, val)}
+                    className="accent-green-600"
+                  />
+                  {val.charAt(0).toUpperCase() + val.slice(1)}
+                </label>
+              ))}
+            </div>
+            <button onClick={() => limpiarFiltro(filtroActivo)} className="text-blue-600 hover:underline text-xs mt-2">
+              Borrar filtro
+            </button>
+          </div>
+        )}
+      </div>
 
-        {/* Botón exportar */}
-        <div className="flex justify-center mt-10">
-          <button className="bg-green-600 text-white px-8 py-2 rounded-md hover:bg-green-700 text-lg font-semibold">
-            Exportar
-          </button>
-        </div>
-      </main>
-    </div>
+      {/* Botón exportar */}
+      <div className="flex justify-center mt-10">
+        <button className="bg-green-600 text-white px-8 py-2 rounded-md hover:bg-green-700 text-lg font-semibold">
+          Exportar
+        </button>
+      </div>
+    </LayoutMayordomo>
   );
 };
 

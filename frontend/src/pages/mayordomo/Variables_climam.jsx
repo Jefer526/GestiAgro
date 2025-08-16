@@ -1,22 +1,11 @@
-import React, { useState, useRef, useEffect } from "react";
+// src/pages/mayordomo/Variables_climam.jsx
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
-  IconHome,
-  IconClipboardList,
-  IconHistory,
-  IconChartBar,
-  IconBox,
-  IconCloudRain,
-  IconTractor,
-  IconSettings,
-  IconTool,
-  IconLogout,
   IconTemperature,
   IconDroplet,
-  IconPlant2,
-  IconBook
+  IconCloudRain,
 } from "@tabler/icons-react";
-import { useNavigate } from "react-router-dom";
-import faviconBlanco from "../../assets/favicon-blanco.png";
 
 // ✅ Gráficos
 import {
@@ -25,32 +14,18 @@ import {
   LinearScale,
   BarElement,
   Tooltip,
-  Legend
+  Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
+
+// ✅ Importa el layout
+import LayoutMayordomo from "../../layouts/LayoutMayordomo";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 const Variables_climam = () => {
   const navigate = useNavigate();
   const [filtro, setFiltro] = useState("Día");
-
-  // Perfil
-  const nombreUsuario = "Juan Pérez"; // <-- reemplaza por el nombre real
-  const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
-  const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
-  const tarjetaRef = useRef(null);
-
-  // Cerrar tarjeta al hacer clic fuera
-  useEffect(() => {
-    const handler = (e) => {
-      if (tarjetaRef.current && !tarjetaRef.current.contains(e.target)) {
-        setMostrarTarjeta(false);
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
 
   const data = {
     labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio"],
@@ -72,202 +47,124 @@ const Variables_climam = () => {
   };
 
   return (
-    <div className="min-h-[100dvh] bg-gray-50">
-      {/* Sidebar fijo con logo arriba y scroll en iconos */}
-      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col justify-between z-[200]">
-        {/* Logo fijo */}
-        <div className="pt-6 flex justify-center">
-          <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
-        </div>
+    <LayoutMayordomo>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-green-700">
+          Variables climáticas
+        </h1>
+        <span className="text-2xl text-black font-bold">
+          Hacienda La esmeralda
+        </span>
+      </div>
 
-        {/* Iconos con scroll oculto */}
-        <div className="flex-1 flex flex-col items-center space-y-8 mt-6 overflow-y-auto scrollbar-hide-only">
-          <button onClick={() => navigate("/homemayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconHome className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/registrolabores")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconClipboardList className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/historial_labores")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconHistory className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/cuaderno_campom")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconBook className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/produccion_mayor")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconPlant2 className="text-white w-11 h-11" />
-          </button>
-          
-          <button onClick={() => navigate("/bodega_insumos")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconBox className="text-white w-11 h-11" />
-          </button>
+      {/* Filtros */}
+      <div className="mb-6">
+        <label className="text-black font-semibold mr-2">Filtrar por:</label>
+        <select
+          value={filtro}
+          onChange={(e) => setFiltro(e.target.value)}
+          className="border border-gray-300 rounded px-4 py-1"
+        >
+          <option>Día</option>
+          <option>Mes</option>
+          <option>Año</option>
+        </select>
+      </div>
 
-          {/* Activo - Variables Climáticas */}
-          <div className="relative">
-            <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            <button
-              onClick={() => navigate("/variables_climaticasm")}
-              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-            >
-              <IconCloudRain className="text-white w-11 h-11" />
-            </button>
-          </div>
+      {/* Fecha */}
+      <div className="mb-6 flex items-center gap-2">
+        <label className="text-black font-semibold">Fecha:</label>
+        <span className="mr-1">Desde</span>
+        <input
+          type="date"
+          className="border border-gray-300 px-3 py-1 rounded"
+        />
+        <span className="mx-1">Hasta</span>
+        <input
+          type="date"
+          className="border border-gray-300 px-3 py-1 rounded"
+        />
+      </div>
 
-          <button onClick={() => navigate("/informes_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconChartBar className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/equipos_mayordomo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconTractor className="text-white w-11 h-11" />
-          </button>
-        </div>
+      {/* Botón Registrar */}
+      <div className="mb-4">
+        <button
+          onClick={() => navigate("/registrar_climam")}
+          className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition font-semibold"
+        >
+          Registrar
+        </button>
+      </div>
 
-        {/* Perfil fijo abajo */}
-        <div className="relative mb-6 flex justify-center">
-          <button
-            onClick={() => setMostrarTarjeta((v) => !v)}
-            className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
-            aria-haspopup="true"
-            aria-expanded={mostrarTarjeta}
+      {/* Tarjetas */}
+      <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+        {[
+          {
+            title: "Precipitaciones",
+            value: "5",
+            unit: "mm",
+            icon: <IconCloudRain className="w-6 h-6" />,
+            ring: "ring-sky-500/50",
+            iconBg: "bg-sky-100",
+            iconText: "text-sky-700",
+          },
+          {
+            title: "Temperatura mínima",
+            value: "15",
+            unit: "°C",
+            icon: <IconTemperature className="w-6 h-6" />,
+            ring: "ring-indigo-500/50",
+            iconBg: "bg-indigo-100",
+            iconText: "text-indigo-700",
+          },
+          {
+            title: "Temperatura máxima",
+            value: "30",
+            unit: "°C",
+            icon: <IconTemperature className="w-6 h-6" />,
+            ring: "ring-amber-500/50",
+            iconBg: "bg-amber-100",
+            iconText: "text-amber-700",
+          },
+          {
+            title: "Humedad relativa",
+            value: "90",
+            unit: "%",
+            icon: <IconDroplet className="w-6 h-6" />,
+            ring: "ring-emerald-500/50",
+            iconBg: "bg-emerald-100",
+            iconText: "text-emerald-700",
+          },
+        ].map((c, i) => (
+          <div
+            key={i}
+            className={`relative overflow-hidden rounded-2xl bg-white border shadow-md px-6 py-5 ring-1 ${c.ring}`}
           >
-            {letraInicial}
-          </button>
-          {mostrarTarjeta && (
-            <div
-              ref={tarjetaRef}
-              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-[10000] backdrop-blur"
-            >
-              <button
-                onClick={() => { setMostrarTarjeta(false); navigate("/ajustesmayordomo"); }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+            <div className="flex items-center gap-4">
+              <div
+                className={`${c.iconBg} ${c.iconText} rounded-xl p-3 shadow-sm border`}
               >
-                <IconSettings className="w-5 h-5 mr-2 text-green-600" />
-                Ajustes
-              </button>
-              <button
-                onClick={() => { setMostrarTarjeta(false); navigate("/soportemayordomo"); }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-              >
-                <IconTool className="w-5 h-5 mr-2 text-green-600" />
-                Soporte
-              </button>
-              <button
-                onClick={() => { setMostrarTarjeta(false); navigate("/login"); }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
-              >
-                <IconLogout className="w-5 h-5 mr-2 text-red-600" />
-                Cerrar sesión
-              </button>
-            </div>
-          )}
-        </div>
-      </aside>
-
-      {/* Contenido principal */}
-      <main className="ml-28 min-h-[100dvh] p-10 overflow-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-green-700">Variables climáticas</h1>
-          <span className="text-2xl text-black font-bold">Hacienda La esmeralda</span>
-        </div>
-
-        {/* Filtros */}
-        <div className="mb-6">
-          <label className="text-black font-semibold mr-2">Filtrar por:</label>
-          <select
-            value={filtro}
-            onChange={(e) => setFiltro(e.target.value)}
-            className="border border-gray-300 rounded px-4 py-1"
-          >
-            <option>Día</option>
-            <option>Mes</option>
-            <option>Año</option>
-          </select>
-        </div>
-
-        {/* Fecha */}
-        <div className="mb-6 flex items-center gap-2">
-          <label className="text-black font-semibold">Fecha:</label>
-          <span className="mr-1">Desde</span>
-          <input type="date" className="border border-gray-300 px-3 py-1 rounded" />
-          <span className="mx-1">Hasta</span>
-          <input type="date" className="border border-gray-300 px-3 py-1 rounded" />
-        </div>
-
-        {/* Botón Registrar */}
-        <div className="mb-4">
-          <button
-            onClick={() => navigate("/registrar_climam")}
-            className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition font-semibold"
-          >
-            Registrar
-          </button>
-        </div>
-
-        {/* Tarjetas */}
-        <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
-          {[
-            {
-              title: "Precipitaciones",
-              value: "5",
-              unit: "mm",
-              icon: <IconCloudRain className="w-6 h-6" />,
-              ring: "ring-sky-500/50",
-              iconBg: "bg-sky-100",
-              iconText: "text-sky-700",
-            },
-            {
-              title: "Temperatura mínima",
-              value: "15",
-              unit: "°C",
-              icon: <IconTemperature className="w-6 h-6" />,
-              ring: "ring-indigo-500/50",
-              iconBg: "bg-indigo-100",
-              iconText: "text-indigo-700",
-            },
-            {
-              title: "Temperatura máxima",
-              value: "30",
-              unit: "°C",
-              icon: <IconTemperature className="w-6 h-6" />,
-              ring: "ring-amber-500/50",
-              iconBg: "bg-amber-100",
-              iconText: "text-amber-700",
-            },
-            {
-              title: "Humedad relativa",
-              value: "90",
-              unit: "%",
-              icon: <IconDroplet className="w-6 h-6" />,
-              ring: "ring-emerald-500/50",
-              iconBg: "bg-emerald-100",
-              iconText: "text-emerald-700",
-            },
-          ].map((c, i) => (
-            <div
-              key={i}
-              className={`relative overflow-hidden rounded-2xl bg-white border shadow-md px-6 py-5 ring-1 ${c.ring}`}
-            >
-              <div className="flex items-center gap-4">
-                <div className={`${c.iconBg} ${c.iconText} rounded-xl p-3 shadow-sm border`}>
-                  {c.icon}
-                </div>
-                <div>
-                  <p className="text-sm text-slate-500">{c.title}</p>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-2xl font-bold text-slate-900">{c.value}</span>
-                    <span className="text-slate-500 text-base">{c.unit}</span>
-                  </div>
+                {c.icon}
+              </div>
+              <div>
+                <p className="text-sm text-slate-500">{c.title}</p>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-2xl font-bold text-slate-900">
+                    {c.value}
+                  </span>
+                  <span className="text-slate-500 text-base">{c.unit}</span>
                 </div>
               </div>
             </div>
-          ))}
-        </section>
+          </div>
+        ))}
+      </section>
 
-        {/* Gráfica */}
-        <div className="w-full h-[500px]">
-          <Bar data={data} options={opcionesChart} />
-        </div>
-      </main>
-    </div>
+      {/* Gráfica */}
+      <div className="w-full h-[500px]">
+        <Bar data={data} options={opcionesChart} />
+      </div>
+    </LayoutMayordomo>
   );
 };
 
