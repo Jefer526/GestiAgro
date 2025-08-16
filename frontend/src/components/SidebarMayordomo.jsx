@@ -29,26 +29,10 @@ const SidebarMayordomo = () => {
   const tarjetaRef = useRef(null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  // 🔹 Guardamos la referencia al contenedor con scroll
+  // 🔹 Ref para manejar el scroll del contenedor
   const scrollRef = useRef(null);
 
-  // 🔹 Guardamos la posición del scroll antes de navegar
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      if (scrollRef.current) {
-        sessionStorage.setItem(
-          "sidebarScroll",
-          scrollRef.current.scrollTop.toString()
-        );
-      }
-    };
-
-    // Al salir de la página (navegación, reload, etc.)
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, []);
-
-  // 🔹 Restauramos la posición del scroll cuando el sidebar se monta
+  // 🔹 Restaurar scroll guardado al montar el sidebar
   useEffect(() => {
     const saved = sessionStorage.getItem("sidebarScroll");
     if (saved && scrollRef.current) {
@@ -90,6 +74,7 @@ const SidebarMayordomo = () => {
     }
   };
 
+  // ====== Saber qué ruta está activa ======
   const isActive = (paths) => {
     if (Array.isArray(paths)) {
       return paths.some((p) => location.pathname.startsWith(p));
@@ -104,7 +89,7 @@ const SidebarMayordomo = () => {
         <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
       </div>
 
-      {/* Zona de iconos con scroll */}
+      {/* Zona de iconos con scroll persistente */}
       <div
         ref={scrollRef}
         className="flex-1 flex flex-col items-center space-y-8 mt-6 overflow-y-auto scrollbar-hide-only"
@@ -118,7 +103,17 @@ const SidebarMayordomo = () => {
           { icon: <IconBox />, route: ["/bodega_insumos", "/detalle_producto"] },
           { icon: <IconCloudRain />, route: ["/variables_climaticasm", "/registrar_climam"] },
           { icon: <IconChartBar />, route: "/informes_mayordomo" },
-          { icon: <IconTractor />, route: ["/equipos_mayordomo", "/registrar_novedadm", "/hoja_vidam", "/registrar_novedad_hoja", "/detalle_mantenimientom", "/historial_trabajom"] }
+          {
+            icon: <IconTractor />,
+            route: [
+              "/equipos_mayordomo",
+              "/registrar_novedadm",
+              "/hoja_vidam",
+              "/registrar_novedad_hoja",
+              "/detalle_mantenimientom",
+              "/historial_trabajom",
+            ],
+          },
         ].map(({ icon, route }, i) => (
           <div key={i} className="relative">
             {isActive(route) && (
@@ -126,7 +121,7 @@ const SidebarMayordomo = () => {
             )}
             <button
               onClick={() => {
-                // guardamos el scroll antes de navegar
+                // Guardar posición del scroll antes de navegar
                 if (scrollRef.current) {
                   sessionStorage.setItem(
                     "sidebarScroll",
@@ -151,10 +146,45 @@ const SidebarMayordomo = () => {
         >
           {letraInicial}
         </button>
-        {/* ... resto del perfil */}
+        {mostrarTarjeta && (
+          <div
+            ref={tarjetaRef}
+            className="absolute bottom-16 left-14 w-56 bg-white/95 border border-gray-200 rounded-xl shadow-2xl py-3 z-[9999] backdrop-blur text-base"
+          >
+            <button
+              onClick={() => {
+                setMostrarTarjeta(false);
+                navigate("/ajustesmayordomo");
+              }}
+              className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100"
+            >
+              <IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes
+            </button>
+            <button
+              onClick={() => {
+                setMostrarTarjeta(false);
+                navigate("/soportemayordomo");
+              }}
+              className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100"
+            >
+              <IconTool className="w-5 h-5 mr-2 text-green-600" /> Soporte
+            </button>
+            <button
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+              className={`flex items-center w-full text-left px-4 py-2 hover:bg-gray-100 ${
+                isLoggingOut ? "opacity-60 cursor-not-allowed" : "text-red-600"
+              }`}
+            >
+              <IconLogout className="w-5 h-5 mr-2 text-red-600" />
+              {isLoggingOut ? "Cerrando..." : "Cerrar sesión"}
+            </button>
+          </div>
+        )}
       </div>
     </aside>
   );
 };
 
 export default SidebarMayordomo;
+
