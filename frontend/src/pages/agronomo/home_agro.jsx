@@ -17,11 +17,12 @@ import {
   IconPlant2,
   IconBook,
 } from "@tabler/icons-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
 const Home_agro = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Estado tarjeta perfil
   const tarjetaRef = useRef(null);
@@ -39,15 +40,37 @@ const Home_agro = () => {
     return () => document.removeEventListener("mousedown", clickFueraTarjeta);
   }, []);
 
-  // 🔹 Función para cerrar sesión
+  // Cerrar sesión
   const handleLogout = () => {
     localStorage.removeItem("access");
     localStorage.removeItem("refresh");
-    localStorage.removeItem("user"); // si guardas datos de usuario
-    sessionStorage.clear(); // por si usas sessionStorage
+    localStorage.removeItem("user");
+    sessionStorage.clear();
     navigate("/login");
   };
 
+  // -------- Sidebar: items --------
+  const navItems = [
+    { ruta: "/homeagro", Icon: IconHome, label: "Inicio" },
+    { ruta: "/Laboresagro", Icon: IconClipboardList, label: "Seguimiento de labores" },
+    { ruta: "/Informesagro", Icon: IconChartBar, label: "Informes" },
+    { ruta: "/Bodegaagro", Icon: IconBox, label: "Bodega" },
+    { ruta: "/variablesclimaticas", Icon: IconCloudRain, label: "Variables climáticas" },
+    { ruta: "/maquinariaequipos", Icon: IconTractor, label: "Maquinaria y equipos" },
+    { ruta: "/manejopersonal", Icon: IconUsersGroup, label: "Manejo personal" },
+    { ruta: "/crearfinca", Icon: IconPlant, label: "Gestión finca" },
+    { ruta: "/crearlote", Icon: IconFrame, label: "Gestión lote" },
+    { ruta: "/produccionagro", Icon: IconPlant2, label: "Producción" },
+    { ruta: "/cuadernocampo", Icon: IconBook, label: "Cuaderno de Campo" },
+  ];
+
+  const normalize = (s = "") => s.replace(/\/+$/, "").toLowerCase();
+  const isActive = (item) => {
+    const current = normalize(location.pathname);
+    return current === normalize(item.ruta) || current.startsWith(normalize(item.ruta) + "/");
+  };
+
+  // -------- Tarjetas del dashboard --------
   const opciones = [
     {
       icon: <IconClipboardList className="w-8 h-8" />,
@@ -155,56 +178,31 @@ const Home_agro = () => {
     <div className="flex">
       {/* Sidebar */}
       <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
-        {/* Logo */}
-        <div className="mb-6">
+        {/* Navegación (logo + botones) */}
+        <div className="flex flex-col items-center space-y-8">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
+
+          {navItems.map(({ ruta, Icon, label }) => {
+            const active = isActive({ ruta });
+            return (
+              <div key={ruta} className="relative">
+                {active && (
+                  <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+                )}
+                <button
+                  title={label}
+                  onClick={() => navigate(ruta)}
+                  className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+                >
+                  <Icon className="text-white w-11 h-11" />
+                </button>
+              </div>
+            );
+          })}
         </div>
 
-        {/* Navegación */}
-        <div className="flex-1 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only">
-          {/* Activo */}
-          <div className="relative">
-            <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            <button className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-              <IconHome className="text-white w-11 h-11" />
-            </button>
-          </div>
-
-          {/* Menú */}
-          <button onClick={() => navigate("/Laboresagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconClipboardList className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/Informesagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconChartBar className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/Bodegaagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconBox className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/variablesclimaticas")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconCloudRain className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/maquinariaequipos")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconTractor className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/manejopersonal")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconUsersGroup className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/crearfinca")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconPlant className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/crearlote")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconFrame className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/produccionagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconPlant2 className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/cuadernocampo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconBook className="text-white w-11 h-11" />
-          </button>
-        </div>
-
-        {/* Perfil */}
-        <div className="relative mb-4 mt-auto">
+        {/* Avatar usuario */}
+        <div className="relative mb-6">
           <button
             onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
             className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
@@ -216,13 +214,18 @@ const Home_agro = () => {
               ref={tarjetaRef}
               className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
             >
-              <button onClick={() => navigate("/ajustesagro")} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
+              <button
+                onClick={() => navigate("/ajustesagro")}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
                 <IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes
               </button>
-              <button onClick={() => navigate("/soporteagro")} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
+              <button
+                onClick={() => navigate("/soporteagro")}
+                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
                 <IconTool className="w-5 h-5 mr-2 text-green-600" /> Soporte
               </button>
-              {/* 🔹 Cerrar sesión con limpieza de datos */}
               <button
                 onClick={handleLogout}
                 className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
@@ -236,16 +239,13 @@ const Home_agro = () => {
 
       {/* Contenido principal */}
       <div className="flex-1 p-10">
-        {/* Título */}
-        <h1 className="text-3xl font-bold text-green-700 mb-6">Panel principal</h1>
+        <h1 className="text-4xl font-bold text-green-700 mb-6">Panel principal</h1>
 
-        {/* Banner */}
         <div className="bg-gradient-to-r from-green-600 to-emerald-500 text-white px-6 py-5 rounded-2xl w-full max-w-3xl mb-10 shadow-lg">
           <p className="text-3xl font-semibold">¡Bienvenido!</p>
           <p className="opacity-90 text-lg">Accede rápidamente a las secciones.</p>
         </div>
 
-        {/* Tarjetas */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {opciones.map(({ icon, label, desc, ruta, gradient, ring, iconBg, text }, i) => (
             <button
