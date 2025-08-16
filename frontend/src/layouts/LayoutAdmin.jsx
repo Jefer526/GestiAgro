@@ -1,10 +1,24 @@
 // src/layouts/LayoutAdmin.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SidebarAdmin from "../components/SidebarAdmin";
 import api, { accountsApi, ENDPOINTS } from "../services/apiClient";
 
-const LayoutAdmin = ({ children, letraInicial = "A" }) => {
+const LayoutAdmin = ({ children }) => {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [letraInicial, setLetraInicial] = useState("U"); // Valor por defecto
+
+  // === Cargar inicial del usuario en sesión ===
+  useEffect(() => {
+    try {
+      const userData = JSON.parse(localStorage.getItem("user"));
+      if (userData?.nombre) {
+        const inicial = userData.nombre.trim()[0].toUpperCase();
+        setLetraInicial(inicial);
+      }
+    } catch {
+      setLetraInicial("U");
+    }
+  }, []);
 
   // ==== LOGOUT ====
   const handleLogout = async () => {
@@ -28,7 +42,6 @@ const LayoutAdmin = ({ children, letraInicial = "A" }) => {
           delete api.defaults.headers.common.Authorization;
         }
       } catch {}
-
       setIsLoggingOut(false);
       // Redirección fuerte para salir de toda sesión
       window.location.replace("/login");
@@ -39,7 +52,7 @@ const LayoutAdmin = ({ children, letraInicial = "A" }) => {
     <div className="flex min-h-screen">
       {/* Sidebar fijo */}
       <SidebarAdmin
-        letraInicial={letraInicial}
+        letraInicial={letraInicial}   // 👈 Inicial dinámica según sesión
         onLogout={handleLogout}
         isLoggingOut={isLoggingOut}
       />

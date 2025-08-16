@@ -78,9 +78,9 @@ const SidebarAdmin = ({ letraInicial = "A", onLogout, isLoggingOut = false }) =>
 
         {/* Soporte */}
         <div className="relative">
-          {isActive("/soporte") && (
+          {isActive("/soporte") || isActive("/detallesticket") ? (
             <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-          )}
+          ): null}
           <button
             onClick={() => navigate("/soporte")}
             className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
