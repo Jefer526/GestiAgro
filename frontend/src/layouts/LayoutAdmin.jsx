@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import SidebarAdmin from "../components/SidebarAdmin";
 import api, { accountsApi, ENDPOINTS } from "../services/apiClient";
 
-const LayoutAdmin = ({ children }) => {
+const LayoutAdmin = ({ children, active }) => {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [letraInicial, setLetraInicial] = useState("U"); // Valor por defecto
 
@@ -49,16 +49,17 @@ const LayoutAdmin = ({ children }) => {
   };
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex h-screen overflow-hidden">
       {/* Sidebar fijo */}
       <SidebarAdmin
-        letraInicial={letraInicial}   // 👈 Inicial dinámica según sesión
+        letraInicial={letraInicial}
         onLogout={handleLogout}
         isLoggingOut={isLoggingOut}
+        active={active} // 👈 para resaltar ícono actual
       />
 
       {/* Contenido dinámico */}
-      <main className="flex-1 p-10 overflow-auto bg-gray-50">
+      <main className="flex-1 h-screen overflow-y-auto bg-gray-50 p-10">
         {children}
       </main>
     </div>
