@@ -174,6 +174,25 @@ const Detalle_produc = () => {
               <IconHistory className="text-white w-11 h-11" />
             </button>
           </div>
+          {/* Cuaderno de campo */}
+          <div className="relative">
+            {location.pathname === "/cuaderno_campom" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/cuaderno_campom")} className="hover:bg-white/10 p-2 rounded-lg">
+              <IconBook className="text-white w-11 h-11" />
+            </button>
+          </div>
+
+          {/* Producción */}
+          <div className="relative">
+            {location.pathname === "/produccion_mayor" && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button onClick={() => navigate("/produccion_mayor")} className="hover:bg-white/10 p-2 rounded-lg">
+              <IconPlant2 className="text-white w-11 h-11" />
+            </button>
+          </div>
 
           {/* Bodega */}
           <div className="relative">
@@ -204,6 +223,7 @@ const Detalle_produc = () => {
               <IconChartBar className="text-white w-11 h-11" />
             </button>
           </div>
+          
 
           {/* Equipos */}
           <div className="relative">
@@ -212,26 +232,6 @@ const Detalle_produc = () => {
             )}
             <button onClick={() => navigate("/equipos_mayordomo")} className="hover:bg-white/10 p-2 rounded-lg">
               <IconTractor className="text-white w-11 h-11" />
-            </button>
-          </div>
-
-          {/* Producción */}
-          <div className="relative">
-            {location.pathname === "/produccion_mayor" && (
-              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            )}
-            <button onClick={() => navigate("/produccion_mayor")} className="hover:bg-white/10 p-2 rounded-lg">
-              <IconPlant2 className="text-white w-11 h-11" />
-            </button>
-          </div>
-
-          {/* Cuaderno de campo */}
-          <div className="relative">
-            {location.pathname === "/cuaderno_campom" && (
-              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            )}
-            <button onClick={() => navigate("/cuaderno_campom")} className="hover:bg-white/10 p-2 rounded-lg">
-              <IconBook className="text-white w-11 h-11" />
             </button>
           </div>
         </div>

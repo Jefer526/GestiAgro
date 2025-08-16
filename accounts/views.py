@@ -208,7 +208,6 @@ class UserDetailUpdateView(generics.RetrieveUpdateAPIView):
         return Response(serializer.data)
 
 
-# ===== Enviar contraseña temporal =====
 class SendTemporaryPasswordAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -231,16 +230,28 @@ class SendTemporaryPasswordAPIView(APIView):
         try:
             send_mail(
                 subject="Contraseña temporal - GestiAgro",
-                message=f"Hola {user.first_name or ''},\n\nTu nueva contraseña temporal es: {temp_password}\n\nPor favor, cámbiala después de iniciar sesión.",
-                from_email="tu_correo@gmail.com",
+                message=(
+                    f"Hola {user.nombre or ''},\n\n"
+                    f"Tu nueva contraseña temporal es: {temp_password}\n\n"
+                    f"Por favor, cámbiala después de iniciar sesión."
+                ),
+                from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[user.email],
                 fail_silently=False,
             )
         except Exception as e:
-            return Response({"detail": f"Error al enviar el correo: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                {"detail": f"Error al enviar el correo: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
-        user.tiene_password = True
-        return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
+        return Response(
+            {
+                "detail": "Contraseña temporal enviada por correo."
+                # En DEBUG podrías devolver también: "temp_password": temp_password
+            },
+            status=status.HTTP_200_OK
+        )
 
 
 # ===== Actualizar rol de usuario =====

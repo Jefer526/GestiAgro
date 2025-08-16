@@ -23,7 +23,14 @@ dist-ssr
 *.sln
 *.sw?
 
+<<<<<<< HEAD
 .env
 *.pyc
 _pycache_/
+=======
+
+.env
+*.pyc
+__pycache__/
+>>>>>>> 26a131b3af1d39f1dc694d5ad1d5eb0cbdc09a34
 .venv
