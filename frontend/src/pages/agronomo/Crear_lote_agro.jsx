@@ -1,31 +1,16 @@
 // src/pages/agronomo/Crear_lote_agro.jsx
 import React, { useState, useRef, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
-  IconHome,
-  IconClipboardList,
-  IconChartBar,
-  IconCloudRain,
-  IconTractor,
-  IconSettings,
-  IconBox,
-  IconUsersGroup,
-  IconPlant,
-  IconFrame,
   IconDotsVertical,
   IconFilter,
   IconPencil,
   IconTrash,
-  IconTool,
-  IconLogout,
-  IconPlant2,
-  IconBook,
 } from "@tabler/icons-react";
-import faviconBlanco from "../../assets/favicon-blanco.png";
+import LayoutAgronomo from "../../layouts/LayoutAgronomo";
 
 const Crear_lote_agro = () => {
   const navigate = useNavigate();
-  const location = useLocation();
 
   // --- Datos base ---
   const [lotes, setLotes] = useState([
@@ -47,15 +32,6 @@ const Crear_lote_agro = () => {
 
   const columnas = ["finca", "lote", "coordenadas", "area", "cultivo"];
 
-  // --- Perfil de usuario ---
-  const nombreUsuario = "Juan Pérez";
-  const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
-  const [mostrarTarjetaPerfil, setMostrarTarjetaPerfil] = useState(false);
-  const tarjetaPerfilRef = useRef(null);
-
-  // --- Scroll del sidebar ---
-  const iconListRef = useRef(null);
-
   // Cerrar tarjetas y filtros al hacer click fuera
   useEffect(() => {
     const clickFuera = (e) => {
@@ -63,23 +39,10 @@ const Crear_lote_agro = () => {
         setFiltroActivo(null);
         setVisibleTarjeta(null);
       }
-      if (tarjetaPerfilRef.current && !tarjetaPerfilRef.current.contains(e.target)) {
-        setMostrarTarjetaPerfil(false);
-      }
     };
     document.addEventListener("mousedown", clickFuera);
     return () => document.removeEventListener("mousedown", clickFuera);
   }, []);
-
-  // Scroll automático según ruta
-  useEffect(() => {
-    if (!iconListRef.current) return;
-    if (/(\/crearlote|\/produccionagro)\b/.test(location.pathname)) {
-      iconListRef.current.scrollTo({ top: iconListRef.current.scrollHeight, behavior: "instant" });
-    } else {
-      iconListRef.current.scrollTo({ top: 0, behavior: "instant" });
-    }
-  }, [location.pathname]);
 
   // --- Manejadores ---
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -135,240 +98,139 @@ const Crear_lote_agro = () => {
     setPosicionTarjeta({ top: boton.bottom + window.scrollY + 4, left: boton.left + window.scrollX });
   };
 
-  // --- Componente ítem del sidebar ---
-  const SidebarItem = ({ to, title, Icon, active }) => (
-    <div className="relative">
-      {active && <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />}
-      <button
-        onClick={() => navigate(to)}
-        className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-        title={title}
-        aria-label={title}
-      >
-        <Icon className="text-white w-11 h-11" />
-      </button>
-    </div>
-  );
-
-  const isActive = (path) => location.pathname === path;
-
   return (
-    <div className="flex">
-      {/* --- Sidebar --- */}
-      <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
-        {/* Logo */}
-        <div className="sticky top-0 mb-6 bg-green-600 z-10">
-          <img src={faviconBlanco} alt="Logo" className="w-11 h-11 mx-auto" />
-        </div>
+    <LayoutAgronomo>
+      <h1 className="text-3xl font-bold text-green-700 mb-6">Crear lote</h1>
 
-        {/* Lista de iconos */}
-        <div
-          ref={iconListRef}
-          className="flex-1 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only pb-24"
-        >
-          <SidebarItem to="/homeagro" title="Inicio" Icon={IconHome} active={false} />
-          <SidebarItem to="/Laboresagro" title="Labores" Icon={IconClipboardList} active={false} />
-          <SidebarItem to="/Informesagro" title="Informes" Icon={IconChartBar} active={false} />
-          <SidebarItem to="/Bodegaagro" title="Bodega" Icon={IconBox} active={false} />
-          <SidebarItem to="/variablesclimaticas" title="Variables climáticas" Icon={IconCloudRain} active={false} />
-          <SidebarItem to="/maquinariaequipos" title="Maquinaria y equipos" Icon={IconTractor} active={false} />
-          <SidebarItem to="/manejopersonal" title="Manejo personal" Icon={IconUsersGroup} active={false} />
-          <SidebarItem to="/crearfinca" title="Gestión finca" Icon={IconPlant} active={false} />
-          <SidebarItem to="/crearlote" title="Gestión lote" Icon={IconFrame} active={isActive("/crearlote")} />
-          <SidebarItem to="/produccionagro" title="Producción" Icon={IconPlant2} active={isActive("/produccionagro")} />
-          <SidebarItem to="/cuadernocampo" title="Cuaderno campo" Icon={IconBook} active={isActive("/cuadernocampo")} />
-        </div>
-
-        {/* Perfil */}
-        <div className="relative mb-4 mt-auto">
-          <button
-            onClick={() => setMostrarTarjetaPerfil(!mostrarTarjetaPerfil)}
-            className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
-          >
-            {letraInicial}
-          </button>
-
-          {mostrarTarjetaPerfil && (
-            <div
-              ref={tarjetaPerfilRef}
-              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-grey-300 rounded-xl shadow-2xl py-3 z-50"
-            >
-              <button
-                onClick={() => {
-                  setMostrarTarjetaPerfil(false);
-                  navigate("/ajustesagro");
-                }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-              >
-                <IconSettings className="w-5 h-5 mr-2 text-green-600" />
-                Ajustes
-              </button>
-              <button
-                onClick={() => {
-                  setMostrarTarjetaPerfil(false);
-                  navigate("/soporteagro");
-                }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-              >
-                <IconTool className="w-5 h-5 mr-2 text-green-600" />
-                Soporte
-              </button>
-              <button
-                onClick={() => {
-                  setMostrarTarjetaPerfil(false);
-                  navigate("/login");
-                }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
-              >
-                <IconLogout className="w-5 h-5 mr-2 text-red-600" />
-                Cerrar sesión
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* --- Contenido principal --- */}
-      <div className="flex-1 p-10 overflow-auto">
-        <h1 className="text-3xl font-bold text-green-700 mb-6">Crear lote</h1>
-
-        {/* Formulario de creación */}
-        <div className="bg-white border border-gray-200 shadow-gray-300 p-6 rounded-lg shadow-md mb-10 max-w-5xl">
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <div>
-              <label className="font-bold block mb-1">Finca</label>
-              <input name="finca" value={formData.finca} onChange={handleChange} placeholder="Nombre finca" className="w-full p-2 border rounded" />
-            </div>
-            <div>
-              <label className="font-bold block mb-1">Número de lote</label>
-              <input name="lote" value={formData.lote} onChange={handleChange} placeholder="Número" className="w-full p-2 border rounded" />
-            </div>
-            <div>
-              <label className="font-bold block mb-1">Coordenadas</label>
-              <input name="coordenadas" value={formData.coordenadas} onChange={handleChange} placeholder="Coordenadas" className="w-full p-2 border rounded" />
-            </div>
-            <div>
-              <label className="font-bold block mb-1">Área lote</label>
-              <input name="area" value={formData.area} onChange={handleChange} placeholder="Área" className="w-full p-2 border rounded" />
-            </div>
-            <div>
-              <label className="font-bold block mb-1">Cultivo</label>
-              <input name="cultivo" value={formData.cultivo} onChange={handleChange} placeholder="Tipo cultivo" className="w-full p-2 border rounded" />
-            </div>
+      {/* Formulario de creación */}
+      <div className="bg-white border border-gray-200 shadow-gray-300 p-6 rounded-lg shadow-md mb-10 max-w-5xl">
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          <div>
+            <label className="font-bold block mb-1">Finca</label>
+            <input name="finca" value={formData.finca} onChange={handleChange} placeholder="Nombre finca" className="w-full p-2 border rounded" />
           </div>
-          <button onClick={agregarLote} className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-            Crear lote
-          </button>
+          <div>
+            <label className="font-bold block mb-1">Número de lote</label>
+            <input name="lote" value={formData.lote} onChange={handleChange} placeholder="Número" className="w-full p-2 border rounded" />
+          </div>
+          <div>
+            <label className="font-bold block mb-1">Coordenadas</label>
+            <input name="coordenadas" value={formData.coordenadas} onChange={handleChange} placeholder="Coordenadas" className="w-full p-2 border rounded" />
+          </div>
+          <div>
+            <label className="font-bold block mb-1">Área lote</label>
+            <input name="area" value={formData.area} onChange={handleChange} placeholder="Área" className="w-full p-2 border rounded" />
+          </div>
+          <div>
+            <label className="font-bold block mb-1">Cultivo</label>
+            <input name="cultivo" value={formData.cultivo} onChange={handleChange} placeholder="Tipo cultivo" className="w-full p-2 border rounded" />
+          </div>
         </div>
-
-        {/* Tabla de lotes */}
-        <div className="overflow-x-auto rounded-lg shadow-lg relative">
-          <table className="min-w-full text-base bg-white text-center">
-            <thead className="bg-green-600 text-white font-bold">
-              <tr>
-                {columnas.map((col, idx) => (
-                  <th key={idx} className="p-4 border">
-                    <div className="flex items-center justify-center gap-2">
-                      {col.toUpperCase()}
-                      <button onClick={(e) => toggleFiltro(col, e)}>
-                        <IconFilter className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </th>
-                ))}
-                <th className="p-4 border">ACCIONES</th>
-              </tr>
-            </thead>
-            <tbody>
-              {datosFiltrados.map((lote, idx) => (
-                <tr key={idx} className="hover:bg-gray-100">
-                  <td className="p-4 border">{lote.finca}</td>
-                  <td className="p-4 border">{lote.lote}</td>
-                  <td className="p-4 border">{lote.coordenadas}</td>
-                  <td className="p-4 border">{lote.area}</td>
-                  <td className="p-4 border">{lote.cultivo}</td>
-                  <td className="p-4 border">
-                    <button onClick={(e) => mostrarTarjeta(idx, e)}>
-                      <IconDotsVertical className="w-5 h-5" />
-                    </button>
-                    {visibleTarjeta === idx && (
-                      <div
-                        ref={filtroRef}
-                        className="fixed bg-white border shadow-md p-3 rounded z-50 w-40 text-sm"
-                        style={{ top: posicionTarjeta.top, left: posicionTarjeta.left }}
-                      >
-                        <div
-                          onClick={() => navigate("/editarlote", { state: lote })}
-                          className="flex items-center gap-2 text-blue-600 hover:text-green-600 cursor-pointer mb-2"
-                        >
-                          <IconPencil className="w-4 h-4" />
-                          <span>Editar</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-red-600 hover:text-red-700 cursor-pointer">
-                          <IconTrash className="w-4 h-4" />
-                          <span>Eliminar</span>
-                        </div>
-                      </div>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          {/* Filtro emergente */}
-          {filtroActivo && (
-            <div
-              ref={filtroRef}
-              className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60 text-left text-sm"
-              style={{ top: posicionTarjeta.top, left: posicionTarjeta.left }}
-            >
-              <div className="font-semibold mb-2">
-                Filtrar por {filtroActivo.charAt(0).toUpperCase() + filtroActivo.slice(1)}
-              </div>
-              <input
-                type="text"
-                placeholder="Buscar..."
-                className="w-full border px-2 py-1 rounded mb-2"
-                value={busquedas[filtroActivo] || ""}
-                onChange={(e) => setBusquedas({ ...busquedas, [filtroActivo]: e.target.value })}
-              />
-              <div className="flex flex-col max-h-40 overflow-y-auto">
-                {getValoresUnicos(filtroActivo).map((val, i) => (
-                  <label key={i} className="flex items-center gap-2 mb-1 capitalize">
-                    <input
-                      type="checkbox"
-                      className="accent-green-600"
-                      checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
-                      onChange={() => toggleValor(filtroActivo, val)}
-                    />
-                    {val.charAt(0).toUpperCase() + val.slice(1)}
-                  </label>
-                ))}
-              </div>
-              <button onClick={() => limpiarFiltro(filtroActivo)} className="text-blue-600 hover:underline text-xs mt-2">
-                Borrar filtro
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Botón guardar cambios */}
-        <div className="flex justify-center mt-6">
-          <button className="bg-green-600 text-white text-lg px-6 py-3 rounded-lg hover:bg-green-700 font-bold">
-            Guardar cambios
-          </button>
-        </div>
+        <button onClick={agregarLote} className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+          Crear lote
+        </button>
       </div>
-    </div>
+
+      {/* Tabla de lotes */}
+      <div className="overflow-x-auto rounded-lg shadow-lg relative">
+        <table className="min-w-full text-base bg-white text-center">
+          <thead className="bg-green-600 text-white font-bold">
+            <tr>
+              {columnas.map((col, idx) => (
+                <th key={idx} className="p-4 border">
+                  <div className="flex items-center justify-center gap-2">
+                    {col.toUpperCase()}
+                    <button onClick={(e) => toggleFiltro(col, e)}>
+                      <IconFilter className="w-4 h-4" />
+                    </button>
+                  </div>
+                </th>
+              ))}
+              <th className="p-4 border">ACCIONES</th>
+            </tr>
+          </thead>
+          <tbody>
+            {datosFiltrados.map((lote, idx) => (
+              <tr key={idx} className="hover:bg-gray-100">
+                <td className="p-4 border">{lote.finca}</td>
+                <td className="p-4 border">{lote.lote}</td>
+                <td className="p-4 border">{lote.coordenadas}</td>
+                <td className="p-4 border">{lote.area}</td>
+                <td className="p-4 border">{lote.cultivo}</td>
+                <td className="p-4 border">
+                  <button onClick={(e) => mostrarTarjeta(idx, e)}>
+                    <IconDotsVertical className="w-5 h-5" />
+                  </button>
+                  {visibleTarjeta === idx && (
+                    <div
+                      ref={filtroRef}
+                      className="fixed bg-white border shadow-md p-3 rounded z-50 w-40 text-sm"
+                      style={{ top: posicionTarjeta.top, left: posicionTarjeta.left }}
+                    >
+                      <div
+                        onClick={() => navigate("/editarlote", { state: lote })}
+                        className="flex items-center gap-2 text-blue-600 hover:text-green-600 cursor-pointer mb-2"
+                      >
+                        <IconPencil className="w-4 h-4" />
+                        <span>Editar</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-red-600 hover:text-red-700 cursor-pointer">
+                        <IconTrash className="w-4 h-4" />
+                        <span>Eliminar</span>
+                      </div>
+                    </div>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {/* Filtro emergente */}
+        {filtroActivo && (
+          <div
+            ref={filtroRef}
+            className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60 text-left text-sm"
+            style={{ top: posicionTarjeta.top, left: posicionTarjeta.left }}
+          >
+            <div className="font-semibold mb-2">
+              Filtrar por {filtroActivo.charAt(0).toUpperCase() + filtroActivo.slice(1)}
+            </div>
+            <input
+              type="text"
+              placeholder="Buscar..."
+              className="w-full border px-2 py-1 rounded mb-2"
+              value={busquedas[filtroActivo] || ""}
+              onChange={(e) => setBusquedas({ ...busquedas, [filtroActivo]: e.target.value })}
+            />
+            <div className="flex flex-col max-h-40 overflow-y-auto">
+              {getValoresUnicos(filtroActivo).map((val, i) => (
+                <label key={i} className="flex items-center gap-2 mb-1 capitalize">
+                  <input
+                    type="checkbox"
+                    className="accent-green-600"
+                    checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
+                    onChange={() => toggleValor(filtroActivo, val)}
+                  />
+                  {val.charAt(0).toUpperCase() + val.slice(1)}
+                </label>
+              ))}
+            </div>
+            <button onClick={() => limpiarFiltro(filtroActivo)} className="text-blue-600 hover:underline text-xs mt-2">
+              Borrar filtro
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Botón guardar cambios */}
+      <div className="flex justify-center mt-6">
+        <button className="bg-green-600 text-white text-lg px-6 py-3 rounded-lg hover:bg-green-700 font-bold">
+          Guardar cambios
+        </button>
+      </div>
+    </LayoutAgronomo>
   );
 };
 
 export default Crear_lote_agro;
-
-
-
-
-
-
-

@@ -1,44 +1,15 @@
-import React, { useState, useRef, useEffect } from "react";
+// src/pages/agronomo/Registrar_empleado.jsx
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  IconHome,
-  IconClipboardList,
-  IconChartBar,
-  IconCloudRain,
-  IconTractor,
-  IconSettings,
-  IconBox,
-  IconUsersGroup,
-  IconPlant,
-  IconFrame,
-  IconChevronLeft,
-  IconCheck,
-  IconTool,
-  IconLogout,
-  IconPlant2,
-  IconBook,
-} from "@tabler/icons-react";
-import faviconBlanco from "../../assets/favicon-blanco.png";
+import { IconChevronLeft, IconCheck } from "@tabler/icons-react";
+import LayoutAgronomo from "../../layouts/LayoutAgronomo";
 
 const Registrar_empleado = () => {
   const navigate = useNavigate();
   const [alertaVisible, setAlertaVisible] = useState(false);
-  const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
-  const tarjetaRef = useRef(null);
 
   const nombreUsuario = "Juan Pérez";
   const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
-
-  // Cierra la tarjeta si se hace clic fuera
-  useEffect(() => {
-    const manejarClickFuera = (e) => {
-      if (tarjetaRef.current && !tarjetaRef.current.contains(e.target)) {
-        setMostrarTarjeta(false);
-      }
-    };
-    document.addEventListener("mousedown", manejarClickFuera);
-    return () => document.removeEventListener("mousedown", manejarClickFuera);
-  }, []);
 
   const manejarGuardar = (e) => {
     e.preventDefault();
@@ -50,105 +21,7 @@ const Registrar_empleado = () => {
   };
 
   return (
-    <div className="flex">
-      {/* Sidebar */}
-      <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
-        {/* Logo */}
-        <div className="sticky top-0 mb-6 bg-green-600 z-10">
-          <img src={faviconBlanco} alt="Logo" className="w-11 h-11 mx-auto" />
-        </div>
-
-        {/* Navegación */}
-        <div className="flex-1 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only">
-          <div className="relative">
-            <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            <button
-              onClick={() => navigate("/homeagro")}
-              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-            >
-              <IconHome className="text-white w-11 h-11" />
-            </button>
-          </div>
-
-          <button onClick={() => navigate("/Laboresagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconClipboardList className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/Informesagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconChartBar className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/Bodegaagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconBox className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/variablesclimaticas")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconCloudRain className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/maquinariaequipos")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconTractor className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/manejopersonal")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconUsersGroup className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/crearfinca")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconPlant className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/crearlote")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconFrame className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/produccionagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconPlant2 className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/cuadernocampo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconBook className="text-white w-11 h-11" />
-          </button>
-        </div>
-
-        {/* Perfil */}
-        <div className="relative mb-4 flex justify-center">
-          <button
-            onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
-            className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
-          >
-            {letraInicial}
-          </button>
-
-          {mostrarTarjeta && (
-            <div
-              ref={tarjetaRef}
-              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
-            >
-              <button
-                onClick={() => {
-                  setMostrarTarjeta(false);
-                  navigate("/ajustesagro");
-                }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-              >
-                <IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes
-              </button>
-              <button
-                onClick={() => {
-                  setMostrarTarjeta(false);
-                  navigate("/soporteagro");
-                }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-              >
-                <IconTool className="w-5 h-5 mr-2 text-green-600" /> Soporte
-              </button>
-              <button
-                onClick={() => {
-                  setMostrarTarjeta(false);
-                  navigate("/login");
-                }}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
-              >
-                <IconLogout className="w-5 h-5 mr-2 text-red-600" /> Cerrar sesión
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Contenido */}
+    <LayoutAgronomo active="/manejopersonal" letraInicial={letraInicial}>
       <div className="flex-1 p-10 overflow-auto relative bg-gray-50">
         {alertaVisible && (
           <div className="fixed top-3 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
@@ -166,19 +39,38 @@ const Registrar_empleado = () => {
 
         {/* Formulario */}
         <div className="bg-white border-2 border-green-200 rounded-lg w-full max-w-4xl md:max-w-[56rem] mx-auto px-8 py-8 shadow-lg">
-          <h1 className="text-3xl font-bold text-green-600 mb-6">Registrar empleado</h1>
+          <h1 className="text-3xl font-bold text-green-600 mb-6">
+            Registrar empleado
+          </h1>
 
-          <form onSubmit={manejarGuardar} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <form
+            onSubmit={manejarGuardar}
+            className="grid grid-cols-1 md:grid-cols-2 gap-6"
+          >
             <div>
-              <label className="block font-bold text-gray-700 mb-2">Nombre completo</label>
-              <input type="text" className="w-full border rounded px-4 py-3" placeholder="Juan Pérez" required />
+              <label className="block font-bold text-gray-700 mb-2">
+                Nombre completo
+              </label>
+              <input
+                type="text"
+                className="w-full border rounded px-4 py-3"
+                placeholder="Juan Pérez"
+                required
+              />
             </div>
             <div>
               <label className="block font-bold text-gray-700 mb-2">Cargo</label>
-              <input type="text" className="w-full border rounded px-4 py-3" placeholder="Operario de campo" required />
+              <input
+                type="text"
+                className="w-full border rounded px-4 py-3"
+                placeholder="Operario de campo"
+                required
+              />
             </div>
             <div>
-              <label className="block font-bold text-gray-700 mb-2">Estado</label>
+              <label className="block font-bold text-gray-700 mb-2">
+                Estado
+              </label>
               <select className="w-full border rounded px-4 py-3" required>
                 <option>Activo</option>
                 <option>Inactivo</option>
@@ -195,27 +87,30 @@ const Registrar_empleado = () => {
               </select>
             </div>
             <div>
-              <label className="block font-bold text-gray-700 mb-2">Teléfono</label>
-              <input type="text" className="w-full border rounded px-4 py-3" placeholder="3124567890" required />
+              <label className="block font-bold text-gray-700 mb-2">
+                Teléfono
+              </label>
+              <input
+                type="text"
+                className="w-full border rounded px-4 py-3"
+                placeholder="3124567890"
+                required
+              />
             </div>
 
             <div className="md:col-span-2 flex justify-center mt-4">
-              <button type="submit" className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg text-lg font-semibold">
+              <button
+                type="submit"
+                className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg text-lg font-semibold"
+              >
                 Guardar empleado
               </button>
             </div>
           </form>
         </div>
       </div>
-    </div>
+    </LayoutAgronomo>
   );
 };
 
 export default Registrar_empleado;
-
-
-
-
-
-
-

@@ -1,27 +1,13 @@
 // src/pages/agronomo/Labores_agro.jsx
 import React, { useState, useRef, useEffect } from "react";
 import {
-  IconHome,
-  IconClipboardList,
-  IconChartBar,
-  IconCloudRain,
-  IconTractor,
-  IconSettings,
-  IconBox,
   IconEye,
-  IconUsersGroup,
-  IconPlant,
-  IconFrame,
   IconFilter,
   IconSortAscending2,
   IconSortDescending2,
-  IconTool,
-  IconLogout,
-  IconPlant2,
-  IconBook,
 } from "@tabler/icons-react";
-import faviconBlanco from "../../assets/favicon-blanco.png";
 import { useNavigate } from "react-router-dom";
+import LayoutAgronomo from "../../layouts/LayoutAgronomo";
 
 const Labores_agro = () => {
   const navigate = useNavigate();
@@ -33,15 +19,8 @@ const Labores_agro = () => {
   const [ordenCampo, setOrdenCampo] = useState(null);
   const [busquedas, setBusquedas] = useState({});
 
-  // --- Referencias para clicks fuera ---
+  // --- Referencia para cerrar filtros ---
   const filtroRef = useRef(null);
-  const menuRef = useRef(null);
-
-  // --- Estado menú perfil ---
-  const [mostrarMenu, setMostrarMenu] = useState(false);
-
-  // --- Datos de usuario ---
-  const user = { inicial: "J" };
 
   // --- Datos de ejemplo ---
   const labores = [
@@ -123,73 +102,9 @@ const Labores_agro = () => {
     return () => document.removeEventListener("mousedown", handleClickOutsideFiltro);
   }, []);
 
-  // --- Cierra menú perfil al hacer click fuera ---
-  useEffect(() => {
-    const handleClickOutsideMenu = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) {
-        setMostrarMenu(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutsideMenu);
-    return () => document.removeEventListener("mousedown", handleClickOutsideMenu);
-  }, []);
-
   return (
-    <div className="flex">
-      {/* --- Sidebar --- */}
-      <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
-        {/* Logo */}
-        <div className="mb-6">
-          <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
-        </div>
-
-        {/* Menú navegación */}
-        <div className="flex-1 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only">
-          {/* Opción activa */}
-          <div className="relative">
-            <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            <button onClick={() => navigate("/homeagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-              <IconHome className="text-white w-11 h-11" />
-            </button>
-          </div>
-
-          {/* Opciones */}
-          <button onClick={() => navigate("/Laboresagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconClipboardList className="text-white w-11 h-11" /></button>
-          <button onClick={() => navigate("/Informesagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconChartBar className="text-white w-11 h-11" /></button>
-          <button onClick={() => navigate("/Bodegaagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconBox className="text-white w-11 h-11" /></button>
-          <button onClick={() => navigate("/variablesclimaticas")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconCloudRain className="text-white w-11 h-11" /></button>
-          <button onClick={() => navigate("/maquinariaequipos")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconTractor className="text-white w-11 h-11" /></button>
-          <button onClick={() => navigate("/manejopersonal")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconUsersGroup className="text-white w-11 h-11" /></button>
-          <button onClick={() => navigate("/crearfinca")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconPlant className="text-white w-11 h-11" /></button>
-          <button onClick={() => navigate("/crearlote")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconFrame className="text-white w-11 h-11" /></button>
-          <button onClick={() => navigate("/produccionagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconPlant2 className="text-white w-11 h-11" /></button>
-          <button onClick={() => navigate("/cuadernocampo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"><IconBook className="text-white w-11 h-11" /></button>
-        </div>
-
-        {/* Botón perfil */}
-        <div className="relative mb-4">
-          <button
-            onClick={() => setMostrarMenu(!mostrarMenu)}
-            className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
-          >
-            {user.inicial}
-          </button>
-
-          {mostrarMenu && (
-            <div
-              ref={menuRef}
-              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
-            >
-              <button onClick={() => navigate("/ajustesagro")} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"><IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes</button>
-              <button onClick={() => navigate("/soporteagro")} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"><IconTool className="w-5 h-5 mr-2 text-green-600" /> Soporte</button>
-              <button onClick={() => navigate("/login")} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"><IconLogout className="w-5 h-5 mr-2 text-red-600" /> Cerrar sesión</button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* --- Contenido principal --- */}
-      <div className="flex-1 p-12">
+    <LayoutAgronomo>
+      <div className="p-12">
         <h1 className="text-4xl font-bold text-green-600 mb-6">Seguimiento labores</h1>
 
         {/* Tabla */}
@@ -284,21 +199,11 @@ const Labores_agro = () => {
           </div>
         )}
       </div>
-    </div>
+    </LayoutAgronomo>
   );
 };
 
 export default Labores_agro;
-
-
-
-
-
-
-
-
-
-
 
 
 

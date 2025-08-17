@@ -1,47 +1,28 @@
 // src/pages/agronomo/Crear_finca_agro.jsx
 import React, { useState, useRef, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
-  IconHome,
-  IconClipboardList,
-  IconChartBar,
-  IconCloudRain,
-  IconTractor,
-  IconSettings,
-  IconBox,
-  IconUsersGroup,
-  IconPlant,
-  IconFrame,
   IconFilter,
   IconDotsVertical,
   IconEdit,
   IconTrash,
   IconMapPin,
-  IconTool,
-  IconLogout,
-  IconPlant2,
-  IconBook,
 } from "@tabler/icons-react";
-import faviconBlanco from "../../assets/favicon-blanco.png";
+import LayoutAgronomo from "../../layouts/LayoutAgronomo";
 
 const Crear_finca_agro = () => {
   const navigate = useNavigate();
-  const location = useLocation();
 
   /* ----------------------------------
      📌 ESTADOS Y REFERENCIAS
   ---------------------------------- */
   const filtroRef = useRef(null);
-  const [mostrarTarjetaPerfil, setMostrarTarjetaPerfil] = useState(false);
-  const tarjetaPerfilRef = useRef(null);
-  const iconListRef = useRef(null); // Scroll automático sidebar
-
-  const columnas = ["nombre", "ubicacion", "coordenadas", "area"];
   const [fincas, setFincas] = useState([
     { nombre: "La Esmeralda", ubicacion: "Huila", coordenadas: "2.40,-75.25", area: "12 ha" },
     { nombre: "Las Palmas", ubicacion: "Caquetá", coordenadas: "1.62,-75.55", area: "18 ha" },
   ]);
 
+  const columnas = ["nombre", "ubicacion", "coordenadas", "area"];
   const [formData, setFormData] = useState({ nombre: "", ubicacion: "", coordenadas: "", area: "" });
   const [filtroActivo, setFiltroActivo] = useState(null);
   const [busquedas, setBusquedas] = useState({});
@@ -49,9 +30,6 @@ const Crear_finca_agro = () => {
   const [ordenCampo, setOrdenCampo] = useState(null);
   const [posicionTarjeta, setPosicionTarjeta] = useState({});
   const [visibleTarjeta, setVisibleTarjeta] = useState(null);
-
-  const nombreUsuario = "Juan Pérez";
-  const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
 
   /* ----------------------------------
      📌 HANDLERS
@@ -116,109 +94,21 @@ const Crear_finca_agro = () => {
   ---------------------------------- */
   useEffect(() => {
     const clickFuera = (e) => {
-      if (
-        filtroRef.current && !filtroRef.current.contains(e.target) &&
-        (!tarjetaPerfilRef.current || !tarjetaPerfilRef.current.contains(e.target))
-      ) {
+      if (filtroRef.current && !filtroRef.current.contains(e.target)) {
         setFiltroActivo(null);
         setVisibleTarjeta(null);
-        setMostrarTarjetaPerfil(false);
       }
     };
     document.addEventListener("mousedown", clickFuera);
     return () => document.removeEventListener("mousedown", clickFuera);
   }, []);
 
-  useEffect(() => {
-    if (!iconListRef.current) return;
-    if (location.pathname.includes("/crearfinca")) {
-      iconListRef.current.scrollTo({ top: iconListRef.current.scrollHeight, behavior: "instant" });
-    } else {
-      iconListRef.current.scrollTo({ top: 0, behavior: "instant" });
-    }
-  }, [location.pathname]);
-
   /* ----------------------------------
      📌 RENDER
   ---------------------------------- */
   return (
-    <div className="flex">
-      {/* ---------------------- SIDEBAR ---------------------- */}
-      <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
-        {/* Logo */}
-        <div className="sticky top-0 mb-6 bg-green-600 z-10">
-          <img src={faviconBlanco} alt="Logo" className="w-11 h-11 mx-auto" />
-        </div>
-
-        {/* Navegación */}
-        <div
-          ref={iconListRef}
-          className="flex-1 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only pb-24"
-        >
-          <button onClick={() => navigate("/homeagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Inicio">
-            <IconHome className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/Laboresagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Labores">
-            <IconClipboardList className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/Informesagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Informes">
-            <IconChartBar className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/Bodegaagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Bodega">
-            <IconBox className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/variablesclimaticas")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Variables climáticas">
-            <IconCloudRain className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/maquinariaequipos")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Maquinaria y equipos">
-            <IconTractor className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/manejopersonal")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Manejo de Personal">
-            <IconUsersGroup className="text-white w-11 h-11" />
-          </button>
-
-          {/* Activo: gestión finca */}
-          <div className="relative">
-            <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-            <button onClick={() => navigate("/crearfinca")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Gestión finca">
-              <IconPlant className="text-white w-11 h-11" />
-            </button>
-          </div>
-
-          <button onClick={() => navigate("/crearlote")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition" title="Gestión lote">
-            <IconFrame className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/produccionagro")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconPlant2 className="text-white w-11 h-11" />
-          </button>
-          <button onClick={() => navigate("/cuadernocampo")} className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition">
-            <IconBook className="text-white w-11 h-11" />
-          </button>
-        </div>
-
-        {/* Perfil */}
-        <div className="relative mb-4 mt-auto">
-          <button onClick={() => setMostrarTarjetaPerfil(!mostrarTarjetaPerfil)} className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition" title="Perfil">
-            {letraInicial}
-          </button>
-          {mostrarTarjetaPerfil && (
-            <div ref={tarjetaPerfilRef} className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50">
-              <button onClick={() => { setMostrarTarjetaPerfil(false); navigate("/ajustesagro"); }} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
-                <IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes
-              </button>
-              <button onClick={() => { setMostrarTarjetaPerfil(false); navigate("/soporteagro"); }} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
-                <IconTool className="w-5 h-5 mr-2 text-green-600" /> Soporte
-              </button>
-              <button onClick={() => { setMostrarTarjetaPerfil(false); navigate("/login"); }} className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600">
-                <IconLogout className="w-5 h-5 mr-2 text-red-600" /> Cerrar sesión
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* ---------------------- CONTENIDO PRINCIPAL ---------------------- */}
-      <div className="flex-1 p-10 overflow-auto">
+    <LayoutAgronomo>
+      <div className="p-10">
         <h1 className="text-3xl font-bold text-green-700 mb-6">Crear finca</h1>
 
         {/* Formulario */}
@@ -229,7 +119,7 @@ const Crear_finca_agro = () => {
               <input name="nombre" value={formData.nombre} onChange={handleChange} placeholder="Nombre finca" className="w-full p-2 border rounded" />
             </div>
             <div>
-              <label className="font-bold block mb-1 items-center gap-1 flex">
+              <label className="font-bold block mb-1 items-center gap-1 ">
                 <IconMapPin className="w-4 h-4 mr-1" /> Ubicación finca
               </label>
               <input name="ubicacion" value={formData.ubicacion} onChange={handleChange} placeholder="Ubicación finca" className="w-full p-2 border rounded" />
@@ -326,13 +216,8 @@ const Crear_finca_agro = () => {
           </button>
         </div>
       </div>
-    </div>
+    </LayoutAgronomo>
   );
 };
 
 export default Crear_finca_agro;
-
-
-
-
-
