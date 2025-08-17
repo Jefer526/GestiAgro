@@ -15,7 +15,7 @@ const Detalles_ticket = () => {
 
   const [alertaVisible, setAlertaVisible] = useState(false);
 
-  // Ticket recibido por navegación
+  // Ticket recibido 
   const t =
     state?.ticket || {
       ticket: "TK-????",

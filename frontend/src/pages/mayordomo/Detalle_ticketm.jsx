@@ -6,7 +6,7 @@ import {
   IconCheck,
 } from "@tabler/icons-react";
 import { useLocation, useNavigate } from "react-router-dom";
-import LayoutAgronomo from "../../layouts/LayoutAgronomo";
+import LayoutMayordomo from "../../layouts/LayoutMayordomo";
 import api from "../../services/apiClient";
 
 const Detalles_ticketm = () => {
@@ -49,7 +49,7 @@ const Detalles_ticketm = () => {
   };
 
   return (
-    <LayoutAgronomo active="soporte_mayordomo">
+    <LayoutMayordomo active="soporte_mayordomo">
       {alertaVisible && (
         <div className="fixed top-3 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
           <IconCheck className="w-5 h-5" /> Estado del ticket actualizado
@@ -135,7 +135,7 @@ const Detalles_ticketm = () => {
           </button>
         </div>
       </div>
-    </LayoutAgronomo>
+    </LayoutMayordomo>
   );
 };
 
