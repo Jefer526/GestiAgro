@@ -22,8 +22,20 @@ const SidebarMayordomo = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const nombreUsuario = "Juan Pérez";
-  const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
+  // 🔹 Estado para inicial dinámica
+  const [letraInicial, setLetraInicial] = useState("U");
+
+  useEffect(() => {
+    try {
+      const userData = JSON.parse(localStorage.getItem("user"));
+      if (userData?.nombre) {
+        const inicial = userData.nombre.trim()[0].toUpperCase();
+        setLetraInicial(inicial);
+      }
+    } catch {
+      setLetraInicial("U");
+    }
+  }, []);
 
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
   const tarjetaRef = useRef(null);
@@ -32,9 +44,9 @@ const SidebarMayordomo = () => {
   // 🔹 Ref para manejar el scroll del contenedor
   const scrollRef = useRef(null);
 
-  // 🔹 Restaurar scroll guardado ANTES del render visual (sin parpadeo)
+  // 🔹 Restaurar scroll guardado ANTES del render visual
   useLayoutEffect(() => {
-    const saved = sessionStorage.getItem("sidebarScroll");
+    const saved = sessionStorage.getItem("sidebarScrollMayo");
     if (saved && scrollRef.current) {
       scrollRef.current.scrollTop = parseInt(saved, 10);
     }
@@ -79,7 +91,7 @@ const SidebarMayordomo = () => {
     if (Array.isArray(paths)) {
       return paths.some((p) => location.pathname.startsWith(p));
     }
-    return location.pathname === paths;
+    return location.pathname.startsWith(paths);
   };
 
   return (
@@ -101,10 +113,7 @@ const SidebarMayordomo = () => {
           { icon: <IconBook />, route: "/cuaderno_campom" },
           { icon: <IconPlant2 />, route: "/produccion_mayor" },
           { icon: <IconBox />, route: ["/bodega_insumos", "/detalle_producto"] },
-          {
-            icon: <IconCloudRain />,
-            route: ["/variables_climaticasm", "/registrar_climam"],
-          },
+          { icon: <IconCloudRain />, route: ["/variables_climaticasm", "/registrar_climam"] },
           { icon: <IconChartBar />, route: "/informes_mayordomo" },
           {
             icon: <IconTractor />,
@@ -124,10 +133,9 @@ const SidebarMayordomo = () => {
             )}
             <button
               onClick={() => {
-                // Guardar posición del scroll antes de navegar
                 if (scrollRef.current) {
                   sessionStorage.setItem(
-                    "sidebarScroll",
+                    "sidebarScrollMayo",
                     scrollRef.current.scrollTop.toString()
                   );
                 }

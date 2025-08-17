@@ -1,97 +1,132 @@
 // src/components/SidebarAdmin.jsx
-import React, { useState, useRef, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
 import {
+  IconHome,
   IconUsers,
   IconCloudUpload,
   IconTool,
-  IconHome,
   IconSettings,
   IconLogout,
 } from "@tabler/icons-react";
+import { useNavigate, useLocation } from "react-router-dom";
 import faviconBlanco from "../assets/favicon-blanco.png";
+import api, { accountsApi, ENDPOINTS } from "../services/apiClient";
 
-const SidebarAdmin = ({ letraInicial = "A", onLogout, isLoggingOut = false }) => {
+const SidebarAdmin = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const tarjetaRef = useRef(null);
-  const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
 
-  // Cerrar tarjeta si se hace clic fuera
+  // 🔹 Estado para inicial dinámica
+  const [letraInicial, setLetraInicial] = useState("U");
+
   useEffect(() => {
-    const clickFueraTarjeta = (e) => {
-      if (tarjetaRef.current && !tarjetaRef.current.contains(e.target)) {
-        setMostrarTarjeta(false);
+    try {
+      const userData = JSON.parse(localStorage.getItem("user"));
+      if (userData?.nombre) {
+        const inicial = userData.nombre.trim()[0].toUpperCase();
+        setLetraInicial(inicial);
       }
-    };
-    document.addEventListener("mousedown", clickFueraTarjeta);
-    return () => document.removeEventListener("mousedown", clickFueraTarjeta);
+    } catch {
+      setLetraInicial("U");
+    }
   }, []);
 
-  // Ahora acepta coincidencias parciales (ej: /admuser y /editar-roluser/:id)
-  const isActive = (path) => location.pathname.startsWith(path);
+  const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
+  const tarjetaRef = useRef(null);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  // 🔹 Ref para manejar scroll persistente
+  const scrollRef = useRef(null);
+
+  useLayoutEffect(() => {
+    const saved = sessionStorage.getItem("sidebarScrollAdmin");
+    if (saved && scrollRef.current) {
+      scrollRef.current.scrollTop = parseInt(saved, 10);
+    }
+  }, []);
+
+  // ====== LOGOUT ======
+  const handleLogout = async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    try {
+      const refresh = localStorage.getItem("refresh");
+      if (ENDPOINTS?.logout) {
+        await api.post(ENDPOINTS.logout, { refresh });
+      } else if (accountsApi?.logout) {
+        await accountsApi.logout({ refresh });
+      }
+    } catch (e) {
+      console.warn("Fallo en logout del backend:", e);
+    } finally {
+      try {
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
+        sessionStorage.removeItem("access");
+        sessionStorage.removeItem("refresh");
+        localStorage.removeItem("rememberedEmail");
+      } catch {}
+      try {
+        if (api?.defaults?.headers?.common) {
+          delete api.defaults.headers.common.Authorization;
+        }
+      } catch {}
+      setMostrarTarjeta(false);
+      setIsLoggingOut(false);
+      window.location.replace("/login");
+    }
+  };
+
+  // ====== Saber qué ruta está activa ======
+  const isActive = (paths) => {
+    if (Array.isArray(paths)) {
+      return paths.some((p) => location.pathname.startsWith(p));
+    }
+    return location.pathname.startsWith(paths);
+  };
 
   return (
-    <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
-      {/* Navegación */}
-      <div className="flex flex-col items-center space-y-8">
+    <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col justify-between z-[200]">
+      {/* Logo */}
+      <div className="pt-6 flex justify-center">
         <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
-
-        {/* Home */}
-        <div className="relative">
-          {isActive("/homeadm") && (
-            <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-          )}
-          <button
-            onClick={() => navigate("/homeadm")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
-            <IconHome className="text-white w-11 h-11" />
-          </button>
-        </div>
-
-        {/* Usuarios */}
-        <div className="relative">
-          {isActive("/admuser") || isActive("/editar-roluser") ? (
-            <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-          ) : null}
-          <button
-            onClick={() => navigate("/admuser")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
-            <IconUsers className="text-white w-11 h-11" />
-          </button>
-        </div>
-
-        {/* Copias */}
-        <div className="relative">
-          {isActive("/copias") && (
-            <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-          )}
-          <button
-            onClick={() => navigate("/copias")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
-            <IconCloudUpload className="text-white w-11 h-11" />
-          </button>
-        </div>
-
-        {/* Soporte */}
-        <div className="relative">
-          {isActive("/soporte") || isActive("/detallesticket") ? (
-            <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-          ): null}
-          <button
-            onClick={() => navigate("/soporte")}
-            className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-          >
-            <IconTool className="text-white w-11 h-11" />
-          </button>
-        </div>
       </div>
 
-      {/* Avatar usuario */}
-      <div className="relative mb-6">
+      {/* Zona de iconos con scroll persistente */}
+      <div
+        ref={scrollRef}
+        className="flex-1 flex flex-col items-center space-y-8 mt-6 overflow-y-auto scrollbar-hide-only"
+      >
+        {[
+          { icon: <IconHome />, route: "/homeadm" },
+          { icon: <IconUsers />, route: ["/admuser", "/editar-roluser"] },
+          { icon: <IconCloudUpload />, route: ["/copias", "/editarcopiassegu"] },
+          { icon: <IconTool />, route: ["/soporte", "/detallesticket"] },
+        ].map(({ icon, route }, i) => (
+          <div key={i} className="relative">
+            {isActive(route) && (
+              <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+            )}
+            <button
+              onClick={() => {
+                if (scrollRef.current) {
+                  sessionStorage.setItem(
+                    "sidebarScrollAdmin",
+                    scrollRef.current.scrollTop.toString()
+                  );
+                }
+                navigate(Array.isArray(route) ? route[0] : route);
+              }}
+              className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+            >
+              {React.cloneElement(icon, { className: "text-white w-11 h-11" })}
+            </button>
+          </div>
+        ))}
+      </div>
+
+      {/* Perfil */}
+      <div className="relative mb-6 flex justify-center">
         <button
           onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
           className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
@@ -101,18 +136,21 @@ const SidebarAdmin = ({ letraInicial = "A", onLogout, isLoggingOut = false }) =>
         {mostrarTarjeta && (
           <div
             ref={tarjetaRef}
-            className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
+            className="absolute bottom-16 left-14 w-56 bg-white/95 border border-gray-200 rounded-xl shadow-2xl py-3 z-[9999] backdrop-blur text-base"
           >
             <button
-              onClick={() => navigate("/ajustesadm")}
-              className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              onClick={() => {
+                setMostrarTarjeta(false);
+                navigate("/ajustesadm");
+              }}
+              className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100"
             >
               <IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes
             </button>
             <button
-              onClick={onLogout}
+              onClick={handleLogout}
               disabled={isLoggingOut}
-              className={`flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${
+              className={`flex items-center w-full text-left px-4 py-2 hover:bg-gray-100 ${
                 isLoggingOut ? "opacity-60 cursor-not-allowed" : "text-red-600"
               }`}
             >
@@ -122,7 +160,7 @@ const SidebarAdmin = ({ letraInicial = "A", onLogout, isLoggingOut = false }) =>
           </div>
         )}
       </div>
-    </div>
+    </aside>
   );
 };
 

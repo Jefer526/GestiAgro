@@ -6,17 +6,11 @@ import {
   IconEyeOff,
   IconX,
 } from "@tabler/icons-react";
-import { useNavigate } from "react-router-dom";
-import LayoutAdmin from "../../layouts/LayoutAdmin"; // ✅ usamos layout central
+import LayoutAdmin from "../../layouts/LayoutAdmin";
 import api, { ENDPOINTS } from "../../services/apiClient";
 
 const Ajustes_adm = () => {
-  const navigate = useNavigate();
-
-  const [notificaciones, setNotificaciones] = useState(true);
-  const [modoOscuro, setModoOscuro] = useState(false);
-
-  // Datos usuario real
+  /* ===== Datos usuario ===== */
   const [usuario, setUsuario] = useState(null);
   const letraInicial = (usuario?.nombre?.trim()?.[0] || "U").toUpperCase();
 
@@ -32,7 +26,11 @@ const Ajustes_adm = () => {
     fetchUser();
   }, []);
 
-  // Modal cambio de contraseña
+  /* ===== Preferencias ===== */
+  const [notificaciones, setNotificaciones] = useState(true);
+  const [modoOscuro, setModoOscuro] = useState(false);
+
+  /* ===== Modal contraseña ===== */
   const [openPwd, setOpenPwd] = useState(false);
   const [show1, setShow1] = useState(false);
   const [show2, setShow2] = useState(false);
@@ -96,14 +94,14 @@ const Ajustes_adm = () => {
   };
 
   return (
-    <LayoutAdmin active="ajustes"> 
+    <LayoutAdmin active="ajustes">
       <main className="p-8">
         <h1 className="text-3xl font-bold text-green-600 mb-6">
           Perfil de la cuenta
         </h1>
 
         <div className="bg-white border border-gray-300 rounded-xl p-6 shadow-md w-full max-w-xl space-y-6">
-          {/* Datos de perfil */}
+          {/* Perfil */}
           <div className="flex items-center space-x-4">
             <div className="bg-green-600 text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold">
               {letraInicial}
@@ -112,7 +110,13 @@ const Ajustes_adm = () => {
               <h2 className="text-xl font-semibold">
                 {usuario?.nombre || "Cargando..."}
               </h2>
-              <p className="text-gray-500">{usuario?.rol || ""}</p>
+              <p className="text-gray-500">
+                {{
+                  admin: "Administrador",
+                  agronomo: "Agrónomo",
+                  mayordomo: "Mayordomo",
+                }[usuario?.rol] || usuario?.rol || ""}
+              </p>
               <p className="text-gray-500 text-sm">{usuario?.email || ""}</p>
             </div>
           </div>
@@ -127,14 +131,14 @@ const Ajustes_adm = () => {
             </button>
           </div>
 
-          {/* Configuración */}
+          {/* Preferencias */}
           <div className="flex items-center justify-between">
             <label className="text-gray-700">Notificaciones</label>
             <input
               type="checkbox"
               checked={notificaciones}
               onChange={() => setNotificaciones(!notificaciones)}
-              className="h-5 w-5 text-green-600"
+              className="h-5 w-5 accent-green-600"
             />
           </div>
 
@@ -144,7 +148,7 @@ const Ajustes_adm = () => {
               type="checkbox"
               checked={modoOscuro}
               onChange={() => setModoOscuro(!modoOscuro)}
-              className="h-5 w-5 text-green-600"
+              className="h-5 w-5 accent-green-600"
             />
           </div>
         </div>
@@ -152,11 +156,7 @@ const Ajustes_adm = () => {
 
       {/* Modal cambio contraseña */}
       {openPwd && (
-        <div
-          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 px-4"
-          aria-modal="true"
-          role="dialog"
-        >
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 px-4">
           <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl text-green-600 font-bold">
@@ -173,7 +173,7 @@ const Ajustes_adm = () => {
               </button>
             </div>
 
-            {/* Campos */}
+            {/* Inputs */}
             {[
               {
                 label: "Contraseña actual",

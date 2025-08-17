@@ -1,5 +1,5 @@
 // src/components/SidebarAgronomo.jsx
-import React, { useState, useRef, useLayoutEffect } from "react";
+import React, { useState, useRef, useLayoutEffect, useEffect } from "react";
 import {
   IconHome,
   IconClipboardList,
@@ -24,8 +24,20 @@ const SidebarAgronomo = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const nombreUsuario = "José Agrónomo"; // 👈 luego se puede traer de sesión
-  const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
+  // 🔹 Estado para inicial dinámica
+  const [letraInicial, setLetraInicial] = useState("U");
+
+  useEffect(() => {
+    try {
+      const userData = JSON.parse(localStorage.getItem("user"));
+      if (userData?.nombre) {
+        const inicial = userData.nombre.trim()[0].toUpperCase();
+        setLetraInicial(inicial);
+      }
+    } catch {
+      setLetraInicial("U");
+    }
+  }, []);
 
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
   const tarjetaRef = useRef(null);
@@ -33,7 +45,7 @@ const SidebarAgronomo = () => {
 
   const scrollRef = useRef(null);
 
-  // Restaurar scroll guardado
+  // 🔹 Restaurar scroll guardado
   useLayoutEffect(() => {
     const saved = sessionStorage.getItem("sidebarScrollAgro");
     if (saved && scrollRef.current) {
@@ -80,7 +92,7 @@ const SidebarAgronomo = () => {
     if (Array.isArray(paths)) {
       return paths.some((p) => location.pathname.startsWith(p));
     }
-    return location.pathname === paths;
+    return location.pathname.startsWith(paths);
   };
 
   return (
