@@ -1,4 +1,4 @@
-// src/pages/agronomo/Gestion_fincas.jsx
+// src/pages/agronomo/Gestion_lotes_agro.jsx
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -10,35 +10,39 @@ import {
 } from "@tabler/icons-react";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
 
-const Gestion_fincas = () => {
+const Gestion_lotes_agro = () => {
   const navigate = useNavigate();
 
   const filtroRef = useRef(null);
-  const [fincas] = useState([
+  const [lotes, setLotes] = useState([
     {
-      nombre: "La Esmeralda",
-      area_bruta: "20 ha",
-      area_neta: "18 ha",
-      municipio: "Neiva",
-      departamento: "Huila",
-      estado: "Activa",
+      finca: "La Esmeralda",
+      lote: "1",
+      area_bruta: "3.0 ha",
+      area_neta: "2.5 ha",
+      cultivo: "Macadamia",
+      variedad: "Integrifolia",
+      estado: "Activo",
     },
     {
-      nombre: "Las Palmas",
-      area_bruta: "25 ha",
-      area_neta: "22 ha",
-      municipio: "Florencia",
-      departamento: "Caquetá",
-      estado: "Inactiva",
+      finca: "Las Palmas",
+      lote: "2",
+      area_bruta: "2.5 ha",
+      area_neta: "2.0 ha",
+      cultivo: "Aguacate",
+      variedad: "Hass",
+      estado: "Inactivo",
     },
   ]);
 
   const columnas = [
-    { key: "nombre", label: "Nombre finca" },
+    { key: "finca", label: "Nombre Finca" },
+    { key: "lote", label: "Lote" },
     { key: "area_bruta", label: "Área bruta" },
     { key: "area_neta", label: "Área neta" },
-    { key: "ubicacion", label: "Ubicación" },
-    { key: "estado", label: "Estado" }, // ✅ nueva columna
+    { key: "cultivo", label: "Cultivo" },
+    { key: "variedad", label: "Variedad" },
+    { key: "estado", label: "Estado" },
   ];
 
   const [filtroActivo, setFiltroActivo] = useState(null);
@@ -59,22 +63,12 @@ const Gestion_fincas = () => {
 
   const getValoresUnicos = (campo) => {
     const search = (busquedas[campo] || "").toLowerCase();
-
     return [
-      ...new Set(
-        fincas.map((e) => {
-          if (campo === "ubicacion") return `${e.municipio}, ${e.departamento}`;
-          return e[campo]?.toString();
-        })
-      ),
-    ].filter((v) => v.toLowerCase().includes(search));
+      ...new Set(lotes.map((l) => l[campo]?.toString())),
+    ].filter((v) => v?.toLowerCase().includes(search));
   };
 
-  const datosFiltrados = fincas
-    .map((f) => ({
-      ...f,
-      ubicacion: `${f.municipio}, ${f.departamento}`,
-    }))
+  const datosFiltrados = lotes
     .filter((item) =>
       columnas.every((col) =>
         !valoresSeleccionados[col.key] ||
@@ -131,15 +125,16 @@ const Gestion_fincas = () => {
   return (
     <LayoutAgronomo>
       <div className="p-10">
+        {/* Encabezado */}
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-green-700">
-            Gestión de Fincas
+            Gestión de Lotes
           </h1>
           <button
             onClick={() => navigate("/crearlote")}
             className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
           >
-            <IconPlus className="w-5 h-5" /> Crear Finca
+            <IconPlus className="w-5 h-5" /> Crear Lote
           </button>
         </div>
 
@@ -162,21 +157,24 @@ const Gestion_fincas = () => {
               </tr>
             </thead>
             <tbody>
-              {datosFiltrados.map((finca, idx) => (
+              {datosFiltrados.map((lote, idx) => (
                 <tr key={idx} className="hover:bg-gray-100">
-                  <td className="p-4 border">{finca.nombre}</td>
-                  <td className="p-4 border">{finca.area_bruta}</td>
-                  <td className="p-4 border">{finca.area_neta}</td>
-                  <td className="p-4 border">{finca.ubicacion}</td>
+                  <td className="p-4 border">{lote.finca}</td>
+                  <td className="p-4 border">{lote.lote}</td>
+                  <td className="p-4 border">{lote.area_bruta}</td>
+                  <td className="p-4 border">{lote.area_neta}</td>
+                  <td className="p-4 border">{lote.cultivo}</td>
+                  <td className="p-4 border">{lote.variedad}</td>
+                  {/* ✅ Estado con badge de colores */}
                   <td className="p-4 border">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                        finca.estado === "Activa"
+                        lote.estado === "Activo"
                           ? "bg-green-100 text-green-700"
                           : "bg-red-100 text-red-700"
                       }`}
                     >
-                      {finca.estado}
+                      {lote.estado}
                     </span>
                   </td>
                   <td className="p-4 border">
@@ -195,7 +193,7 @@ const Gestion_fincas = () => {
                         {/* 📄 Detalles */}
                         <div
                           onClick={() =>
-                            navigate("/detallesfinca", { state: { finca } })
+                            navigate("/detalleslote", { state: { lote } })
                           }
                           className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm text-blue-600 gap-2"
                         >
@@ -206,7 +204,11 @@ const Gestion_fincas = () => {
                         {/* 🚫 Inactivar */}
                         <div
                           onClick={() =>
-                            alert(`Finca inactivada: ${finca.nombre}`)
+                            setLotes((prev) =>
+                              prev.map((l, i) =>
+                                i === idx ? { ...l, estado: "Inactivo" } : l
+                              )
+                            )
                           }
                           className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm text-red-600 gap-2"
                         >
@@ -272,4 +274,4 @@ const Gestion_fincas = () => {
   );
 };
 
-export default Gestion_fincas;
+export default Gestion_lotes_agro;
