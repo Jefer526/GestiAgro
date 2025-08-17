@@ -7,7 +7,8 @@ class TicketSerializer(serializers.ModelSerializer):
         source="solicitado_por.nombre", 
         read_only=True
     )
-    estado_display = serializers.SerializerMethodField()  # 👈 Estado con primera letra mayúscula
+    solicitado_por_rol = serializers.SerializerMethodField()  # 👈 para traer el display
+    estado_display = serializers.SerializerMethodField()
 
     class Meta:
         model = Ticket
@@ -15,5 +16,8 @@ class TicketSerializer(serializers.ModelSerializer):
         read_only_fields = ("numero", "fecha_solicitud", "solicitado_por")
 
     def get_estado_display(self, obj):
-        # Usa el label definido en choices (ej. "Abierto", "En proceso", "Cerrado")
         return obj.get_estado_display()
+
+    def get_solicitado_por_rol(self, obj):
+        # devuelve "Administrador", "Agrónomo", "Mayordomo"
+        return obj.solicitado_por.get_rol_display()
