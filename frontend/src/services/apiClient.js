@@ -1,4 +1,3 @@
-// src/services/apiClient.js
 import axios from "axios";
 
 // ===== Base URL =====
@@ -89,7 +88,7 @@ export const getMe = () => api.get(ENDPOINTS.me);
 
 export const logout = () => api.post(ENDPOINTS.logout);
 
-// ===== Alias retrocompatible =====
+// ===== Alias retrocompatible (usuarios) =====
 export const accountsApi = {
   listUsers: () => api.get("/api/accounts/users/"),
   getUser: (id) => api.get(`/api/accounts/users/${id}/`),
@@ -98,7 +97,13 @@ export const accountsApi = {
   updateRole: (id, data) => api.put(`/api/accounts/update-role/${id}/`, data),
 };
 
+// ===== Nuevo: API Soporte =====
+export const soporteApi = {
+  listTickets: () => api.get("/soporte/tickets/"),
+  getTicket: (id) => api.get(`/soporte/tickets/${id}/`),
+  createTicket: (data) => api.post("/soporte/tickets/", data),
+  updateTicket: (id, data) => api.patch(`/soporte/tickets/${id}/`, data), // 👈 AHORA PATCH
+};
+
 // ===== Export principal =====
 export default api;
-
-

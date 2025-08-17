@@ -1,52 +1,49 @@
 // src/pages/admin/Detalles_ticket.jsx
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   IconChevronLeft,
   IconDeviceFloppy,
   IconCheck,
 } from "@tabler/icons-react";
 import { useLocation, useNavigate } from "react-router-dom";
-import LayoutAdmin from "../../layouts/LayoutAdmin"; // ✅ usamos el Layout
-import api from "../../services/apiClient";
+import LayoutAdmin from "../../layouts/LayoutAdmin";
+import { soporteApi } from "../../services/apiClient"; // ✅ usamos soporteApi
 
 const Detalles_ticket = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
+  const ticket = state?.ticket;
 
+  const [estado, setEstado] = useState(ticket?.estado || "abierto");
+  const [seguimiento, setSeguimiento] = useState(ticket?.seguimiento || "");
   const [alertaVisible, setAlertaVisible] = useState(false);
-
-  // Ticket recibido 
-  const t =
-    state?.ticket || {
-      ticket: "TK-????",
-      asunto: "—",
-      estado: "Abierto",
-      solicitadoPor: "—",
-      fechaSolicitud: "—",
-      descripcion: "—",
-      seguimiento: "",
-    };
-
-  const [estado, setEstado] = useState(t.estado);
-  const [seguimiento, setSeguimiento] = useState(t.seguimiento);
 
   const handleGuardar = async () => {
     try {
-      console.log("Nuevo estado:", estado);
-      console.log("Nuevo seguimiento:", seguimiento);
+      console.log("Enviando actualización:", { estado, seguimiento });
 
-      // TODO: llamada real a la API
-      // await api.put(`/api/tickets/${t.ticket}`, { estado, seguimiento });
+      await soporteApi.updateTicket(ticket.id, { estado, seguimiento });
 
       setAlertaVisible(true);
       setTimeout(() => {
         setAlertaVisible(false);
-        navigate("/soporte"); // vuelve a listado soporte
+        navigate("/soporte"); // ✅ vuelve al listado soporte admin
       }, 2000);
     } catch (err) {
       console.error("Error guardando cambios:", err);
+      alert("Hubo un error al guardar los cambios.");
     }
   };
+
+  if (!ticket) {
+    return (
+      <LayoutAdmin>
+        <p className="text-center text-gray-500 mt-10">
+          No se encontró el ticket
+        </p>
+      </LayoutAdmin>
+    );
+  }
 
   return (
     <LayoutAdmin active="soporte">
@@ -72,15 +69,17 @@ const Detalles_ticket = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div className="border rounded-lg p-4">
               <p className="text-gray-500">Ticket</p>
-              <p className="font-semibold text-gray-800">{t.ticket}</p>
+              <p className="font-semibold text-gray-800">{ticket.numero}</p>
             </div>
             <div className="border rounded-lg p-4">
               <p className="text-gray-500">Asunto</p>
-              <p className="font-semibold text-gray-800">{t.asunto}</p>
+              <p className="font-semibold text-gray-800">{ticket.asunto}</p>
             </div>
             <div className="border rounded-lg p-4">
               <p className="text-gray-500">Solicitado por</p>
-              <p className="font-semibold text-gray-800">{t.solicitadoPor}</p>
+              <p className="font-semibold text-gray-800">
+                {ticket.solicitado_por_nombre}
+              </p>
             </div>
             <div className="border rounded-lg p-4">
               <p className="text-gray-500 mb-2">Estado</p>
@@ -89,27 +88,28 @@ const Detalles_ticket = () => {
                 value={estado}
                 onChange={(e) => setEstado(e.target.value)}
               >
-                <option value="Abierto">Abierto</option>
-                <option value="En proceso">En proceso</option>
-                <option value="Cerrado">Cerrado</option>
+                {/* 👇 valores reales que espera el backend */}
+                <option value="abierto">Abierto</option>
+                <option value="proceso">En proceso</option>
+                <option value="cerrado">Cerrado</option>
               </select>
             </div>
             <div className="border rounded-lg p-4 md:col-span-2">
               <p className="text-gray-500">Fecha de solicitud</p>
               <p className="font-semibold text-gray-800">
-                {t.fechaSolicitud}
+                {ticket.fecha_solicitud}
               </p>
             </div>
           </div>
 
-          {/* Descripción */}
+          {/* Descripción (solo lectura) */}
           <div className="mb-6">
             <label className="block text-gray-700 font-semibold mb-2">
               Descripción detallada del ticket
             </label>
             <textarea
-              className="w-full min-h-[160px] border rounded-md p-3 outline-none focus:ring-2 focus:ring-green-400 text-lg"
-              value={t.descripcion}
+              className="w-full min-h-[160px] border rounded-md p-3 text-lg"
+              value={ticket.descripcion}
               readOnly
             />
           </div>
@@ -120,7 +120,7 @@ const Detalles_ticket = () => {
               Seguimiento del ticket
             </label>
             <textarea
-              className="w-full min-h-[160px] border rounded-md p-3 outline-none focus:ring-2 focus:ring-green-400 text-lg"
+              className="w-full min-h-[160px] border rounded-md p-3 text-lg"
               value={seguimiento}
               onChange={(e) => setSeguimiento(e.target.value)}
               placeholder="Escribe aquí el seguimiento..."

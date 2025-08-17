@@ -14,6 +14,7 @@ class Ticket(models.Model):
     estado = models.CharField(max_length=20, choices=ESTADOS, default="abierto")
     solicitado_por = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     fecha_solicitud = models.DateField(auto_now_add=True)
+    seguimiento = models.TextField(blank=True, null=True)
 
     def save(self, *args, **kwargs):
         if not self.numero:
