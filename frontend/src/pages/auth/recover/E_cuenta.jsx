@@ -1,19 +1,45 @@
+// src/pages/auth/recovery/E_cuenta.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import faviconBlanco from "../../../assets/favicon-blanco.png";
+import { checkEmail } from "../../../services/apiClient"; // 👈 usamos la función nueva
 
 const E_cuenta = () => {
   const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const [cargando, setCargando] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate("/confirmar-correo", { state: { email } }); // Envía el email por state
+    setError("");
+    setCargando(true);
+
+    try {
+      const res = await checkEmail(email);
+
+      if (res.status === 200) {
+        if (res.data.tiene_password) {
+          // ✅ Tiene contraseña → avanza
+          navigate("/confirmar-correo", { state: { email } });
+        } else {
+          // ❌ No tiene contraseña
+          setError("Usted no tiene contraseña asignada.");
+        }
+      }
+    } catch (err) {
+      if (err.response?.status === 404) {
+        setError("El correo no está registrado en el sistema.");
+      } else {
+        setError("Error al verificar el correo. Inténtalo más tarde.");
+      }
+    } finally {
+      setCargando(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-green-600 flex flex-col items-center justify-center p-4 relative">
-      
       {/* Botón cerrar */}
       <button
         className="absolute top-4 right-4 text-white text-5xl font-bold"
@@ -36,7 +62,7 @@ const E_cuenta = () => {
       </div>
 
       {/* Instrucción */}
-      <p className="text-white mt-8 mb-9 text-center text-xl max-w-md">
+      <p className="text-white mt-8 mb-6 text-center text-xl max-w-md">
         Ingresa tu email asociado con tu cuenta para cambiar tu contraseña.
       </p>
 
@@ -51,18 +77,22 @@ const E_cuenta = () => {
         <input
           type="email"
           id="email"
-          placeholder="Correo@gmail.com"
-          className="w-full p-4 px-4 py-2 text-lg border rounded-md mb-4"
+          placeholder="correo@gmail.com"
+          className="w-full p-4 px-4 py-2 text-lg border rounded-md mb-2"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
 
+        {/* error */}
+        {error && <p className="text-red-200 text-sm mb-2">{error}</p>}
+
         <button
           type="submit"
-          className="bg-white text-black font-medium px-10 py-3 mt-5 rounded-full hover:bg-gray-100 transition"
+          disabled={cargando}
+          className="bg-white text-black font-medium px-10 py-3 mt-5 rounded-full hover:bg-gray-100 transition disabled:opacity-50"
         >
-          Siguiente
+          {cargando ? "Verificando..." : "Siguiente"}
         </button>
       </form>
     </div>

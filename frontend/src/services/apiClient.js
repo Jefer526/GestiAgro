@@ -78,6 +78,10 @@ export const ENDPOINTS = {
   login: "api/accounts/token/",
   me: "api/accounts/me/",
   logout: "api/accounts/logout/",
+  checkEmail: "api/accounts/check-email/",
+  sendCode: "api/accounts/send-code/",
+  verifyCode: "api/accounts/verify-code/",
+  resetPassword: "api/accounts/reset-password/",
 };
 
 // ===== Funciones de autenticación =====
@@ -87,6 +91,12 @@ export const login = (email, password) =>
 export const getMe = () => api.get(ENDPOINTS.me);
 
 export const logout = () => api.post(ENDPOINTS.logout);
+
+export const checkEmail = (email) =>  // 👈 nueva función helper
+  api.post(ENDPOINTS.checkEmail, { email });
+
+export const resetPassword = (email, password) =>
+  api.post(ENDPOINTS.resetPassword, { email, password });
 
 // ===== Alias retrocompatible (usuarios) =====
 export const accountsApi = {
@@ -104,6 +114,15 @@ export const soporteApi = {
   createTicket: (data) => api.post("/soporte/tickets/", data),
   updateTicket: (id, data) => api.patch(`/soporte/tickets/${id}/`, data), // 👈 AHORA PATCH
 };
+
+
+export const sendCode = (email) =>
+  api.post(ENDPOINTS.sendCode, { email });
+
+export const verifyCode = (email, code) =>
+  api.post(ENDPOINTS.verifyCode, { email, code });
+
+
 
 // ===== Export principal =====
 export default api;

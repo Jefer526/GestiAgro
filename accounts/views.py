@@ -319,3 +319,115 @@ class MyRolesView(APIView):
     def get(self, request):
         user = request.user
         return Response([user.get_rol_display()])
+    
+
+# ===== Verificar email y si tiene contraseña =====
+class CheckEmailView(APIView):
+    permission_classes = [permissions.AllowAny]
+    throttle_classes = [AnonRateThrottle]
+
+    def post(self, request):
+        email = request.data.get("email")
+        if not email:
+            return Response({"detail": "Email requerido."}, status=400)
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response({"detail": "No existe este correo."}, status=404)
+
+        # 🔑 verificar si tiene contraseña usable
+        tiene_password = bool(user.password and user.has_usable_password())
+
+        return Response(
+            {
+                "detail": "Correo válido.",
+                "tiene_password": tiene_password
+            },
+            status=200
+        )
+
+# ===== Enviar código de verificación al correo =====
+class SendVerificationCodeAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        email = request.data.get("email")
+        if not email:
+            return Response({"detail": "Email requerido."}, status=400)
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response({"detail": "Correo no registrado."}, status=404)
+
+        # Generar un código temporal (6 dígitos)
+        code = get_random_string(length=6, allowed_chars="0123456789")
+
+        # Guardarlo en cache o en un campo temporal del usuario
+        from django.core.cache import cache
+        cache.set(f"verify_code_{user.id}", code, timeout=300)  # expira en 5 min
+
+        # Enviar correo
+        try:
+            send_mail(
+                subject="Código de verificación - GestiAgro",
+                message=f"Tu código de verificación es para su cambio de clave es: {code} // Si usted no ha solicitado este cambio, por favor ignore este mensaje.",
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[user.email],
+                fail_silently=False,
+            )
+        except Exception as e:
+            return Response({"detail": f"Error enviando correo: {str(e)}"}, status=500)
+
+        return Response({"detail": "Código enviado al correo."}, status=200)
+
+
+# ===== Verificar el código ingresado =====
+class VerifyCodeAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        email = request.data.get("email")
+        code = request.data.get("code")
+
+        if not email or not code:
+            return Response({"detail": "Faltan datos."}, status=400)
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response({"detail": "Correo no registrado."}, status=404)
+
+        from django.core.cache import cache
+        saved_code = cache.get(f"verify_code_{user.id}")
+
+        if not saved_code or saved_code != code:
+            return Response({"detail": "Código inválido o expirado."}, status=400)
+
+        # ✅ Código correcto → puedes marcarlo como validado
+        cache.delete(f"verify_code_{user.id}")
+        return Response({"detail": "Código verificado."}, status=200)
+    
+
+class ResetPasswordAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        email = request.data.get("email")
+        password = request.data.get("password")
+
+        if not email or not password:
+            return Response({"detail": "Faltan datos."}, status=400)
+
+        if len(password) < 8:
+            return Response({"detail": "La contraseña debe tener al menos 8 caracteres."}, status=400)
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response({"detail": "Usuario no encontrado."}, status=404)
+
+        user.set_password(password)
+        user.save()
+        return Response({"detail": "Contraseña restablecida correctamente."}, status=200)

@@ -1,11 +1,30 @@
-import React from "react";
+// src/pages/auth/recovery/C_correo.jsx
+import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import faviconBlanco from "../../../assets/favicon-blanco.png";
+import { sendCode } from "../../../services/apiClient"; // 👈 función API
 
 const C_correo = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const email = location.state?.email || "correo@desconocido.com"; // Recupera el email
+  const email = location.state?.email || "correo no disponible"; // Recupera el email
+
+  const [error, setError] = useState("");
+  const [cargando, setCargando] = useState(false);
+
+  const handleConfirmar = async () => {
+    setError("");
+    setCargando(true);
+    try {
+      await sendCode(email); // 👈 llama al backend para enviar el código
+      navigate("/confirmar-codigo", { state: { email } });
+    } catch (err) {
+      console.error("Error enviando código:", err);
+      setError("No se pudo enviar el código. Intenta más tarde.");
+    } finally {
+      setCargando(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-green-600 text-white flex flex-col justify-center items-center px-6 relative">
@@ -26,40 +45,35 @@ const C_correo = () => {
       />
 
       {/* Título */}
-      <h1 className="text-3xl md:text-5xl font-bold text-center mb-20">
+      <h1 className="text-3xl md:text-5xl font-bold text-center mb-12">
         Confirmación de correo electrónico
       </h1>
 
       {/* Contenido */}
-      <div className="w-full max-w-xl flex flex-col items-start">
-        <p className="text-xl text-center mb-7 font-semibold">
+      <div className="w-full max-w-xl flex flex-col items-center text-center">
+        <p className="text-lg md:text-xl mb-6 font-medium">
           Antes de cambiar tu contraseña, necesitamos asegurarnos de que realmente eres tú.
         </p>
 
-        <p className="text-xl text-left mb-4">
-          Empezaremos eligiendo dónde se enviará el código de confirmación.
+        <p className="text-lg md:text-xl mb-4">
+          Empezaremos enviando un código de confirmación al correo registrado.
         </p>
 
-        <p className="text-xl font-bold text-left mb-2">
-          Enviar email a: {email}
+        <p className="text-lg md:text-xl font-bold mb-8">
+          Enviar email a: <span className="underline">{email}</span>
         </p>
 
-        <p className="text-left text-xl mb-10">
-          Contacta{" "}
-          <span
-            className="text-blue-300 font-semibold underline cursor-pointer"
-            onClick={() => navigate("/soporte_user")}
-          >
-            proyecto soporte
-          </span>
-        </p>
+        {error && <p className="text-red-200 text-sm mb-4">{error}</p>}
+
+
 
         {/* Botón Confirmar */}
         <button
-          onClick={() => navigate("/confirmar-codigo")}
-          className="bg-white text-black px-10 py-3 rounded-full hover:bg-gray-100 transition self-center"
+          onClick={handleConfirmar}
+          disabled={cargando}
+          className="bg-white text-black px-10 py-3 rounded-full hover:bg-gray-100 transition disabled:opacity-50"
         >
-          Confirmar
+          {cargando ? "Enviando..." : "Confirmar"}
         </button>
       </div>
     </div>

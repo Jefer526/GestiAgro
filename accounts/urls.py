@@ -4,12 +4,13 @@ from .views import (
     RegisterView, MeView, LogoutView, DemoSignupAPIView, SetPasswordAPIView,
     AccountsUserToggleActiveAPIView, UsersListView, UserDetailUpdateView,
     SendTemporaryPasswordAPIView, UpdateUserRoleView, ChangePasswordAPIView,
-    RolesListView, MyRolesView, MyTokenObtainPairView
+    RolesListView, MyRolesView, MyTokenObtainPairView,
+    CheckEmailView, SendVerificationCodeAPIView, VerifyCodeAPIView, ResetPasswordAPIView
 )
 
 urlpatterns = [
     path("register/", RegisterView.as_view(), name="register"),
-    path("token/", MyTokenObtainPairView.as_view(), name="token_obtain_pair"),  # 👈 login definitivo
+    path("token/", MyTokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("logout/", LogoutView.as_view(), name="logout"),
     path("me/", MeView.as_view(), name="me"),
@@ -27,4 +28,10 @@ urlpatterns = [
 
     path("roles/", RolesListView.as_view(), name="roles-list"),
     path("auth/my-roles/", MyRolesView.as_view(), name="my-roles"),
+
+ 
+    path("check-email/", CheckEmailView.as_view(), name="check-email"),
+    path("send-code/", SendVerificationCodeAPIView.as_view(), name="send-code"),
+    path("verify-code/", VerifyCodeAPIView.as_view(), name="verify-code"),
+    path("reset-password/", ResetPasswordAPIView.as_view(), name="reset-password"),
 ]
