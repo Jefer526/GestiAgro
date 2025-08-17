@@ -20,6 +20,8 @@ import Produccion_mayor from "../pages/mayordomo/Produccion_mayor";
 import Cuaderno_campom from "../pages/mayordomo/Cuaderno_campom";
 import Detalle_mantenimientom from "../pages/mayordomo/Detalle_mantenimientom";
 import Registrarticketm from "../pages/mayordomo/Registrarticketm";
+import Detalles_ticketm from "../pages/mayordomo/Detalle_ticketm";
+
 
 const mayordomoRoutes = [
   <Route key="home" path="/homemayordomo" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Home_mayo /></ProtectedRoute>} />,
@@ -41,6 +43,8 @@ const mayordomoRoutes = [
   <Route key="Produccion-mayor" path="/produccion_mayor" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Produccion_mayor /></ProtectedRoute>} />,
   <Route key="cuaderno-campom" path="/cuaderno_campom" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Cuaderno_campom /></ProtectedRoute>} />,
   <Route key="detalle-mantenimientom" path="/detalle_mantenimientom" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Detalle_mantenimientom /></ProtectedRoute>} />,
+  <Route key="detalles-ticketm" path="/detallesticketm" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Detalles_ticketm /></ProtectedRoute>} />,
+
 ];
 
 export default mayordomoRoutes;

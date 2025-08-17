@@ -38,7 +38,7 @@ const Soporte_mayordomo = () => {
       <h1 className="text-4xl font-bold text-green-600 mb-4">Soporte</h1>
 
       <button
-        onClick={() => navigate("/Registrarticketm")}
+        onClick={() => navigate("/registrarticketm")}
         className="bg-green-600 text-white px-10 py-5 text-2xl rounded-xl shadow-lg hover:bg-green-700 transition font-bold mb-8"
       >
         Solicitar soporte
@@ -66,7 +66,9 @@ const Soporte_mayordomo = () => {
                 <td className="p-3 border">{t.solicitadoPor}</td>
                 <td className="p-3 border">{t.fechaSolicitud}</td>
                 <td className="p-3 border">
-                  <button className="bg-blue-100 text-blue-700 px-4 py-2 rounded-lg flex items-center gap-1 text-xs font-medium hover:bg-blue-200 transition mx-auto">
+                  <button 
+                    onClick={() => navigate("/detallesticketm")}
+                    className="bg-blue-100 text-blue-700 px-4 py-2 rounded-lg flex items-center gap-1 text-xs font-medium hover:bg-blue-200 transition mx-auto">
                     <IconEye className="w-4 h-4" /> Detalle
                   </button>
                 </td>
