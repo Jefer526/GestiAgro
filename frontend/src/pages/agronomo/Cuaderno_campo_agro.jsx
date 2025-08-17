@@ -107,7 +107,7 @@ const Cuaderno_campo_agro = () => {
 
         {/* Menú navegación */}
         <div ref={iconListRef} className="flex-1 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only pb-24">
-          <SidebarItem to="/Homeagro" title="Inicio" Icon={IconHome} />
+          <SidebarItem to="/homeagro" title="Inicio" Icon={IconHome} />
           <SidebarItem to="/Laboresagro" title="Labores" Icon={IconClipboardList} />
           <SidebarItem to="/Informesagro" title="Informes" Icon={IconChartBar} />
           <SidebarItem to="/Bodegaagro" title="Bodega" Icon={IconBox} />

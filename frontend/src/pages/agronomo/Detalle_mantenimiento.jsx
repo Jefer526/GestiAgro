@@ -84,7 +84,7 @@ El mantenimiento correctivo no fue necesario, ya que no se detectaron fallas cr√
           <div className="relative">
             <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
             <button
-              onClick={() => navigate("/Homeagro")}
+              onClick={() => navigate("/homeagro")}
               className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
             >
               <IconHome className="text-white w-11 h-11" />

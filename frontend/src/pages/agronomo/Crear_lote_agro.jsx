@@ -166,7 +166,7 @@ const Crear_lote_agro = () => {
           ref={iconListRef}
           className="flex-1 flex flex-col items-center space-y-8 pr-1 overflow-y-auto scrollbar-hide-only pb-24"
         >
-          <SidebarItem to="/Homeagro" title="Inicio" Icon={IconHome} active={false} />
+          <SidebarItem to="/homeagro" title="Inicio" Icon={IconHome} active={false} />
           <SidebarItem to="/Laboresagro" title="Labores" Icon={IconClipboardList} active={false} />
           <SidebarItem to="/Informesagro" title="Informes" Icon={IconChartBar} active={false} />
           <SidebarItem to="/Bodegaagro" title="Bodega" Icon={IconBox} active={false} />

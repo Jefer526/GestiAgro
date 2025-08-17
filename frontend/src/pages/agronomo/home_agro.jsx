@@ -1,5 +1,5 @@
 // src/pages/agronomo/Home_agro.jsx
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
 import {
   IconHome,
   IconClipboardList,
@@ -19,58 +19,73 @@ import {
 } from "@tabler/icons-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
+import api, { accountsApi, ENDPOINTS } from "../../services/apiClient";
 
 const Home_agro = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Estado tarjeta perfil
-  const tarjetaRef = useRef(null);
-  const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
-  const letraInicial = "J";
+  const nombreUsuario = "José Agrónomo"; // Cambia por el real
+  const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
 
-  // Cierra tarjeta si se hace click fuera
-  useEffect(() => {
-    const clickFueraTarjeta = (e) => {
-      if (tarjetaRef.current && !tarjetaRef.current.contains(e.target)) {
-        setMostrarTarjeta(false);
-      }
-    };
-    document.addEventListener("mousedown", clickFueraTarjeta);
-    return () => document.removeEventListener("mousedown", clickFueraTarjeta);
+  const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
+  const tarjetaRef = useRef(null);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  // 🔹 Ref para manejar el scroll del contenedor
+  const scrollRef = useRef(null);
+
+  // 🔹 Restaurar scroll guardado ANTES del render visual (sin parpadeo)
+  useLayoutEffect(() => {
+    const saved = sessionStorage.getItem("sidebarScrollAgro");
+    if (saved && scrollRef.current) {
+      scrollRef.current.scrollTop = parseInt(saved, 10);
+    }
   }, []);
 
-  // Cerrar sesión
-  const handleLogout = () => {
-    localStorage.removeItem("access");
-    localStorage.removeItem("refresh");
-    localStorage.removeItem("user");
-    sessionStorage.clear();
-    navigate("/login");
+  // ====== LOGOUT ======
+  const handleLogout = async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    try {
+      const refresh = localStorage.getItem("refresh");
+      try {
+        if (ENDPOINTS?.logout) {
+          await api.post(ENDPOINTS.logout, { refresh });
+        } else if (accountsApi?.logout) {
+          await accountsApi.logout({ refresh });
+        }
+      } catch (e) {
+        console.warn("Fallo en logout del backend:", e);
+      }
+    } finally {
+      try {
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
+        sessionStorage.removeItem("access");
+        sessionStorage.removeItem("refresh");
+        localStorage.removeItem("rememberedEmail");
+      } catch {}
+      try {
+        if (api?.defaults?.headers?.common) {
+          delete api.defaults.headers.common.Authorization;
+        }
+      } catch {}
+      setMostrarTarjeta(false);
+      setIsLoggingOut(false);
+      window.location.replace("/login");
+    }
   };
 
-  // -------- Sidebar: items --------
-  const navItems = [
-    { ruta: "/homeagro", Icon: IconHome, label: "Inicio" },
-    { ruta: "/Laboresagro", Icon: IconClipboardList, label: "Seguimiento de labores" },
-    { ruta: "/Informesagro", Icon: IconChartBar, label: "Informes" },
-    { ruta: "/Bodegaagro", Icon: IconBox, label: "Bodega" },
-    { ruta: "/variablesclimaticas", Icon: IconCloudRain, label: "Variables climáticas" },
-    { ruta: "/maquinariaequipos", Icon: IconTractor, label: "Maquinaria y equipos" },
-    { ruta: "/manejopersonal", Icon: IconUsersGroup, label: "Manejo personal" },
-    { ruta: "/crearfinca", Icon: IconPlant, label: "Gestión finca" },
-    { ruta: "/crearlote", Icon: IconFrame, label: "Gestión lote" },
-    { ruta: "/produccionagro", Icon: IconPlant2, label: "Producción" },
-    { ruta: "/cuadernocampo", Icon: IconBook, label: "Cuaderno de Campo" },
-  ];
-
-  const normalize = (s = "") => s.replace(/\/+$/, "").toLowerCase();
-  const isActive = (item) => {
-    const current = normalize(location.pathname);
-    return current === normalize(item.ruta) || current.startsWith(normalize(item.ruta) + "/");
+  // ====== Saber qué ruta está activa ======
+  const isActive = (paths) => {
+    if (Array.isArray(paths)) {
+      return paths.some((p) => location.pathname.startsWith(p));
+    }
+    return location.pathname === paths;
   };
 
-  // -------- Tarjetas del dashboard --------
+  // ====== Opciones del dashboard (tarjetas) ======
   const opciones = [
     {
       icon: <IconClipboardList className="w-8 h-8" />,
@@ -176,33 +191,55 @@ const Home_agro = () => {
 
   return (
     <div className="flex">
-      {/* Sidebar */}
-      <div className="bg-green-600 w-28 h-screen flex flex-col items-center py-6 justify-between relative">
-        {/* Navegación (logo + botones) */}
-        <div className="flex flex-col items-center space-y-8">
+      {/* Sidebar replicado */}
+      <aside className="fixed left-0 top-0 w-28 h-[100dvh] bg-green-600 flex flex-col justify-between z-[200]">
+        {/* Logo */}
+        <div className="pt-6 flex justify-center">
           <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
-
-          {navItems.map(({ ruta, Icon, label }) => {
-            const active = isActive({ ruta });
-            return (
-              <div key={ruta} className="relative">
-                {active && (
-                  <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
-                )}
-                <button
-                  title={label}
-                  onClick={() => navigate(ruta)}
-                  className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
-                >
-                  <Icon className="text-white w-11 h-11" />
-                </button>
-              </div>
-            );
-          })}
         </div>
 
-        {/* Avatar usuario */}
-        <div className="relative mb-6">
+        {/* Zona de iconos con scroll persistente */}
+        <div
+          ref={scrollRef}
+          className="flex-1 flex flex-col items-center space-y-8 mt-6 overflow-y-auto scrollbar-hide-only"
+        >
+          {[
+            { icon: <IconHome />, route: "/homeagro" },
+            { icon: <IconClipboardList />, route: "/Laboresagro" },
+            { icon: <IconChartBar />, route: "/Informesagro" },
+            { icon: <IconBox />, route: "/Bodegaagro" },
+            { icon: <IconCloudRain />, route: "/variablesclimaticas" },
+            { icon: <IconTractor />, route: "/maquinariaequipos" },
+            { icon: <IconUsersGroup />, route: "/manejopersonal" },
+            { icon: <IconPlant />, route: "/crearfinca" },
+            { icon: <IconFrame />, route: "/crearlote" },
+            { icon: <IconPlant2 />, route: "/produccionagro" },
+            { icon: <IconBook />, route: "/cuadernocampo" },
+          ].map(({ icon, route }, i) => (
+            <div key={i} className="relative">
+              {isActive(route) && (
+                <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-11 bg-white rounded-full" />
+              )}
+              <button
+                onClick={() => {
+                  if (scrollRef.current) {
+                    sessionStorage.setItem(
+                      "sidebarScrollAgro",
+                      scrollRef.current.scrollTop.toString()
+                    );
+                  }
+                  navigate(route);
+                }}
+                className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
+              >
+                {React.cloneElement(icon, { className: "text-white w-11 h-11" })}
+              </button>
+            </div>
+          ))}
+        </div>
+
+        {/* Perfil */}
+        <div className="relative mb-6 flex justify-center">
           <button
             onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
             className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
@@ -212,33 +249,43 @@ const Home_agro = () => {
           {mostrarTarjeta && (
             <div
               ref={tarjetaRef}
-              className="absolute bottom-16 left-14 w-52 bg-white/95 border-2 border-gray-300 rounded-xl shadow-2xl py-3 z-50"
+              className="absolute bottom-16 left-14 w-56 bg-white/95 border border-gray-200 rounded-xl shadow-2xl py-3 z-[9999] backdrop-blur text-base"
             >
               <button
-                onClick={() => navigate("/ajustesagro")}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                onClick={() => {
+                  setMostrarTarjeta(false);
+                  navigate("/ajustesagro");
+                }}
+                className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100"
               >
                 <IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes
               </button>
               <button
-                onClick={() => navigate("/soporteagro")}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                onClick={() => {
+                  setMostrarTarjeta(false);
+                  navigate("/soporteagro");
+                }}
+                className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100"
               >
                 <IconTool className="w-5 h-5 mr-2 text-green-600" /> Soporte
               </button>
               <button
                 onClick={handleLogout}
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
+                disabled={isLoggingOut}
+                className={`flex items-center w-full text-left px-4 py-2 hover:bg-gray-100 ${
+                  isLoggingOut ? "opacity-60 cursor-not-allowed" : "text-red-600"
+                }`}
               >
-                <IconLogout className="w-5 h-5 mr-2 text-red-600" /> Cerrar sesión
+                <IconLogout className="w-5 h-5 mr-2 text-red-600" />
+                {isLoggingOut ? "Cerrando..." : "Cerrar sesión"}
               </button>
             </div>
           )}
         </div>
-      </div>
+      </aside>
 
       {/* Contenido principal */}
-      <div className="flex-1 p-10">
+      <div className="flex-1 p-10 ml-28">
         <h1 className="text-4xl font-bold text-green-700 mb-6">Panel principal</h1>
 
         <div className="bg-gradient-to-r from-green-600 to-emerald-500 text-white px-6 py-5 rounded-2xl w-full max-w-3xl mb-10 shadow-lg">

@@ -31,7 +31,7 @@ import Cuaderno_campo_agro from "../pages/agronomo/Cuaderno_campo_agro";
 import Registrarticketag from "../pages/agronomo/registrarticketag"; // 👈 nuevo
 
 const agronomoRoutes = [
-  <Route key="home" path="/Homeagro" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Home_agro /></ProtectedRoute>} />,
+  <Route key="home" path="/homeagro" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Home_agro /></ProtectedRoute>} />,
   <Route key="labores" path="/Laboresagro" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Labores_agro /></ProtectedRoute>} />,
   <Route key="historial-labores" path="/historial" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Historial_labores /></ProtectedRoute>} />,
   <Route key="informes" path="/Informesagro" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Informes_agro /></ProtectedRoute>} />,
