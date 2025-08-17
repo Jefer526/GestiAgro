@@ -1,5 +1,5 @@
 // src/components/SidebarMayordomo.jsx
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
 import {
   IconHome,
   IconClipboardList,
@@ -32,8 +32,8 @@ const SidebarMayordomo = () => {
   // 🔹 Ref para manejar el scroll del contenedor
   const scrollRef = useRef(null);
 
-  // 🔹 Restaurar scroll guardado al montar el sidebar
-  useEffect(() => {
+  // 🔹 Restaurar scroll guardado ANTES del render visual (sin parpadeo)
+  useLayoutEffect(() => {
     const saved = sessionStorage.getItem("sidebarScroll");
     if (saved && scrollRef.current) {
       scrollRef.current.scrollTop = parseInt(saved, 10);
@@ -101,7 +101,10 @@ const SidebarMayordomo = () => {
           { icon: <IconBook />, route: "/cuaderno_campom" },
           { icon: <IconPlant2 />, route: "/produccion_mayor" },
           { icon: <IconBox />, route: ["/bodega_insumos", "/detalle_producto"] },
-          { icon: <IconCloudRain />, route: ["/variables_climaticasm", "/registrar_climam"] },
+          {
+            icon: <IconCloudRain />,
+            route: ["/variables_climaticasm", "/registrar_climam"],
+          },
           { icon: <IconChartBar />, route: "/informes_mayordomo" },
           {
             icon: <IconTractor />,
@@ -187,4 +190,3 @@ const SidebarMayordomo = () => {
 };
 
 export default SidebarMayordomo;
-
