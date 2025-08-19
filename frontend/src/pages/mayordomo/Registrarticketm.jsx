@@ -42,7 +42,7 @@ const Registrarticketm = () => {
 
         <button
           onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-2 text-green-700 hover:text-green-800 font-semibold mb-6"
+          className="flex items-center text-green-700 font-semibold mb-4 text-lg hover:underline"
         >
           <IconChevronLeft className="w-5 h-5" /> Volver
         </button>

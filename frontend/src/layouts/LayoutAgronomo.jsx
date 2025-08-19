@@ -4,11 +4,12 @@ import SidebarAgronomo from "../components/SidebarAgronomo";
 
 const LayoutAgronomo = ({ children }) => {
   return (
-    <div className="flex">
+    <div className="min-h-[100dvh] bg-gray-50 flex">
       <SidebarAgronomo />
-      <main className="flex-1 p-10 ml-28">{children}</main>
+      <main className="ml-28 min-h-[100dvh] p-10 w-full">{children}</main>
     </div>
   );
 };
+
 
 export default LayoutAgronomo;

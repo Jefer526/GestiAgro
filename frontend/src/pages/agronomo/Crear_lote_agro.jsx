@@ -28,7 +28,7 @@ const Crear_lote_agro = () => {
 
   return (
     <LayoutAgronomo>
-      <div className="flex-1 px-10 py-6 relative">
+
         {/* 🔙 Botón volver */}
         <button
           onClick={() => navigate("/gestionlotes")}
@@ -37,7 +37,8 @@ const Crear_lote_agro = () => {
           <IconChevronLeft className="w-6 h-6 mr-1" />
           <span className="text-base font-medium">Volver</span>
         </button>
-
+        
+      <div className="flex-1 px-10 py-6 relative">
         {/* 📌 Formulario */}
         <div className="max-w-4xl mx-auto bg-white border border-gray-200 rounded-xl p-10 shadow-md">
           <h1 className="text-3xl font-bold text-green-700 mb-10">

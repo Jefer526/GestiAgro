@@ -26,7 +26,7 @@ const Crear_finca_agro = () => {
 
   return (
     <LayoutAgronomo>
-      <div className="flex-1 px-10 py-6 relative">
+
         {/* 🔙 Botón Volver */}
         <button
           onClick={() => navigate("/gestionfincas")}
@@ -36,6 +36,7 @@ const Crear_finca_agro = () => {
           <span className="text-base font-medium">Volver</span>
         </button>
 
+      <div className="flex-1 px-10 py-6 relative">
         {/* 📌 Formulario */}
         <div className="max-w-2xl mx-auto bg-white border border-gray-200 rounded-xl p-10 shadow-md">
           {/* Título */}

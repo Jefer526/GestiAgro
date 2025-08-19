@@ -7,7 +7,6 @@ import LayoutAgronomo from "../../layouts/LayoutAgronomo";
 const Registrar_empleado = () => {
   const navigate = useNavigate();
   const [alertaVisible, setAlertaVisible] = useState(false);
-
   const nombreUsuario = "Juan Pérez";
   const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
 
@@ -22,21 +21,22 @@ const Registrar_empleado = () => {
 
   return (
     <LayoutAgronomo active="/manejopersonal" letraInicial={letraInicial}>
+      {alertaVisible && (
+        <div className="fixed top-3 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
+          <IconCheck className="w-5 h-5" /> Empleado registrado exitosamente
+        </div>
+      )}
+
+      {/* Botón volver (idéntico a Hoja_vidam.jsx) */}
+      <button
+        onClick={() => navigate("/manejopersonal")}
+        className="flex items-center text-green-700 font-semibold mb-6 text-lg hover:underline"
+      >
+        <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
+      </button>
+
+      {/* Contenedor principal */}
       <div className="flex-1 p-10 overflow-auto relative">
-        {alertaVisible && (
-          <div className="fixed top-3 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
-            <IconCheck className="w-5 h-5" /> Empleado registrado exitosamente
-          </div>
-        )}
-
-        {/* Botón volver */}
-        <button
-          onClick={() => navigate("/manejopersonal")}
-          className="flex items-center text-green-700 font-semibold mb-4 text-lg hover:underline"
-        >
-          <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
-        </button>
-
         {/* Formulario */}
         <div className="bg-white border-2 border-gray-200 rounded-lg w-full max-w-4xl md:max-w-[56rem] mx-auto px-8 py-8 shadow-lg">
           <h1 className="text-3xl font-bold text-green-700 mb-6">

@@ -22,7 +22,7 @@ const Soporte_agro = () => {
 
       <button
         onClick={() => navigate("/Registrarticketag")}
-        className="bg-green-600 text-white px-10 py-5 text-2xl rounded-xl shadow-lg hover:bg-green-700 transition font-bold mb-8"
+        className="bg-green-600 text-white px-8 py-4 text-xl rounded-xl shadow-lg hover:bg-green-700 transition font-bold mb-8"
       >
         Solicitar soporte
       </button>
