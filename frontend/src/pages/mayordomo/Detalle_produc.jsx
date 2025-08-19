@@ -1,45 +1,56 @@
 // src/pages/mayordomo/Detalle_produc.jsx
+import React, { useState, useRef, useEffect } from "react";
 import {
   IconChevronLeft,
   IconFilter,
+  IconSortAscending2,
+  IconSortDescending2,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
-import { useState, useRef, useEffect, useMemo } from "react";
-
-// Importa el layout reutilizable del Mayordomo
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
 
 const Detalle_produc = () => {
   const navigate = useNavigate();
-
   const filtroRef = useRef(null);
-  const [filtroActivo, setFiltroActivo] = useState(null);
-  const [valoresSeleccionados, setValoresSeleccionados] = useState({});
-  const [filtroPosicion, setFiltroPosicion] = useState({ top: 0, left: 0 });
 
-  // Movimientos (mock)
+  // Estados de filtros
+  const [filtroActivo, setFiltroActivo] = useState(null);
+  const [filtroPosicion, setFiltroPosicion] = useState({ top: 0, left: 0 });
+  const [valoresSeleccionados, setValoresSeleccionados] = useState({});
+  const [busquedas, setBusquedas] = useState({});
+  const [ordenCampo, setOrdenCampo] = useState(null);
+
+  // Columnas y datos
+  const columnas = ["fecha", "tipo", "lote", "cantidad", "um", "saldo"];
   const movimientos = [
-    { fecha: "2025-06-15", tipo: "Entrada", lote: "El Vaquero", cantidad: 50, um: "Kg" },
-    { fecha: "2025-06-16", tipo: "Salida", lote: 1, cantidad: 10, um: "Kg" },
-    { fecha: "2025-06-17", tipo: "Salida", lote: 2, cantidad: 25, um: "Kg" },
+    { fecha: "2025-06-15", tipo: "Entrada", lote: "1", cantidad: "50", um: "Kg", saldo: "350" },
+    { fecha: "2025-06-16", tipo: "Salida", lote: "2", cantidad: "10", um: "Kg", saldo: "340" },
+    { fecha: "2025-06-17", tipo: "Salida", lote: "3", cantidad: "25", um: "Kg", saldo: "315" },
   ];
 
-  // Ordenar por fecha asc y calcular saldo acumulado
-  const movimientosConSaldo = useMemo(() => {
-    const copia = [...movimientos].sort((a, b) => a.fecha.localeCompare(b.fecha));
-    let saldo = 0;
-    return copia.map((m) => {
-      saldo += m.tipo.toLowerCase() === "entrada" ? m.cantidad : -m.cantidad;
-      return { ...m, saldo };
-    });
-  }, [movimientos]);
+  // Cierre filtros flotantes
+  useEffect(() => {
+    const clickFuera = (e) => {
+      if (filtroRef.current && !filtroRef.current.contains(e.target)) setFiltroActivo(null);
+    };
+    document.addEventListener("mousedown", clickFuera);
+    return () => document.removeEventListener("mousedown", clickFuera);
+  }, []);
 
-  const toggleFiltro = (campo, event) => {
-    const icono = event.currentTarget.getBoundingClientRect();
-    const cardWidth = 260;
-    const margen = 12;
+  // Funciones de filtros
+  const getValoresUnicos = (campo) => {
+    if (campo === "fecha") return [];
+    const search = (busquedas[campo] || "").toLowerCase();
+    return [...new Set(movimientos.map((e) => e[campo]))].filter((v) =>
+      String(v).toLowerCase().includes(search)
+    );
+  };
+
+  const toggleFiltro = (campo, e) => {
+    const icono = e.currentTarget.getBoundingClientRect();
+    const filtroWidth = 260;
     let left = icono.left + window.scrollX;
-    if (left + cardWidth + margen > window.innerWidth) left = window.innerWidth - cardWidth - margen;
+    if (left + filtroWidth > window.innerWidth) left = window.innerWidth - filtroWidth - 10;
     setFiltroActivo(filtroActivo === campo ? null : campo);
     setFiltroPosicion({ top: icono.bottom + window.scrollY + 4, left });
   };
@@ -56,92 +67,59 @@ const Detalle_produc = () => {
     setValoresSeleccionados(actualizado);
   };
 
-  const camposFiltro = ["fecha", "tipo", "lote", "cantidad", "um", "saldo"];
+  const ordenar = (campo, orden) => setOrdenCampo({ campo, orden });
+  const handleBusqueda = (campo, texto) => setBusquedas({ ...busquedas, [campo]: texto });
 
-  const datosFiltrados = movimientosConSaldo.filter((d) =>
-    camposFiltro.every((campo) => {
-      const filtro = valoresSeleccionados[campo];
-      return !filtro || filtro.includes(String(d[campo]));
-    })
-  );
-
-  useEffect(() => {
-    const clickOutside = (e) => {
-      if (filtroRef.current && !filtroRef.current.contains(e.target)) setFiltroActivo(null);
-    };
-    document.addEventListener("mousedown", clickOutside);
-    return () => document.removeEventListener("mousedown", clickOutside);
-  }, []);
-
-  const renderFiltroSimple = (campo) => {
-    const opcionesUnicas = [...new Set(movimientosConSaldo.map((d) => String(d[campo])))];
-    return (
-      <div
-        ref={filtroRef}
-        className="fixed bg-white text-black shadow-md border rounded z-[10000] p-3 w-64 text-left text-sm"
-        style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
-      >
-        <div className="font-semibold mb-2">
-          Filtrar por {campo.charAt(0).toUpperCase() + campo.slice(1)}
-        </div>
-        <div className="max-h-64 overflow-auto pr-1">
-          {opcionesUnicas.map((valor) => (
-            <label key={valor} className="flex items-center gap-2 mb-1">
-              <input
-                type="checkbox"
-                checked={(valoresSeleccionados[campo] || []).includes(valor)}
-                onChange={() => toggleValor(campo, valor)}
-                className="accent-green-600"
-              />
-              {valor}
-            </label>
-          ))}
-        </div>
-        <button onClick={() => limpiarFiltro(campo)} className="text-blue-600 hover:underline text-xs mt-2">
-          Borrar filtro
-        </button>
-      </div>
-    );
-  };
-
-  const saldoActual = movimientosConSaldo.length
-    ? movimientosConSaldo[movimientosConSaldo.length - 1].saldo
-    : 0;
+  const movimientosFiltrados = movimientos
+    .filter((item) =>
+      columnas.every((campo) =>
+        !valoresSeleccionados[campo] || valoresSeleccionados[campo].length === 0
+          ? true
+          : valoresSeleccionados[campo].includes(item[campo])
+      )
+    )
+    .sort((a, b) => {
+      if (!ordenCampo) return 0;
+      const { campo, orden } = ordenCampo;
+      return orden === "asc"
+        ? String(a[campo]).localeCompare(String(b[campo]))
+        : String(b[campo]).localeCompare(String(a[campo]));
+    });
 
   return (
-    <LayoutMayordomo>
+    <LayoutMayordomo active="/bodega_insumos">
+      {/* Botón volver */}
       <button
         onClick={() => navigate("/bodega_insumos")}
-        className="flex items-center text-green-700 font-semibold mb-6 text-lg hover:underline"
+        className="flex items-center text-green-700 font-semibold mb-4 text-lg hover:underline"
       >
         <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
       </button>
 
+      {/* Título */}
       <h1 className="text-3xl font-bold text-green-700 mb-6">Detalle del producto</h1>
 
-      {/* Recuadro de info */}
-      <div className="border border-gray-400 rounded-lg p-6 text-lg grid grid-cols-2 gap-y-2 max-w-3xl mb-10">
-        <div><span className="font-bold">Producto:</span> Urea</div>
-        <div><span className="font-bold">Ingrediente activo:</span> Nitrógeno 46%</div>
-        <div><span className="font-bold">Finca:</span> La Esmeralda</div>
-        <div><span className="font-bold">Categoría:</span> Fertilizante</div>
-        <div className="col-span-2">
-          <span className="font-bold">Saldo actual:</span> {saldoActual} Kg
-        </div>
+      {/* Card info */}
+      <div className="bg-white border border-gray-300 rounded-xl shadow-md mb-8 p-6 grid grid-cols-1 sm:grid-cols-2 gap-y-2 text-[17px] leading-relaxed max-w-3xl">
+        <div><strong>Producto:</strong> Urea</div>
+        <div><strong>Ingrediente activo:</strong> Nitrógeno 46%</div>
+        <div><strong>Finca:</strong> La Esmeralda</div>
+        <div><strong>Categoría:</strong> Fertilizante</div>
+        <div><strong>Saldo:</strong> 315 Kg</div>
       </div>
 
-      <h2 className="text-2xl font-bold text-green-700 mb-4">Movimiento del producto</h2>
+      <h2 className="text-3xl font-bold text-green-700 mb-6">Movimiento del producto</h2>
 
-      {/* Tabla */}
-      <div className="relative bg-white border border-gray-300 rounded-xl overflow-auto">
+      {/* === TABLA IGUAL A AGRO === */}
+      <div className="bg-white border border-gray-300 rounded-xl shadow-md overflow-x-auto relative">
         <table className="w-full text-base text-center">
           <thead className="bg-green-600 text-white">
             <tr>
-              {["fecha", "tipo", "lote", "cantidad", "um", "saldo"].map((campo) => (
-                <th key={campo} className="px-4 py-3 border-r border-gray-300 text-center">
-                  <div className="flex justify-center items-center gap-1">
-                    {campo.toUpperCase()}
-                    <button onClick={(e) => toggleFiltro(campo, e)}>
+              {columnas.map((col, idx) => (
+                <th key={idx} className="px-4 py-4 font-bold border">
+                  <div className="flex justify-center items-center gap-2">
+                    <span className="uppercase">{col}</span>
+                    <button onClick={(e) => toggleFiltro(col, e)}>
                       <IconFilter className="w-4 h-4" />
                     </button>
                   </div>
@@ -150,76 +128,126 @@ const Detalle_produc = () => {
             </tr>
           </thead>
           <tbody>
-            {datosFiltrados.map((m, i) => (
-              <tr key={i} className="border-b border-gray-200 text-center">
-                <td className="px-4 py-2 border-r border-gray-200">{m.fecha}</td>
-                <td className="px-4 py-2 border-r border-gray-200">{m.tipo}</td>
-                <td className="px-4 py-2 border-r border-gray-200">{m.lote}</td>
-                <td className="px-4 py-2 border-r border-gray-200">{m.cantidad}</td>
-                <td className="px-4 py-2 border-r border-gray-200">{m.um}</td>
-                <td className="px-4 py-2">{m.saldo}</td>
+            {movimientosFiltrados.map((m, i) => (
+              <tr key={i} className="border-t hover:bg-gray-50 transition">
+                <td className="px-6 py-4 border border-gray-200">{m.fecha}</td>
+                <td className="px-6 py-4 border border-gray-200">{m.tipo}</td>
+                <td className="px-6 py-4 border border-gray-200">{m.lote}</td>
+                <td className="px-6 py-4 border border-gray-200">{m.cantidad}</td>
+                <td className="px-6 py-4 border border-gray-200">{m.um}</td>
+                <td className="px-6 py-4 border border-gray-200">{m.saldo}</td>
               </tr>
             ))}
-            {datosFiltrados.length === 0 && (
-              <tr>
-                <td colSpan={6} className="p-6 text-gray-500">Sin movimientos</td>
-              </tr>
-            )}
           </tbody>
         </table>
 
-        {/* Filtros */}
-        {filtroActivo && (
-          filtroActivo === "fecha"
-            ? /* Filtro por fecha más detallado */
-              <div
-                ref={filtroRef}
-                className="fixed bg-white text-black shadow-md border rounded z-[10000] p-3 w-64 text-left text-sm"
-                style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
-              >
-                <div className="font-semibold mb-2">Filtrar por Fecha</div>
-                {Object.entries(
-                  movimientosConSaldo.reduce((acc, { fecha }) => {
-                    const [y, m, d] = fecha.split("-");
-                    const monthName = new Date(`${y}-${m}-01`).toLocaleString("default", { month: "long" });
-                    acc[y] = acc[y] || {};
-                    acc[y][monthName] = acc[y][monthName] || new Set();
-                    acc[y][monthName].add(d);
-                    return acc;
-                  }, {})
-                ).map(([year, months]) => (
-                  <div key={year} className="mb-2">
-                    <div className="font-medium">{year}</div>
-                    {Object.entries(months).map(([month, days]) => (
-                      <div key={month} className="ml-4">
-                        <div className="font-medium">{month}</div>
-                        {[...days].map((day) => {
-                          const fullDate = `${year}-${String(new Date(`${month} 1, ${year}`).getMonth() + 1).padStart(2, "0")}-${day}`;
-                          return (
-                            <label key={day} className="ml-6 flex items-center gap-2">
-                              <input
-                                type="checkbox"
-                                checked={(valoresSeleccionados["fecha"] || []).includes(fullDate)}
-                                onChange={() => toggleValor("fecha", fullDate)}
-                                className="accent-green-600"
-                              />
-                              {day}
-                            </label>
-                          );
-                        })}
-                      </div>
-                    ))}
+        {/* Filtros popover */}
+        {filtroActivo === "fecha" ? (
+          <div
+            ref={filtroRef}
+            className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60 text-left text-sm"
+            style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
+          >
+            <div className="font-semibold mb-2">Filtrar por Fecha</div>
+            {Object.entries(
+              movimientos.reduce((acc, { fecha }) => {
+                const [year, month, day] = fecha.split("-");
+                const monthName = new Date(fecha).toLocaleString("default", { month: "long" });
+                acc[year] = acc[year] || {};
+                acc[year][monthName] = acc[year][monthName] || { days: new Set(), monthNum: month };
+                acc[year][monthName].days.add(day);
+                return acc;
+              }, {})
+            ).map(([year, months]) => (
+              <div key={year} className="mb-2">
+                <div className="font-medium">{year}</div>
+                {Object.entries(months).map(([monthName, info]) => (
+                  <div key={monthName} className="ml-4">
+                    <div className="font-medium">{monthName}</div>
+                    {[...info.days].map((day) => {
+                      const fullDate = `${year}-${String(info.monthNum).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+                      return (
+                        <label key={fullDate} className="ml-6 flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={(valoresSeleccionados["fecha"] || []).includes(fullDate)}
+                            onChange={() => toggleValor("fecha", fullDate)}
+                            className="accent-green-600"
+                          />
+                          {String(day).padStart(2, "0")}
+                        </label>
+                      );
+                    })}
                   </div>
                 ))}
-                <button onClick={() => limpiarFiltro("fecha")} className="text-blue-600 hover:underline text-xs mt-2">
-                  Borrar filtro
-                </button>
               </div>
-            : renderFiltroSimple(filtroActivo)
+            ))}
+            <button
+              onClick={() => limpiarFiltro("fecha")}
+              className="text-blue-600 hover:underline text-xs lowercase mt-2"
+            >
+              borrar filtro
+            </button>
+          </div>
+        ) : (
+          filtroActivo && (
+            <div
+              ref={filtroRef}
+              className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60 text-left text-sm"
+              style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
+            >
+              <div className="font-semibold mb-2">
+                Filtrar por {filtroActivo.charAt(0).toUpperCase() + filtroActivo.slice(1)}
+              </div>
+
+              <button
+                onClick={() => ordenar(filtroActivo, "asc")}
+                className="text-green-700 flex items-center gap-1 mb-1"
+              >
+                <IconSortAscending2 className="w-4 h-4" />Ordenar A → Z
+              </button>
+              <button
+                onClick={() => ordenar(filtroActivo, "desc")}
+                className="text-green-700 flex items-center gap-1 mb-2"
+              >
+                <IconSortDescending2 className="w-4 h-4" />Ordenar Z → A
+              </button>
+
+              <input
+                type="text"
+                placeholder="Buscar..."
+                className="w-full border border-gray-300 px-2 py-1 rounded mb-2 text-sm"
+                value={busquedas[filtroActivo] || ""}
+                onChange={(e) => handleBusqueda(filtroActivo, e.target.value)}
+              />
+
+              <div className="flex flex-col max-h-40 overflow-y-auto">
+                {getValoresUnicos(filtroActivo).map((val, idx) => (
+                  <label key={idx} className="flex items-center gap-2 mb-1">
+                    <input
+                      type="checkbox"
+                      checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
+                      onChange={() => toggleValor(filtroActivo, val)}
+                      className="accent-green-600"
+                    />
+                    {String(val).charAt(0).toUpperCase() + String(val).slice(1)}
+                  </label>
+                ))}
+              </div>
+
+              <button
+                onClick={() => limpiarFiltro(filtroActivo)}
+                className="text-blue-600 hover:underline text-xs mt-2"
+              >
+                Borrar filtro
+              </button>
+            </div>
+          )
         )}
       </div>
 
-      <div className="flex justify-end mt-6">
+      {/* Botón exportar */}
+      <div className="mt-4 flex justify-end">
         <button className="bg-green-600 text-white px-8 py-2 rounded-md hover:bg-green-700 text-lg font-semibold">
           Exportar historial
         </button>
@@ -229,3 +257,5 @@ const Detalle_produc = () => {
 };
 
 export default Detalle_produc;
+
+

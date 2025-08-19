@@ -18,7 +18,7 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 
-// ✅ Importa el layout
+// ✅ Importa el layout de Mayordomo
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
@@ -26,7 +26,9 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 const Variables_climam = () => {
   const navigate = useNavigate();
   const [filtro, setFiltro] = useState("Día");
+  const [finca, setFinca] = useState("Todas"); // 👈 igual que en agro
 
+  // Datos de ejemplo para la gráfica
   const data = {
     labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio"],
     datasets: [
@@ -48,16 +50,28 @@ const Variables_climam = () => {
 
   return (
     <LayoutMayordomo>
+      {/* Encabezado: Título + Nombre de Hacienda a la derecha */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-green-700">
-          Variables climáticas
-        </h1>
-        <span className="text-2xl text-black font-bold">
-          Hacienda La esmeralda
-        </span>
+        <h1 className="text-3xl font-bold text-green-700">Variables climáticas</h1>
+        <span className="text-2xl text-black font-bold">Hacienda La esmeralda</span>
       </div>
 
-      {/* Filtros */}
+      {/* 🔹 Filtro por finca */}
+      <div className="mb-6">
+        <label className="text-black font-semibold mr-2">Finca:</label>
+        <select
+          value={finca}
+          onChange={(e) => setFinca(e.target.value)}
+          className="border border-gray-300 rounded px-4 py-1"
+        >
+          <option>Todas</option>
+          <option>La Esmeralda</option>
+          <option>La Carolina</option>
+          <option>Las Palmas</option>
+        </select>
+      </div>
+
+      {/* Filtro principal */}
       <div className="mb-6">
         <label className="text-black font-semibold mr-2">Filtrar por:</label>
         <select
@@ -75,15 +89,9 @@ const Variables_climam = () => {
       <div className="mb-6 flex items-center gap-2">
         <label className="text-black font-semibold">Fecha:</label>
         <span className="mr-1">Desde</span>
-        <input
-          type="date"
-          className="border border-gray-300 px-3 py-1 rounded"
-        />
+        <input type="date" className="border border-gray-300 px-3 py-1 rounded" />
         <span className="mx-1">Hasta</span>
-        <input
-          type="date"
-          className="border border-gray-300 px-3 py-1 rounded"
-        />
+        <input type="date" className="border border-gray-300 px-3 py-1 rounded" />
       </div>
 
       {/* Botón Registrar */}
@@ -141,17 +149,13 @@ const Variables_climam = () => {
             className={`relative overflow-hidden rounded-2xl bg-white border shadow-md px-6 py-5 ring-1 ${c.ring}`}
           >
             <div className="flex items-center gap-4">
-              <div
-                className={`${c.iconBg} ${c.iconText} rounded-xl p-3 shadow-sm border`}
-              >
+              <div className={`${c.iconBg} ${c.iconText} rounded-xl p-3 shadow-sm border`}>
                 {c.icon}
               </div>
               <div>
                 <p className="text-sm text-slate-500">{c.title}</p>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-2xl font-bold text-slate-900">
-                    {c.value}
-                  </span>
+                  <span className="text-2xl font-bold text-slate-900">{c.value}</span>
                   <span className="text-slate-500 text-base">{c.unit}</span>
                 </div>
               </div>
@@ -169,3 +173,4 @@ const Variables_climam = () => {
 };
 
 export default Variables_climam;
+

@@ -14,6 +14,7 @@ import {
   IconPlant2,
   IconBook,
   IconBug,
+  IconHistory,
 } from "@tabler/icons-react";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
 
@@ -30,6 +31,16 @@ const Home_agro = () => {
       ring: "ring-emerald-300/40",
       iconBg: "bg-white/70",
       text: "text-emerald-700",
+    },
+    {
+      icon: <IconHistory className="w-8 h-8" />,
+      label: "Historial labores",
+      desc: "Consulta trabajos realizados.",
+      ruta: "/Historialagro",
+      gradient: "from-sky-500/20 to-blue-500/20",
+      ring: "ring-sky-300/40",
+      iconBg: "bg-white/70",
+      text: "text-sky-700",
     },
     {
       icon: <IconBook className="w-8 h-8" />,
