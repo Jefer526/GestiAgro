@@ -72,81 +72,109 @@ const Produccion_agro = () => {
 
   return (
     <LayoutAgronomo>
-      <div className="ml-28 p-10 overflow-auto bg-gray-50 min-h-screen">
-        <h1 className="text-3xl font-bold text-green-700 mb-6">Producción agrícola</h1>
+      <h1 className="text-3xl font-bold text-green-700 mb-6 flex items-center gap-2">
+        Producción agrícola
+      </h1>
 
-        {/* Filtros */}
-        <div className="mb-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div>
-            <label className="font-semibold mr-2">Finca:</label>
-            <select value={finca} onChange={(e) => setFinca(e.target.value)} className="border border-gray-300 rounded px-4 py-1 w-full">
-              <option>Todas</option>
-              <option>La Esmeralda</option>
-              <option>La Carolina</option>
-            </select>
-          </div>
-          <div>
-            <label className="font-semibold mr-2">Cultivo:</label>
-            <select value={cultivo} onChange={(e) => setCultivo(e.target.value)} className="border border-gray-300 rounded px-4 py-1 w-full">
-              <option>Todos</option>
-              <option>Café</option>
-              <option>Cacao</option>
-            </select>
-          </div>
-          <div>
-            <label className="font-semibold mr-2">Variedad:</label>
-            <select value={variedad} onChange={(e) => setVariedad(e.target.value)} className="border border-gray-300 rounded px-4 py-1 w-full">
-              <option>Todas</option>
-              <option>Variedad A</option>
-              <option>Variedad B</option>
-            </select>
-          </div>
-          <div>
-            <label className="font-semibold mr-2">Lote:</label>
-            <select value={lote} onChange={(e) => setLote(e.target.value)} className="border border-gray-300 rounded px-4 py-1 w-full">
-              <option>Todos</option>
-              <option>Lote 1</option>
-              <option>Lote 2</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Filtrar por */}
-        <div className="mb-6">
-          <label className="font-semibold mr-2">Filtrar por:</label>
-          <select value={periodo} onChange={(e) => setPeriodo(e.target.value)} className="border border-gray-300 rounded px-4 py-1 w-60">
-            <option>Día</option>
-            <option>Mes</option>
-            <option>Año</option>
+      {/* Filtros */}
+      <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div>
+          <label className="font-bold text-gray-800 block mb-1">Finca</label>
+          <select
+            value={finca}
+            onChange={(e) => setFinca(e.target.value)}
+            className="border border-gray-300 rounded px-4 py-1 w-full"
+          >
+            <option>Todas</option>
+            <option>La Esmeralda</option>
+            <option>La Carolina</option>
           </select>
         </div>
 
-        {/* Fechas */}
-        <div className="mb-8 flex flex-wrap items-center gap-4">
-          <label className="font-semibold">Fecha:</label>
-          <span>Desde</span>
-          <input type="date" className="border border-gray-300 px-3 py-1 rounded w-48" />
-          <span>Hasta</span>
-          <input type="date" className="border border-gray-300 px-3 py-1 rounded w-48" />
+        <div>
+          <label className="font-bold text-gray-800 block mb-1">Cultivo</label>
+          <select
+            value={cultivo}
+            onChange={(e) => setCultivo(e.target.value)}
+            className="border border-gray-300 rounded px-4 py-1 w-full"
+          >
+            <option>Todos</option>
+            <option>Café</option>
+            <option>Cacao</option>
+          </select>
         </div>
 
-        {/* Gráfica */}
-        <div className="w-full h-[400px] bg-white p-6 rounded-xl shadow-md mt-6">
-          {/* Leyenda */}
-          <div className="mb-4 flex items-center justify-center">
-            <div
-              className="w-5 h-3 mr-2"
-              style={{
-                background: "linear-gradient(to bottom, rgba(34,197,94,0.8), rgba(34,197,94,0.3))",
-                border: "1px solid rgba(34,197,94,1)",
-              }}
-            ></div>
-            <span className="text-gray-700 font-medium">Kilogramos</span>
-          </div>
-          {/* Chart */}
-          <div className="h-[320px]">
-            <Bar data={data} options={opcionesChart} />
-          </div>
+        <div>
+          <label className="font-bold text-gray-800 block mb-1">Variedad</label>
+          <select
+            value={variedad}
+            onChange={(e) => setVariedad(e.target.value)}
+            className="border border-gray-300 rounded px-4 py-1 w-full"
+          >
+            <option>Todas</option>
+            <option>Variedad A</option>
+            <option>Variedad B</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="font-bold text-gray-800 block mb-1">Lote</label>
+          <select
+            value={lote}
+            onChange={(e) => setLote(e.target.value)}
+            className="border border-gray-300 rounded px-4 py-1 w-full"
+          >
+            <option>Todos</option>
+            <option>Lote 1</option>
+            <option>Lote 2</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Periodo */}
+      <div className="mb-6">
+        <label className="font-bold text-gray-800 mr-2">Filtrar por</label>
+        <select
+          value={periodo}
+          onChange={(e) => setPeriodo(e.target.value)}
+          className="border border-gray-300 rounded px-4 py-1 w-60"
+        >
+          <option>Día</option>
+          <option>Mes</option>
+          <option>Año</option>
+        </select>
+      </div>
+
+      {/* Fechas */}
+      <div className="mb-8 flex flex-wrap items-center gap-4">
+        <label className="font-bold text-gray-800">Fecha:</label>
+        <span className="font-bold text-gray-800">Desde</span>
+        <input
+          type="date"
+          className="border border-gray-300 px-3 py-1 rounded w-48"
+        />
+        <span className="font-bold text-gray-800">Hasta</span>
+        <input
+          type="date"
+          className="border border-gray-300 px-3 py-1 rounded w-48"
+        />
+      </div>
+
+      {/* Gráfica */}
+      <div className="w-full h-[400px] bg-white p-4 rounded-xl shadow relative">
+        <div className="absolute top-2 left-1/2 -translate-x-1/2 flex items-center">
+          <div
+            className="w-5 h-3 mr-2"
+            style={{
+              background:
+                "linear-gradient(to bottom, rgba(34,197,94,0.8), rgba(34,197,94,0.3))",
+              border: "1px solid rgba(34,197,94,1)",
+            }}
+          ></div>
+          <span className="text-gray-700 font-medium">Kilogramos</span>
+        </div>
+        <div className="h-[350px]">
+          <Bar data={data} options={opcionesChart} />
         </div>
       </div>
     </LayoutAgronomo>
@@ -154,3 +182,4 @@ const Produccion_agro = () => {
 };
 
 export default Produccion_agro;
+

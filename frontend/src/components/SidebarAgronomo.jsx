@@ -15,6 +15,7 @@ import {
   IconLogout,
   IconPlant2,
   IconBook,
+  IconBug,
 } from "@tabler/icons-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import faviconBlanco from "../assets/favicon-blanco.png";
@@ -110,15 +111,16 @@ const SidebarAgronomo = () => {
         {[
           { icon: <IconHome />, routes: ["/homeagro"] },
           { icon: <IconClipboardList />, routes: ["/Laboresagro", "/historial"] },
+          { icon: <IconBook />, routes: ["/cuadernocampo"] },
+          { icon: <IconPlant2 />, routes: ["/produccionagro"] },
           { icon: <IconChartBar />, routes: ["/Informesagro"] },
-          { icon: <IconBox />, routes: ["/Bodegaagro", "/agregarproducto"] },
+          { icon: <IconBug />, routes: [] },
+          { icon: <IconBox />, routes: ["/Bodegaagro", "/agregarproducto", "/Detallesagrop"] },
           { icon: <IconCloudRain />, routes: ["/variablesclimaticas", "/Registrarclima"] },
           { icon: <IconTractor />, routes: ["/maquinariaequipos", "/registrarmaquina", "/registrarnovedad", "/hojadevida", "/historialtrabajo"] },
           { icon: <IconUsersGroup />, routes: ["/manejopersonal", "/registrarempleado", "/editarempleado"] },
           { icon: <IconPlant />, routes: ["/gestionfincas", "/crearfinca"] },
           { icon: <IconFrame />, routes: ["/gestionlotes", "/crearlote"] },
-          { icon: <IconPlant2 />, routes: ["/produccionagro"] },
-          { icon: <IconBook />, routes: ["/cuadernocampo"] },
         ].map(({ icon, routes }, i) => (
           <div key={i} className="relative">
             {isActive(routes) && (

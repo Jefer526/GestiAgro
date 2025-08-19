@@ -36,7 +36,7 @@ const Cuaderno_campo_agro = () => {
   return (
     <LayoutAgronomo active="/cuadernocampo" letraInicial={letraInicial}>
       <div className="flex justify-center items-center p-8 overflow-auto">
-        <div className="bg-white border border-green-300 shadow-md p-10 rounded-xl w-full max-w-3xl space-y-6 text-black">
+        <div className="bg-white border border-gray-200 shadow-md p-10 rounded-xl w-full max-w-3xl space-y-6 text-black">
           <h1 className="text-3xl font-bold text-green-700">Cuaderno de Campo</h1>
 
           {/* Fecha */}
@@ -101,7 +101,7 @@ const Cuaderno_campo_agro = () => {
           </div>
 
           {/* Tomar foto */}
-          <div className="flex flex-col items-center gap-4">
+          <div className="flex flex-col items-center gap-4 font-bo">
             <button
               onClick={handleTomarFoto}
               className="bg-green-600 text-white px-8 py-3 rounded hover:bg-green-700 text-lg flex items-center gap-2"

@@ -1,21 +1,20 @@
 // src/pages/agronomo/Gestion_lotes_agro.jsx
 import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   IconFilter,
-  IconDotsVertical,
-  IconFileText,
-  IconBan,
-  IconPlus,
+  IconSortAscending2,
+  IconSortDescending2,
 } from "@tabler/icons-react";
+import { useNavigate } from "react-router-dom";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
 
 const Gestion_lotes_agro = () => {
   const navigate = useNavigate();
-
   const filtroRef = useRef(null);
-  const [lotes, setLotes] = useState([
+
+  const lotes = [
     {
+      id: "L01",
       finca: "La Esmeralda",
       lote: "1",
       area_bruta: "3.0 ha",
@@ -25,6 +24,7 @@ const Gestion_lotes_agro = () => {
       estado: "Activo",
     },
     {
+      id: "L02",
       finca: "Las Palmas",
       lote: "2",
       area_bruta: "2.5 ha",
@@ -33,67 +33,37 @@ const Gestion_lotes_agro = () => {
       variedad: "Hass",
       estado: "Inactivo",
     },
-  ]);
+  ];
 
   const columnas = [
-    { key: "finca", label: "Nombre Finca" },
-    { key: "lote", label: "Lote" },
-    { key: "area_bruta", label: "Área bruta" },
-    { key: "area_neta", label: "Área neta" },
-    { key: "cultivo", label: "Cultivo" },
-    { key: "variedad", label: "Variedad" },
-    { key: "estado", label: "Estado" },
+    "finca",
+    "lote",
+    "area_bruta",
+    "area_neta",
+    "cultivo",
+    "variedad",
+    "estado",
   ];
 
   const [filtroActivo, setFiltroActivo] = useState(null);
+  const [filtroPosicion, setFiltroPosicion] = useState({ top: 0, left: 0 });
   const [busquedas, setBusquedas] = useState({});
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
-  const [posicionTarjeta, setPosicionTarjeta] = useState({});
-  const [visibleTarjeta, setVisibleTarjeta] = useState(null);
 
-  const toggleFiltro = (campo, e) => {
-    const icono = e.currentTarget.getBoundingClientRect();
+  const toggleFiltro = (campo, event) => {
+    const icono = event.currentTarget.getBoundingClientRect();
     setFiltroActivo(filtroActivo === campo ? null : campo);
-    setPosicionTarjeta({
+    setFiltroPosicion({
       top: icono.bottom + window.scrollY + 4,
       left: icono.left + window.scrollX,
     });
   };
 
-  const getValoresUnicos = (campo) => {
-    const search = (busquedas[campo] || "").toLowerCase();
-    return [
-      ...new Set(lotes.map((l) => l[campo]?.toString())),
-    ].filter((v) => v?.toLowerCase().includes(search));
-  };
-
-  const datosFiltrados = lotes
-    .filter((item) =>
-      columnas.every((col) =>
-        !valoresSeleccionados[col.key] ||
-        valoresSeleccionados[col.key].length === 0
-          ? true
-          : valoresSeleccionados[col.key].includes(item[col.key]?.toString())
-      )
-    )
-    .sort((a, b) => {
-      if (!ordenCampo) return 0;
-      const { campo, orden } = ordenCampo;
-      return orden === "asc"
-        ? a[campo]?.toString().localeCompare(b[campo]?.toString())
-        : b[campo]?.toString().localeCompare(a[campo]?.toString());
-    });
-
   const toggleValor = (campo, valor) => {
     const seleccionados = new Set(valoresSeleccionados[campo] || []);
-    seleccionados.has(valor)
-      ? seleccionados.delete(valor)
-      : seleccionados.add(valor);
-    setValoresSeleccionados({
-      ...valoresSeleccionados,
-      [campo]: [...seleccionados],
-    });
+    seleccionados.has(valor) ? seleccionados.delete(valor) : seleccionados.add(valor);
+    setValoresSeleccionados({ ...valoresSeleccionados, [campo]: [...seleccionados] });
   };
 
   const limpiarFiltro = (campo) => {
@@ -102,176 +72,156 @@ const Gestion_lotes_agro = () => {
     setValoresSeleccionados(actualizado);
   };
 
-  const mostrarTarjeta = (idx, e) => {
-    const boton = e.currentTarget.getBoundingClientRect();
-    setVisibleTarjeta(idx);
-    setPosicionTarjeta({
-      top: boton.bottom + window.scrollY + 4,
-      left: boton.left + window.scrollX,
-    });
+  const ordenar = (campo, orden) => {
+    setOrdenCampo({ campo, orden });
   };
 
+  const handleBusqueda = (campo, texto) => {
+    setBusquedas({ ...busquedas, [campo]: texto });
+  };
+
+  const getValoresUnicos = (campo) => {
+    const search = (busquedas[campo] || "").toLowerCase();
+    return [
+      ...new Set(lotes.map((d) => d[campo])),
+    ].filter((v) => String(v).toLowerCase().includes(search));
+  };
+
+  const lotesFiltrados = lotes
+    .filter((d) =>
+      columnas.every((campo) =>
+        !valoresSeleccionados[campo] ||
+        valoresSeleccionados[campo].length === 0
+          ? true
+          : valoresSeleccionados[campo].includes(d[campo])
+      )
+    )
+    .sort((a, b) => {
+      if (!ordenCampo) return 0;
+      const { campo, orden } = ordenCampo;
+      return orden === "asc"
+        ? String(a[campo]).localeCompare(String(b[campo]))
+        : String(b[campo]).localeCompare(String(a[campo]));
+    });
+
   useEffect(() => {
-    const clickFuera = (e) => {
+    const handleClickOutside = (e) => {
       if (filtroRef.current && !filtroRef.current.contains(e.target)) {
         setFiltroActivo(null);
-        setVisibleTarjeta(null);
       }
     };
-    document.addEventListener("mousedown", clickFuera);
-    return () => document.removeEventListener("mousedown", clickFuera);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
     <LayoutAgronomo>
-      <div className="p-10">
-        {/* Encabezado */}
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-green-700">
-            Gestión de Lotes
-          </h1>
+      <h1 className="text-3xl font-bold text-green-700 mb-6">
+        Gestión de Lotes
+      </h1>
+
+      <div className="overflow-x-auto rounded-lg shadow-lg">
+        <table className="min-w-full text-center text-base bg-white">
+          <thead className="bg-green-600 text-white font-bold">
+            <tr>
+              {columnas.map((campo, i) => (
+                <th key={i} className="p-4 border text-center">
+                  <div className="flex items-center justify-center gap-2">
+                    {campo === "area_bruta"
+                      ? "ÁREA BRUTA"
+                      : campo === "area_neta"
+                      ? "ÁREA NETA"
+                      : campo.toUpperCase()}
+                    <button onClick={(e) => toggleFiltro(campo, e)}>
+                      <IconFilter className="w-4 h-4" />
+                    </button>
+                  </div>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {lotesFiltrados.map((lote, idx) => (
+              <tr key={idx} className="hover:bg-gray-100">
+                {columnas.map((campo, j) => (
+                  <td key={j} className="p-4 border text-center">
+                    {lote[campo]}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Filtro flotante */}
+      {filtroActivo && (
+        <div
+          ref={filtroRef}
+          className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60 text-left text-sm"
+          style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
+        >
+          <div className="font-semibold mb-2">
+            Filtrar por{" "}
+            {String(filtroActivo).charAt(0).toUpperCase() +
+              String(filtroActivo).slice(1)}
+          </div>
           <button
-            onClick={() => navigate("/crearlote")}
-            className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+            onClick={() => ordenar(filtroActivo, "asc")}
+            className="text-green-700 flex items-center gap-1 mb-1"
           >
-            <IconPlus className="w-5 h-5" /> Crear Lote
+            <IconSortAscending2 className="w-4 h-4" /> Ordenar A → Z
+          </button>
+          <button
+            onClick={() => ordenar(filtroActivo, "desc")}
+            className="text-green-700 flex items-center gap-1 mb-2"
+          >
+            <IconSortDescending2 className="w-4 h-4" /> Ordenar Z → A
+          </button>
+          <input
+            type="text"
+            placeholder="Buscar..."
+            className="w-full border border-gray-300 px-2 py-1 rounded mb-2 text-sm"
+            value={busquedas[filtroActivo] || ""}
+            onChange={(e) => handleBusqueda(filtroActivo, e.target.value)}
+          />
+          <div className="flex flex-col max-h-40 overflow-y-auto">
+            {getValoresUnicos(filtroActivo).map((val, idx) => (
+              <label key={idx} className="flex items-center gap-2 mb-1">
+                <input
+                  type="checkbox"
+                  checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
+                  onChange={() => toggleValor(filtroActivo, val)}
+                  className="accent-green-600"
+                />
+                {String(val).charAt(0).toUpperCase() + String(val).slice(1)}
+              </label>
+            ))}
+          </div>
+          <button
+            onClick={() => limpiarFiltro(filtroActivo)}
+            className="text-blue-600 hover:underline text-xs mt-2"
+          >
+            Borrar filtro
           </button>
         </div>
+      )}
 
-        {/* Tabla */}
-        <div className="overflow-x-auto rounded-lg shadow-lg relative">
-          <table className="min-w-full text-base bg-white text-center">
-            <thead className="bg-green-600 text-white font-bold">
-              <tr>
-                {columnas.map((col, idx) => (
-                  <th key={idx} className="p-4 border">
-                    <div className="flex items-center justify-center gap-2">
-                      <span>{col.label}</span>
-                      <button onClick={(e) => toggleFiltro(col.key, e)}>
-                        <IconFilter className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </th>
-                ))}
-                <th className="p-4 border">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {datosFiltrados.map((lote, idx) => (
-                <tr key={idx} className="hover:bg-gray-100">
-                  <td className="p-4 border">{lote.finca}</td>
-                  <td className="p-4 border">{lote.lote}</td>
-                  <td className="p-4 border">{lote.area_bruta}</td>
-                  <td className="p-4 border">{lote.area_neta}</td>
-                  <td className="p-4 border">{lote.cultivo}</td>
-                  <td className="p-4 border">{lote.variedad}</td>
-                  {/* ✅ Estado con badge de colores */}
-                  <td className="p-4 border">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                        lote.estado === "Activo"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-red-100 text-red-700"
-                      }`}
-                    >
-                      {lote.estado}
-                    </span>
-                  </td>
-                  <td className="p-4 border">
-                    <button onClick={(e) => mostrarTarjeta(idx, e)}>
-                      <IconDotsVertical className="w-5 h-5" />
-                    </button>
-                    {visibleTarjeta === idx && (
-                      <div
-                        ref={filtroRef}
-                        className="fixed bg-white border shadow-lg rounded-md z-50 w-44 py-2"
-                        style={{
-                          top: posicionTarjeta.top,
-                          left: posicionTarjeta.left,
-                        }}
-                      >
-                        {/* 📄 Detalles */}
-                        <div
-                          onClick={() =>
-                            navigate("/detalleslote", { state: { lote } })
-                          }
-                          className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm text-blue-600 gap-2"
-                        >
-                          <IconFileText className="w-4 h-4" />
-                          <span>Detalles</span>
-                        </div>
-
-                        {/* 🚫 Inactivar */}
-                        <div
-                          onClick={() =>
-                            setLotes((prev) =>
-                              prev.map((l, i) =>
-                                i === idx ? { ...l, estado: "Inactivo" } : l
-                              )
-                            )
-                          }
-                          className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm text-red-600 gap-2"
-                        >
-                          <IconBan className="w-4 h-4" />
-                          <span>Inactivar</span>
-                        </div>
-                      </div>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          {/* Filtro */}
-          {filtroActivo && (
-            <div
-              ref={filtroRef}
-              className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60 text-left text-sm"
-              style={{
-                top: posicionTarjeta.top,
-                left: posicionTarjeta.left,
-              }}
-            >
-              <div className="font-semibold mb-2 capitalize">
-                Filtrar por {filtroActivo}
-              </div>
-              <input
-                type="text"
-                placeholder="Buscar..."
-                value={busquedas[filtroActivo] || ""}
-                onChange={(e) =>
-                  setBusquedas({ ...busquedas, [filtroActivo]: e.target.value })
-                }
-                className="w-full px-2 py-1 border rounded mb-2 text-sm"
-              />
-              <div className="max-h-40 overflow-y-auto flex flex-col gap-1">
-                {getValoresUnicos(filtroActivo).map((val, idx) => (
-                  <label key={idx} className="flex items-center gap-2 text-sm">
-                    <input
-                      type="checkbox"
-                      className="accent-green-600"
-                      checked={
-                        (valoresSeleccionados[filtroActivo] || []).includes(val)
-                      }
-                      onChange={() => toggleValor(filtroActivo, val)}
-                    />
-                    {val}
-                  </label>
-                ))}
-              </div>
-              <button
-                onClick={() => limpiarFiltro(filtroActivo)}
-                className="text-blue-600 hover:underline text-xs mt-2"
-              >
-                Borrar filtro
-              </button>
-            </div>
-          )}
-        </div>
+      {/* Botones inferiores */}
+      <div className="flex justify-center gap-8 mt-8">
+        <button
+          onClick={() => navigate("/crearlote")}
+          className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 text-lg font-semibold"
+        >
+          Crear lote
+        </button>
+        <button className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 text-lg font-semibold">
+          Exportar
+        </button>
       </div>
     </LayoutAgronomo>
   );
 };
 
 export default Gestion_lotes_agro;
+

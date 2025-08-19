@@ -27,7 +27,7 @@ const Informes_agro = () => {
   return (
     <LayoutAgronomo active="/informesagro" letraInicial={letraInicial}>
       <div className="flex justify-center items-center p-8 overflow-auto">
-        <div className="bg-white border border-green-300 shadow-md p-10 rounded-xl w-full max-w-3xl space-y-6 text-black">
+        <div className="bg-white border border-gray-200 shadow-md p-10 rounded-xl w-full max-w-3xl space-y-6 text-black">
 
           <h1 className="text-3xl font-bold text-green-700">Informes</h1>
 

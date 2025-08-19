@@ -111,28 +111,31 @@ const Historial_labores = () => {
   return (
     <LayoutAgronomo>
       {/* Botón volver */}
-      <button onClick={() => navigate("/Laboresagro")} className="flex items-center text-green-600 font-semibold mb-4 text-lg hover:underline">
+      <button
+        onClick={() => navigate("/Laboresagro")}
+        className="flex items-center text-green-700 font-semibold mb-4 text-lg hover:underline"
+      >
         <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
       </button>
 
       {/* Título */}
-      <h1 className="text-3xl font-bold text-green-600 mb-6">Historial labores</h1>
+      <h1 className="text-3xl font-bold text-green-700 mb-6">Historial labores</h1>
 
-      {/* Datos cabecera */}
-      <div className="bg-white border border-gray-300 rounded-xl shadow-md mb-6 p-4 flex flex-wrap justify-between items-center">
-        <div className="space-y-1 text-[15px]">
+      {/* 📌 Datos cabecera (recuadro más grande) */}
+      <div className="bg-white border border-gray-300 rounded-xl shadow-md mb-8 p-6 flex flex-wrap justify-between items-start gap-6">
+        <div className="space-y-2 text-[17px] leading-relaxed">
           <p><strong>Finca:</strong> {datosCabecera.finca}</p>
           <p><strong>Lote:</strong> {datosCabecera.lote}</p>
           <p><strong>Labor:</strong> {datosCabecera.labor}</p>
           <p><strong>Semana:</strong> {datosCabecera.semana}</p>
           <p><strong>Estado actual:</strong> {datosCabecera.estadoActual}</p>
         </div>
-        <div className="w-full md:w-1/2 mt-4 md:mt-0">
-          <p className="font-bold text-sm">Avance actual:</p>
-          <div className="w-full bg-gray-200 h-4 rounded overflow-hidden">
-            <div className="bg-green-600 h-4" style={{ width: `${datosCabecera.avance}%` }} />
+        <div className="w-full md:w-1/2">
+          <p className="font-bold text-base mb-1">Avance actual:</p>
+          <div className="w-full bg-gray-200 h-5 rounded overflow-hidden">
+            <div className="bg-green-600 h-5" style={{ width: `${datosCabecera.avance}%` }} />
           </div>
-          <p className="text-right text-sm">{datosCabecera.avance}%</p>
+          <p className="text-right text-base font-semibold mt-1">{datosCabecera.avance}%</p>
         </div>
       </div>
 
@@ -249,7 +252,7 @@ const Historial_labores = () => {
 
       {/* Botón exportar */}
       <div className="mt-4 flex justify-end">
-        <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition text-base font-semibold">
+        <button className="bg-green-600 text-white px-8 py-2 rounded-md hover:bg-green-700 text-lg font-semibold">
           Exportar historial
         </button>
       </div>

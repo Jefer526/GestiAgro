@@ -54,14 +54,14 @@ const Agregar_producto = () => {
 
       {/* Botón volver */}
       <button
-        onClick={() => navigate("/bodegaagro")}
-        className="flex items-center text-green-600 font-semibold mb-6 text-lg hover:underline"
+        onClick={() => navigate("/Bodegaagro")}
+        className="flex items-center text-green-700 font-semibold mb-4 text-lg hover:underline"
       >
         <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
       </button>
 
       {/* Formulario */}
-      <div className="bg-white shadow-md border border-green-300 p-8 rounded-xl w-full max-w-2xl mx-auto space-y-6">
+      <div className="bg-white shadow-md border border-gray-200 p-8 rounded-xl w-full max-w-2xl mx-auto space-y-6">
         <h2 className="text-2xl font-bold text-green-700">Agregar producto</h2>
 
         <div>

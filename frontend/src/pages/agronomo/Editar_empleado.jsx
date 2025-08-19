@@ -96,14 +96,14 @@ const Editar_empleado = () => {
 
         {/* Botón volver */}
         <div className="mb-4">
-          <button onClick={() => navigate("/manejopersonal")} className="flex items-center text-green-700 font-semibold mb-6 hover:underline">
+          <button onClick={() => navigate("/manejopersonal")} className="flex items-center text-green-700 font-semibold mb-4 text-lg hover:underline">
             <IconArrowLeft className="w-5 h-5 mr-2" /> Volver
           </button>
         </div>
 
         {/* Formulario de edición */}
-        <div className="bg-white border-2 border-green-200 rounded-lg max-w-4xl mx-auto px-8 py-8 shadow-lg">
-          <h1 className="text-3xl font-bold text-green-600 mb-8">Editar datos de empleado</h1>
+        <div className="bg-white border-2 border-gray-200 rounded-lg max-w-4xl mx-auto px-8 py-8 shadow-lg">
+          <h1 className="text-3xl font-bold text-green-700 mb-8">Editar datos de empleado</h1>
 
           {/* Buscador */}
           <div className="mb-6" ref={sugRef}>
