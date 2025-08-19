@@ -21,7 +21,7 @@ const Registrar_vclima = () => {
     <LayoutMayordomo>
       {/* ✅ Alerta de guardado exitoso */}
       {alertaVisible && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 z-[11000] font-semibold text-base">
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
           <IconCheck className="w-5 h-5" /> Variables registradas exitosamente
         </div>
       )}
@@ -38,64 +38,74 @@ const Registrar_vclima = () => {
       {/* Formulario */}
       <form
         onSubmit={handleSubmit}
-        className="bg-white border border-gray-200 shadow-md p-10 rounded-xl w-full max-w-2xl space-y-6 text-black mx-auto"
+        className="bg-white shadow-md border border-gray-200 p-8 rounded-xl w-full max-w-2xl mx-auto space-y-6 text-black"
       >
         <h2 className="text-3xl font-bold text-green-700">
           Registrar variables climáticas
         </h2>
-        <p className="text-green-700 font-semibold text-lg">
+        <p className="text-green-700 font-semibold text-xl">
           Hacienda La Esmeralda
         </p>
 
         <div>
-          <label className="block font-bold mb-1">Fecha</label>
+          <label className="block mb-1 font-semibold text-black">Fecha</label>
           <input
             type="date"
-            className="border px-4 py-2 rounded w-full text-lg"
+            className="w-full border p-3 rounded text-base"
             required
           />
         </div>
 
         <div>
-          <label className="block font-bold mb-1">Precipitación (mm)</label>
+          <label className="block mb-1 font-semibold text-black">Precipitación (mm)</label>
           <input
             type="text"
             placeholder="Ej: 10"
-            className="border px-4 py-2 rounded w-full text-lg"
+            className="w-full border p-3 rounded text-base"
           />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block font-bold mb-1">Temperatura mínima (°C)</label>
+            <label className="block mb-1 font-semibold text-black">Temperatura mínima (°C)</label>
             <input
               type="text"
               placeholder="Ej: 16°"
-              className="border px-4 py-2 rounded w-full text-lg"
+              className="w-full border p-3 rounded text-base"
             />
           </div>
           <div>
-            <label className="block font-bold mb-1">Temperatura máxima (°C)</label>
+            <label className="block mb-1 font-semibold text-black">Temperatura máxima (°C)</label>
             <input
               type="text"
               placeholder="Ej: 29°"
-              className="border px-4 py-2 rounded w-full text-lg"
+              className="w-full border p-3 rounded text-base"
             />
           </div>
         </div>
 
         <div>
-          <label className="block font-bold mb-1">Humedad relativa (%)</label>
+          <label className="block mb-1 font-semibold text-black">Humedad relativa (%)</label>
           <input
             type="text"
             placeholder="Ej: 85%"
-            className="border px-4 py-2 rounded w-full text-lg"
+            className="w-full border p-3 rounded text-base"
           />
         </div>
 
-        <div className="text-center">
-          <button className="bg-green-600 text-white px-8 py-3 rounded hover:bg-green-700 text-lg">
+        <div className="flex justify-center space-x-6">
+          <button
+            type="submit"
+            className="bg-green-600 text-white px-8 py-2 rounded hover:bg-green-700"
+          >
             Registrar
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate("/variables_climaticasm")}
+            className="bg-gray-300 text-black px-8 py-2 rounded hover:bg-gray-400"
+          >
+            Cancelar
           </button>
         </div>
       </form>
@@ -104,6 +114,7 @@ const Registrar_vclima = () => {
 };
 
 export default Registrar_vclima;
+
 
 
 

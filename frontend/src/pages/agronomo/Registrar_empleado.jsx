@@ -21,96 +21,105 @@ const Registrar_empleado = () => {
 
   return (
     <LayoutAgronomo active="/manejopersonal" letraInicial={letraInicial}>
+      {/* ✅ Alerta */}
       {alertaVisible && (
-        <div className="fixed top-3 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
           <IconCheck className="w-5 h-5" /> Empleado registrado exitosamente
         </div>
       )}
 
-      {/* Botón volver (idéntico a Hoja_vidam.jsx) */}
+      {/* ✅ Botón volver */}
       <button
         onClick={() => navigate("/manejopersonal")}
-        className="flex items-center text-green-700 font-semibold mb-6 text-lg hover:underline"
+        className="flex items-center text-green-700 font-semibold mb-4 text-lg hover:underline"
       >
         <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
       </button>
 
-      {/* Contenedor principal */}
-      <div className="flex-1 p-10 overflow-auto relative">
-        {/* Formulario */}
-        <div className="bg-white border-2 border-gray-200 rounded-lg w-full max-w-4xl md:max-w-[56rem] mx-auto px-8 py-8 shadow-lg">
-          <h1 className="text-3xl font-bold text-green-700 mb-6">
-            Registrar empleado
-          </h1>
+      {/* ✅ Contenedor principal */}
+      <form
+        onSubmit={manejarGuardar}
+        className="bg-white border border-gray-200 rounded-xl shadow-md p-8 w-full max-w-2xl mx-auto space-y-6 text-black"
+      >
+        <h2 className="text-3xl font-bold text-green-700">
+          Registrar empleado
+        </h2>
 
-          <form
-            onSubmit={manejarGuardar}
-            className="grid grid-cols-1 md:grid-cols-2 gap-6"
-          >
-            <div>
-              <label className="block font-bold text-gray-700 mb-2">
-                Nombre completo
-              </label>
-              <input
-                type="text"
-                className="w-full border rounded px-4 py-3"
-                placeholder="Juan Pérez"
-                required
-              />
-            </div>
-            <div>
-              <label className="block font-bold text-gray-700 mb-2">Cargo</label>
-              <input
-                type="text"
-                className="w-full border rounded px-4 py-3"
-                placeholder="Operario de campo"
-                required
-              />
-            </div>
-            <div>
-              <label className="block font-bold text-gray-700 mb-2">
-                Estado
-              </label>
-              <select className="w-full border rounded px-4 py-3" required>
-                <option>Activo</option>
-                <option>Inactivo</option>
-                <option>Vacaciones</option>
-                <option>Suspendido</option>
-              </select>
-            </div>
-            <div>
-              <label className="block font-bold text-gray-700 mb-2">Finca</label>
-              <select className="w-full border rounded px-4 py-3" required>
-                <option>La Esmeralda</option>
-                <option>La Carolina</option>
-                <option>Las Palmas</option>
-              </select>
-            </div>
-            <div>
-              <label className="block font-bold text-gray-700 mb-2">
-                Teléfono
-              </label>
-              <input
-                type="text"
-                className="w-full border rounded px-4 py-3"
-                placeholder="3124567890"
-                required
-              />
-            </div>
-
-            <div className="md:col-span-2 flex justify-center mt-4">
-              <button
-                type="submit"
-                className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg text-lg font-semibold"
-              >
-                Guardar empleado
-              </button>
-            </div>
-          </form>
+        <div>
+          <label className="block mb-1 font-semibold text-black">Nombre completo</label>
+          <input
+            type="text"
+            className="w-full border p-3 rounded text-base"
+            placeholder="Juan Pérez"
+            required
+          />
         </div>
-      </div>
+
+        <div>
+          <label className="block mb-1 font-semibold text-black">Cargo</label>
+          <input
+            type="text"
+            className="w-full border p-3 rounded text-base"
+            placeholder="Operario de campo"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block mb-1 font-semibold text-black">Estado</label>
+          <select
+            className="w-full border p-3 rounded text-base"
+            required
+          >
+            <option>Activo</option>
+            <option>Inactivo</option>
+            <option>Vacaciones</option>
+            <option>Suspendido</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block mb-1 font-semibold text-black">Finca</label>
+          <select
+            className="w-full border p-3 rounded text-base"
+            required
+          >
+            <option>La Esmeralda</option>
+            <option>La Carolina</option>
+            <option>Las Palmas</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block mb-1 font-semibold text-black">Teléfono</label>
+          <input
+            type="text"
+            className="w-full border p-3 rounded text-base"
+            placeholder="3124567890"
+            required
+          />
+        </div>
+
+        {/* ✅ Botones acción */}
+        <div className="flex justify-center space-x-6">
+          <button
+            type="submit"
+            className="bg-green-600 text-white px-8 py-2 rounded hover:bg-green-700"
+          >
+            Registrar
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate("/manejopersonal")}
+            className="bg-gray-300 text-black px-8 py-2 rounded hover:bg-gray-400"
+          >
+            Cancelar
+          </button>
+        </div>
+      </form>
     </LayoutAgronomo>
   );
 };
 
 export default Registrar_empleado;
+

@@ -62,7 +62,7 @@ const Agregar_producto = () => {
 
       {/* Formulario */}
       <div className="bg-white shadow-md border border-gray-200 p-8 rounded-xl w-full max-w-2xl mx-auto space-y-6">
-        <h2 className="text-2xl font-bold text-green-700">Agregar producto</h2>
+        <h2 className="text-3xl font-bold text-green-700">Agregar producto</h2>
 
         <div>
           <label className="block mb-1 font-semibold text-black">Categoría</label>
