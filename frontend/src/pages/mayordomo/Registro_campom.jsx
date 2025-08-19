@@ -41,7 +41,7 @@ const Registro_campom = () => {
     setAlertaVisible(true);
     setTimeout(() => {
       setAlertaVisible(false);
-      navigate("/cuaderno_campom");
+      navigate("/historial_cuadernoc");
     }, 2000);
   };
 

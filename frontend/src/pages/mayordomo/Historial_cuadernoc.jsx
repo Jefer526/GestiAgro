@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { IconPlus, IconEye } from "@tabler/icons-react";
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
 
-const Cuaderno_campo = () => {
+const Historial_cuadernoc = () => {
   const navigate = useNavigate();
 
   // 📌 Datos de ejemplo
@@ -94,5 +94,5 @@ const Cuaderno_campo = () => {
   );
 };
 
-export default Cuaderno_campo;
+export default Historial_cuadernoc;
 

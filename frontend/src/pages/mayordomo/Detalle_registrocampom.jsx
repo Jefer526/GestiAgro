@@ -22,7 +22,7 @@ Se detectaron algunos focos de insectos, se programará control fitosanitario.`,
   const data = { ...fallback, ...(state && typeof state === "object" ? state : {}) };
 
   return (
-    <LayoutMayordomo active="/cuaderno_campom">
+    <LayoutMayordomo active="/historial_cuadernoc">
       {/* Botón volver */}
       <button
         onClick={() => navigate(-1)}
