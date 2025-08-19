@@ -113,7 +113,7 @@ const SidebarAgronomo = () => {
           { icon: <IconHome />, routes: ["/homeagro"] },
           { icon: <IconCheckupList />, routes: ["/Laboresagro", "/historial"] },
           { icon: <IconHistory />, routes: ["/Historialagro"] },
-          { icon: <IconBook />, routes: ["/cuadernocampo"] },
+          { icon: <IconBook />, routes: ["/Historialcampo", "/detallecampo", "/cuadernocampo"] },
           { icon: <IconPlant2 />, routes: ["/produccionagro"] },
           { icon: <IconChartBar />, routes: ["/Informesagro"] },
           { icon: <IconBug />, routes: ["/manejofitosanitario"] },

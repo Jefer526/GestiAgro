@@ -52,7 +52,7 @@ const Registrarticketag = () => {
             Soporte
           </h1>
 
-          <div className="max-w-xl w-full bg-white border border-green-300 rounded-xl shadow-md p-8">
+          <div className="max-w-xl w-full bg-white border border-gray-200 rounded-xl shadow-md p-8">
             <h2 className="text-2xl font-bold mb-2 text-green-700">¿Necesitas ayuda?</h2>
             <p className="mb-6 text-lg text-gray-700">
               Por favor contacta a nuestro equipo si necesitas ayuda, detalla tu problema y
