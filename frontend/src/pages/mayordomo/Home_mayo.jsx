@@ -56,7 +56,7 @@ const Home_mayo = () => {
       icon: <IconBook className="w-8 h-8" />,
       label: "Cuaderno de Campo",
       desc: "Registro de anotaciones, observaciones y fotos de campo.",
-      ruta: "/cuaderno_campom",
+      ruta: "/historial_cuadernoc",
       gradient: "from-green-700/20 to-amber-600/20",
       ring: "ring-green-400/40",
       iconBg: "bg-white/70",
