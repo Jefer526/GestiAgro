@@ -1,10 +1,7 @@
 // src/pages/mayordomo/Registrar_vclima.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  IconChevronLeft,
-  IconCheck,
-} from "@tabler/icons-react";
+import { IconChevronLeft, IconCheck } from "@tabler/icons-react";
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
 
 const Registrar_vclima = () => {
@@ -33,7 +30,7 @@ const Registrar_vclima = () => {
       <button
         type="button"
         onClick={() => navigate("/variables_climaticasm")}
-        className="flex items-center text-green-700 text-lg mb-6 self-start hover:underline"
+        className="flex items-center text-green-700 font-semibold mb-4 text-lg hover:underline"
       >
         <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
       </button>
@@ -43,10 +40,10 @@ const Registrar_vclima = () => {
         onSubmit={handleSubmit}
         className="bg-white border border-gray-200 shadow-md p-10 rounded-xl w-full max-w-2xl space-y-6 text-black mx-auto"
       >
-        <h2 className="text-3xl font-bold text-green-700 text-left">
+        <h2 className="text-3xl font-bold text-green-700">
           Registrar variables climáticas
         </h2>
-        <p className="text-left text-green-700 font-semibold text-lg">
+        <p className="text-green-700 font-semibold text-lg">
           Hacienda La Esmeralda
         </p>
 
@@ -107,5 +104,6 @@ const Registrar_vclima = () => {
 };
 
 export default Registrar_vclima;
+
 
 

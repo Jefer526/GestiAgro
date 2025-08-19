@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  IconArrowLeft,
+  IconChevronLeft,
   IconFilter,
   IconSortAscending2,
   IconSortDescending2,
@@ -117,7 +117,7 @@ const Historial_trabajo_agro = () => {
         onClick={() => navigate("/maquinariaequipos")}
         className="flex items-center text-green-700 font-semibold mb-4 text-lg hover:underline"
       >
-        <IconArrowLeft className="w-6 h-6 mr-1" /> Volver
+        <IconChevronLeft className="w-6 h-6 mr-1" /> Volver
       </button>
 
       {/* Título */}

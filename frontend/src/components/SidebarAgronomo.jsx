@@ -16,6 +16,7 @@ import {
   IconPlant2,
   IconBook,
   IconBug,
+  IconHistory,
 } from "@tabler/icons-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import faviconBlanco from "../assets/favicon-blanco.png";
@@ -111,6 +112,7 @@ const SidebarAgronomo = () => {
         {[
           { icon: <IconHome />, routes: ["/homeagro"] },
           { icon: <IconClipboardList />, routes: ["/Laboresagro", "/historial"] },
+          { icon: <IconHistory />, routes: ["/Historialagro"] },
           { icon: <IconBook />, routes: ["/cuadernocampo"] },
           { icon: <IconPlant2 />, routes: ["/produccionagro"] },
           { icon: <IconChartBar />, routes: ["/Informesagro"] },

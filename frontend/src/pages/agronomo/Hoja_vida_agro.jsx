@@ -1,7 +1,7 @@
 // src/pages/agronomo/Hoja_vida.jsx
 import React, { useState, useRef, useEffect } from "react";
 import {
-  IconArrowLeft,
+  IconChevronLeft,
   IconFilter,
   IconSortAscending2,
   IconSortDescending2,
@@ -156,7 +156,7 @@ const Hoja_vida = () => {
         onClick={() => navigate("/maquinariaequipos")}
         className="flex items-center text-green-700 font-semibold mb-4 text-lg hover:underline"
       >
-        <IconArrowLeft className="w-5 h-5 mr-1" /> Volver
+        <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
       </button>
 
       {/* Título */}
@@ -175,6 +175,7 @@ const Hoja_vida = () => {
       </div>
 
       {/* Historial */}
+      <h2 className="text-3xl font-bold text-green-700 mb-4">Historial de mantenimiento</h2>
       <div className="bg-white border border-gray-300 rounded-xl shadow-md overflow-x-auto relative">
         <table className="w-full text-base text-center">
           <thead className="bg-green-600 text-white">

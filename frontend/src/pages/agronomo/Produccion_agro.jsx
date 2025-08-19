@@ -10,6 +10,7 @@ import {
   Legend,
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
+import { IconFileText } from "@tabler/icons-react";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend, ChartDataLabels);
@@ -68,6 +69,10 @@ const Produccion_agro = () => {
       },
       x: { ticks: { color: "#374151" } },
     },
+  };
+
+  const generarReporte = () => {
+    alert("📄 Reporte generado (pendiente exportar a PDF/Excel)");
   };
 
   return (
@@ -176,6 +181,17 @@ const Produccion_agro = () => {
         <div className="h-[350px]">
           <Bar data={data} options={opcionesChart} />
         </div>
+      </div>
+
+      {/* Botón de generar reporte */}
+      <div className="flex justify-center mt-8">
+        <button
+          onClick={generarReporte}
+          className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold"
+        >
+          <IconFileText className="w-5 h-5" />
+          Generar reporte
+        </button>
       </div>
     </LayoutAgronomo>
   );

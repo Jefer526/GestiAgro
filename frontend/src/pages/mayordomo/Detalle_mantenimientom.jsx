@@ -2,8 +2,6 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { IconChevronLeft } from "@tabler/icons-react";
-
-// Importa el layout del Mayordomo
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
 
 const Detalle_mantenimientom = () => {
@@ -42,20 +40,22 @@ El mantenimiento correctivo no fue necesario, ya que no se detectaron fallas cr√
       : "‚Äî");
 
   return (
-    <LayoutMayordomo>
+    <LayoutMayordomo active="/equipos_mayordomo">
+      {/* Bot√≥n volver */}
       <button
         onClick={() => navigate(-1)}
-        className="flex items-center text-green-600 font-medium mb-6"
+        className="flex items-center text-green-700 font-semibold mb-4 text-lg hover:underline"
       >
         <IconChevronLeft className="w-5 h-5 mr-2" /> Volver
       </button>
 
-      <div className="bg-white border border-green-300 rounded-xl shadow-md p-8 w-[900px] max-w-full mx-auto">
+      {/* Card de detalle */}
+      <div className="bg-white border border-gray-200 rounded-xl shadow-md p-10 w-[900px] max-w-full mx-auto">
         <h1 className="text-3xl font-bold text-green-700 mb-6">
           Detalle de Mantenimiento
         </h1>
 
-        <div className="space-y-4 text-lg">
+        <div className="space-y-5 text-lg">
           <p>
             <strong>C√≥digo equipo:</strong> {data.idMaquina}
           </p>
@@ -80,7 +80,7 @@ El mantenimiento correctivo no fue necesario, ya que no se detectaron fallas cr√
 
           <div>
             <strong>Descripci√≥n:</strong>
-            <p className="mt-1 text-justify">{data.descripcion}</p>
+            <p className="mt-2 text-justify">{data.descripcion}</p>
           </div>
 
           <p>
@@ -93,3 +93,4 @@ El mantenimiento correctivo no fue necesario, ya que no se detectaron fallas cr√
 };
 
 export default Detalle_mantenimientom;
+

@@ -26,6 +26,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 const Variables_climaticas = () => {
   const navigate = useNavigate();
   const [filtro, setFiltro] = useState("Día");
+  const [finca, setFinca] = useState("Todas"); // 👈 nuevo estado para finca
 
   // Datos de ejemplo para la gráfica
   const data = {
@@ -53,6 +54,21 @@ const Variables_climaticas = () => {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-green-700">Variables climáticas</h1>
         <span className="text-2xl text-black font-bold">Hacienda La esmeralda</span>
+      </div>
+
+      {/* 🔹 Filtro por finca */}
+      <div className="mb-6">
+        <label className="text-black font-semibold mr-2">Finca:</label>
+        <select
+          value={finca}
+          onChange={(e) => setFinca(e.target.value)}
+          className="border border-gray-300 rounded px-4 py-1"
+        >
+          <option>Todas</option>
+          <option>La Esmeralda</option>
+          <option>La Carolina</option>
+          <option>Las Palmas</option>
+        </select>
       </div>
 
       {/* Filtro principal */}
@@ -157,6 +173,7 @@ const Variables_climaticas = () => {
 };
 
 export default Variables_climaticas;
+
 
 
 

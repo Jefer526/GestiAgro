@@ -108,10 +108,12 @@ const Detalles_agrop = () => {
       <div className="bg-white border border-gray-300 rounded-xl shadow-md mb-8 p-6 grid grid-cols-1 sm:grid-cols-2 gap-y-2 text-[17px] leading-relaxed max-w-3xl">
         <div><strong>Producto:</strong> Urea</div>
         <div><strong>Ingrediente activo:</strong> Nitrogeno 46%</div>
-        <div><strong>Finca:</strong> La esmeralda</div>
+        <div><strong>Finca:</strong> La Esmeralda</div>
         <div><strong>Categoría:</strong> Fertilizante</div>
-        <div><strong>Saldo:</strong> 300</div>
+        <div><strong>Saldo:</strong> 300 Kg</div>
       </div>
+
+      <h2 className="text-3xl font-bold text-green-700 mb-6">Movimiento del producto</h2>
 
       {/* Tabla (alineada a Historial) */}
       <div className="bg-white border border-gray-300 rounded-xl shadow-md overflow-x-auto relative">
