@@ -51,11 +51,11 @@ El mantenimiento correctivo no fue necesario, ya que no se detectaron fallas cr√
       </button>
 
       <div className="bg-white border border-green-300 rounded-xl shadow-md p-8 w-[900px] max-w-full mx-auto">
-        <h1 className="text-2xl font-bold text-green-600 mb-6">
+        <h1 className="text-3xl font-bold text-green-700 mb-6">
           Detalle de Mantenimiento
         </h1>
 
-        <div className="space-y-4 text-base">
+        <div className="space-y-4 text-lg">
           <p>
             <strong>C√≥digo equipo:</strong> {data.idMaquina}
           </p>

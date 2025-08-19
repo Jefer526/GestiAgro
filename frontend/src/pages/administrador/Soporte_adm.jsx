@@ -1,4 +1,3 @@
-// src/pages/administrador/Soporte_adm.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LayoutAdmin from "../../layouts/LayoutAdmin";
@@ -7,21 +6,27 @@ import TablaSoporte from "../../components/TablaSoporte";
 
 const Soporte_adm = () => {
   const navigate = useNavigate();
-  const [tickets, setTickets] = useState([]);
+  const [tickets, setTickets] = useState(null); // 👈 null = aún no cargado
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     soporteApi
       .listTickets()
       .then((res) => setTickets(res.data))
-      .catch((err) => console.error("Error al cargar tickets:", err));
+      .catch((err) => {
+        console.error("Error al cargar tickets:", err);
+        setTickets([]); // si hay error dejamos vacío
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   return (
     <LayoutAdmin letraInicial="A">
-      <h1 className="text-4xl font-bold text-green-600 mb-6">Soporte</h1>
-      
+      <h1 className="text-3xl font-bold text-green-700 mb-6">Soporte</h1>
+
       <TablaSoporte
         tickets={tickets}
+        loading={loading}
         onDetalle={(ticket) =>
           navigate("/detallesticket", { state: { ticket } })
         }

@@ -49,16 +49,15 @@ const Registrar_novedad_hoja = () => {
 
       {/* BOTÓN VOLVER */}
       <button
-        onClick={() => navigate("/hoja_vidam")}
-        className="flex items-center text-green-600 font-medium mb-4"
+        onClick={() => navigate("/equipos_mayordomo")}
+        className="flex items-center text-green-700 font-semibold mb-6 text-lg hover:underline"
       >
-        <IconChevronLeft className="w-5 h-5 mr-2" />
-        Volver
+        <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
       </button>
 
       {/* FORMULARIO */}
       <div className="bg-white border border-green-300 rounded-xl shadow-md p-8 w-[800px] mx-auto">
-        <h1 className="text-2xl font-bold text-green-600 mb-6">
+        <h1 className="text-3xl font-bold text-green-700 mb-6">
           Registro novedad
         </h1>
 

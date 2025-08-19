@@ -1,4 +1,3 @@
-// src/components/TablaSoporte.jsx
 import React, { useRef, useState, useEffect } from "react";
 import {
   IconEye,
@@ -7,7 +6,7 @@ import {
   IconSortDescending2,
 } from "@tabler/icons-react";
 
-const TablaSoporte = ({ tickets, onDetalle, hiddenColumns = [] }) => {
+const TablaSoporte = ({ tickets, onDetalle, hiddenColumns = [], loading }) => {
   const filtroRef = useRef(null);
   const [filtroActivo, setFiltroActivo] = useState(null);
   const [filtroPosicion, setFiltroPosicion] = useState({ top: 0, left: 0 });
@@ -17,15 +16,14 @@ const TablaSoporte = ({ tickets, onDetalle, hiddenColumns = [] }) => {
 
   // 🔹 Definición columnas
   const todasLasColumnas = [
-    { key: "numero", label: "Ticket", width: "w-32" },
-    { key: "asunto", label: "Asunto", width: "w-64" },
-    { key: "estado_display", label: "Estado", width: "w-40" },
-    { key: "solicitado_por_nombre", label: "Solicitado por", width: "w-48" },
-    { key: "solicitado_por_rol", label: "Rol", width: "w-40" }, // 👈 dinámico
-    { key: "fecha_solicitud", label: "Fecha solicitud", width: "w-40" },
+    { key: "numero", label: "TICKET", width: "w-32" },
+    { key: "asunto", label: "ASUNTO", width: "w-64" },
+    { key: "estado_display", label: "ESTADO", width: "w-40" },
+    { key: "solicitado_por_nombre", label: "SOLICITADO POR", width: "w-48" },
+    { key: "solicitado_por_rol", label: "ROL", width: "w-40" },
+    { key: "fecha_solicitud", label: "FECHA SOLICITUD", width: "w-40" },
   ];
 
-  // 🔹 Solo mostramos columnas que no estén ocultas
   const columnas = todasLasColumnas.filter(
     (col) => !hiddenColumns.includes(col.key)
   );
@@ -63,27 +61,30 @@ const TablaSoporte = ({ tickets, onDetalle, hiddenColumns = [] }) => {
   const handleBusqueda = (campo, texto) =>
     setBusquedas({ ...busquedas, [campo]: texto });
 
-  const datosFiltrados = tickets
-    .filter((item) =>
-      columnas.every((c) => {
-        const campo = c.key;
-        if (
-          !valoresSeleccionados[campo] ||
-          valoresSeleccionados[campo].length === 0
-        )
-          return true;
-        return valoresSeleccionados[campo].includes(
-          item[campo]?.toString() ?? ""
-        );
-      })
-    )
-    .sort((a, b) => {
-      if (!ordenCampo) return 0;
-      const { campo, orden } = ordenCampo;
-      const av = a[campo]?.toString() ?? "";
-      const bv = b[campo]?.toString() ?? "";
-      return orden === "asc" ? av.localeCompare(bv) : bv.localeCompare(av);
-    });
+  const datosFiltrados =
+    tickets && Array.isArray(tickets)
+      ? tickets
+          .filter((item) =>
+            columnas.every((c) => {
+              const campo = c.key;
+              if (
+                !valoresSeleccionados[campo] ||
+                valoresSeleccionados[campo].length === 0
+              )
+                return true;
+              return valoresSeleccionados[campo].includes(
+                item[campo]?.toString() ?? ""
+              );
+            })
+          )
+          .sort((a, b) => {
+            if (!ordenCampo) return 0;
+            const { campo, orden } = ordenCampo;
+            const av = a[campo]?.toString() ?? "";
+            const bv = b[campo]?.toString() ?? "";
+            return orden === "asc" ? av.localeCompare(bv) : bv.localeCompare(av);
+          })
+      : [];
 
   // --- Outside click ---
   useEffect(() => {
@@ -99,7 +100,7 @@ const TablaSoporte = ({ tickets, onDetalle, hiddenColumns = [] }) => {
   return (
     <div className="overflow-x-auto bg-white shadow-md rounded-lg relative">
       <table className="min-w-full text-base text-center table-fixed">
-        <thead className="bg-green-600 text-white">
+        <thead className="bg-green-600 text-white uppercase">
           <tr>
             {columnas.map((col) => (
               <th key={col.key} className={`px-4 py-4 border ${col.width}`}>
@@ -115,15 +116,30 @@ const TablaSoporte = ({ tickets, onDetalle, hiddenColumns = [] }) => {
                 </div>
               </th>
             ))}
-            <th className="px-4 py-4 border w-32">Acciones</th>
+            <th className="px-4 py-4 border w-32">ACCIONES</th>
           </tr>
         </thead>
         <tbody>
-          {datosFiltrados.length > 0 ? (
+          {loading ? (
+            <tr>
+              <td colSpan={columnas.length + 1} className="p-6 text-gray-500">
+                Cargando...
+              </td>
+            </tr>
+          ) : !tickets || tickets.length === 0 ? (
+            <tr>
+              <td colSpan={columnas.length + 1} className="p-6 text-gray-500">
+                No hay tickets registrados
+              </td>
+            </tr>
+          ) : datosFiltrados.length > 0 ? (
             datosFiltrados.map((t) => (
               <tr key={t.id} className="border-t hover:bg-gray-50">
                 {columnas.map((col) => (
-                  <td key={col.key} className={`p-3 border ${col.width}`}>
+                  <td
+                    key={col.key}
+                    className={`p-3 border ${col.width} normal-case`}
+                  >
                     {t[col.key]}
                   </td>
                 ))}
@@ -139,9 +155,10 @@ const TablaSoporte = ({ tickets, onDetalle, hiddenColumns = [] }) => {
             ))
           ) : (
             <tr>
-              <td colSpan={columnas.length + 1} className="p-6 text-gray-500">
-                No se encontraron resultados
-              </td>
+              <td
+                colSpan={columnas.length + 1}
+                className="p-6 text-gray-400"
+              ></td>
             </tr>
           )}
         </tbody>

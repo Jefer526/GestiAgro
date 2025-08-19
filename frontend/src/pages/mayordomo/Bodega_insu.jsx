@@ -7,14 +7,14 @@ import {
   IconSortDescending2,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
-
-// ✅ Importa el layout del Mayordomo
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
 
 const Bodega_insu = () => {
   const navigate = useNavigate();
 
-  // -------- Datos de la tabla --------
+  /* ----------------------------------
+     📌 DATOS Y FILTROS TABLA
+  ---------------------------------- */
   const datos = [
     { categoria: "Fertilizante", producto: "Urea", ingrediente: "Nitrogeno 46%", cantidad: 300, um: "Kg" },
     { categoria: "Insecticida", producto: "Galeon", ingrediente: "Tiametoxam", cantidad: 5, um: "Lt" },
@@ -57,8 +57,13 @@ const Bodega_insu = () => {
     setValoresSeleccionados(actualizado);
   };
 
-  const ordenar = (campo, orden) => setOrdenCampo({ campo, orden });
-  const handleBusqueda = (campo, texto) => setBusquedas({ ...busquedas, [campo]: texto });
+  const ordenar = (campo, orden) => {
+    setOrdenCampo({ campo, orden });
+  };
+
+  const handleBusqueda = (campo, texto) => {
+    setBusquedas({ ...busquedas, [campo]: texto });
+  };
 
   const datosFiltrados = datos
     .filter((item) =>
@@ -86,6 +91,9 @@ const Bodega_insu = () => {
     return () => document.removeEventListener("mousedown", clickFuera);
   }, []);
 
+  /* ----------------------------------
+     📌 RENDER
+  ---------------------------------- */
   return (
     <LayoutMayordomo>
       <h1 className="text-3xl font-bold text-green-700 mb-6">Bodega de insumos</h1>
@@ -131,8 +139,7 @@ const Bodega_insu = () => {
                     onClick={() => navigate("/detalle_producto")}
                     className="bg-blue-100 text-blue-800 px-4 py-1 rounded-full text-sm font-medium flex items-center gap-1 justify-center mx-auto"
                   >
-                    <IconEye className="w-4 h-4" />
-                    Detalle
+                    <IconEye className="w-4 h-4" /> Detalle
                   </button>
                 </td>
               </tr>
@@ -140,23 +147,27 @@ const Bodega_insu = () => {
           </tbody>
         </table>
 
-        {/* Filtros */}
+        {/* Panel de filtro */}
         {filtroActivo && (
           <div
             ref={filtroRef}
-            className="fixed bg-white text-black shadow-md border rounded z-[10000] p-3 w-60 text-left text-sm"
+            className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60 text-left text-sm"
             style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
           >
             <div className="font-semibold mb-2">
               Filtrar por {filtroActivo.charAt(0).toUpperCase() + filtroActivo.slice(1)}
             </div>
-            <button onClick={() => ordenar(filtroActivo, "asc")} className="text-green-700 flex items-center gap-1 mb-1">
-              <IconSortAscending2 className="w-4 h-4" />
-              Ordenar A → Z
+            <button
+              onClick={() => ordenar(filtroActivo, "asc")}
+              className="text-green-700 flex items-center gap-1 mb-1"
+            >
+              <IconSortAscending2 className="w-4 h-4" /> Ordenar A → Z
             </button>
-            <button onClick={() => ordenar(filtroActivo, "desc")} className="text-green-700 flex items-center gap-1 mb-2">
-              <IconSortDescending2 className="w-4 h-4" />
-              Ordenar Z → A
+            <button
+              onClick={() => ordenar(filtroActivo, "desc")}
+              className="text-green-700 flex items-center gap-1 mb-2"
+            >
+              <IconSortDescending2 className="w-4 h-4" /> Ordenar Z → A
             </button>
             <input
               type="text"
@@ -178,15 +189,18 @@ const Bodega_insu = () => {
                 </label>
               ))}
             </div>
-            <button onClick={() => limpiarFiltro(filtroActivo)} className="text-blue-600 hover:underline text-xs mt-2">
+            <button
+              onClick={() => limpiarFiltro(filtroActivo)}
+              className="text-blue-600 hover:underline text-xs mt-2"
+            >
               Borrar filtro
             </button>
           </div>
         )}
       </div>
 
-      {/* Botón exportar */}
-      <div className="flex justify-center mt-10">
+      {/* Botones acción */}
+      <div className="flex justify-center gap-20 mt-10">
         <button className="bg-green-600 text-white px-8 py-2 rounded-md hover:bg-green-700 text-lg font-semibold">
           Exportar
         </button>

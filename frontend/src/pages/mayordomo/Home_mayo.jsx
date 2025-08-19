@@ -11,6 +11,8 @@ import {
   IconCloudRain,
   IconChartBar,
   IconTractor,
+  IconBug,
+  IconCalendarClock,
 } from "@tabler/icons-react";
 
 // Importa el layout del Mayordomo
@@ -59,6 +61,26 @@ const Home_mayo = () => {
       ring: "ring-green-300/40",
       iconBg: "bg-white/70",
       text: "text-green-700",
+    },
+    {
+      icon: <IconCalendarClock className="w-8 h-8" />, 
+      label: "Programación de labores",
+      desc: "Programación de labores semanales.",
+      route: "/programacion_labores",
+      gradient: "from-green-500/20 to-emerald-500/20",
+      ring: "ring-green-300/40",
+      iconBg: "bg-white/70",
+      text: "text-green-700",
+    },
+    {
+      icon: <IconBug className="w-8 h-8" />,
+      label: "Manejo fitosanitario",
+      desc: "Manejo de plagas y enfermedades.",
+      ruta: "/manejo_fitosanitariom",
+      gradient: "from-red-500/20 to-orange-500/20",
+      ring: "ring-red-300/40",
+      iconBg: "bg-white/70",
+      text: "text-red-700",
     },
     {
       icon: <IconBox className="w-8 h-8" />,
