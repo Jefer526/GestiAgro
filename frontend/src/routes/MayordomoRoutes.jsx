@@ -21,6 +21,8 @@ import Cuaderno_campom from "../pages/mayordomo/Cuaderno_campom";
 import Detalle_mantenimientom from "../pages/mayordomo/Detalle_mantenimientom";
 import Registrarticketm from "../pages/mayordomo/Registrarticketm";
 import Detalles_ticketm from "../pages/mayordomo/Detalle_ticketm";
+import Programacion_labores from "../pages/mayordomo/Programacion_labores";
+import Manejo_fitosanitariom from "../pages/mayordomo/Manejo_fitosanitariom";
 
 
 const mayordomoRoutes = [
@@ -44,6 +46,8 @@ const mayordomoRoutes = [
   <Route key="cuaderno-campom" path="/cuaderno_campom" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Cuaderno_campom /></ProtectedRoute>} />,
   <Route key="detalle-mantenimientom" path="/detalle_mantenimientom" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Detalle_mantenimientom /></ProtectedRoute>} />,
   <Route key="detalles-ticketm" path="/detallesticketm" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Detalles_ticketm /></ProtectedRoute>} />,
+  <Route key="programacionlabores" path="/programacion_labores" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Programacion_labores /></ProtectedRoute>} />,
+  <Route key="manejofitosanitariom" path="/manejo_fitosanitariom" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Manejo_fitosanitariom /></ProtectedRoute>} />,
 
 ];
 

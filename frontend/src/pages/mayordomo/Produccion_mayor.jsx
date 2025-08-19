@@ -1,8 +1,6 @@
 // src/pages/mayordomo/Produccion_mayor.jsx
 import React, { useState } from "react";
-import {
-  IconPlant2,
-} from "@tabler/icons-react";
+import { IconPlant2, IconFileText } from "@tabler/icons-react";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -76,16 +74,20 @@ const Produccion_mayor = () => {
     },
   };
 
+  const generarReporte = () => {
+    alert("📄 Reporte generado (pendiente exportar a PDF/Excel)");
+  };
+
   return (
     <LayoutMayordomo>
       <h1 className="text-3xl font-bold text-green-700 mb-6 flex items-center gap-2">
-        <IconPlant2 className="w-8 h-8 text-green-600" /> Producción agrícola
+        Producción agrícola
       </h1>
 
       {/* Filtros */}
-      <div className="mb-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <div>
-          <label className="font-semibold mr-2">Finca:</label>
+          <label className="font-bold text-gray-800 block mb-1">Finca</label>
           <select
             value={finca}
             onChange={(e) => setFinca(e.target.value)}
@@ -96,8 +98,9 @@ const Produccion_mayor = () => {
             <option>La Carolina</option>
           </select>
         </div>
+
         <div>
-          <label className="font-semibold mr-2">Cultivo:</label>
+          <label className="font-bold text-gray-800 block mb-1">Cultivo</label>
           <select
             value={cultivo}
             onChange={(e) => setCultivo(e.target.value)}
@@ -108,8 +111,9 @@ const Produccion_mayor = () => {
             <option>Cacao</option>
           </select>
         </div>
+
         <div>
-          <label className="font-semibold mr-2">Variedad:</label>
+          <label className="font-bold text-gray-800 block mb-1">Variedad</label>
           <select
             value={variedad}
             onChange={(e) => setVariedad(e.target.value)}
@@ -120,8 +124,9 @@ const Produccion_mayor = () => {
             <option>Variedad B</option>
           </select>
         </div>
+
         <div>
-          <label className="font-semibold mr-2">Lote:</label>
+          <label className="font-bold text-gray-800 block mb-1">Lote</label>
           <select
             value={lote}
             onChange={(e) => setLote(e.target.value)}
@@ -136,7 +141,7 @@ const Produccion_mayor = () => {
 
       {/* Periodo */}
       <div className="mb-6">
-        <label className="font-semibold mr-2">Filtrar por:</label>
+        <label className="font-bold text-gray-800 mr-2">Filtrar por</label>
         <select
           value={periodo}
           onChange={(e) => setPeriodo(e.target.value)}
@@ -150,13 +155,13 @@ const Produccion_mayor = () => {
 
       {/* Fechas */}
       <div className="mb-8 flex flex-wrap items-center gap-4">
-        <label className="font-semibold">Fecha:</label>
-        <span>Desde</span>
+        <label className="font-bold text-gray-800">Fecha:</label>
+        <span className="font-bold text-gray-800">Desde</span>
         <input
           type="date"
           className="border border-gray-300 px-3 py-1 rounded w-48"
         />
-        <span>Hasta</span>
+        <span className="font-bold text-gray-800">Hasta</span>
         <input
           type="date"
           className="border border-gray-300 px-3 py-1 rounded w-48"
@@ -180,9 +185,19 @@ const Produccion_mayor = () => {
           <Bar data={data} options={opcionesChart} />
         </div>
       </div>
+
+      {/* Botón de generar reporte */}
+      <div className="flex justify-center mt-8">
+        <button
+          onClick={generarReporte}
+          className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold"
+        >
+          <IconFileText className="w-5 h-5" />
+          Generar reporte
+        </button>
+      </div>
     </LayoutMayordomo>
   );
 };
 
 export default Produccion_mayor;
-

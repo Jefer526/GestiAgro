@@ -42,7 +42,7 @@ const Registrarticketm = () => {
 
         <button
           onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-2 text-green-600 hover:text-green-800 font-semibold mb-6"
+          className="inline-flex items-center gap-2 text-green-700 hover:text-green-800 font-semibold mb-6"
         >
           <IconChevronLeft className="w-5 h-5" /> Volver
         </button>
@@ -52,7 +52,7 @@ const Registrarticketm = () => {
             Soporte
           </h1>
 
-          <div className="max-w-xl w-full bg-white border border-green-300 rounded-xl shadow-md p-8">
+          <div className="max-w-xl w-full bg-white border border-gray-300 rounded-xl shadow-md p-8">
             <h2 className="text-2xl font-bold mb-2 text-green-700">¿Necesitas ayuda?</h2>
             <p className="mb-6 text-lg text-gray-700">
               Por favor contacta a nuestro equipo si necesitas ayuda, detalla tu problema y

@@ -178,15 +178,14 @@ const Hoja_vidam = () => {
 
   return (
     <LayoutMayordomo>
-      <h2 className="text-3xl font-bold text-green-600 mb-6">Hoja de vida</h2>
-
       <button
         onClick={() => navigate("/equipos_mayordomo")}
-        className="flex items-center text-green-600 hover:text-green-800 mb-6"
+        className="flex items-center text-green-700 font-semibold mb-6 text-lg hover:underline"
       >
-        <IconChevronLeft className="w-6 h-6 mr-1" />
-        <span className="text-base font-medium">Volver</span>
+        <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
       </button>
+
+      <h2 className="text-3xl font-bold text-green-700 mb-6">Hoja de vida</h2>
 
       {/* Información general */}
       <div className="bg-white border border-gray-300 p-6 rounded-xl mb-6 max-w-4xl">
@@ -201,7 +200,7 @@ const Hoja_vidam = () => {
       </div>
 
       {/* Historial */}
-      <h2 className="text-2xl font-bold text-green-600 mb-4">Historial de mantenimiento</h2>
+      <h2 className="text-2xl font-bold text-green-700 mb-4">Historial de mantenimiento</h2>
       <div className="overflow-x-auto relative">
         <table className="w-full bg-white border border-gray-300 text-base text-center">
           <thead className="bg-green-600 text-white font-bold text-base">

@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  IconArrowLeft,
+  IconChevronLeft,
   IconCheck,
 } from "@tabler/icons-react";
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
@@ -33,20 +33,20 @@ const Registrar_vclima = () => {
       <button
         type="button"
         onClick={() => navigate("/variables_climaticasm")}
-        className="flex items-center text-green-600 text-lg mb-6 self-start hover:underline"
+        className="flex items-center text-green-700 text-lg mb-6 self-start hover:underline"
       >
-        <IconArrowLeft className="w-5 h-5 mr-1" /> Volver
+        <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
       </button>
 
       {/* Formulario */}
       <form
         onSubmit={handleSubmit}
-        className="bg-white border border-green-300 shadow-md p-10 rounded-xl w-full max-w-2xl space-y-6 text-black mx-auto"
+        className="bg-white border border-gray-200 shadow-md p-10 rounded-xl w-full max-w-2xl space-y-6 text-black mx-auto"
       >
-        <h2 className="text-3xl font-bold text-green-700 text-center">
+        <h2 className="text-3xl font-bold text-green-700 text-left">
           Registrar variables climáticas
         </h2>
-        <p className="text-center text-green-700 font-semibold text-lg">
+        <p className="text-left text-green-700 font-semibold text-lg">
           Hacienda La Esmeralda
         </p>
 

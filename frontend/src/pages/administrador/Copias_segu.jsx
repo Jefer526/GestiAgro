@@ -125,7 +125,7 @@ const Copias_segu = () => {
 
   return (
     <LayoutAdmin letraInicial="J">
-      <h1 className="text-4xl font-bold text-green-600 mb-6">Copias de seguridad</h1>
+      <h1 className="text-3xl font-bold text-green-700 mb-6">Copias de seguridad</h1>
 
       <div className="overflow-x-auto shadow-md rounded-lg relative bg-white">
         <table className="min-w-full text-base bg-white text-center">

@@ -168,14 +168,15 @@ const Historial_trabajom = () => {
 
   return (
     <LayoutMayordomo>
-      <h2 className="text-3xl font-bold text-green-600 mb-6">Historial de trabajo</h2>
 
       <button
         onClick={() => navigate("/equipos_mayordomo")}
-        className="flex items-center text-green-600 font-semibold mb-6 text-lg hover:underline"
+        className="flex items-center text-green-700 font-semibold mb-6 text-lg hover:underline"
       >
         <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
       </button>
+
+      <h2 className="text-3xl font-bold text-green-700 mb-6">Historial de trabajo</h2>
 
       {/* Información general */}
       <div className="bg-white border border-gray-300 p-6 rounded-xl mb-6 max-w-4xl">
