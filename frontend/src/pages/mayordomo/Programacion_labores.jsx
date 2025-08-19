@@ -46,7 +46,7 @@ const Programacion_labores = () => {
         </div>
       )}
 
-      <h1 className="text-3xl font-bold text-green-700 mb-6 text-center">
+      <h1 className="text-3xl font-bold text-green-700 mb-6 text-left">
         Programación de labores semanales
       </h1>
 

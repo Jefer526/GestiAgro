@@ -104,107 +104,130 @@ const Labores_agro = () => {
 
   return (
     <LayoutAgronomo>
-      {/* Título arriba, alineado al estilo de Bodega */}
-      <h1 className="text-3xl font-bold text-green-700 px-6 pt-4 mb-4">
-        Seguimiento labores
+      {/* ✅ Título */}
+      <h1 className="text-3xl font-bold text-green-700 mb-6">
+        Seguimiento de Labores
       </h1>
-
-      {/* Contenido principal pegado (sin padding grande) */}
-      <div className="px-6">
-        {/* Tabla */}
-        <div className="bg-white border border-gray-300 rounded-xl overflow-x-auto relative">
-          <table className="w-full text-base text-center">
-            <thead className="bg-green-600 text-white font-bold">
-              <tr>
-                {campos.map((campo, i) => (
-                  <th key={i} className="px-4 py-3 border">
-                    <div className="flex items-center justify-center gap-2">
-                      <span className="uppercase">{campo}</span>
-                      <button onClick={(e) => toggleFiltro(campo, e)}>
-                        <IconFilter className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </th>
-                ))}
-                <th className="px-4 py-3 font-bold border uppercase">AVANCE</th>
-                <th className="px-4 py-3 font-bold border uppercase">DETALLE</th>
-              </tr>
-            </thead>
-            <tbody>
-              {laboresFiltradas.map((l, i) => (
-                <tr key={i} className="border-b border-gray-200 hover:bg-gray-50">
-                  <td className="px-4 py-2 border">{l.semana}</td>
-                  <td className="px-4 py-2 border">{l.finca}</td>
-                  <td className="px-4 py-2 border">{l.labor}</td>
-                  <td className="px-4 py-2 border">{l.lote}</td>
-                  <td className="px-4 py-2 border">{l.estado}</td>
-                  <td className="px-4 py-2 border w-[280px]">
-                    <div className="flex items-center justify-center gap-2">
-                      <span className="whitespace-nowrap text-sm">{l.unidad}</span>
-                      <div className="flex-1 bg-gray-200 h-2 rounded overflow-hidden">
-                        <div className="bg-green-600 h-2" style={{ width: `${l.avance}%` }} />
-                      </div>
-                      <span className="text-sm">{l.avance}%</span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-2 border text-center">
-                    <button
-                      onClick={() => navigate("/historial", { state: { laborData: l } })}
-                      className="bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm font-medium flex items-center gap-1 justify-center mx-auto hover:bg-blue-200 transition"
-                    >
-                      <IconEye className="w-4 h-4" /> Detalle
+  
+      {/* ✅ Tabla */}
+      <div className="bg-white border border-gray-200 rounded-xl overflow-auto relative">
+        <table className="w-full text-base">
+          <thead className="bg-green-600 text-white">
+            <tr>
+              {campos.map((campo, i) => (
+                <th key={i} className="px-4 py-3 border text-center uppercase">
+                  <div className="flex items-center justify-center gap-2">
+                    <span>{campo}</span>
+                    <button onClick={(e) => toggleFiltro(campo, e)}>
+                      <IconFilter className="w-4 h-4" />
                     </button>
-                  </td>
-                </tr>
+                  </div>
+                </th>
               ))}
-            </tbody>
-          </table>
-
-          {/* Filtro flotante */}
-          {filtroActivo && (
-            <div
-              ref={filtroRef}
-              className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60 text-left text-sm"
-              style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
-            >
-              <div className="font-semibold mb-2">
-                Filtrar por {String(filtroActivo).charAt(0).toUpperCase() + String(filtroActivo).slice(1)}
-              </div>
-              <button onClick={() => ordenar(filtroActivo, "asc")} className="text-green-700 flex items-center gap-1 mb-1">
-                <IconSortAscending2 className="w-4 h-4" /> Ordenar A → Z
-              </button>
-              <button onClick={() => ordenar(filtroActivo, "desc")} className="text-green-700 flex items-center gap-1 mb-2">
-                <IconSortDescending2 className="w-4 h-4" /> Ordenar Z → A
-              </button>
-              <input
-                type="text"
-                placeholder="Buscar..."
-                className="w-full border border-gray-300 px-2 py-1 rounded mb-2 text-sm"
-                value={busquedas[filtroActivo] || ""}
-                onChange={(e) => handleBusqueda(filtroActivo, e.target.value)}
-              />
-              <div className="flex flex-col max-h-40 overflow-y-auto">
-                {getValoresUnicos(filtroActivo).map((val, idx) => (
-                  <label key={idx} className="flex items-center gap-2 mb-1">
-                    <input
-                      type="checkbox"
-                      checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
-                      onChange={() => toggleValor(filtroActivo, val)}
-                      className="accent-green-600"
-                    />
-                    {String(val).charAt(0).toUpperCase() + String(val).slice(1)}
-                  </label>
-                ))}
-              </div>
-              <button onClick={() => limpiarFiltro(filtroActivo)} className="text-blue-600 hover:underline text-xs mt-2">
-                Borrar filtro
-              </button>
-            </div>
-          )}
-        </div>
+              <th className="px-4 py-3 border text-center uppercase">Avance</th>
+              <th className="px-4 py-3 border text-center uppercase">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {laboresFiltradas.map((l, i) => (
+              <tr
+                key={i}
+                className="border-b border-gray-200 text-center align-middle hover:bg-gray-50 transition"
+              >
+                <td className="px-4 py-2 border">{l.semana}</td>
+                <td className="px-4 py-2 border">{l.finca}</td>
+                <td className="px-4 py-2 border">{l.labor}</td>
+                <td className="px-4 py-2 border">{l.lote}</td>
+                <td className="px-4 py-2 border">{l.estado}</td>
+                <td className="px-4 py-2 border w-[280px]">
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="whitespace-nowrap text-sm">{l.unidad}</span>
+                    <div className="flex-1 bg-gray-200 h-2 rounded overflow-hidden">
+                      <div
+                        className="bg-green-600 h-2"
+                        style={{ width: `${l.avance}%` }}
+                      />
+                    </div>
+                    <span className="text-sm">{l.avance}%</span>
+                  </div>
+                </td>
+                <td className="px-4 py-2 border text-center">
+                  <button
+                    onClick={() =>
+                      navigate("/historial", { state: { laborData: l } })
+                    }
+                    className="bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm font-medium flex items-center gap-1 justify-center mx-auto hover:bg-blue-200 transition"
+                  >
+                    <IconEye className="w-4 h-4" /> Detalle
+                  </button>
+                </td>
+              </tr>
+            ))}
+            {laboresFiltradas.length === 0 && (
+              <tr>
+                <td colSpan={7} className="p-6 text-gray-500 text-center">
+                  Sin registros
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
+  
+      {/* ✅ Filtro flotante */}
+      {filtroActivo && (
+        <div
+          ref={filtroRef}
+          className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60 text-left text-sm"
+          style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
+        >
+          <div className="font-semibold mb-2">
+            Filtrar por{" "}
+            {String(filtroActivo).charAt(0).toUpperCase() +
+              String(filtroActivo).slice(1)}
+          </div>
+          <button
+            onClick={() => ordenar(filtroActivo, "asc")}
+            className="text-green-700 flex items-center gap-1 mb-1"
+          >
+            <IconSortAscending2 className="w-4 h-4" /> Ordenar A → Z
+          </button>
+          <button
+            onClick={() => ordenar(filtroActivo, "desc")}
+            className="text-green-700 flex items-center gap-1 mb-2"
+          >
+            <IconSortDescending2 className="w-4 h-4" /> Ordenar Z → A
+          </button>
+          <input
+            type="text"
+            placeholder="Buscar..."
+            className="w-full border border-gray-300 px-2 py-1 rounded mb-2 text-sm"
+            value={busquedas[filtroActivo] || ""}
+            onChange={(e) => handleBusqueda(filtroActivo, e.target.value)}
+          />
+          <div className="flex flex-col max-h-40 overflow-y-auto">
+            {getValoresUnicos(filtroActivo).map((val, idx) => (
+              <label key={idx} className="flex items-center gap-2 mb-1">
+                <input
+                  type="checkbox"
+                  checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
+                  onChange={() => toggleValor(filtroActivo, val)}
+                  className="accent-green-600"
+                />
+                {String(val).charAt(0).toUpperCase() + String(val).slice(1)}
+              </label>
+            ))}
+          </div>
+          <button
+            onClick={() => limpiarFiltro(filtroActivo)}
+            className="text-blue-600 hover:underline text-xs mt-2"
+          >
+            Borrar filtro
+          </button>
+        </div>
+      )}
     </LayoutAgronomo>
-  );
+  );  
 };
 
 export default Labores_agro;
