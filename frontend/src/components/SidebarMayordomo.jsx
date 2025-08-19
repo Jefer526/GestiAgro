@@ -120,6 +120,7 @@ const SidebarMayordomo = () => {
           { icon: <IconCalendarClock />, route: "/programacion_labores" },
           { icon: <IconBug />, route: "/manejo_fitosanitariom" },
           { icon: <IconBox />, route: ["/bodega_insumos", "/detalle_producto"] },
+          { icon: <IconCloudRain />, route: ["/variables_climaticasm", "/registrar_climam"] },
           {
             icon: <IconTractor />,
             route: [
