@@ -85,17 +85,13 @@ const Produccion_mayor = () => {
 
       {/* Filtros */}
       <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {/* ✅ Nombre de finca fijo en lugar del select */}
+        {/* ✅ Nombre de finca */}
           <div>
             <label className="font-bold text-gray-800 block mb-1">Finca</label>
-            <div className="border border-gray-300 rounded px-4 py-1 w-full bg-gray-50 font-semibold text-gray-700">
+            <div className="border border-gray-300 rounded px-4 py-1 w-full">
               La Esmeralda
             </div>
           </div>
-
-
-
-
 
         <div>
           <label className="font-bold text-gray-800 block mb-1">Cultivo</label>
