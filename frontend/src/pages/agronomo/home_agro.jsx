@@ -65,7 +65,7 @@ const Home_agro = () => {
       icon: <IconBug className="w-8 h-8" />,
       label: "Manejo fitosanitario",
       desc: "Manejo de plagas y enfermedades.",
-      ruta: "/fitosanitario",
+      ruta: "/manejofitosanitario",
       gradient: "from-red-500/20 to-orange-500/20",
       ring: "ring-red-300/40",
       iconBg: "bg-white/70",
