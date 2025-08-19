@@ -1,6 +1,6 @@
 // src/pages/mayordomo/Cuaderno_campom.jsx
 import React, { useState, useRef } from "react";
-import { IconCamera, IconCheck } from "@tabler/icons-react";
+import { IconCamera, IconCheck, IconChevronLeft } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
 
@@ -54,7 +54,16 @@ const Registro_campom = () => {
         </div>
       )}
 
-      <div className="flex justify-center items-center p-8 overflow-auto">
+      {/* ✅ Botón volver (afuera del form) */}
+      <button
+        onClick={() => navigate(-1)}
+        className="flex items-center text-green-700 font-semibold mb-4 text-lg hover:underline"
+      >
+        <IconChevronLeft className="w-5 h-5 mr-2" /> Volver
+      </button>
+
+      {/* ✅ Formulario */}
+      <div className="flex justify-center p-8 overflow-auto -mt-16">
         <form
           onSubmit={handleGuardar}
           className="bg-white border border-gray-200 shadow-md p-10 rounded-xl w-full max-w-3xl space-y-6 text-black"
@@ -175,3 +184,4 @@ const Registro_campom = () => {
 };
 
 export default Registro_campom;
+

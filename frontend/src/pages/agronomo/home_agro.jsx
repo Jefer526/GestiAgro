@@ -55,7 +55,7 @@ const Home_agro = () => {
     {
       icon: <IconPlant2 className="w-8 h-8" />,
       label: "Producción",
-      desc: "Gestión y registro de producción agrícola",
+      desc: "Gestión y registro de producción agrícola.",
       ruta: "/produccionagro",
       gradient: "from-green-500/20 to-yellow-500/20",
       ring: "ring-green-300/40",
