@@ -116,11 +116,10 @@ const SidebarMayordomo = () => {
           { icon: <IconHistory />, route: "/historial_labores" },
           { icon: <IconBook />, route: ["/historial_cuadernoc", "/registro_campom", "/detalle_registrocampom"] },
           { icon: <IconPlant2 />, route: "/produccion_mayor" },
+          { icon: <IconChartBar />, route: "/informes_mayordomo" },
           { icon: <IconCalendarClock />, route: "/programacion_labores" },
           { icon: <IconBug />, route: "/manejo_fitosanitariom" },
           { icon: <IconBox />, route: ["/bodega_insumos", "/detalle_producto"] },
-          { icon: <IconCloudRain />, route: ["/variables_climaticasm", "/registrar_climam"] },
-          { icon: <IconChartBar />, route: "/informes_mayordomo" },
           {
             icon: <IconTractor />,
             route: [
