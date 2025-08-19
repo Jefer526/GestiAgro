@@ -1,137 +1,98 @@
-// src/pages/mayordomo/Cuaderno_campom.jsx
-import React, { useState, useRef } from "react";
-import { IconCamera } from "@tabler/icons-react";
+// src/pages/mayordomo/Cuaderno_campo.jsx
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { IconPlus, IconEye } from "@tabler/icons-react";
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
 
-const Cuaderno_campom = () => {
-  const [filtros, setFiltros] = useState({
-    fecha: "",
-    finca: "",
-    lote: "",
-    anotaciones: "",
-  });
+const Cuaderno_campo = () => {
+  const navigate = useNavigate();
 
-  const [foto, setFoto] = useState(null); // 📌 Guardar imagen seleccionada
-  const fileInputRef = useRef(null); // 📌 Referencia al input de archivo
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFiltros({ ...filtros, [name]: value });
-  };
-
-  const handleTomarFoto = () => {
-    // Abre el input oculto de tipo file
-    fileInputRef.current.click();
-  };
-
-  const handleFotoSeleccionada = (e) => {
-    const archivo = e.target.files[0];
-    if (archivo) {
-      const url = URL.createObjectURL(archivo);
-      setFoto(url);
-    }
-  };
+  // 📌 Datos de ejemplo
+  const registros = [
+    {
+      fecha: "2025-08-15",
+      finca: "La Esmeralda",
+      lote: "Lote 1",
+      anotaciones: "Revisión de plagas en cultivo de aguacate.",
+    },
+    {
+      fecha: "2025-08-16",
+      finca: "Las Palmas",
+      lote: "Lote 2",
+      anotaciones: "Aplicación de fertilizantes orgánicos.",
+    },
+    {
+      fecha: "2025-08-17",
+      finca: "La Carolina",
+      lote: "Lote 3",
+      anotaciones: "Observación de humedad del suelo.",
+    },
+  ];
 
   return (
     <LayoutMayordomo>
-      <div className="flex justify-center items-center p-8 overflow-auto">
-        <div className="bg-white border border-gray-200 shadow-md p-10 rounded-xl w-full max-w-3xl space-y-6 text-black">
-          <h1 className="text-3xl font-bold text-green-700">Cuaderno de Campo</h1>
+      {/* ✅ Título */}
+      <h1 className="text-3xl font-bold text-green-700 mb-6">
+        Historial de Campo
+      </h1>
 
-          {/* Fecha */}
-          <div>
-            <label className="font-bold text-lg mb-2 block">Fecha</label>
-            <input
-              type="date"
-              name="fecha"
-              value={filtros.fecha}
-              onChange={handleChange}
-              className="border p-3 rounded w-full text-lg"
-            />
-          </div>
+      {/* ✅ Botón nuevo registro */}
+      <div className="mb-6">
+        <button
+          onClick={() => navigate("/registro_campom")}
+          className="bg-green-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-700 transition flex items-center gap-2"
+        >
+          <IconPlus className="w-5 h-5" />
+          Nuevo Registro de Campo
+        </button>
+      </div>
 
-          {/* Finca */}
-          <div>
-            <label className="font-bold text-lg mb-2 block">Finca</label>
-            <select
-              name="finca"
-              value={filtros.finca}
-              onChange={handleChange}
-              className="w-full border p-4 rounded text-lg"
-            >
-              <option value="" disabled hidden>
-                Selecciona una finca
-              </option>
-              <option value="La Esmeralda">La Esmeralda</option>
-              <option value="Las Palmas">Las Palmas</option>
-              <option value="La Carolina">La Carolina</option>
-            </select>
-          </div>
-
-          {/* Lote */}
-          <div>
-            <label className="font-bold text-lg mb-2 block">Lote</label>
-            <select
-              name="lote"
-              value={filtros.lote}
-              onChange={handleChange}
-              className="w-full border p-4 rounded text-lg"
-            >
-              <option value="" disabled hidden>
-                Selecciona un lote
-              </option>
-              <option value="Lote 1">Lote 1</option>
-              <option value="Lote 2">Lote 2</option>
-              <option value="Lote 3">Lote 3</option>
-            </select>
-          </div>
-
-          {/* Anotaciones */}
-          <div>
-            <label className="font-bold text-lg mb-2 block">Anotaciones</label>
-            <textarea
-              name="anotaciones"
-              value={filtros.anotaciones}
-              onChange={handleChange}
-              rows="4"
-              placeholder="Escribe aquí las anotaciones..."
-              className="w-full border p-4 rounded text-lg"
-            ></textarea>
-          </div>
-
-          {/* Tomar foto */}
-          <div className="flex flex-col items-center gap-4">
-            <button
-              onClick={handleTomarFoto}
-              className="bg-green-600 text-white px-8 py-3 rounded hover:bg-green-700 text-lg flex items-center gap-2"
-            >
-              <IconCamera className="w-5 h-5" /> Tomar Foto
-            </button>
-
-            <input
-              type="file"
-              accept="image/*"
-              capture="environment"
-              ref={fileInputRef}
-              className="hidden"
-              onChange={handleFotoSeleccionada}
-            />
-
-            {foto && (
-              <div className="mt-4">
-                <p className="text-sm font-medium">Vista previa:</p>
-                <img
-                  src={foto}
-                  alt="Foto tomada"
-                  className="mt-2 max-h-48 rounded border"
-                />
-              </div>
+      {/* ✅ Tabla */}
+      <div className="bg-white border border-gray-200 rounded-xl overflow-auto relative">
+        <table className="w-full text-base">
+          <thead className="bg-green-600 text-white">
+            <tr>
+              <th className="px-4 py-3 border text-center uppercase">Fecha</th>
+              <th className="px-4 py-3 border text-center uppercase">Finca</th>
+              <th className="px-4 py-3 border text-center uppercase">Lote</th>
+              <th className="px-4 py-3 border text-center uppercase">Anotaciones</th>
+              <th className="px-4 py-3 border text-center uppercase">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {registros.map((r, i) => (
+              <tr
+                key={i}
+                className="border-b border-gray-200 text-center align-middle hover:bg-gray-50 transition"
+              >
+                <td className="px-4 py-2 border">{r.fecha}</td>
+                <td className="px-4 py-2 border">{r.finca}</td>
+                <td className="px-4 py-2 border">{r.lote}</td>
+                {/* ✅ contenido de anotaciones alineado a la izquierda */}
+                <td className="px-4 py-2 border text-left">{r.anotaciones}</td>
+                <td className="px-4 py-2 border text-center">
+                  <button
+                    onClick={() => navigate("/detalle_registrocampom")}
+                    className="bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm font-medium flex items-center gap-1 justify-center mx-auto hover:bg-blue-200 transition"
+                  >
+                    <IconEye className="w-4 h-4" /> Detalles
+                  </button>
+                </td>
+              </tr>
+            ))}
+            {registros.length === 0 && (
+              <tr>
+                <td colSpan={5} className="p-6 text-gray-500 text-center">
+                  Sin registros
+                </td>
+              </tr>
             )}
-          </div>
-        </div>
+          </tbody>
+        </table>
       </div>
     </LayoutMayordomo>
   );
 };
 
-export default Cuaderno_campom;
+export default Cuaderno_campo;
+

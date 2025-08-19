@@ -13,6 +13,9 @@ import {
   IconLogout,
   IconPlant2,
   IconBook,
+  IconCheckupList,
+  IconCalendarClock,
+  IconBug,
 } from "@tabler/icons-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import faviconBlanco from "../assets/favicon-blanco.png";
@@ -108,10 +111,13 @@ const SidebarMayordomo = () => {
       >
         {[
           { icon: <IconHome />, route: "/homemayordomo" },
+          { icon: <IconCheckupList />, route: "/seguimiento_laboresm" },
           { icon: <IconClipboardList />, route: "/registrolabores" },
           { icon: <IconHistory />, route: "/historial_labores" },
           { icon: <IconBook />, route: "/cuaderno_campom" },
           { icon: <IconPlant2 />, route: "/produccion_mayor" },
+          { icon: <IconCalendarClock />, route: "/programacion_labores" },
+          { icon: <IconBug />, route: "/manejo_fitosanitariom" },
           { icon: <IconBox />, route: ["/bodega_insumos", "/detalle_producto"] },
           { icon: <IconCloudRain />, route: ["/variables_climaticasm", "/registrar_climam"] },
           { icon: <IconChartBar />, route: "/informes_mayordomo" },

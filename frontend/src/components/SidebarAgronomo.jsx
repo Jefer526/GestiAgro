@@ -2,7 +2,7 @@
 import React, { useState, useRef, useLayoutEffect, useEffect } from "react";
 import {
   IconHome,
-  IconClipboardList,
+  IconCheckupList,
   IconChartBar,
   IconBox,
   IconCloudRain,
@@ -111,7 +111,7 @@ const SidebarAgronomo = () => {
       >
         {[
           { icon: <IconHome />, routes: ["/homeagro"] },
-          { icon: <IconClipboardList />, routes: ["/Laboresagro", "/historial"] },
+          { icon: <IconCheckupList />, routes: ["/Laboresagro", "/historial"] },
           { icon: <IconHistory />, routes: ["/Historialagro"] },
           { icon: <IconBook />, routes: ["/cuadernocampo"] },
           { icon: <IconPlant2 />, routes: ["/produccionagro"] },

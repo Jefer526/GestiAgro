@@ -2,7 +2,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  IconClipboardList,
+  IconCheckupList,
   IconChartBar,
   IconBox,
   IconCloudRain,
@@ -23,7 +23,7 @@ const Home_agro = () => {
 
   const opciones = [
     {
-      icon: <IconClipboardList className="w-8 h-8" />,
+      icon: <IconCheckupList className="w-8 h-8" />,
       label: "Seguimiento de labores",
       desc: "Monitoreo de labores agrícolas.",
       ruta: "/Laboresagro",

@@ -1,6 +1,6 @@
 // src/pages/mayordomo/Produccion_mayor.jsx
 import React, { useState } from "react";
-import { IconPlant2, IconFileText } from "@tabler/icons-react";
+import { IconFileText } from "@tabler/icons-react";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -16,7 +16,6 @@ import LayoutMayordomo from "../../layouts/LayoutMayordomo";
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend, ChartDataLabels);
 
 const Produccion_mayor = () => {
-  const [finca, setFinca] = useState("Todas");
   const [periodo, setPeriodo] = useState("Mes");
   const [cultivo, setCultivo] = useState("Todos");
   const [variedad, setVariedad] = useState("Todas");
@@ -86,18 +85,17 @@ const Produccion_mayor = () => {
 
       {/* Filtros */}
       <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <div>
-          <label className="font-bold text-gray-800 block mb-1">Finca</label>
-          <select
-            value={finca}
-            onChange={(e) => setFinca(e.target.value)}
-            className="border border-gray-300 rounded px-4 py-1 w-full"
-          >
-            <option>Todas</option>
-            <option>La Esmeralda</option>
-            <option>La Carolina</option>
-          </select>
-        </div>
+        {/* ✅ Nombre de finca fijo en lugar del select */}
+          <div>
+            <label className="font-bold text-gray-800 block mb-1">Finca</label>
+            <div className="border border-gray-300 rounded px-4 py-1 w-full bg-gray-50 font-semibold text-gray-700">
+              La Esmeralda
+            </div>
+          </div>
+
+
+
+
 
         <div>
           <label className="font-bold text-gray-800 block mb-1">Cultivo</label>
@@ -201,3 +199,4 @@ const Produccion_mayor = () => {
 };
 
 export default Produccion_mayor;
+
