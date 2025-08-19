@@ -119,7 +119,7 @@ const SidebarAgronomo = () => {
           { icon: <IconBug />, routes: ["/manejofitosanitario"] },
           { icon: <IconBox />, routes: ["/Bodegaagro", "/agregarproducto", "/Detallesagrop"] },
           { icon: <IconCloudRain />, routes: ["/variablesclimaticas", "/Registrarclima"] },
-          { icon: <IconTractor />, routes: ["/maquinariaequipos", "/registrarmaquina", "/registrarnovedad", "/hojadevida", "/historialtrabajo"] },
+          { icon: <IconTractor />, routes: ["/maquinariaequipos", "/registrarmaquina", "/registrarnovedad", "/hojadevida", "/historialtrabajo", "/detalle_mantenimiento"] },
           { icon: <IconUsersGroup />, routes: ["/manejopersonal", "/registrarempleado", "/editarempleado"] },
           { icon: <IconPlant />, routes: ["/gestionfincas", "/crearfinca"] },
           { icon: <IconFrame />, routes: ["/gestionlotes", "/crearlote"] },
