@@ -49,7 +49,8 @@ api.interceptors.response.use(
         const refresh = localStorage.getItem("refresh");
         if (!refresh) throw new Error("No refresh token");
 
-        const res = await axios.post(`${API}/accounts/token/refresh/`, { refresh });
+        // 👇 usar ENDPOINT centralizado
+        const res = await axios.post(`${API}${ENDPOINTS.refresh}`, { refresh });
         const newAccess = res.data.access;
 
         localStorage.setItem("access", newAccess);
@@ -75,13 +76,14 @@ api.interceptors.response.use(
 
 // ===== ENDPOINTS centralizados =====
 export const ENDPOINTS = {
-  login: "api/accounts/token/",
-  me: "api/accounts/me/",
-  logout: "api/accounts/logout/",
-  checkEmail: "api/accounts/check-email/",
-  sendCode: "api/accounts/send-code/",
-  verifyCode: "api/accounts/verify-code/",
-  resetPassword: "api/accounts/reset-password/",
+  login: "/api/accounts/token/",
+  refresh: "/api/accounts/token/refresh/", // 👈 añadido
+  me: "/api/accounts/me/",
+  logout: "/api/accounts/logout/",
+  checkEmail: "/api/accounts/check-email/",
+  sendCode: "/api/accounts/send-code/",
+  verifyCode: "/api/accounts/verify-code/",
+  resetPassword: "/api/accounts/reset-password/",
 };
 
 // ===== Funciones de autenticación =====
@@ -92,7 +94,7 @@ export const getMe = () => api.get(ENDPOINTS.me);
 
 export const logout = () => api.post(ENDPOINTS.logout);
 
-export const checkEmail = (email) =>  // 👈 nueva función helper
+export const checkEmail = (email) =>
   api.post(ENDPOINTS.checkEmail, { email });
 
 export const resetPassword = (email, password) =>
@@ -115,14 +117,11 @@ export const soporteApi = {
   updateTicket: (id, data) => api.patch(`/soporte/tickets/${id}/`, data), // 👈 AHORA PATCH
 };
 
-
 export const sendCode = (email) =>
   api.post(ENDPOINTS.sendCode, { email });
 
 export const verifyCode = (email, code) =>
   api.post(ENDPOINTS.verifyCode, { email, code });
-
-
 
 // ===== Export principal =====
 export default api;

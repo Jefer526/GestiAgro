@@ -1,46 +1,85 @@
-// src/pages/agronomo/Gestion_fincas.jsx
+// src/pages/agronomo/Gestion_lotes_agro.jsx
 import React, { useState, useRef, useEffect } from "react";
 import {
   IconFilter,
   IconSortAscending2,
   IconSortDescending2,
+  IconEye,
+  IconPlus,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
+import api from "../../services/apiClient";
 
-const Gestion_fincas = () => {
+const Gestion_lotes_agro = () => {
   const navigate = useNavigate();
   const filtroRef = useRef(null);
 
-  const fincas = [
-    {
-      id: "01",
-      nombre: "La Esmeralda",
-      area_bruta: "20 ha",
-      area_neta: "18 ha",
-      municipio: "Neiva",
-      departamento: "Huila",
-      estado: "Activa",
-    },
-    {
-      id: "02",
-      nombre: "Las Palmas",
-      area_bruta: "25 ha",
-      area_neta: "22 ha",
-      municipio: "Florencia",
-      departamento: "Caquetá",
-      estado: "Inactiva",
-    },
-  ];
+  const [lotes, setLotes] = useState([]);
+  const [fincas, setFincas] = useState([]);
 
-  const columnas = ["nombre", "area_bruta", "area_neta", "ubicacion", "estado"];
-
+  // --- Filtros y orden ---
   const [filtroActivo, setFiltroActivo] = useState(null);
   const [filtroPosicion, setFiltroPosicion] = useState({ top: 0, left: 0 });
   const [busquedas, setBusquedas] = useState({});
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
 
+  // === 📌 Obtener fincas y lotes desde API ===
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [resFincas, resLotes] = await Promise.all([
+          api.get("/api/fincas/"),
+          api.get("/api/lotes/"),
+        ]);
+
+        const fincasData = resFincas.data;
+        const lotesData = resLotes.data;
+
+        const lotesConFincas = [...lotesData];
+        fincasData.forEach((f) => {
+          const tieneLotes = lotesData.some((l) => l.finca === f.id);
+          if (!tieneLotes) {
+            lotesConFincas.push({
+              id: `finca-${f.id}`,
+              finca: f.id,
+              finca_nombre: f.nombre,
+              lote: "-",
+              cultivo: "-",
+              numero_arboles: 0,
+              variedades: [],
+              variedades_detalle: [],
+              area_neta: 0,
+              area_bruta: 0,
+              estado: "Sin lotes",
+              detalles: null,
+            });
+          }
+        });
+
+        setFincas(fincasData);
+        setLotes(lotesConFincas);
+      } catch (err) {
+        console.error("❌ Error al cargar datos:", err);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const columnas = [
+    "finca_nombre",
+    "lote",
+    "cultivo",
+    "numero_arboles",
+    "variedades",
+    "area_neta",
+    "area_bruta",
+    "estado",
+    "detalles",
+  ];
+
+  // === 🔎 Manejo de filtros ===
   const toggleFiltro = (campo, event) => {
     const icono = event.currentTarget.getBoundingClientRect();
     setFiltroActivo(filtroActivo === campo ? null : campo);
@@ -52,8 +91,13 @@ const Gestion_fincas = () => {
 
   const toggleValor = (campo, valor) => {
     const seleccionados = new Set(valoresSeleccionados[campo] || []);
-    seleccionados.has(valor) ? seleccionados.delete(valor) : seleccionados.add(valor);
-    setValoresSeleccionados({ ...valoresSeleccionados, [campo]: [...seleccionados] });
+    seleccionados.has(valor)
+      ? seleccionados.delete(valor)
+      : seleccionados.add(valor);
+    setValoresSeleccionados({
+      ...valoresSeleccionados,
+      [campo]: [...seleccionados],
+    });
   };
 
   const limpiarFiltro = (campo) => {
@@ -72,36 +116,92 @@ const Gestion_fincas = () => {
 
   const getValoresUnicos = (campo) => {
     const search = (busquedas[campo] || "").toLowerCase();
-    return [
-      ...new Set(
-        fincas.map((d) =>
-          campo === "ubicacion" ? `${d.municipio}, ${d.departamento}` : d[campo]
-        )
-      ),
-    ].filter((v) => String(v).toLowerCase().includes(search));
+
+    if (campo === "variedades") {
+      const todasVariedades = lotes.flatMap(
+        (d) => (d.variedades_detalle || []).map((v) => v.variedad)
+      );
+      return [...new Set(todasVariedades)].filter((v) =>
+        String(v).toLowerCase().includes(search)
+      );
+    }
+
+    return [...new Set(lotes.map((d) => d[campo]))].filter((v) =>
+      String(v).toLowerCase().includes(search)
+    );
   };
 
-  const fincasFiltradas = fincas
-    .map((f) => ({
-      ...f,
-      ubicacion: `${f.municipio}, ${f.departamento}`,
-    }))
+  // === 🔎 Filtro y ordenamiento de lotes ===
+  const lotesFiltrados = lotes
     .filter((d) =>
-      columnas.every((campo) =>
-        !valoresSeleccionados[campo] ||
-        valoresSeleccionados[campo].length === 0
-          ? true
-          : valoresSeleccionados[campo].includes(d[campo])
-      )
+      columnas.every((campo) => {
+        if (campo === "detalles") return true;
+
+        const seleccionados = valoresSeleccionados[campo] || [];
+        if (seleccionados.length === 0) return true;
+
+        if (campo === "variedades") {
+          if (seleccionados.length === 1) {
+            return (d.variedades_detalle || []).some(
+              (v) => v.variedad === seleccionados[0]
+            );
+          }
+          return seleccionados.every((sel) =>
+            (d.variedades_detalle || []).some((v) => v.variedad === sel)
+          );
+        }
+
+        return seleccionados.includes(d[campo]);
+      })
     )
     .sort((a, b) => {
       if (!ordenCampo) return 0;
       const { campo, orden } = ordenCampo;
+      if (campo === "detalles") return 0;
+
+      const valA =
+        campo === "variedades"
+          ? (a.variedades_detalle || []).map((v) => v.variedad).join(", ")
+          : a[campo];
+      const valB =
+        campo === "variedades"
+          ? (b.variedades_detalle || []).map((v) => v.variedad).join(", ")
+          : b[campo];
+
       return orden === "asc"
-        ? String(a[campo]).localeCompare(String(b[campo]))
-        : String(b[campo]).localeCompare(String(a[campo]));
+        ? String(valA).localeCompare(String(valB))
+        : String(valB).localeCompare(String(valA));
     });
 
+  // === Calcular Totales ===
+  const lotesReales = lotesFiltrados.filter((l) => l.estado !== "Sin lotes");
+  const totalArboles = lotesReales.reduce(
+    (acc, l) => acc + (Number(l.numero_arboles) || 0),
+    0
+  );
+  const totalAreaNeta = lotesReales.reduce(
+    (acc, l) => acc + parseFloat(l.area_neta || 0),
+    0
+  );
+  const totalAreaBruta = lotesReales.reduce(
+    (acc, l) => acc + parseFloat(l.area_bruta || 0),
+    0
+  );
+
+  // ✅ Total de variedades (se ajusta con filtros)
+  const seleccionadas = valoresSeleccionados["variedades"] || [];
+  const totalVariedades = lotesReales.reduce((acc, lote) => {
+    const variedades = lote.variedades_detalle || [];
+    const visibles =
+      seleccionadas.length > 0
+        ? variedades.filter((v) => seleccionadas.includes(v.variedad))
+        : variedades;
+    return (
+      acc + visibles.reduce((sum, v) => sum + (Number(v.cantidad) || 0), 0)
+    );
+  }, 0);
+
+  // === Cerrar filtro al hacer click fuera ===
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (filtroRef.current && !filtroRef.current.contains(e.target)) {
@@ -112,11 +212,36 @@ const Gestion_fincas = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // === Cambiar estado ===
+  const handleCambiarEstado = (id) => {
+    const lote = lotes.find((l) => l.id === id);
+    if (!lote || lote.estado === "Sin lotes") return;
+
+    const nuevoEstado = lote.estado === "Activo" ? "Inactivo" : "Activo";
+    const confirmar = window.confirm(
+      `¿Estás seguro de cambiar el estado del lote ${lote.lote} a "${nuevoEstado}"?`
+    );
+
+    if (confirmar) {
+      setLotes((prev) =>
+        prev.map((l) => (l.id === id ? { ...l, estado: nuevoEstado } : l))
+      );
+    }
+  };
+
   return (
     <LayoutAgronomo>
-      <h1 className="text-3xl font-bold text-green-700 mb-6">
-        Gestión de Fincas
-      </h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-green-700">
+          Gestión de Fincas y Lotes
+        </h1>
+        <button
+          onClick={() => navigate("/crearfinca")}
+          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center gap-2"
+        >
+          <IconPlus className="w-5 h-5" /> Añadir Finca
+        </button>
+      </div>
 
       <div className="overflow-x-auto rounded-lg shadow-lg">
         <table className="min-w-full text-center text-base bg-white">
@@ -129,30 +254,100 @@ const Gestion_fincas = () => {
                       ? "ÁREA BRUTA"
                       : campo === "area_neta"
                       ? "ÁREA NETA"
+                      : campo === "numero_arboles"
+                      ? "NÚMERO DE ÁRBOLES"
+                      : campo === "variedades"
+                      ? "VARIEDADES"
+                      : campo === "finca_nombre"
+                      ? "FINCA"
+                      : campo === "detalles"
+                      ? "DETALLES"
                       : campo.toUpperCase()}
-                    <button onClick={(e) => toggleFiltro(campo, e)}>
-                      <IconFilter className="w-4 h-4" />
-                    </button>
+                    {campo !== "detalles" && (
+                      <button onClick={(e) => toggleFiltro(campo, e)}>
+                        <IconFilter className="w-4 h-4" />
+                      </button>
+                    )}
                   </div>
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {fincasFiltradas.map((finca, idx) => (
+            {lotesFiltrados.map((lote, idx) => (
               <tr key={idx} className="hover:bg-gray-100">
                 {columnas.map((campo, j) => (
                   <td key={j} className="p-4 border text-center">
-                    {finca[campo]}
+                    {campo === "detalles" ? (
+                      lote.estado === "Sin lotes" ? (
+                        "-"
+                      ) : (
+                        <div className="flex justify-center">
+                          <button
+                            onClick={() =>
+                              navigate(`/editarfinca/${lote.finca}`)
+                            }
+                            className="text-green-600 hover:text-green-800 flex items-center gap-1"
+                          >
+                            <IconEye className="w-5 h-5" /> Ver
+                          </button>
+                        </div>
+                      )
+                    ) : campo === "estado" ? (
+                      <button
+                        onClick={() => handleCambiarEstado(lote.id)}
+                        className={`px-2 py-1 rounded text-sm font-medium ${
+                          lote.estado === "Activo"
+                            ? "bg-green-100 text-green-700 hover:bg-green-200"
+                            : lote.estado === "Sin lotes"
+                            ? "bg-red-100 text-red-600"
+                            : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                        }`}
+                      >
+                        {lote.estado}
+                      </button>
+                    ) : campo === "variedades" ? (
+                      (() => {
+                        const seleccionados = valoresSeleccionados["variedades"] || [];
+                        const variedades = lote.variedades_detalle || [];
+                        const visibles =
+                          seleccionados.length > 0
+                            ? variedades.filter((v) =>
+                                seleccionados.includes(v.variedad)
+                              )
+                            : variedades;
+                        return visibles
+                          .map((v) => `${v.variedad} (${v.cantidad})`)
+                          .join(", ");
+                      })()
+                    ) : (
+                      lote[campo]
+                    )}
                   </td>
                 ))}
               </tr>
             ))}
+
+            {/* === Fila de Totales === */}
+            <tr className="font-bold bg-gray-100">
+              <td colSpan={3} className="p-4 border text-right">
+                TOTAL
+              </td>
+              <td className="p-4 border text-center">{totalArboles}</td>
+              <td className="p-4 border text-center">{totalVariedades}</td>
+              <td className="p-4 border text-center">
+                {totalAreaNeta.toFixed(2)} ha
+              </td>
+              <td className="p-4 border text-center">
+                {totalAreaBruta.toFixed(2)} ha
+              </td>
+              <td className="p-4 border"></td>
+              <td className="p-4 border"></td>
+            </tr>
           </tbody>
         </table>
       </div>
-
-      {/* Filtro flotante */}
+      {/* === Filtro flotante === */}
       {filtroActivo && (
         <div
           ref={filtroRef}
@@ -192,33 +387,31 @@ const Gestion_fincas = () => {
                   onChange={() => toggleValor(filtroActivo, val)}
                   className="accent-green-600"
                 />
-                {String(val).charAt(0).toUpperCase() + String(val).slice(1)}
+                {String(val)}
               </label>
             ))}
           </div>
-          <button
-            onClick={() => limpiarFiltro(filtroActivo)}
-            className="text-blue-600 hover:underline text-xs mt-2"
-          >
-            Borrar filtro
-          </button>
+
+          {/* Botones Borrar / Aceptar */}
+          <div className="flex justify-between mt-3">
+            <button
+              onClick={() => limpiarFiltro(filtroActivo)}
+              className="bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-xs font-medium hover:bg-gray-300 transition"
+            >
+              Borrar
+            </button>
+            <button
+              onClick={() => setFiltroActivo(null)}
+              className="bg-green-600 text-white px-3 py-1 rounded-md text-xs font-medium hover:bg-green-700 transition"
+            >
+              Aceptar
+            </button>
+          </div>
         </div>
       )}
 
-      <div className="flex justify-center gap-8 mt-8">
-        <button
-          onClick={() => navigate("/crearfinca")}
-          className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 text-lg font-semibold"
-        >
-          Crear finca
-        </button>
-        <button className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 text-lg font-semibold">
-          Exportar
-        </button>
-      </div>
     </LayoutAgronomo>
   );
 };
 
-export default Gestion_fincas;
-
+export default Gestion_lotes_agro;

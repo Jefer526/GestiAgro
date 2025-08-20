@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IconChevronLeft, IconCheck } from "@tabler/icons-react";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
+import api from "../../services/apiClient"; // 👈 conexión con backend
 
 const Crear_finca_agro = () => {
   const navigate = useNavigate();
@@ -20,14 +21,19 @@ const Crear_finca_agro = () => {
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("✅ Finca creada:", formData);
-    setAlertaVisible(true);
-    setTimeout(() => {
-      setAlertaVisible(false);
-      navigate("/gestionfincas");
-    }, 2000);
+    try {
+      const res = await api.post("/api/fincas/", formData); // 👈 crea finca en el backend
+      console.log("✅ Finca creada:", res.data);
+      setAlertaVisible(true);
+      setTimeout(() => {
+        setAlertaVisible(false);
+        navigate("/gestionfincas"); // 👈 vuelve a la lista
+      }, 2000);
+    } catch (err) {
+      console.error("❌ Error al crear finca:", err.response?.data || err);
+    }
   };
 
   return (
@@ -53,10 +59,14 @@ const Crear_finca_agro = () => {
         className="max-w-2xl mx-auto bg-white border border-gray-200 rounded-xl p-8 shadow-md space-y-6 text-black"
       >
         {/* Título */}
-        <h2 className="text-3xl font-bold text-green-700">Registrar nueva finca</h2>
+        <h2 className="text-3xl font-bold text-green-700">
+          Registrar nueva finca
+        </h2>
 
         <div>
-          <label className="block mb-1 font-semibold text-black">Nombre de la finca</label>
+          <label className="block mb-1 font-semibold text-black">
+            Nombre de la finca
+          </label>
           <input
             name="nombre"
             value={formData.nombre}
@@ -68,8 +78,12 @@ const Crear_finca_agro = () => {
         </div>
 
         <div>
-          <label className="block mb-1 font-semibold text-black">Área bruta (ha)</label>
+          <label className="block mb-1 font-semibold text-black">
+            Área bruta (ha)
+          </label>
           <input
+            type="number"
+            step="0.01"
             name="area_bruta"
             value={formData.area_bruta}
             onChange={handleChange}
@@ -80,8 +94,12 @@ const Crear_finca_agro = () => {
         </div>
 
         <div>
-          <label className="block mb-1 font-semibold text-black">Área neta (ha)</label>
+          <label className="block mb-1 font-semibold text-black">
+            Área neta (ha)
+          </label>
           <input
+            type="number"
+            step="0.01"
             name="area_neta"
             value={formData.area_neta}
             onChange={handleChange}
@@ -104,7 +122,9 @@ const Crear_finca_agro = () => {
         </div>
 
         <div>
-          <label className="block mb-1 font-semibold text-black">Departamento</label>
+          <label className="block mb-1 font-semibold text-black">
+            Departamento
+          </label>
           <input
             name="departamento"
             value={formData.departamento}
@@ -137,9 +157,3 @@ const Crear_finca_agro = () => {
 };
 
 export default Crear_finca_agro;
-
-
-
-
-
-

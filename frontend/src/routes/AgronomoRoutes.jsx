@@ -20,9 +20,9 @@ import Manejo_personal_agro from "../pages/agronomo/Manejo_personal_agro";
 import Registrar_empleado from "../pages/agronomo/Registrar_empleado";
 import Editar_empleado from "../pages/agronomo/Editar_empleado";
 import Crear_finca_agro from "../pages/agronomo/Crear_finca_agro";
-import Editar_finca from "../pages/agronomo/Editar_finca";
 import Crear_lote_agro from "../pages/agronomo/Crear_lote_agro";
-import Editar_lote from "../pages/agronomo/Editar_lote";
+import Detalle_lote_agro from "../pages/agronomo/Detalle_lote_agro";
+import Editar_finca from "../pages/agronomo/Editar_finca";
 import Soporte_agro from "../pages/agronomo/Soporte_agro";
 import Ajustes_agro from "../pages/agronomo/Ajustes_agro";
 import Detalle_mantenimiento from "../pages/agronomo/Detalle_mantenimiento";
@@ -31,11 +31,11 @@ import Cuaderno_campo_agro from "../pages/agronomo/Cuaderno_campo_agro";
 import Registrarticketag from "../pages/agronomo/Registrarticketag"; 
 import Detalles_ticketa from "../pages/agronomo/Detalle_ticketa";
 import Gestion_fincas from "../pages/agronomo/Gestion_fincas";
-import Gestion_lotes_agro from "../pages/agronomo/Gestion_lotes";
 import Manejo_fitosanitario from "../pages/agronomo/Manejo_fitosanitario";
 import Historial_labor_agro from "../pages/agronomo/Historial_labor_agro";
 import Historial_campo_agro from "../pages/agronomo/Historial_campo_agro";
 import Detalle_campo_agro from "../pages/agronomo/Detalle_campo_agro";
+
 
 const agronomoRoutes = [
   <Route key="home" path="/homeagro" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Home_agro /></ProtectedRoute>} />,
@@ -57,9 +57,9 @@ const agronomoRoutes = [
   <Route key="registrar-empleado" path="/registrarempleado" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Registrar_empleado /></ProtectedRoute>} />,
   <Route key="editar-empleado" path="/editarempleado" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Editar_empleado /></ProtectedRoute>} />,
   <Route key="crear-finca" path="/crearfinca" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Crear_finca_agro /></ProtectedRoute>} />,
-  <Route key="editar-finca" path="/editarfinca" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Editar_finca /></ProtectedRoute>} />,
-  <Route key="crear-lote" path="/crearlote" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Crear_lote_agro /></ProtectedRoute>} />,
-  <Route key="editar-lote" path="/editarlote" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Editar_lote /></ProtectedRoute>} />,
+  <Route key="crear-lote" path="/crearlote/:fincaId" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Crear_lote_agro /></ProtectedRoute>} />,
+  <Route key="Detalle-lote" path="/Detallelote/:fincaId/:loteId" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Detalle_lote_agro /></ProtectedRoute>} />,
+  <Route key="editar-finca" path="/editarfinca/:id" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Editar_finca /></ProtectedRoute>} />,
   <Route key="soporte-agro" path="/soporteagro" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Soporte_agro /></ProtectedRoute>} />,
   <Route key="registrar-ticket-agro" path="/registrarticketag" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Registrarticketag /></ProtectedRoute>} />,
   <Route key="ajustes-agro" path="/ajustesagro" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Ajustes_agro /></ProtectedRoute>} />,
@@ -68,7 +68,6 @@ const agronomoRoutes = [
   <Route key="cuaderno-campo-agro" path="/cuadernocampo" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Cuaderno_campo_agro /></ProtectedRoute>} />,
   <Route key="detalles-ticketa" path="/detallesticketa" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Detalles_ticketa /></ProtectedRoute>} />,
   <Route key="gestion-fincas" path="/gestionfincas" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Gestion_fincas /></ProtectedRoute>} />,
-  <Route key="gestion-lotes" path="/gestionlotes" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Gestion_lotes_agro /></ProtectedRoute>} />,
   <Route key="manejo-fitosanitario" path="/manejofitosanitario" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Manejo_fitosanitario /></ProtectedRoute>} />,
   <Route key="historial-labor-agro" path="/historialagro" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Historial_labor_agro /></ProtectedRoute>} />,
   <Route key="historial-campo-agro" path="/historialcampo" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Historial_campo_agro /></ProtectedRoute>} />,

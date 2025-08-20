@@ -1,17 +1,17 @@
-// src/pages/agronomo/Crear_lote_agro.jsx
+// src/pages/agronomo/Detalle_lote_agro.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { IconChevronLeft, IconCheck, IconAlertTriangle } from "@tabler/icons-react";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
 import api from "../../services/apiClient";
 
-const Crear_lote_agro = () => {
+const Detalle_lote_agro = () => {
   const navigate = useNavigate();
-  const { fincaId } = useParams(); // 👈 id de la finca desde la URL
+  const { fincaId, loteId } = useParams(); // 👈 necesitamos tanto la finca como el lote
 
   const [finca, setFinca] = useState(null);
   const [formData, setFormData] = useState({
-    finca: fincaId, // 👈 ya fija
+    finca: fincaId,
     lote: "",
     cultivo: "",
     area_bruta: "",
@@ -19,22 +19,33 @@ const Crear_lote_agro = () => {
     estado: "Activo",
   });
 
-  const [arboles, setArboles] = useState([{ variedad: "", cantidad: "" }]);
+  const [arboles, setArboles] = useState([]);
   const [alertaVisible, setAlertaVisible] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  // 🔄 Obtener la finca desde API
+  // 🔄 Obtener finca y lote desde API
   useEffect(() => {
-    const fetchFinca = async () => {
+    const fetchData = async () => {
       try {
-        const res = await api.get(`/api/fincas/${fincaId}/`);
-        setFinca(res.data);
+        const fincaRes = await api.get(`/api/fincas/${fincaId}/`);
+        setFinca(fincaRes.data);
+
+        const loteRes = await api.get(`/api/lotes/${loteId}/`);
+        setFormData({
+          finca: loteRes.data.finca,
+          lote: loteRes.data.lote,
+          cultivo: loteRes.data.cultivo,
+          area_bruta: loteRes.data.area_bruta,
+          area_neta: loteRes.data.area_neta,
+          estado: loteRes.data.estado,
+        });
+        setArboles(loteRes.data.arboles || []);
       } catch (err) {
-        console.error("❌ Error al cargar finca:", err);
+        console.error("❌ Error al cargar datos:", err);
       }
     };
-    fetchFinca();
-  }, [fincaId]);
+    fetchData();
+  }, [fincaId, loteId]);
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -57,8 +68,8 @@ const Crear_lote_agro = () => {
     setErrorMsg("");
     try {
       const payload = { ...formData, arboles };
-      const res = await api.post("/api/lotes/", payload);
-      console.log("✅ Nuevo lote con árboles:", res.data);
+      const res = await api.put(`/api/lotes/${loteId}/`, payload); // 👈 UPDATE
+      console.log("✅ Lote actualizado:", res.data);
 
       setAlertaVisible(true);
       setTimeout(() => {
@@ -66,12 +77,8 @@ const Crear_lote_agro = () => {
         navigate(`/editarfinca/${fincaId}`);
       }, 2500);
     } catch (err) {
-      console.error("❌ Error al guardar lote:", err.response?.data || err);
-      if (err.response?.data?.lote) {
-        setErrorMsg(err.response.data.lote[0]);
-      } else {
-        setErrorMsg("El número de lote ya existe.");
-      }
+      console.error("❌ Error al actualizar lote:", err.response?.data || err);
+      setErrorMsg("Error al actualizar el lote. Revisa los datos.");
     }
   };
 
@@ -82,7 +89,7 @@ const Crear_lote_agro = () => {
         <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 
                         bg-green-600 text-white px-6 py-3 rounded-lg 
                         shadow-lg flex items-center gap-2 text-base font-semibold">
-          <IconCheck className="w-5 h-5" /> ¡Lote registrado exitosamente!
+          <IconCheck className="w-5 h-5" /> ¡Lote actualizado exitosamente!
         </div>
       )}
 
@@ -96,7 +103,6 @@ const Crear_lote_agro = () => {
       )}
 
       {/* 🔙 Botón volver */}
-
       <button
         onClick={() => navigate(`/editarfinca/${fincaId}`)}
         className="flex items-center text-green-700 font-semibold mb-4 text-lg hover:underline"
@@ -111,7 +117,7 @@ const Crear_lote_agro = () => {
                    rounded-xl p-8 shadow-md grid grid-cols-1 md:grid-cols-2 gap-6 text-black"
       >
         <h2 className="col-span-2 text-3xl font-bold text-green-700">
-          Registrar nuevo lote
+          Editar Lote
         </h2>
 
         {/* Finca fija */}
@@ -132,7 +138,6 @@ const Crear_lote_agro = () => {
             name="lote"
             value={formData.lote}
             onChange={handleChange}
-            placeholder="Ej: 1"
             className="w-full border p-3 rounded text-base"
             required
           />
@@ -145,7 +150,6 @@ const Crear_lote_agro = () => {
             name="cultivo"
             value={formData.cultivo}
             onChange={handleChange}
-            placeholder="Ej: Aguacate"
             className="w-full border p-3 rounded text-base"
             required
           />
@@ -160,7 +164,6 @@ const Crear_lote_agro = () => {
             name="area_bruta"
             value={formData.area_bruta}
             onChange={handleChange}
-            placeholder="Ej: 3.0"
             className="w-full border p-3 rounded text-base"
             required
           />
@@ -175,7 +178,6 @@ const Crear_lote_agro = () => {
             name="area_neta"
             value={formData.area_neta}
             onChange={handleChange}
-            placeholder="Ej: 2.5"
             className="w-full border p-3 rounded text-base"
             required
           />
@@ -243,7 +245,7 @@ const Crear_lote_agro = () => {
             type="submit"
             className="bg-green-600 text-white px-8 py-2 rounded hover:bg-green-700"
           >
-            Guardar lote
+            Guardar cambios
           </button>
           <button
             type="button"
@@ -258,4 +260,4 @@ const Crear_lote_agro = () => {
   );
 };
 
-export default Crear_lote_agro;
+export default Detalle_lote_agro;

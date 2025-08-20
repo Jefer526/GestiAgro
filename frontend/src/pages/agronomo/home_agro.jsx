@@ -124,24 +124,15 @@ const Home_agro = () => {
     },
     {
       icon: <IconPlant className="w-8 h-8" />,
-      label: "Gestión finca",
-      desc: "Registro y administración de fincas.",
+      label: "Gestión de Fincas y lotes",
+      desc: "Registro y administración de fincas y Lotes.",
       ruta: "/gestionfincas",
       gradient: "from-teal-500/20 to-emerald-500/20",
       ring: "ring-teal-300/40",
       iconBg: "bg-white/70",
       text: "text-teal-700",
     },
-    {
-      icon: <IconFrame className="w-8 h-8" />,
-      label: "Gestión lote",
-      desc: "Registro y administración de lotes.",
-      ruta: "/gestionlotes",
-      gradient: "from-rose-500/20 to-pink-500/20",
-      ring: "ring-rose-300/40",
-      iconBg: "bg-white/70",
-      text: "text-rose-700",
-    },
+
   ];
 
   return (

@@ -29,7 +29,6 @@ urlpatterns = [
     path("roles/", RolesListView.as_view(), name="roles-list"),
     path("auth/my-roles/", MyRolesView.as_view(), name="my-roles"),
 
- 
     path("check-email/", CheckEmailView.as_view(), name="check-email"),
     path("send-code/", SendVerificationCodeAPIView.as_view(), name="send-code"),
     path("verify-code/", VerifyCodeAPIView.as_view(), name="verify-code"),
