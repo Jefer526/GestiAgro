@@ -1,26 +1,42 @@
 // src/pages/agronomo/Registrar_empleado.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { IconChevronLeft, IconCheck } from "@tabler/icons-react";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
+import api from "../../services/apiClient";
 
 const Registrar_empleado = () => {
   const navigate = useNavigate();
   const [alertaVisible, setAlertaVisible] = useState(false);
-  const nombreUsuario = "Juan Pérez";
-  const letraInicial = (nombreUsuario?.trim()?.[0] || "U").toUpperCase();
+  const [fincas, setFincas] = useState([]);
+  const [form, setForm] = useState({
+    nombre: "",
+    cargo: "",
+    estado: "activo",
+    finca: "",
+    telefono: "",
+  });
+
+  useEffect(() => {
+    api.get("/api/fincas/").then((res) => setFincas(res.data));
+  }, []);
 
   const manejarGuardar = (e) => {
     e.preventDefault();
-    setAlertaVisible(true);
-    setTimeout(() => {
-      setAlertaVisible(false);
-      navigate("/manejopersonal");
-    }, 2000);
+    api
+      .post("/api/trabajadores/", form)
+      .then(() => {
+        setAlertaVisible(true);
+        setTimeout(() => {
+          setAlertaVisible(false);
+          navigate("/manejopersonal");
+        }, 2000);
+      })
+      .catch((err) => console.error("Error registrando empleado:", err));
   };
 
   return (
-    <LayoutAgronomo active="/manejopersonal" letraInicial={letraInicial}>
+    <LayoutAgronomo active="/manejopersonal">
       {/* ✅ Alerta */}
       {alertaVisible && (
         <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
@@ -36,7 +52,7 @@ const Registrar_empleado = () => {
         <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
       </button>
 
-      {/* ✅ Contenedor principal */}
+      {/* ✅ Formulario */}
       <form
         onSubmit={manejarGuardar}
         className="bg-white border border-gray-200 rounded-xl shadow-md p-8 w-full max-w-2xl mx-auto space-y-6 text-black"
@@ -45,62 +61,82 @@ const Registrar_empleado = () => {
           Registrar empleado
         </h2>
 
+        {/* Código generado automáticamente */}
         <div>
-          <label className="block mb-1 font-semibold text-black">Nombre completo</label>
+          <label className="block mb-1 font-semibold">Código empleado</label>
           <input
             type="text"
+            value="Se generará automáticamente"
+            disabled
+            className="w-full border p-3 rounded text-base bg-gray-100 text-gray-500"
+          />
+        </div>
+
+        <div>
+          <label className="block mb-1 font-semibold">Nombre completo</label>
+          <input
+            type="text"
+            value={form.nombre}
+            onChange={(e) => setForm({ ...form, nombre: e.target.value })}
             className="w-full border p-3 rounded text-base"
-            placeholder="Juan Pérez"
             required
           />
         </div>
 
         <div>
-          <label className="block mb-1 font-semibold text-black">Cargo</label>
+          <label className="block mb-1 font-semibold">Cargo</label>
           <input
             type="text"
+            value={form.cargo}
+            onChange={(e) => setForm({ ...form, cargo: e.target.value })}
             className="w-full border p-3 rounded text-base"
-            placeholder="Operario de campo"
             required
           />
         </div>
 
         <div>
-          <label className="block mb-1 font-semibold text-black">Estado</label>
+          <label className="block mb-1 font-semibold">Estado</label>
           <select
+            value={form.estado}
+            onChange={(e) => setForm({ ...form, estado: e.target.value })}
             className="w-full border p-3 rounded text-base"
             required
           >
-            <option>Activo</option>
-            <option>Inactivo</option>
-            <option>Vacaciones</option>
-            <option>Suspendido</option>
+            <option value="activo">Activo</option>
+            <option value="inactivo">Inactivo</option>
+            <option value="vacaciones">Vacaciones</option>
+            <option value="suspendido">Suspendido</option>
           </select>
         </div>
 
         <div>
-          <label className="block mb-1 font-semibold text-black">Finca</label>
+          <label className="block mb-1 font-semibold">Finca</label>
           <select
+            value={form.finca}
+            onChange={(e) => setForm({ ...form, finca: e.target.value })}
             className="w-full border p-3 rounded text-base"
-            required
           >
-            <option>La Esmeralda</option>
-            <option>La Carolina</option>
-            <option>Las Palmas</option>
+            <option value="">Seleccione finca</option>
+            {fincas.map((f) => (
+              <option key={f.id} value={f.id}>
+                {f.nombre}
+              </option>
+            ))}
           </select>
         </div>
 
         <div>
-          <label className="block mb-1 font-semibold text-black">Teléfono</label>
+          <label className="block mb-1 font-semibold">Teléfono</label>
           <input
             type="text"
+            value={form.telefono}
+            onChange={(e) => setForm({ ...form, telefono: e.target.value })}
             className="w-full border p-3 rounded text-base"
-            placeholder="3124567890"
             required
           />
         </div>
 
-        {/* ✅ Botones acción */}
+        {/* ✅ Botones */}
         <div className="flex justify-center space-x-6">
           <button
             type="submit"
@@ -122,4 +158,3 @@ const Registrar_empleado = () => {
 };
 
 export default Registrar_empleado;
-

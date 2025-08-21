@@ -10,3 +10,10 @@ class FincaViewSet(viewsets.ModelViewSet):
 class LoteViewSet(viewsets.ModelViewSet):
     queryset = Lote.objects.all()
     serializer_class = LoteSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        finca_id = self.request.query_params.get("finca")
+        if finca_id:
+            queryset = queryset.filter(finca_id=finca_id)
+        return queryset

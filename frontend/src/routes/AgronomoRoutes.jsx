@@ -55,7 +55,7 @@ const agronomoRoutes = [
   <Route key="registrar-novedad-hv" path="/registrarnovedadhv" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Registrar_novedad_hv /></ProtectedRoute>} />,
   <Route key="manejo-personal" path="/manejopersonal" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Manejo_personal_agro /></ProtectedRoute>} />,
   <Route key="registrar-empleado" path="/registrarempleado" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Registrar_empleado /></ProtectedRoute>} />,
-  <Route key="editar-empleado" path="/editarempleado" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Editar_empleado /></ProtectedRoute>} />,
+  <Route key="editar-empleado" path="/editarempleado/:id" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Editar_empleado /></ProtectedRoute>} />,
   <Route key="crear-finca" path="/crearfinca" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Crear_finca_agro /></ProtectedRoute>} />,
   <Route key="crear-lote" path="/crearlote/:fincaId" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Crear_lote_agro /></ProtectedRoute>} />,
   <Route key="Detalle-lote" path="/Detallelote/:fincaId/:loteId" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Detalle_lote_agro /></ProtectedRoute>} />,

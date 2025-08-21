@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'accounts',
     'soporte',
     "fincas",
+    "trabajadores",
 ]
 
 

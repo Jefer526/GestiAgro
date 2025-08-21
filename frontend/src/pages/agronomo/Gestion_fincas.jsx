@@ -194,7 +194,7 @@ const Gestion_lotes_agro = () => {
     const variedades = lote.variedades_detalle || [];
     const visibles =
       seleccionadas.length > 0
-        ? variedades.filter((v) => seleccionadas.includes(v.variedad))
+        ? variedades.filter((v) => seleccionados.includes(v.variedad))
         : variedades;
     return (
       acc + visibles.reduce((sum, v) => sum + (Number(v.cantidad) || 0), 0)
@@ -279,20 +279,14 @@ const Gestion_lotes_agro = () => {
                 {columnas.map((campo, j) => (
                   <td key={j} className="p-4 border text-center">
                     {campo === "detalles" ? (
-                      lote.estado === "Sin lotes" ? (
-                        "-"
-                      ) : (
-                        <div className="flex justify-center">
-                          <button
-                            onClick={() =>
-                              navigate(`/editarfinca/${lote.finca}`)
-                            }
-                            className="text-green-600 hover:text-green-800 flex items-center gap-1"
-                          >
-                            <IconEye className="w-5 h-5" /> Ver
-                          </button>
-                        </div>
-                      )
+                      <div className="flex justify-center">
+                        <button
+                          onClick={() => navigate(`/editarfinca/${lote.finca}`)}
+                          className="text-green-600 hover:text-green-800 flex items-center gap-1"
+                        >
+                          <IconEye className="w-5 h-5" /> Ver
+                        </button>
+                      </div>
                     ) : campo === "estado" ? (
                       <button
                         onClick={() => handleCambiarEstado(lote.id)}
@@ -308,7 +302,8 @@ const Gestion_lotes_agro = () => {
                       </button>
                     ) : campo === "variedades" ? (
                       (() => {
-                        const seleccionados = valoresSeleccionados["variedades"] || [];
+                        const seleccionados =
+                          valoresSeleccionados["variedades"] || [];
                         const variedades = lote.variedades_detalle || [];
                         const visibles =
                           seleccionados.length > 0
@@ -351,7 +346,7 @@ const Gestion_lotes_agro = () => {
       {filtroActivo && (
         <div
           ref={filtroRef}
-          className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60 text-left text-sm"
+          className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60"
           style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
         >
           <div className="font-semibold mb-2">
@@ -383,7 +378,9 @@ const Gestion_lotes_agro = () => {
               <label key={idx} className="flex items-center gap-2 mb-1">
                 <input
                   type="checkbox"
-                  checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
+                  checked={(valoresSeleccionados[filtroActivo] || []).includes(
+                    val
+                  )}
                   onChange={() => toggleValor(filtroActivo, val)}
                   className="accent-green-600"
                 />
@@ -409,7 +406,6 @@ const Gestion_lotes_agro = () => {
           </div>
         </div>
       )}
-
     </LayoutAgronomo>
   );
 };
