@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'soporte',
     "fincas",
     "trabajadores",
+    "django_extensions",
 ]
 
 

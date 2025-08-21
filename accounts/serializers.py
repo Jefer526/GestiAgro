@@ -1,13 +1,20 @@
+# accounts/serializers.py
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from fincas.models import Finca   # 👈 para acceder al nombre/id de la finca
 
 User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
     tiene_password = serializers.SerializerMethodField()
+    finca_asignada = serializers.PrimaryKeyRelatedField(
+        queryset=Finca.objects.all(),
+        allow_null=True,
+        required=False
+    )
 
     class Meta:
         model = User
@@ -22,10 +29,23 @@ class UserSerializer(serializers.ModelSerializer):
             "is_staff",
             "is_demo",
             "tiene_password",
+            "finca_asignada",
         ]
 
     def get_tiene_password(self, obj):
         return obj.has_usable_password()
+
+    # ⚡ Representar la finca como objeto {id, nombre}
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        if instance.finca_asignada:
+            rep["finca_asignada"] = {
+                "id": instance.finca_asignada.id,
+                "nombre": instance.finca_asignada.nombre,
+            }
+        else:
+            rep["finca_asignada"] = None
+        return rep
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -98,6 +118,11 @@ class SetPasswordSerializer(serializers.Serializer):
 
 class UserUpdateSerializer(serializers.ModelSerializer):
     tiene_password = serializers.SerializerMethodField()
+    finca_asignada = serializers.PrimaryKeyRelatedField(
+        queryset=Finca.objects.all(),
+        allow_null=True,
+        required=False
+    )
 
     class Meta:
         model = User
@@ -112,6 +137,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             "is_staff",
             "is_demo",
             "tiene_password",
+            "finca_asignada",
         ]
         extra_kwargs = {
             "email": {"required": False}
@@ -120,8 +146,19 @@ class UserUpdateSerializer(serializers.ModelSerializer):
     def get_tiene_password(self, obj):
         return obj.has_usable_password()
 
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        if instance.finca_asignada:
+            rep["finca_asignada"] = {
+                "id": instance.finca_asignada.id,
+                "nombre": instance.finca_asignada.nombre,
+            }
+        else:
+            rep["finca_asignada"] = None
+        return rep
+
 
 class UserRoleUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "rol"]
+        fields = ["id", "rol", "finca_asignada"]  # 👈 permitir actualizar la finca

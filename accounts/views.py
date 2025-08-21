@@ -25,7 +25,11 @@ from .serializers import (
 )
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
+# 👇 importamos tu permiso nuevo
+from .permissions import EsAdminOAgronomo  
+
 User = get_user_model()
+
 
 # ===== Login extendido (tokens + usuario) =====
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -42,6 +46,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         }
         return data
 
+
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
@@ -50,7 +55,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
 class RegisterView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = RegisterSerializer
-    throttle_classes = [AnonRateThrottle]   # protección básica
+    throttle_classes = [AnonRateThrottle]
 
 
 # ===== Yo mismo =====
@@ -105,7 +110,7 @@ class DemoSignupAPIView(APIView):
         return Response(
             {
                 "message": "Registro recibido. Revisa tu correo para establecer la contraseña.",
-                "set_password_url_demo": set_password_url,  # solo en desarrollo
+                "set_password_url_demo": set_password_url,
             },
             status=status.HTTP_201_CREATED,
         )
@@ -145,7 +150,7 @@ class SetPasswordAPIView(APIView):
             )
 
 
-# ===== Nuevo: Cambiar contraseña (usuario autenticado) =====
+# ===== Cambiar contraseña (usuario autenticado) =====
 class ChangePasswordAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     throttle_classes = [UserRateThrottle]
@@ -156,30 +161,30 @@ class ChangePasswordAPIView(APIView):
         new_password = request.data.get("new_password")
 
         if not old_password or not new_password:
-            return Response({"detail": "Faltan campos."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Faltan campos."}, status=400)
 
         if not user.check_password(old_password):
-            return Response({"detail": "Contraseña actual incorrecta."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Contraseña actual incorrecta."}, status=400)
 
         if len(new_password) < 8:
-            return Response({"detail": "La nueva contraseña debe tener al menos 8 caracteres."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "La nueva contraseña debe tener al menos 8 caracteres."}, status=400)
 
         user.set_password(new_password)
         user.save()
-        return Response({"detail": "Contraseña cambiada correctamente."}, status=status.HTTP_200_OK)
+        return Response({"detail": "Contraseña cambiada correctamente."}, status=200)
 
 
 # ===== Listado de usuarios =====
 class UsersListView(generics.ListAPIView):
     queryset = User.objects.all().order_by('id')
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [EsAdminOAgronomo]
     authentication_classes = [JWTAuthentication]
 
 
 # ===== Activar / desactivar usuario =====
 class AccountsUserToggleActiveAPIView(APIView):
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [EsAdminOAgronomo]
 
     def patch(self, request, pk):
         try:
@@ -187,17 +192,11 @@ class AccountsUserToggleActiveAPIView(APIView):
         except User.DoesNotExist:
             return Response({"detail": "Usuario no encontrado"}, status=404)
 
-        # 🚫 Bloqueo para superusuarios
         if user.is_superuser and request.data.get("is_active") is False:
-            return Response(
-                {"detail": "No se puede desactivar un superusuario."},
-                status=400
-            )
+            return Response({"detail": "No se puede desactivar un superusuario."}, status=400)
+
         if user.is_superuser and not request.data.get("is_active") and user.is_active:
-            return Response(
-                {"detail": "No se puede desactivar un superusuario."},
-                status=400
-            )
+            return Response({"detail": "No se puede desactivar un superusuario."}, status=400)
 
         is_active = request.data.get("is_active")
         if isinstance(is_active, bool):
@@ -213,11 +212,11 @@ class AccountsUserToggleActiveAPIView(APIView):
 class UserDetailUpdateView(generics.RetrieveUpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserUpdateSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [EsAdminOAgronomo]
     authentication_classes = [JWTAuthentication]
 
     def update(self, request, *args, **kwargs):
-        kwargs['partial'] = True  # permite actualizar solo algunos campos
+        kwargs['partial'] = True
         data = request.data.copy()
         if 'nombre' in data and 'first_name' not in data:
             data['first_name'] = data['nombre']
@@ -228,6 +227,7 @@ class UserDetailUpdateView(generics.RetrieveUpdateAPIView):
         return Response(serializer.data)
 
 
+# ===== Enviar contraseña temporal =====
 class SendTemporaryPasswordAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -235,13 +235,10 @@ class SendTemporaryPasswordAPIView(APIView):
         try:
             user = User.objects.get(pk=pk)
         except User.DoesNotExist:
-            return Response({"detail": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"detail": "Usuario no encontrado."}, status=404)
 
         if user.is_superuser:
-            return Response(
-                {"detail": "No se puede cambiar la contraseña de un superusuario."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"detail": "No se puede cambiar la contraseña de un superusuario."}, status=400)
 
         temp_password = get_random_string(length=8)
         user.set_password(temp_password)
@@ -260,24 +257,16 @@ class SendTemporaryPasswordAPIView(APIView):
                 fail_silently=False,
             )
         except Exception as e:
-            return Response(
-                {"detail": f"Error al enviar el correo: {str(e)}"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+            return Response({"detail": f"Error al enviar el correo: {str(e)}"}, status=500)
 
-        return Response(
-            {
-                "detail": "Contraseña temporal enviada por correo."
-            },
-            status=status.HTTP_200_OK
-        )
+        return Response({"detail": "Contraseña temporal enviada por correo."}, status=200)
 
 
 # ===== Actualizar rol de usuario =====
 class UpdateUserRoleView(generics.UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserRoleUpdateSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [EsAdminOAgronomo]
     authentication_classes = [JWTAuthentication]
 
     def update(self, request, *args, **kwargs):
@@ -288,15 +277,12 @@ class UpdateUserRoleView(generics.UpdateAPIView):
         roles_validos = ["admin", "agronomo", "mayordomo"]
 
         if nuevo_rol not in roles_validos:
-            return Response(
-                {"detail": "Rol inválido. Debe ser admin, agronomo o mayordomo."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"detail": "Rol inválido. Debe ser admin, agronomo o mayordomo."}, status=400)
 
         instance.rol = nuevo_rol
         instance.save()
 
-        return Response(UserSerializer(instance).data, status=status.HTTP_200_OK)
+        return Response(UserSerializer(instance).data, status=200)
 
 
 # ===== Listado de roles =====
@@ -310,7 +296,7 @@ class RolesListView(APIView):
             {"id": 2, "nombre": "Agrónomo"},
             {"id": 3, "nombre": "Mayordomo"},
         ]
-        return Response(roles, status=status.HTTP_200_OK)
+        return Response(roles, status=200)
 
 
 class MyRolesView(APIView):
@@ -319,9 +305,9 @@ class MyRolesView(APIView):
     def get(self, request):
         user = request.user
         return Response([user.get_rol_display()])
-    
 
-# ===== Verificar email y si tiene contraseña =====
+
+# ===== Verificar email =====
 class CheckEmailView(APIView):
     permission_classes = [permissions.AllowAny]
     throttle_classes = [AnonRateThrottle]
@@ -336,18 +322,12 @@ class CheckEmailView(APIView):
         except User.DoesNotExist:
             return Response({"detail": "No existe este correo."}, status=404)
 
-        # 🔑 verificar si tiene contraseña usable
         tiene_password = bool(user.password and user.has_usable_password())
 
-        return Response(
-            {
-                "detail": "Correo válido.",
-                "tiene_password": tiene_password
-            },
-            status=200
-        )
+        return Response({"detail": "Correo válido.", "tiene_password": tiene_password}, status=200)
 
-# ===== Enviar código de verificación al correo =====
+
+# ===== Enviar código de verificación =====
 class SendVerificationCodeAPIView(APIView):
     permission_classes = [permissions.AllowAny]
 
@@ -361,14 +341,11 @@ class SendVerificationCodeAPIView(APIView):
         except User.DoesNotExist:
             return Response({"detail": "Correo no registrado."}, status=404)
 
-        # Generar un código temporal (6 dígitos)
         code = get_random_string(length=6, allowed_chars="0123456789")
 
-        # Guardarlo en cache o en un campo temporal del usuario
         from django.core.cache import cache
-        cache.set(f"verify_code_{user.id}", code, timeout=300)  # expira en 5 min
+        cache.set(f"verify_code_{user.id}", code, timeout=300)
 
-        # Enviar correo
         try:
             send_mail(
                 subject="Código de verificación - GestiAgro",
@@ -383,7 +360,7 @@ class SendVerificationCodeAPIView(APIView):
         return Response({"detail": "Código enviado al correo."}, status=200)
 
 
-# ===== Verificar el código ingresado =====
+# ===== Verificar código =====
 class VerifyCodeAPIView(APIView):
     permission_classes = [permissions.AllowAny]
 
@@ -405,11 +382,11 @@ class VerifyCodeAPIView(APIView):
         if not saved_code or saved_code != code:
             return Response({"detail": "Código inválido o expirado."}, status=400)
 
-        # ✅ Código correcto → puedes marcarlo como validado
         cache.delete(f"verify_code_{user.id}")
         return Response({"detail": "Código verificado."}, status=200)
-    
 
+
+# ===== Resetear contraseña =====
 class ResetPasswordAPIView(APIView):
     permission_classes = [permissions.AllowAny]
 

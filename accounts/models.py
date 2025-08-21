@@ -30,9 +30,19 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     nombre = models.CharField(max_length=150)
     telefono = models.CharField(max_length=20, blank=True, null=True)
 
-    rol = models.CharField(max_length=20, choices=ROLES, default="agronomo")
-    is_demo = models.BooleanField(default=True)
+    rol = models.CharField(max_length=20, choices=ROLES, default="mayordomo")
 
+
+    finca_asignada = models.ForeignKey(   # 👈 nuevo
+        "fincas.Finca",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="mayordomos"
+    )
+
+
+    is_demo = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 

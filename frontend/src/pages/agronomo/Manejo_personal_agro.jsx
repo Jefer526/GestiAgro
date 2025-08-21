@@ -5,6 +5,7 @@ import {
   IconSortAscending2,
   IconSortDescending2,
   IconPencil,
+  IconUserCog,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
@@ -44,9 +45,19 @@ const Manejo_personal_agro = () => {
 
   return (
     <LayoutAgronomo>
-      <h1 className="text-3xl font-bold text-green-700 mb-6">
-        Manejo Personal
-      </h1>
+      {/* Encabezado con botón a la derecha */}
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-3xl font-bold text-green-700">
+          Manejo Personal
+        </h1>
+        <button
+          onClick={() => navigate("/gestionmayordomo")}
+          className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 font-semibold shadow"
+        >
+          <IconUserCog className="w-5 h-5" />
+          Gestionar mayordomo
+        </button>
+      </div>
 
       <div className="overflow-x-auto rounded-lg shadow-lg">
         <table className="min-w-full text-center text-base bg-white">
