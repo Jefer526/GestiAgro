@@ -77,7 +77,7 @@ api.interceptors.response.use(
 // ===== ENDPOINTS centralizados =====
 export const ENDPOINTS = {
   login: "/api/accounts/token/",
-  refresh: "/api/accounts/token/refresh/", // 👈 añadido
+  refresh: "/api/accounts/token/refresh/",
   me: "/api/accounts/me/",
   logout: "/api/accounts/logout/",
   checkEmail: "/api/accounts/check-email/",
@@ -109,12 +109,12 @@ export const accountsApi = {
   updateRole: (id, data) => api.put(`/api/accounts/update-role/${id}/`, data),
 };
 
-// ===== Nuevo: API Soporte =====
+// ===== API Soporte =====
 export const soporteApi = {
   listTickets: () => api.get("/soporte/tickets/"),
   getTicket: (id) => api.get(`/soporte/tickets/${id}/`),
   createTicket: (data) => api.post("/soporte/tickets/", data),
-  updateTicket: (id, data) => api.patch(`/soporte/tickets/${id}/`, data), // 👈 AHORA PATCH
+  updateTicket: (id, data) => api.patch(`/soporte/tickets/${id}/`, data),
 };
 
 export const sendCode = (email) =>
@@ -122,6 +122,36 @@ export const sendCode = (email) =>
 
 export const verifyCode = (email, code) =>
   api.post(ENDPOINTS.verifyCode, { email, code });
+
+// ===== API Equipos =====
+export const equiposApi = {
+  list: () => api.get("/api/equipos/maquinas/"),
+  get: (id) => api.get(`/api/equipos/maquinas/${id}/`),
+  create: (data) => api.post("/api/equipos/maquinas/", data),
+  update: (id, data) => api.patch(`/api/equipos/maquinas/${id}/`, data),
+  delete: (id) => api.delete(`/api/equipos/maquinas/${id}/`),
+};
+
+// ===== API Mantenimientos =====
+export const mantenimientosApi = {
+  list: () => api.get("/api/equipos/mantenimientos/"),
+  get: (id) => api.get(`/api/equipos/mantenimientos/${id}/`),
+  create: (data) => api.post("/api/equipos/mantenimientos/", data),
+  update: (id, data) => api.patch(`/api/equipos/mantenimientos/${id}/`, data),
+  delete: (id) => api.delete(`/api/equipos/mantenimientos/${id}/`),
+};
+
+// ===== API Labores Maquinaria =====
+export const laboresMaquinariaApi = {
+  list: (maquinaId) => api.get(`/api/equipos/maquinas/${maquinaId}/labores/`),
+  create: (data) => api.post("/api/equipos/labores/", data),
+};
+
+// ===== API Lotes =====
+export const lotesApi = {
+  // ✅ corregido: ahora usa query param finca=ID
+  listByFinca: (fincaId) => api.get(`/api/lotes/?finca=${fincaId}`),
+};
 
 // ===== Export principal =====
 export default api;

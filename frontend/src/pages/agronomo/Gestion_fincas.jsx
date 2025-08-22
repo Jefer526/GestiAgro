@@ -21,8 +21,8 @@ const Gestion_lotes_agro = () => {
   // --- Filtros y orden ---
   const [filtroActivo, setFiltroActivo] = useState(null);
   const [filtroPosicion, setFiltroPosicion] = useState({ top: 0, left: 0 });
-  const [busquedas, setBusquedas] = useState({});
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
+  const [busquedas, setBusquedas] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
 
   // === 📌 Obtener fincas y lotes desde API ===
@@ -79,9 +79,27 @@ const Gestion_lotes_agro = () => {
     "detalles",
   ];
 
-  // === 🔎 Manejo de filtros ===
-  const toggleFiltro = (campo, event) => {
-    const icono = event.currentTarget.getBoundingClientRect();
+  // === 🔎 Filtros ===
+  const getValoresUnicos = (campo) => {
+    const search = (busquedas[campo] || "").toLowerCase();
+
+    if (campo === "variedades") {
+      const todasVariedades = lotes.flatMap(
+        (d) => (d.variedades_detalle || []).map((v) => v.variedad)
+      );
+      return [...new Set(todasVariedades)].filter((v) =>
+        String(v).toLowerCase().includes(search)
+      );
+    }
+
+    return [...new Set(lotes.map((d) => String(d[campo] || "")))].filter((v) =>
+      v.toLowerCase().includes(search)
+    );
+  };
+
+  const toggleFiltro = (campo, e) => {
+    if (campo === "detalles") return;
+    const icono = e.currentTarget.getBoundingClientRect();
     setFiltroActivo(filtroActivo === campo ? null : campo);
     setFiltroPosicion({
       top: icono.bottom + window.scrollY + 4,
@@ -106,32 +124,12 @@ const Gestion_lotes_agro = () => {
     setValoresSeleccionados(actualizado);
   };
 
-  const ordenar = (campo, orden) => {
-    setOrdenCampo({ campo, orden });
-  };
+  const ordenar = (campo, orden) => setOrdenCampo({ campo, orden });
 
-  const handleBusqueda = (campo, texto) => {
+  const handleBusqueda = (campo, texto) =>
     setBusquedas({ ...busquedas, [campo]: texto });
-  };
 
-  const getValoresUnicos = (campo) => {
-    const search = (busquedas[campo] || "").toLowerCase();
-
-    if (campo === "variedades") {
-      const todasVariedades = lotes.flatMap(
-        (d) => (d.variedades_detalle || []).map((v) => v.variedad)
-      );
-      return [...new Set(todasVariedades)].filter((v) =>
-        String(v).toLowerCase().includes(search)
-      );
-    }
-
-    return [...new Set(lotes.map((d) => d[campo]))].filter((v) =>
-      String(v).toLowerCase().includes(search)
-    );
-  };
-
-  // === 🔎 Filtro y ordenamiento de lotes ===
+  // === 🔎 Filtrar y ordenar ===
   const lotesFiltrados = lotes
     .filter((d) =>
       columnas.every((campo) => {
@@ -151,7 +149,7 @@ const Gestion_lotes_agro = () => {
           );
         }
 
-        return seleccionados.includes(d[campo]);
+        return seleccionados.includes(String(d[campo]));
       })
     )
     .sort((a, b) => {
@@ -173,7 +171,7 @@ const Gestion_lotes_agro = () => {
         : String(valB).localeCompare(String(valA));
     });
 
-  // === Calcular Totales ===
+  // === Totales ===
   const lotesReales = lotesFiltrados.filter((l) => l.estado !== "Sin lotes");
   const totalArboles = lotesReales.reduce(
     (acc, l) => acc + (Number(l.numero_arboles) || 0),
@@ -188,13 +186,12 @@ const Gestion_lotes_agro = () => {
     0
   );
 
-  // ✅ Total de variedades (se ajusta con filtros)
   const seleccionadas = valoresSeleccionados["variedades"] || [];
   const totalVariedades = lotesReales.reduce((acc, lote) => {
     const variedades = lote.variedades_detalle || [];
     const visibles =
       seleccionadas.length > 0
-        ? variedades.filter((v) => seleccionados.includes(v.variedad))
+        ? variedades.filter((v) => seleccionadas.includes(v.variedad))
         : variedades;
     return (
       acc + visibles.reduce((sum, v) => sum + (Number(v.cantidad) || 0), 0)
@@ -212,23 +209,6 @@ const Gestion_lotes_agro = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // === Cambiar estado ===
-  const handleCambiarEstado = (id) => {
-    const lote = lotes.find((l) => l.id === id);
-    if (!lote || lote.estado === "Sin lotes") return;
-
-    const nuevoEstado = lote.estado === "Activo" ? "Inactivo" : "Activo";
-    const confirmar = window.confirm(
-      `¿Estás seguro de cambiar el estado del lote ${lote.lote} a "${nuevoEstado}"?`
-    );
-
-    if (confirmar) {
-      setLotes((prev) =>
-        prev.map((l) => (l.id === id ? { ...l, estado: nuevoEstado } : l))
-      );
-    }
-  };
-
   return (
     <LayoutAgronomo>
       <div className="flex justify-between items-center mb-6">
@@ -243,12 +223,12 @@ const Gestion_lotes_agro = () => {
         </button>
       </div>
 
-      <div className="overflow-x-auto rounded-lg shadow-lg">
-        <table className="min-w-full text-center text-base bg-white">
+      <div className="overflow-x-auto rounded-lg shadow-lg bg-white">
+        <table className="min-w-full text-center text-base">
           <thead className="bg-green-600 text-white font-bold">
             <tr>
-              {columnas.map((campo, i) => (
-                <th key={i} className="p-4 border text-center">
+              {columnas.map((campo) => (
+                <th key={campo} className="p-4 border text-center">
                   <div className="flex items-center justify-center gap-2">
                     {campo === "area_bruta"
                       ? "ÁREA BRUTA"
@@ -274,32 +254,29 @@ const Gestion_lotes_agro = () => {
             </tr>
           </thead>
           <tbody>
-            {lotesFiltrados.map((lote, idx) => (
-              <tr key={idx} className="hover:bg-gray-100">
-                {columnas.map((campo, j) => (
-                  <td key={j} className="p-4 border text-center">
+            {lotesFiltrados.map((lote) => (
+              <tr key={lote.id} className="hover:bg-gray-50">
+                {columnas.map((campo) => (
+                  <td key={campo} className="p-4 border text-center">
                     {campo === "detalles" ? (
-                      <div className="flex justify-center">
-                        <button
-                          onClick={() => navigate(`/editarfinca/${lote.finca}`)}
-                          className="text-green-600 hover:text-green-800 flex items-center gap-1"
-                        >
-                          <IconEye className="w-5 h-5" /> Ver
-                        </button>
-                      </div>
-                    ) : campo === "estado" ? (
                       <button
-                        onClick={() => handleCambiarEstado(lote.id)}
+                        onClick={() => navigate(`/editarfinca/${lote.finca}`)}
+                        className="text-green-600 hover:text-green-800 flex items-center gap-1"
+                      >
+                        <IconEye className="w-5 h-5" /> Ver
+                      </button>
+                    ) : campo === "estado" ? (
+                      <span
                         className={`px-2 py-1 rounded text-sm font-medium ${
                           lote.estado === "Activo"
-                            ? "bg-green-100 text-green-700 hover:bg-green-200"
+                            ? "bg-green-100 text-green-700"
                             : lote.estado === "Sin lotes"
                             ? "bg-red-100 text-red-600"
-                            : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                            : "bg-gray-200 text-gray-700"
                         }`}
                       >
                         {lote.estado}
-                      </button>
+                      </span>
                     ) : campo === "variedades" ? (
                       (() => {
                         const seleccionados =
@@ -315,6 +292,8 @@ const Gestion_lotes_agro = () => {
                           .map((v) => `${v.variedad} (${v.cantidad})`)
                           .join(", ");
                       })()
+                    ) : campo === "area_neta" || campo === "area_bruta" ? (
+                      `${lote[campo]} ha`
                     ) : (
                       lote[campo]
                     )}
@@ -323,25 +302,28 @@ const Gestion_lotes_agro = () => {
               </tr>
             ))}
 
-            {/* === Fila de Totales === */}
-            <tr className="font-bold bg-gray-100">
-              <td colSpan={3} className="p-4 border text-right">
-                TOTAL
-              </td>
-              <td className="p-4 border text-center">{totalArboles}</td>
-              <td className="p-4 border text-center">{totalVariedades}</td>
-              <td className="p-4 border text-center">
-                {totalAreaNeta.toFixed(2)} ha
-              </td>
-              <td className="p-4 border text-center">
-                {totalAreaBruta.toFixed(2)} ha
-              </td>
-              <td className="p-4 border"></td>
-              <td className="p-4 border"></td>
-            </tr>
+            {/* === Totales === */}
+            {lotesFiltrados.length > 0 && (
+              <tr className="font-bold bg-gray-100">
+                <td colSpan={3} className="p-4 border text-right">
+                  TOTAL
+                </td>
+                <td className="p-4 border text-center">{totalArboles}</td>
+                <td className="p-4 border text-center">{totalVariedades}</td>
+                <td className="p-4 border text-center">
+                  {totalAreaNeta.toFixed(2)} ha
+                </td>
+                <td className="p-4 border text-center">
+                  {totalAreaBruta.toFixed(2)} ha
+                </td>
+                <td className="p-4 border"></td>
+                <td className="p-4 border"></td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
+
       {/* === Filtro flotante === */}
       {filtroActivo && (
         <div
@@ -350,9 +332,7 @@ const Gestion_lotes_agro = () => {
           style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
         >
           <div className="font-semibold mb-2">
-            Filtrar por{" "}
-            {String(filtroActivo).charAt(0).toUpperCase() +
-              String(filtroActivo).slice(1)}
+            Filtrar por {filtroActivo.toUpperCase()}
           </div>
           <button
             onClick={() => ordenar(filtroActivo, "asc")}
@@ -374,8 +354,8 @@ const Gestion_lotes_agro = () => {
             onChange={(e) => handleBusqueda(filtroActivo, e.target.value)}
           />
           <div className="flex flex-col max-h-40 overflow-y-auto">
-            {getValoresUnicos(filtroActivo).map((val, idx) => (
-              <label key={idx} className="flex items-center gap-2 mb-1">
+            {getValoresUnicos(filtroActivo).map((val) => (
+              <label key={val} className="flex items-center gap-2 mb-1">
                 <input
                   type="checkbox"
                   checked={(valoresSeleccionados[filtroActivo] || []).includes(

@@ -1,6 +1,6 @@
 // src/pages/agronomo/Historial_trabajo_agro.jsx
 import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   IconChevronLeft,
   IconFilter,
@@ -8,39 +8,62 @@ import {
   IconSortDescending2,
 } from "@tabler/icons-react";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
+import { equiposApi } from "../../services/apiClient";
 
 const Historial_trabajo_agro = () => {
   const navigate = useNavigate();
-
-  // Ref para filtros
+  const { id } = useParams(); // 👈 id de la máquina
   const filtroRef = useRef(null);
 
-  // Datos generales
-  const infoGeneral = {
-    codigo: 1,
-    maquina: "Tractor",
-    referencia: "JD 5055",
-    ubicacion: "La Esmeralda",
-    estado: "Óptimo",
-  };
+  // Datos generales de la máquina (dinámico)
+  const [maquina, setMaquina] = useState(null);
 
-  // Datos del historial
+  useEffect(() => {
+    const fetchMaquina = async () => {
+      try {
+        const res = await equiposApi.get(id);
+        setMaquina(res.data);
+      } catch (err) {
+        console.error("❌ Error cargando máquina:", err.response?.data || err);
+      }
+    };
+    fetchMaquina();
+  }, [id]);
+
+  // Datos del historial (ejemplo estático, luego puedes traerlo de API)
   const historial = [
-    { fecha: "2025-06-15", labor: "Siembra", "horas trabajadas": "6 horas", "horas maquina": "4 horas", observaciones: "Se limpió lote 2, clima nublado" },
-    { fecha: "2025-06-15", labor: "Desyerba guadaña", "horas trabajadas": "8 horas", "horas maquina": "3 horas", observaciones: "Cuchilla se atascó temporalmente. Se solucionó" },
-    { fecha: "2025-06-15", labor: "Recolección", "horas trabajadas": "4 horas", "horas maquina": "1 hora", observaciones: "Trabajo en área común. Máquina en estado óptimo" },
+    {
+      fecha: "2025-06-15",
+      labor: "Siembra",
+      "horas trabajadas": "6 horas",
+      "horas maquina": "4 horas",
+      observaciones: "Se limpió lote 2, clima nublado",
+    },
+    {
+      fecha: "2025-06-15",
+      labor: "Desyerba guadaña",
+      "horas trabajadas": "8 horas",
+      "horas maquina": "3 horas",
+      observaciones: "Cuchilla se atascó temporalmente. Se solucionó",
+    },
+    {
+      fecha: "2025-06-15",
+      labor: "Recolección",
+      "horas trabajadas": "4 horas",
+      "horas maquina": "1 hora",
+      observaciones: "Trabajo en área común. Máquina en estado óptimo",
+    },
   ];
 
   const columnas = ["fecha", "labor", "horas trabajadas", "horas maquina", "observaciones"];
 
-  // Estados filtros
+  // Filtros
   const [filtroActivo, setFiltroActivo] = useState(null);
   const [filtroPosicion, setFiltroPosicion] = useState({ top: 0, left: 0 });
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [busquedas, setBusquedas] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
 
-  // Obtener valores únicos
   const getValoresUnicos = (campo) => {
     if (campo === "fecha" || campo === "observaciones") return [];
     const search = (busquedas[campo] || "").toLowerCase();
@@ -49,7 +72,6 @@ const Historial_trabajo_agro = () => {
     );
   };
 
-  // Abrir/cerrar filtro
   const toggleFiltro = (campo, e) => {
     if (campo === "observaciones") return;
     const icono = e.currentTarget.getBoundingClientRect();
@@ -60,29 +82,24 @@ const Historial_trabajo_agro = () => {
     });
   };
 
-  // Seleccionar valor
   const toggleValor = (campo, valor) => {
     const seleccionados = new Set(valoresSeleccionados[campo] || []);
     seleccionados.has(valor) ? seleccionados.delete(valor) : seleccionados.add(valor);
     setValoresSeleccionados({ ...valoresSeleccionados, [campo]: [...seleccionados] });
   };
 
-  // Limpiar filtro
   const limpiarFiltro = (campo) => {
     const actualizado = { ...valoresSeleccionados };
     delete actualizado[campo];
     setValoresSeleccionados(actualizado);
   };
 
-  // Ordenar
   const ordenar = (campo, orden) => setOrdenCampo({ campo, orden });
 
-  // Buscar
   const handleBusqueda = (campo, texto) => {
     setBusquedas({ ...busquedas, [campo]: texto });
   };
 
-  // Filtrado + ordenamiento
   const historialFiltrado = historial
     .filter((item) =>
       columnas.every((campo) =>
@@ -120,22 +137,25 @@ const Historial_trabajo_agro = () => {
         <IconChevronLeft className="w-6 h-6 mr-1" /> Volver
       </button>
 
-      {/* Título */}
       <h1 className="text-3xl font-bold text-green-700 mb-6">Historial de trabajo</h1>
 
-      {/* Info general */}
-      <div className="bg-white border border-gray-300 p-6 rounded-xl mb-6 max-w-4xl shadow-md">
-        <h2 className="text-2xl font-bold mb-4 text-green-700">Información general</h2>
-        <div className="grid grid-cols-2 gap-x-12 gap-y-2 text-lg">
-          <p><strong>Código Equipo:</strong> {infoGeneral.codigo}</p>
-          <p><strong>Ubicación:</strong> {infoGeneral.ubicacion}</p>
-          <p><strong>Máquina:</strong> {infoGeneral.maquina}</p>
-          <p><strong>Estado:</strong> {infoGeneral.estado}</p>
-          <p><strong>Referencia:</strong> {infoGeneral.referencia}</p>
+      {/* Info general de la máquina */}
+      {maquina ? (
+        <div className="bg-white border border-gray-300 p-6 rounded-xl mb-6 max-w-4xl shadow-md">
+          <h2 className="text-2xl font-bold mb-4 text-green-700">Información general</h2>
+          <div className="grid grid-cols-2 gap-x-12 gap-y-2 text-lg">
+            <p><strong>Código Equipo:</strong> {maquina.codigo_equipo}</p>
+            <p><strong>Ubicación:</strong> {maquina.ubicacion_nombre}</p>
+            <p><strong>Máquina:</strong> {maquina.maquina}</p>
+            <p><strong>Estado:</strong> {maquina.estado}</p>
+            <p><strong>Referencia:</strong> {maquina.referencia}</p>
+          </div>
         </div>
-      </div>
+      ) : (
+        <p className="text-gray-500">Cargando información de la máquina...</p>
+      )}
 
-      {/* Tabla */}
+      {/* Tabla historial */}
       <div className="bg-white border border-gray-300 rounded-xl shadow-md overflow-x-auto relative">
         <table className="w-full text-base text-center">
           <thead className="bg-green-600 text-white">
@@ -158,122 +178,29 @@ const Historial_trabajo_agro = () => {
             {historialFiltrado.map((item, i) => (
               <tr key={i} className="border-t hover:bg-gray-50 transition">
                 {columnas.map((campo, j) => (
-                  <td key={j} className="px-6 py-4 border border-gray-200">{item[campo]}</td>
+                  <td key={j} className="px-6 py-4 border border-gray-200">
+                    {item[campo]}
+                  </td>
                 ))}
               </tr>
             ))}
           </tbody>
         </table>
-
-        {/* Filtro Fecha */}
-        {filtroActivo === "fecha" ? (
-          <div
-            ref={filtroRef}
-            className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60 text-left text-sm"
-            style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
-          >
-            <div className="font-semibold mb-2">Filtrar por Fecha</div>
-            {Object.entries(
-              historial.reduce((acc, { fecha }) => {
-                const [year, month, day] = fecha.split("-");
-                const monthName = new Date(fecha).toLocaleString("default", { month: "long" });
-                acc[year] = acc[year] || {};
-                acc[year][monthName] = acc[year][monthName] || new Set();
-                acc[year][monthName].add(day);
-                return acc;
-              }, {})
-            ).map(([year, months]) => (
-              <div key={year} className="mb-2">
-                <div className="font-medium">{year}</div>
-                {Object.entries(months).map(([month, days]) => (
-                  <div key={month} className="ml-4">
-                    <div className="font-medium">{month}</div>
-                    {[...days].map((day) => {
-                      const monthNum = new Date(`${month} 1`).getMonth() + 1;
-                      const fullDate = `${year}-${String(monthNum).padStart(2, "0")}-${day}`;
-                      return (
-                        <label key={day} className="ml-6 flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            checked={(valoresSeleccionados["fecha"] || []).includes(fullDate)}
-                            onChange={() => toggleValor("fecha", fullDate)}
-                            className="accent-green-600"
-                          />
-                          {day}
-                        </label>
-                      );
-                    })}
-                  </div>
-                ))}
-              </div>
-            ))}
-            <button
-              onClick={() => limpiarFiltro("fecha")}
-              className="text-blue-600 hover:underline text-xs lowercase mt-2"
-            >
-              borrar filtro
-            </button>
-          </div>
-        ) : filtroActivo && (
-          <div
-            ref={filtroRef}
-            className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60 text-left text-sm"
-            style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
-          >
-            <div className="font-semibold mb-2">
-              Filtrar por {filtroActivo.charAt(0).toUpperCase() + filtroActivo.slice(1)}
-            </div>
-            <button
-              onClick={() => ordenar(filtroActivo, "asc")}
-              className="text-green-700 flex items-center gap-1 mb-1"
-            >
-              <IconSortAscending2 className="w-4 h-4" /> Ordenar A → Z
-            </button>
-            <button
-              onClick={() => ordenar(filtroActivo, "desc")}
-              className="text-green-700 flex items-center gap-1 mb-2"
-            >
-              <IconSortDescending2 className="w-4 h-4" /> Ordenar Z → A
-            </button>
-            <input
-              type="text"
-              placeholder="Buscar..."
-              className="w-full border border-gray-300 px-2 py-1 rounded mb-2 text-sm"
-              value={busquedas[filtroActivo] || ""}
-              onChange={(e) => handleBusqueda(filtroActivo, e.target.value)}
-            />
-            <div className="flex flex-col max-h-40 overflow-y-auto">
-              {getValoresUnicos(filtroActivo).map((val, idx) => (
-                <label key={idx} className="flex items-center gap-2 mb-1">
-                  <input
-                    type="checkbox"
-                    checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
-                    onChange={() => toggleValor(filtroActivo, val)}
-                    className="accent-green-600"
-                  />
-                  {val.charAt(0).toUpperCase() + val.slice(1)}
-                </label>
-              ))}
-            </div>
-            <button
-              onClick={() => limpiarFiltro(filtroActivo)}
-              className="text-blue-600 hover:underline text-xs mt-2"
-            >
-              borrar filtro
-            </button>
-          </div>
-        )}
       </div>
 
-      {/* Botón Descargar */}
-      <div className="flex justify-center gap-10 mt-10">
-        <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold text-lg">
-          Descargar PDF
-        </button>
-      </div>
+      {/* Botón Registrar → solo aparece si ya cargó la máquina */}
+      {maquina && (
+        <div className="flex justify-center gap-10 mt-10">
+          <button
+            onClick={() => navigate(`/registrarlabormaquinaria/${maquina.id}`)}
+            className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold text-lg"
+          >
+            Registrar labores
+          </button>
+        </div>
+      )}
     </LayoutAgronomo>
   );
 };
 
 export default Historial_trabajo_agro;
-

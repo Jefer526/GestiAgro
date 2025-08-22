@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "fincas",
     "trabajadores",
     "django_extensions",
+    "equipos",
 ]
 
 

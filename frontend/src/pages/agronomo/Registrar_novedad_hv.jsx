@@ -1,24 +1,36 @@
 // src/pages/agronomo/Registrar_novedad_hv.jsx
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { IconChevronLeft, IconCheck } from "@tabler/icons-react";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
+import { equiposApi, mantenimientosApi } from "../../services/apiClient";
 
 const Registrar_novedad_hv = () => {
   const navigate = useNavigate();
+  const { id } = useParams(); // id de la máquina
 
   const [alertaVisible, setAlertaVisible] = useState(false);
+  const [maquina, setMaquina] = useState(null);
   const [formData, setFormData] = useState({
-    codigoequipo: "",
-    maquina: "",
-    referencia: "",
-    ubicacion: "",
-    estado: "",
     fecha: "",
     tipo: "",
     descripcion: "",
-    realizadoPor: "",
+    realizado_por: "",
+    estado: "",
   });
+
+  // 📌 Traer info de la máquina
+  useEffect(() => {
+    const fetchMaquina = async () => {
+      try {
+        const res = await equiposApi.get(id);
+        setMaquina(res.data);
+      } catch (err) {
+        console.error("❌ Error cargando máquina:", err.response?.data || err);
+      }
+    };
+    fetchMaquina();
+  }, [id]);
 
   const handleChange = (e) => {
     setFormData({
@@ -27,98 +39,66 @@ const Registrar_novedad_hv = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Datos registrados:", formData);
-    setAlertaVisible(true);
-    setTimeout(() => {
-      setAlertaVisible(false);
-      navigate("/hojadevida");
-    }, 2000);
+    try {
+      const payload = { maquina: id, ...formData };
+      console.log("📤 Enviando mantenimiento:", payload);
+
+      // 1️⃣ Crear mantenimiento
+      await mantenimientosApi.create(payload);
+
+      // 2️⃣ Actualizar estado de la máquina si fue cambiado
+      if (formData.estado && formData.estado !== maquina.estado) {
+        await equiposApi.update(id, { estado: formData.estado }); // ✅ CORREGIDO
+      }
+
+      // 3️⃣ Mostrar alerta y redirigir
+      setAlertaVisible(true);
+      setTimeout(() => {
+        setAlertaVisible(false);
+        navigate(`/hojadevida/${id}`);
+      }, 2000);
+    } catch (err) {
+      console.error("❌ Error registrando mantenimiento:", err.response?.data || err);
+    }
   };
 
   return (
     <LayoutAgronomo>
-      {/* ALERTA */}
       {alertaVisible && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold z-[10000] transition-all duration-300">
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold z-[10000]">
           <IconCheck className="w-5 h-5" />
-          Registrado exitosamente
+          Mantenimiento registrado exitosamente
         </div>
       )}
 
-      {/* BOTÓN VOLVER */}
       <button
-        onClick={() => navigate("/hojadevida")}
+        onClick={() => navigate(`/hojadevida/${id}`)}
         className="flex items-center text-green-700 font-semibold mb-6 text-lg hover:underline"
       >
         <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
       </button>
 
-      {/* FORMULARIO */}
-      <div className="bg-white border border-gray-200 rounded-xl shadow-md p-8 w-[800px] mx-auto">
+      <div className="bg-white border border-gray-200 rounded-xl shadow-md p-8 w-[850px] mx-auto">
         <h1 className="text-3xl font-bold text-green-700 mb-6">
-          Registro novedad
+          Registrar mantenimiento
         </h1>
+
+        {maquina ? (
+          <div className="bg-gray-50 border border-gray-300 rounded-lg p-4 mb-6">
+            <p><strong>Código:</strong> {maquina.codigo_equipo}</p>
+            <p><strong>Máquina:</strong> {maquina.maquina}</p>
+            <p><strong>Referencia:</strong> {maquina.referencia}</p>
+            <p><strong>Ubicación:</strong> {maquina.ubicacion_nombre}</p>
+            <p><strong>Estado actual:</strong> {maquina.estado}</p>
+          </div>
+        ) : (
+          <p className="text-gray-500">Cargando información de la máquina...</p>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4 text-base">
           <div className="grid grid-cols-2 gap-5">
-            <div>
-              <label className="block font-semibold mb-1">Código Equipo:</label>
-              <input
-                name="codigoequipo"
-                value={formData.codigoequipo}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded px-3 py-1.5"
-              />
-            </div>
-            <div>
-              <label className="block font-semibold mb-1">Referencia:</label>
-              <input
-                name="referencia"
-                value={formData.referencia}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded px-3 py-1.5"
-              />
-            </div>
-            <div>
-              <label className="block font-semibold mb-1">Máquina:</label>
-              <input
-                name="maquina"
-                value={formData.maquina}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded px-3 py-1.5"
-              />
-            </div>
-            <div>
-              <label className="block font-semibold mb-1">Ubicación:</label>
-              <select
-                name="ubicacion"
-                value={formData.ubicacion}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded px-3 py-1.5"
-              >
-                <option value="">Selecciona</option>
-                <option>Bodega</option>
-                <option>La Esmeralda</option>
-                <option>La Carolina</option>
-              </select>
-            </div>
-            <div>
-              <label className="block font-semibold mb-1">Estado:</label>
-              <select
-                name="estado"
-                value={formData.estado}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded px-3 py-1.5"
-              >
-                <option value="">Selecciona</option>
-                <option>Óptimo</option>
-                <option>En operación</option>
-                <option>Mantenimiento</option>
-                <option>Averiado</option>
-              </select>
-            </div>
             <div>
               <label className="block font-semibold mb-1">Fecha:</label>
               <input
@@ -126,22 +106,39 @@ const Registrar_novedad_hv = () => {
                 name="fecha"
                 value={formData.fecha}
                 onChange={handleChange}
+                required
                 className="w-full border border-gray-300 rounded px-3 py-1.5"
               />
             </div>
+            <div>
+              <label className="block font-semibold mb-1">Estado:</label>
+              <select
+                name="estado"
+                value={formData.estado}
+                onChange={handleChange}
+                required
+                className="w-full border border-gray-300 rounded px-3 py-1.5"
+              >
+                <option value="">Selecciona</option>
+                <option value="Óptimo">Óptimo</option>
+                <option value="Mantenimiento">Mantenimiento</option>
+                <option value="Averiado">Averiado</option>
+              </select>
+            </div>
             <div className="col-span-2">
               <label className="block font-semibold mb-1">
-                Tipo de novedad:
+                Tipo de mantenimiento:
               </label>
               <select
                 name="tipo"
                 value={formData.tipo}
                 onChange={handleChange}
+                required
                 className="w-full border border-gray-300 rounded px-3 py-1.5"
               >
-                <option value="">Selecciona una opción</option>
-                <option>Mantenimiento</option>
-                <option>Reparación</option>
+                <option value="">Selecciona</option>
+                <option value="preventivo">Preventivo</option>
+                <option value="correctivo">Correctivo</option>
               </select>
             </div>
           </div>
@@ -152,6 +149,7 @@ const Registrar_novedad_hv = () => {
               name="descripcion"
               value={formData.descripcion}
               onChange={handleChange}
+              required
               rows="3"
               className="w-full border border-gray-300 rounded px-3 py-2"
             />
@@ -160,9 +158,10 @@ const Registrar_novedad_hv = () => {
           <div>
             <label className="block font-semibold mb-1">Realizado por:</label>
             <input
-              name="realizadoPor"
-              value={formData.realizadoPor}
+              name="realizado_por"
+              value={formData.realizado_por}
               onChange={handleChange}
+              required
               className="w-full border border-gray-300 rounded px-3 py-1.5"
             />
           </div>
@@ -182,4 +181,3 @@ const Registrar_novedad_hv = () => {
 };
 
 export default Registrar_novedad_hv;
-

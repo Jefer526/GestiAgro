@@ -301,7 +301,7 @@ const Editar_finca = () => {
                     onClick={() => navigate(`/Detallelote/${id}/${item.id}`)}
                     className="flex items-center gap-1 bg-blue-100 text-blue-600 px-3 py-1 rounded-md text-sm font-medium hover:bg-blue-200 mx-auto"
                   >
-                    <IconEye className="w-4 h-4" /> Detalle
+                    <IconEye className="w-4 h-4" /> Editar
                   </button>
                   
                 </td>

@@ -14,6 +14,7 @@ import {
 } from "@tabler/icons-react";
 
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
+import { equiposApi } from "../../services/apiClient"; // ✅ API equipos
 
 const MENU_WIDTH_PX = 288;
 const MENU_MARGIN_PX = 8;
@@ -21,13 +22,21 @@ const MENU_MARGIN_PX = 8;
 const Registrar_novedad_agro = () => {
   const navigate = useNavigate();
 
-  // === Datos base + columnas para filtros ===
-  const columnas = ["id", "maquina", "referencia", "estado"];
-  const [maquinas, setMaquinas] = useState([
-    { id: 1, maquina: "Tractor", referencia: "JD 5055", estado: "" },
-    { id: 2, maquina: "Guadaña", referencia: "Stihl MS 450", estado: "" },
-    { id: 3, maquina: "Podadora", referencia: "Stihl BR 130", estado: "" },
-  ]);
+  // === Datos base (desde API) ===
+  const columnas = ["codigo_equipo", "maquina", "referencia", "estado"];
+  const [maquinas, setMaquinas] = useState([]);
+
+  useEffect(() => {
+    const fetchMaquinas = async () => {
+      try {
+        const res = await equiposApi.list();
+        setMaquinas(res.data);
+      } catch (err) {
+        console.error("❌ Error cargando máquinas:", err);
+      }
+    };
+    fetchMaquinas();
+  }, []);
 
   // === Filtros ===
   const filtroRef = useRef(null);
@@ -111,10 +120,19 @@ const Registrar_novedad_agro = () => {
     return () => document.removeEventListener("mousedown", manejarClickFuera);
   }, []);
 
-  const handleEstadoChange = (index, marcarAveriado) => {
-    const nuevas = [...maquinas];
-    nuevas[index].estado = marcarAveriado ? "Averiado" : "";
-    setMaquinas(nuevas);
+  const handleEstadoChange = async (index) => {
+    try {
+      const maquina = maquinas[index];
+      const nuevoEstado = "Averiado"; // ✅ Solo se puede marcar averiado
+
+      await equiposApi.update(maquina.id, { estado: nuevoEstado });
+
+      const nuevas = [...maquinas];
+      nuevas[index].estado = nuevoEstado;
+      setMaquinas(nuevas);
+    } catch (err) {
+      console.error("❌ Error actualizando estado:", err);
+    }
   };
 
   const handleGuardar = () => {
@@ -125,17 +143,19 @@ const Registrar_novedad_agro = () => {
     }, 2000);
   };
 
-  const EstadoAveriadoBadge = ({ isAveriado }) => {
-    const classes = isAveriado
-      ? "bg-red-50 text-red-700 ring-red-200"
-      : "bg-gray-50 text-gray-600 ring-gray-300";
-    const iconClass = isAveriado ? "text-red-600" : "text-gray-500";
+  const EstadoAveriadoBadge = ({ estado }) => {
+    if (estado === "Averiado") {
+      return (
+        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full ring-1 text-sm font-semibold shadow-sm bg-red-50 text-red-700 ring-red-200">
+          <IconAlertTriangle className="w-4 h-4 text-red-600" />
+          Averiado
+        </span>
+      );
+    }
     return (
-      <span
-        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full ring-1 text-sm font-semibold shadow-sm ${classes}`}
-      >
-        <IconAlertTriangle className={`w-4 h-4 ${iconClass}`} />
-        Averiado
+      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full ring-1 text-sm font-semibold shadow-sm bg-green-50 text-green-700 ring-green-200">
+        <IconCircleCheck className="w-4 h-4 text-green-600" />
+        {estado || "Óptimo"}
       </span>
     );
   };
@@ -197,32 +217,24 @@ const Registrar_novedad_agro = () => {
           </thead>
 
           <tbody className="text-center">
-            {datosFiltrados.map((m, index) => {
-              const isAveriado = m.estado === "Averiado";
-              return (
-                <tr key={m.id} className="hover:bg-gray-100">
-                  <td className="p-4 border">{m.id}</td>
-                  <td className="p-4 border">{m.maquina}</td>
-                  <td className="p-4 border">{m.referencia}</td>
-                  <td className="p-4 border">
-                    <div className="inline-flex items-center gap-2">
-                      <EstadoAveriadoBadge isAveriado={isAveriado} />
-                      <button
-                        onClick={(e) => openMenu(index, e)}
-                        className={`inline-flex items-center justify-center w-9 h-9 rounded-lg border shadow-sm transition
-                          ${
-                            isAveriado
-                              ? "border-red-200 bg-red-50 text-red-600 hover:bg-red-100"
-                              : "border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100"
-                          }`}
-                      >
-                        <IconDotsVertical className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
+            {datosFiltrados.map((m, index) => (
+              <tr key={m.id} className="hover:bg-gray-100">
+                <td className="p-4 border">{m.codigo_equipo}</td>
+                <td className="p-4 border">{m.maquina}</td>
+                <td className="p-4 border">{m.referencia}</td>
+                <td className="p-4 border">
+                  <div className="inline-flex items-center gap-2">
+                    <EstadoAveriadoBadge estado={m.estado} />
+                    <button
+                      onClick={(e) => openMenu(index, e)}
+                      className="inline-flex items-center justify-center w-9 h-9 rounded-lg border shadow-sm transition border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100"
+                    >
+                      <IconDotsVertical className="w-5 h-5" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
 
@@ -298,11 +310,11 @@ const Registrar_novedad_agro = () => {
               Selecciona una opción
             </div>
 
-            {/* Marcar como AVERIADO */}
+            {/* ✅ Solo Marcar como AVERIADO */}
             {maquinas[menuIndex]?.estado !== "Averiado" && (
               <button
                 onClick={() => {
-                  handleEstadoChange(menuIndex, true);
+                  handleEstadoChange(menuIndex);
                   closeMenu();
                 }}
                 className="w-full flex items-center gap-3 px-3 py-3 rounded-xl transition text-left hover:bg-gray-100"
@@ -314,29 +326,6 @@ const Registrar_novedad_agro = () => {
                   <div className="text-sm font-semibold">Marcar como averiado</div>
                   <div className="text-xs text-gray-500">
                     El equipo quedará en estado “Averiado”.
-                  </div>
-                </div>
-              </button>
-            )}
-
-            {/* DESMARCAR AVERIADO */}
-            {maquinas[menuIndex]?.estado === "Averiado" && (
-              <button
-                onClick={() => {
-                  handleEstadoChange(menuIndex, false);
-                  closeMenu();
-                }}
-                className="w-full flex items-center gap-3 px-3 py-3 rounded-xl transition text-left hover:bg-gray-100"
-              >
-                <div className="shrink-0 inline-flex items-center justify-center w-8 h-8 rounded-lg border">
-                  <IconCircleCheck className="w-5 h-5 text-green-600" />
-                </div>
-                <div>
-                  <div className="text-sm font-semibold text-green-700">
-                    Desmarcar averiado
-                  </div>
-                  <div className="text-xs text-gray-500">
-                    El equipo dejará de estar marcado.
                   </div>
                 </div>
               </button>
@@ -358,4 +347,3 @@ const Registrar_novedad_agro = () => {
 };
 
 export default Registrar_novedad_agro;
-

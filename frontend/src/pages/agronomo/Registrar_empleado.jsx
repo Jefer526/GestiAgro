@@ -12,8 +12,8 @@ const Registrar_empleado = () => {
   const [form, setForm] = useState({
     nombre: "",
     cargo: "",
-    estado: "activo",
-    finca: "",
+    estado: "activo", // 👈 valor en minúscula para coincidir con el modelo
+    finca: null,
     telefono: "",
   });
 
@@ -23,8 +23,17 @@ const Registrar_empleado = () => {
 
   const manejarGuardar = (e) => {
     e.preventDefault();
+
+    const payload = {
+      nombre: form.nombre,
+      cargo: form.cargo,
+      estado: form.estado, // en minúscula
+      finca: form.finca,
+      telefono: form.telefono,
+    };
+
     api
-      .post("/api/trabajadores/", form)
+      .post("/api/trabajadores/", payload)
       .then(() => {
         setAlertaVisible(true);
         setTimeout(() => {
@@ -32,7 +41,13 @@ const Registrar_empleado = () => {
           navigate("/manejopersonal");
         }, 2000);
       })
-      .catch((err) => console.error("Error registrando empleado:", err));
+      .catch((err) => {
+        if (err.response) {
+          console.error("Detalles del error:", err.response.data);
+        } else {
+          console.error("Error registrando empleado:", err);
+        }
+      });
   };
 
   return (
@@ -112,8 +127,13 @@ const Registrar_empleado = () => {
         <div>
           <label className="block mb-1 font-semibold">Finca</label>
           <select
-            value={form.finca}
-            onChange={(e) => setForm({ ...form, finca: e.target.value })}
+            value={form.finca || ""}
+            onChange={(e) =>
+              setForm({
+                ...form,
+                finca: e.target.value ? parseInt(e.target.value) : null,
+              })
+            }
             className="w-full border p-3 rounded text-base"
           >
             <option value="">Seleccione finca</option>
