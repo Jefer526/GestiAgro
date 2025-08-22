@@ -1,6 +1,6 @@
 # equipos/models.py
 from django.db import models
-from fincas.models import Finca   # si ya tienes fincas creadas
+from fincas.models import Finca, Lote  # si ya tienes fincas creadas
 
 class Maquina(models.Model):
     codigo_equipo = models.CharField(max_length=50, unique=True)  # asignado por el usuario
@@ -29,3 +29,18 @@ class Mantenimiento(models.Model):
 
     def __str__(self):
         return f"{self.maquina.codigo_equipo} - {self.fecha} ({self.tipo})"
+
+
+
+class LaborMaquinaria(models.Model):
+    maquina = models.ForeignKey(Maquina, related_name="labores", on_delete=models.CASCADE)
+    fecha = models.DateField()
+    labor = models.CharField(max_length=100)
+    horometro_inicio = models.DecimalField(max_digits=10, decimal_places=2)
+    horometro_fin = models.DecimalField(max_digits=10, decimal_places=2)
+    finca = models.ForeignKey(Finca, on_delete=models.SET_NULL, null=True, blank=True)
+    lote = models.ForeignKey(Lote, on_delete=models.SET_NULL, null=True, blank=True)
+    observaciones = models.TextField(blank=True, null=True)  # opcional
+
+    def __str__(self):
+        return f"{self.maquina.codigo_equipo} - {self.fecha} - {self.labor}"

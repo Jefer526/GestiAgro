@@ -49,7 +49,6 @@ api.interceptors.response.use(
         const refresh = localStorage.getItem("refresh");
         if (!refresh) throw new Error("No refresh token");
 
-        // 👇 usar ENDPOINT centralizado
         const res = await axios.post(`${API}${ENDPOINTS.refresh}`, { refresh });
         const newAccess = res.data.access;
 
@@ -100,6 +99,12 @@ export const checkEmail = (email) =>
 export const resetPassword = (email, password) =>
   api.post(ENDPOINTS.resetPassword, { email, password });
 
+export const sendCode = (email) =>
+  api.post(ENDPOINTS.sendCode, { email });
+
+export const verifyCode = (email, code) =>
+  api.post(ENDPOINTS.verifyCode, { email, code });
+
 // ===== Alias retrocompatible (usuarios) =====
 export const accountsApi = {
   listUsers: () => api.get("/api/accounts/users/"),
@@ -116,12 +121,6 @@ export const soporteApi = {
   createTicket: (data) => api.post("/soporte/tickets/", data),
   updateTicket: (id, data) => api.patch(`/soporte/tickets/${id}/`, data),
 };
-
-export const sendCode = (email) =>
-  api.post(ENDPOINTS.sendCode, { email });
-
-export const verifyCode = (email, code) =>
-  api.post(ENDPOINTS.verifyCode, { email, code });
 
 // ===== API Equipos =====
 export const equiposApi = {
@@ -143,13 +142,17 @@ export const mantenimientosApi = {
 
 // ===== API Labores Maquinaria =====
 export const laboresMaquinariaApi = {
-  list: (maquinaId) => api.get(`/api/equipos/maquinas/${maquinaId}/labores/`),
-  create: (data) => api.post("/api/equipos/labores/", data),
+  list: (maquinaId) =>
+    api.get(`/api/equipos/labores-maquinaria/?maquina=${maquinaId}`),
+  create: (data) => {
+    // 👇 si no es array, lo convertimos
+    const payload = Array.isArray(data) ? data : [data];
+    return api.post("/api/equipos/labores-maquinaria/", payload);
+  },
 };
 
 // ===== API Lotes =====
 export const lotesApi = {
-  // ✅ corregido: ahora usa query param finca=ID
   listByFinca: (fincaId) => api.get(`/api/lotes/?finca=${fincaId}`),
 };
 

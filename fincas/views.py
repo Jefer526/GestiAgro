@@ -21,7 +21,7 @@ class FincaViewSet(viewsets.ModelViewSet):
 
 
 class LoteViewSet(viewsets.ModelViewSet):
-    queryset = Lote.objects.all()
+    queryset = Lote.objects.all().order_by("lote")
     serializer_class = LoteSerializer
 
     def get_queryset(self):
