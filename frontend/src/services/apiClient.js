@@ -156,5 +156,22 @@ export const lotesApi = {
   listByFinca: (fincaId) => api.get(`/api/lotes/?finca=${fincaId}`),
 };
 
+export const variablesClimaApi = {
+  getAll: () => api.get("/api/clima/variablesclimaticas/"),
+  get: (id) => api.get(`/api/clima/variablesclimaticas/${id}/`),
+  post: (data) => api.post("/api/clima/variablesclimaticas/", data),
+  put: (id, data) => api.put(`/api/clima/variablesclimaticas/${id}/`, data),
+  delete: (id) => api.delete(`/api/clima/variablesclimaticas/${id}/`),
+};
+
+export const fincasApi = {
+  list: () => api.get("/api/fincas/"),
+  get: (id) => api.get(`/api/fincas/${id}/`),
+  create: (data) => api.post("/api/fincas/", data),
+  update: (id, data) => api.patch(`/api/fincas/${id}/`, data),
+  delete: (id) => api.delete(`/api/fincas/${id}/`),
+};
+
+
 // ===== Export principal =====
 export default api;

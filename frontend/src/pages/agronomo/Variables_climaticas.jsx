@@ -1,5 +1,5 @@
 // src/pages/agronomo/Variables_climaticas.jsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   IconTemperature,
@@ -7,7 +7,6 @@ import {
   IconCloudRain,
 } from "@tabler/icons-react";
 
-// ✅ Gráficos
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -17,154 +16,297 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 
-// ✅ Importa el layout de Agrónomo
+import Select from "react-select";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
+import { variablesClimaApi, fincasApi } from "../../services/apiClient";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend, ChartDataLabels);
 
 const Variables_climaticas = () => {
   const navigate = useNavigate();
-  const [filtro, setFiltro] = useState("Día");
-  const [finca, setFinca] = useState("Todas"); // 👈 nuevo estado para finca
 
-  // Datos de ejemplo para la gráfica
-  const data = {
-    labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio"],
-    datasets: [
-      {
-        label: "Precipitaciones",
-        data: [150, 300, 500, 320, 260, 40],
-        backgroundColor: "rgba(34,197,94,0.5)",
-        borderColor: "rgba(34,197,94,1)",
-        borderWidth: 1,
-      },
-    ],
+  const [filtro, setFiltro] = useState("Día");
+  const [fincas, setFincas] = useState([]);
+  const [fincasSeleccionadas, setFincasSeleccionadas] = useState([]);
+  const [desde, setDesde] = useState("");
+  const [hasta, setHasta] = useState("");
+  const [climas, setClimas] = useState([]);
+
+  // 🔹 variable a graficar
+  const [variableGrafica, setVariableGrafica] = useState("precipitacion");
+
+  // 🔹 configuración de etiquetas
+  const [decimales, setDecimales] = useState(1);
+  const [colorEtiquetas, setColorEtiquetas] = useState("#000");
+  const [mostrarEtiquetas, setMostrarEtiquetas] = useState(true);
+
+  // 🔹 modo de rango
+  const [modoRango, setModoRango] = useState("por_dia"); // "junto" o "por_dia"
+
+  // 📌 Traer fincas y datos de clima
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const resFincas = await fincasApi.list();
+        setFincas(resFincas.data);
+
+        const resClima = await variablesClimaApi.getAll();
+        setClimas(resClima.data);
+      } catch (err) {
+        console.error("Error cargando datos:", err);
+      }
+    };
+    fetchData();
+  }, []);
+
+  // 📌 Filtrar datos base
+  const datosFiltrados = climas.filter((c) => {
+    if (
+      fincasSeleccionadas.length > 0 &&
+      !fincasSeleccionadas.includes(String(c.finca))
+    ) {
+      return false;
+    }
+    if (desde && c.fecha < desde) return false;
+    if (hasta && c.fecha > hasta) return false;
+    return true;
+  });
+
+  // 📌 Agrupación con prioridad en el rango
+  const agrupados = {};
+  datosFiltrados.forEach((d) => {
+    let key;
+
+    if (modoRango === "junto" && desde && hasta) {
+      // 🔹 1 sola barra para todo el rango
+      key = `${desde} a ${hasta}`;
+    } else if (modoRango === "por_dia" && desde && hasta) {
+      // 🔹 siempre por día cuando hay rango
+      key = d.fecha;
+    } else {
+      // 🔹 sin rango → depende del filtro
+      key = d.fecha;
+      if (filtro === "Mes") key = d.fecha.slice(0, 7); // yyyy-mm
+      if (filtro === "Año") key = d.fecha.slice(0, 4); // yyyy
+    }
+
+    if (!agrupados[key]) agrupados[key] = {};
+    if (!agrupados[key][d.finca_nombre]) agrupados[key][d.finca_nombre] = 0;
+
+    agrupados[key][d.finca_nombre] += Number(d[variableGrafica] || 0);
+  });
+
+  // 📌 Formatear etiquetas
+  const formatearLabel = (key) => {
+    if (key.includes(" a ")) {
+      const [d1, d2] = key.split(" a ");
+      return `Del ${d1} al ${d2}`;
+    }
+    if (filtro === "Mes") {
+      const [year, month] = key.split("-");
+      const fecha = new Date(year, month - 1);
+      let mes = fecha.toLocaleDateString("es-ES", { month: "long" });
+      mes = mes.charAt(0).toUpperCase() + mes.slice(1);
+      return `${mes} ${year}`;
+    }
+    if (filtro === "Día") {
+      const [year, month, day] = key.split("-");
+      return `${day}-${month}-${year}`;
+    }
+    return key; // Año
   };
+
+  const labelsRaw = Object.keys(agrupados).sort();
+  const labels = labelsRaw.map((key) => formatearLabel(key));
+
+  const fincasUnicas = [...new Set(datosFiltrados.map((d) => d.finca_nombre))];
+
+  // 📌 Un dataset por finca
+  const datasets = fincasUnicas.map((fincaNombre, i) => ({
+    label: fincaNombre,
+    data: labelsRaw.map((label) => agrupados[label][fincaNombre] || 0),
+    backgroundColor: `hsl(${(i * 60) % 360}, 70%, 50%)`,
+  }));
+
+  const data = { labels, datasets };
 
   const opcionesChart = {
     responsive: true,
     maintainAspectRatio: false,
+    plugins: {
+      datalabels: mostrarEtiquetas
+        ? {
+            color: colorEtiquetas,
+            anchor: "end",
+            align: "top",
+            formatter: (value) => value.toFixed(decimales),
+            font: { weight: "bold", size: 12 },
+          }
+        : false,
+    },
     scales: { y: { beginAtZero: true } },
   };
 
+  // 📌 Último registro
+  const ultimo = datosFiltrados.sort((a, b) =>
+    a.fecha < b.fecha ? 1 : -1
+  )[0];
+
   return (
     <LayoutAgronomo>
-      {/* Encabezado: Título + Nombre de Hacienda a la derecha */}
+      {/* Título */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-green-700">Variables climáticas</h1>
-        <span className="text-2xl text-black font-bold">Hacienda La esmeralda</span>
+        <h1 className="text-3xl font-bold text-green-700">
+          Variables climáticas
+        </h1>
+        {ultimo && (
+          <span className="text-base text-gray-600">
+            Último registro:{" "}
+            {new Date(ultimo.fecha).toLocaleDateString("es-ES", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+            })}{" "}
+            ({ultimo.finca_nombre})
+          </span>
+        )}
       </div>
 
       {/* 🔹 Filtro por finca */}
-      <div className="mb-6">
-        <label className="text-black font-semibold mr-2">Finca:</label>
-        <select
-          value={finca}
-          onChange={(e) => setFinca(e.target.value)}
-          className="border border-gray-300 rounded px-4 py-1"
-        >
-          <option>Todas</option>
-          <option>La Esmeralda</option>
-          <option>La Carolina</option>
-          <option>Las Palmas</option>
-        </select>
+      <div className="mb-6 w-80">
+        <label className="text-black font-semibold block mb-1">Fincas:</label>
+        <Select
+          isMulti
+          closeMenuOnSelect={false}
+          placeholder="Todas"
+          value={
+            fincasSeleccionadas.length === 0
+              ? []
+              : fincas
+                  .filter((f) => fincasSeleccionadas.includes(String(f.id)))
+                  .map((f) => ({ value: f.id, label: f.nombre }))
+          }
+          options={fincas.map((f) => ({ value: f.id, label: f.nombre }))}
+          onChange={(selected) => {
+            if (!selected || selected.length === 0) {
+              setFincasSeleccionadas([]);
+            } else {
+              setFincasSeleccionadas(selected.map((s) => String(s.value)));
+            }
+          }}
+        />
       </div>
 
-      {/* Filtro principal */}
-      <div className="mb-6">
-        <label className="text-black font-semibold mr-2">Filtrar por:</label>
-        <select
-          value={filtro}
-          onChange={(e) => setFiltro(e.target.value)}
-          className="border border-gray-300 rounded px-4 py-1"
-        >
-          <option>Día</option>
-          <option>Mes</option>
-          <option>Año</option>
-        </select>
+      {/* 🔹 Filtros en una sola fila */}
+      <div className="mb-6 flex flex-wrap items-center gap-6">
+        <div className="flex items-center gap-2">
+          <label className="text-black font-semibold">Filtrar por:</label>
+          <select
+            value={filtro}
+            onChange={(e) => setFiltro(e.target.value)}
+            className="border border-gray-300 rounded px-4 py-1"
+            disabled={modoRango === "junto"} // 👈 se desactiva si es "junto"
+          >
+            <option>Día</option>
+            <option>Mes</option>
+            <option>Año</option>
+          </select>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <label className="text-black font-semibold">Modo de rango:</label>
+          <select
+            value={modoRango}
+            onChange={(e) => setModoRango(e.target.value)}
+            className="border border-gray-300 rounded px-4 py-1"
+          >
+            <option value="por_dia">Por día</option>
+            <option value="junto">Junto (totalizado)</option>
+          </select>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <label className="text-black font-semibold">Fecha:</label>
+          <span>Desde</span>
+          <input
+            type="date"
+            value={desde}
+            onChange={(e) => setDesde(e.target.value)}
+            className="border border-gray-300 px-3 py-1 rounded"
+          />
+          <span>Hasta</span>
+          <input
+            type="date"
+            value={hasta}
+            onChange={(e) => setHasta(e.target.value)}
+            className="border border-gray-300 px-3 py-1 rounded"
+          />
+        </div>
       </div>
 
-      {/* Fecha */}
-      <div className="mb-6 flex items-center gap-2">
-        <label className="text-black font-semibold">Fecha:</label>
-        <span className="mr-1">Desde</span>
-        <input type="date" className="border border-gray-300 px-3 py-1 rounded" />
-        <span className="mx-1">Hasta</span>
-        <input type="date" className="border border-gray-300 px-3 py-1 rounded" />
-      </div>
-
-      {/* Botón Registrar */}
-      <div className="mb-4">
+      {/* Botón Registrar + switch de variable */}
+      <div className="mb-4 flex gap-4 items-center">
         <button
           onClick={() => navigate("/Registrarclima")}
           className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition font-semibold"
         >
           Registrar
         </button>
+
+        <select
+          value={variableGrafica}
+          onChange={(e) => setVariableGrafica(e.target.value)}
+          className="border border-gray-300 rounded px-4 py-2"
+        >
+          <option value="precipitacion">Precipitación (mm)</option>
+          <option value="temp_min">Temperatura mínima (°C)</option>
+          <option value="temp_max">Temperatura máxima (°C)</option>
+          <option value="humedad">Humedad relativa (%)</option>
+        </select>
       </div>
 
-      {/* Tarjetas */}
-      <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
-        {[
-          {
-            title: "Precipitaciones",
-            value: "5",
-            unit: "mm",
-            icon: <IconCloudRain className="w-6 h-6" />,
-            ring: "ring-sky-500/50",
-            iconBg: "bg-sky-100",
-            iconText: "text-sky-700",
-          },
-          {
-            title: "Temperatura mínima",
-            value: "15",
-            unit: "°C",
-            icon: <IconTemperature className="w-6 h-6" />,
-            ring: "ring-indigo-500/50",
-            iconBg: "bg-indigo-100",
-            iconText: "text-indigo-700",
-          },
-          {
-            title: "Temperatura máxima",
-            value: "30",
-            unit: "°C",
-            icon: <IconTemperature className="w-6 h-6" />,
-            ring: "ring-amber-500/50",
-            iconBg: "bg-amber-100",
-            iconText: "text-amber-700",
-          },
-          {
-            title: "Humedad relativa",
-            value: "90",
-            unit: "%",
-            icon: <IconDroplet className="w-6 h-6" />,
-            ring: "ring-emerald-500/50",
-            iconBg: "bg-emerald-100",
-            iconText: "text-emerald-700",
-          },
-        ].map((c, i) => (
-          <div
-            key={i}
-            className={`relative overflow-hidden rounded-2xl bg-white border shadow-md px-6 py-5 ring-1 ${c.ring}`}
+      {/* 🔹 Panel configuración etiquetas */}
+      <div className="flex gap-6 mb-6 items-center">
+        <label className="font-semibold text-sm text-gray-700">
+          Decimales:
+          <select
+            value={decimales}
+            onChange={(e) => setDecimales(Number(e.target.value))}
+            className="ml-2 border rounded px-2 py-1"
           >
-            <div className="flex items-center gap-4">
-              <div className={`${c.iconBg} ${c.iconText} rounded-xl p-3 shadow-sm border`}>
-                {c.icon}
-              </div>
-              <div>
-                <p className="text-sm text-slate-500">{c.title}</p>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-2xl font-bold text-slate-900">{c.value}</span>
-                  <span className="text-slate-500 text-base">{c.unit}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </section>
+            <option value={0}>0</option>
+            <option value={1}>1</option>
+            <option value={2}>2</option>
+          </select>
+        </label>
 
-      {/* Gráfica */}
+        <label className="font-semibold text-sm text-gray-700">
+          Color etiquetas:
+          <select
+            value={colorEtiquetas}
+            onChange={(e) => setColorEtiquetas(e.target.value)}
+            className="ml-2 border rounded px-2 py-1"
+          >
+            <option value="#000">Negro</option>
+            <option value="#fff">Blanco</option>
+            <option value="#333">Gris</option>
+          </select>
+        </label>
+
+        <label className="font-semibold text-sm text-gray-700">
+          Mostrar etiquetas:
+          <input
+            type="checkbox"
+            checked={mostrarEtiquetas}
+            onChange={(e) => setMostrarEtiquetas(e.target.checked)}
+            className="ml-2"
+          />
+        </label>
+      </div>
+
+      {/* 🔹 Gráfica */}
       <div className="w-full h-[500px]">
         <Bar data={data} options={opcionesChart} />
       </div>
@@ -173,9 +315,3 @@ const Variables_climaticas = () => {
 };
 
 export default Variables_climaticas;
-
-
-
-
-
-

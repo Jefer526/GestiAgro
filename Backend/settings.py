@@ -54,6 +54,8 @@ INSTALLED_APPS = [
     "trabajadores",
     "django_extensions",
     "equipos",
+    "clima",
+
 ]
 
 
