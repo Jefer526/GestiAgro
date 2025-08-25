@@ -37,6 +37,7 @@ import Historial_campo_agro from "../pages/agronomo/Historial_campo_agro";
 import Detalle_campo_agro from "../pages/agronomo/Detalle_campo_agro";
 import Gestion_mayordomos from "../pages/agronomo/Gestion_mayordomo";
 import Registrar_labor_maquinaria from "../pages/agronomo/Registrar_labor_maquinaria";
+import Registrar_movimiento from "../pages/agronomo/Registrar_movimiento";
 
 const agronomoRoutes = [
   <Route key="home" path="/homeagro" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Home_agro /></ProtectedRoute>} />,
@@ -44,7 +45,7 @@ const agronomoRoutes = [
   <Route key="historial-labores" path="/historial" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Historial_labores /></ProtectedRoute>} />,
   <Route key="informes" path="/Informesagro" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Informes_agro /></ProtectedRoute>} />,
   <Route key="bodega" path="/Bodegaagro" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Bodega_agro /></ProtectedRoute>} />,
-  <Route key="detalles" path="/Detallesagrop" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Detalles_agrop /></ProtectedRoute>} />,
+  <Route key="detalles" path="/Detallesagrop/:id/:finca" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Detalles_agrop /></ProtectedRoute>} />,
   <Route key="agregar-producto" path="/agregarproducto" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Agregar_producto /></ProtectedRoute>} />,
   <Route key="variables-clima" path="/variablesclimaticas" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Variables_climaticas /></ProtectedRoute>} />,
   <Route key="registrar-clima" path="/Registrarclima" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Registrar_clima /></ProtectedRoute>} />,
@@ -75,6 +76,7 @@ const agronomoRoutes = [
   <Route key="detalle-campo-agro" path="/detallecampo" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Detalle_campo_agro /></ProtectedRoute>} />,
   <Route key="gestion-mayordomos" path="/gestionmayordomo" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Gestion_mayordomos /></ProtectedRoute>} />,
   <Route key="registrar-labor-maquinaria" path="/registrarlabormaquinaria/:id" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Registrar_labor_maquinaria /></ProtectedRoute>} />,
+  <Route key="registrar-movimiento" path="/registrarmovimiento" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Registrar_movimiento /></ProtectedRoute>} />,
 ];
 
 export default agronomoRoutes;

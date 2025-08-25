@@ -16,5 +16,6 @@ urlpatterns = [
     path("api/", include("trabajadores.urls")),  
     path("api/equipos/", include("equipos.urls")),
     path("api/clima/", include("clima.urls")),
+    path("api/bodega/", include("bodega.urls")),  # Nueva ruta para la app bodega
 
 ]

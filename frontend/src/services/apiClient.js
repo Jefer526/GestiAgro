@@ -145,7 +145,6 @@ export const laboresMaquinariaApi = {
   list: (maquinaId) =>
     api.get(`/api/equipos/labores-maquinaria/?maquina=${maquinaId}`),
   create: (data) => {
-    // 👇 si no es array, lo convertimos
     const payload = Array.isArray(data) ? data : [data];
     return api.post("/api/equipos/labores-maquinaria/", payload);
   },
@@ -156,6 +155,7 @@ export const lotesApi = {
   listByFinca: (fincaId) => api.get(`/api/lotes/?finca=${fincaId}`),
 };
 
+// ===== API Variables Climáticas =====
 export const variablesClimaApi = {
   getAll: () => api.get("/api/clima/variablesclimaticas/"),
   get: (id) => api.get(`/api/clima/variablesclimaticas/${id}/`),
@@ -164,6 +164,7 @@ export const variablesClimaApi = {
   delete: (id) => api.delete(`/api/clima/variablesclimaticas/${id}/`),
 };
 
+// ===== API Fincas =====
 export const fincasApi = {
   list: () => api.get("/api/fincas/"),
   get: (id) => api.get(`/api/fincas/${id}/`),
@@ -172,6 +173,22 @@ export const fincasApi = {
   delete: (id) => api.delete(`/api/fincas/${id}/`),
 };
 
+// ===== API Bodega =====
+export const productosApi = {
+  list: () => api.get("/api/bodega/productos/"),
+  get: (id) => api.get(`/api/bodega/productos/${id}/`),
+  create: (data) => api.post("/api/bodega/productos/", data),
+  update: (id, data) => api.patch(`/api/bodega/productos/${id}/`, data),
+  delete: (id) => api.delete(`/api/bodega/productos/${id}/`),
+};
+
+export const movimientosApi = {
+  list: () => api.get("/api/bodega/movimientos/"),
+  get: (id) => api.get(`/api/bodega/movimientos/${id}/`),
+  create: (data) => api.post("/api/bodega/movimientos/", data),
+  listByProducto: (productoId) =>
+    api.get(`/api/bodega/movimientos/?producto=${productoId}`),
+};
 
 // ===== Export principal =====
 export default api;

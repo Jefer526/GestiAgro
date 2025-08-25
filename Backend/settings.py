@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     "django_extensions",
     "equipos",
     "clima",
-
+    "bodega",
 ]
 
 
