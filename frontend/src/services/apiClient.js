@@ -230,5 +230,17 @@ export const produccionApi = {
 };
 
 
+// ===== API Fitosanitario (Monitoreos de plagas) =====
+export const fitosanitarioApi = {
+  list: (params = {}) => api.get("/api/fitosanitario/monitoreos/", { params }),
+  get: (id) => api.get(`/api/fitosanitario/monitoreos/${id}/`),
+  create: (data) => api.post("/api/fitosanitario/monitoreos/", data),
+  update: (id, data) => api.patch(`/api/fitosanitario/monitoreos/${id}/`, data),
+  delete: (id) => api.delete(`/api/fitosanitario/monitoreos/${id}/`),
+
+  // ✅ Nuevo endpoint de resumen
+  resumen: (params = {}) => api.get("/api/fitosanitario/monitoreos/resumen/", { params }),
+};
+
 // ===== Export principal =====
 export default api;

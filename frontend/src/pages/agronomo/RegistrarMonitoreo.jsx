@@ -1,8 +1,9 @@
 // src/pages/agronomo/RegistrarMonitoreo.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
 import { IconChevronLeft, IconCheck, IconPlus, IconTrash } from "@tabler/icons-react";
+import { fincasApi, lotesApi, fitosanitarioApi } from "../../services/apiClient";
 
 const RegistrarMonitoreo = () => {
   const navigate = useNavigate();
@@ -13,30 +14,51 @@ const RegistrarMonitoreo = () => {
   const [lote, setLote] = useState("");
   const [observaciones, setObservaciones] = useState("");
 
+  // 📌 Listados desde backend
+  const [fincas, setFincas] = useState([]);
+  const [lotes, setLotes] = useState([]);
+
   // 📌 Registros de plagas dinámicos
-  const [registros, setRegistros] = useState([
-    { familia: "", plaga: "", promedio: "" },
-  ]);
+  const [registros, setRegistros] = useState([{ familia: "", plaga: "", promedio: "" }]);
 
-  // 📌 Datos mock
-  const fincas = [
-    { id: 1, nombre: "La Esmeralda" },
-    { id: 2, nombre: "Las Palmas" },
-  ];
-
-  const lotes = [
-    { id: 1, fincaId: 1, nombre: "Lote 1" },
-    { id: 2, fincaId: 1, nombre: "Lote 2" },
-    { id: 3, fincaId: 2, nombre: "Lote 3" },
-  ];
-
+  // 📌 Campos fijos
   const familias = ["Hemípteros", "Homópteros", "Curculiónidos", "Tisanópteros"];
   const plagas = {
-    "Hemípteros": ["Loxa sp.", "Antiteuchus"],
-    "Homópteros": ["Stictocephala bisonia"],
-    "Curculiónidos": ["Compsus sp."],
-    "Tisanópteros": ["Trips"],
+    Hemípteros: ["Loxa sp.", "Antiteuchus"],
+    Homópteros: ["Stictocephala bisonia"],
+    Curculiónidos: ["Compsus sp."],
+    Tisanópteros: ["Trips"],
   };
+
+  // 📌 Cargar fincas al inicio
+  useEffect(() => {
+    const fetchFincas = async () => {
+      try {
+        const res = await fincasApi.list();
+        setFincas(res.data);
+      } catch (err) {
+        console.error("Error cargando fincas:", err);
+      }
+    };
+    fetchFincas();
+  }, []);
+
+  // 📌 Cargar lotes cuando cambie la finca
+  useEffect(() => {
+    const fetchLotes = async () => {
+      if (!finca) {
+        setLotes([]);
+        return;
+      }
+      try {
+        const res = await lotesApi.listByFinca(Number(finca));
+        setLotes(res.data);
+      } catch (err) {
+        console.error("Error cargando lotes:", err);
+      }
+    };
+    fetchLotes();
+  }, [finca]);
 
   // 📌 Funciones para manejar filas
   const addRegistro = () => {
@@ -57,20 +79,22 @@ const RegistrarMonitoreo = () => {
   };
 
   // 📌 Guardar monitoreo
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const nuevoMonitoreo = {
-      fecha,
-      finca,
-      lote,
-      observaciones,
-      registros,
-    };
-
-    console.log("✅ Monitoreo registrado:", nuevoMonitoreo);
-    alert("Monitoreo registrado correctamente ✅");
-    navigate(-1);
+    try {
+      await fitosanitarioApi.create({
+        fecha,
+        finca,
+        lote,
+        observaciones,
+        registros,
+      });
+      alert("✅ Monitoreo registrado correctamente");
+      navigate("/manejofitosanitario");
+    } catch (err) {
+      console.error("Error guardando monitoreo:", err);
+      alert("❌ Error al guardar monitoreo");
+    }
   };
 
   return (
@@ -87,9 +111,7 @@ const RegistrarMonitoreo = () => {
       </div>
 
       <div className="bg-white border border-gray-200 rounded-xl shadow-md p-8 w-[1050px] mx-auto">
-        <h1 className="text-3xl font-bold text-green-700 mb-6">
-          Registrar Monitoreo
-        </h1>
+        <h1 className="text-3xl font-bold text-green-700 mb-6">Registrar Monitoreo</h1>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Campos generales */}
@@ -138,13 +160,11 @@ const RegistrarMonitoreo = () => {
                 disabled={!finca}
               >
                 <option value="">Seleccione...</option>
-                {lotes
-                  .filter((l) => !finca || l.fincaId === Number(finca))
-                  .map((l) => (
-                    <option key={l.id} value={l.id}>
-                      {l.nombre}
-                    </option>
-                  ))}
+                {lotes.map((l) => (
+                  <option key={l.id} value={l.id}>
+                    {l.lote} {/* ✅ corregido */}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -180,9 +200,7 @@ const RegistrarMonitoreo = () => {
                       <td className="p-2 border border-gray-300">
                         <select
                           value={reg.familia}
-                          onChange={(e) =>
-                            updateRegistro(idx, "familia", e.target.value)
-                          }
+                          onChange={(e) => updateRegistro(idx, "familia", e.target.value)}
                           className="border rounded px-2 py-1 w-full"
                           required
                         >
@@ -199,9 +217,7 @@ const RegistrarMonitoreo = () => {
                       <td className="p-2 border border-gray-300">
                         <select
                           value={reg.plaga}
-                          onChange={(e) =>
-                            updateRegistro(idx, "plaga", e.target.value)
-                          }
+                          onChange={(e) => updateRegistro(idx, "plaga", e.target.value)}
                           className="border rounded px-2 py-1 w-full"
                           required
                           disabled={!reg.familia}
@@ -221,9 +237,7 @@ const RegistrarMonitoreo = () => {
                         <input
                           type="number"
                           value={reg.promedio}
-                          onChange={(e) =>
-                            updateRegistro(idx, "promedio", e.target.value)
-                          }
+                          onChange={(e) => updateRegistro(idx, "promedio", e.target.value)}
                           className="border rounded px-2 py-1 w-full"
                           min="0"
                           step="0.1"

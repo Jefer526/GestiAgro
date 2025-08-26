@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "bodega",
     "cuaderno_campo",
     "produccion",
+    "fitosanitario",
 ]
 
 

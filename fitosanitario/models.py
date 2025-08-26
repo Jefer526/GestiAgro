@@ -1,0 +1,20 @@
+from django.db import models
+from fincas.models import Finca, Lote   # 👈 importa desde tu otra app
+
+class Monitoreo(models.Model):
+    fecha = models.DateField()
+    finca = models.ForeignKey(Finca, on_delete=models.CASCADE, related_name="monitoreos")
+    lote = models.ForeignKey(Lote, on_delete=models.CASCADE, related_name="monitoreos")
+    observaciones = models.TextField(blank=True)
+
+    def __str__(self):
+        return f"Monitoreo {self.id} - {self.fecha} ({self.finca.nombre} / {self.lote.nombre})"
+
+class RegistroPlaga(models.Model):
+    monitoreo = models.ForeignKey(Monitoreo, on_delete=models.CASCADE, related_name="registros")
+    familia = models.CharField(max_length=100)
+    plaga = models.CharField(max_length=100)
+    promedio = models.FloatField()
+
+    def __str__(self):
+        return f"{self.familia} - {self.plaga} ({self.promedio})"
