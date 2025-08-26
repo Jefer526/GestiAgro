@@ -20,6 +20,8 @@ urlpatterns = [
     path("api/clima/", include("clima.urls")),
     path("api/bodega/", include("bodega.urls")),  # Nueva ruta para la app bodega
     path("api/cuaderno/", include("cuaderno_campo.urls")),
+    path("api/produccion/", include("produccion.urls")),
+    
 
 ]
 

@@ -1,5 +1,5 @@
 // src/pages/agronomo/Produccion_agro.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -10,26 +10,102 @@ import {
   Legend,
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import { IconFileText } from "@tabler/icons-react";
+import { IconFileText, IconPlus } from "@tabler/icons-react";
+import { useNavigate } from "react-router-dom";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
+import { produccionApi, fincasApi, lotesApi } from "../../services/apiClient";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend, ChartDataLabels);
 
 const Produccion_agro = () => {
-  // Filtros
-  const [finca, setFinca] = useState("Todas");
-  const [periodo, setPeriodo] = useState("Mes");
-  const [cultivo, setCultivo] = useState("Todos");
-  const [variedad, setVariedad] = useState("Todas");
-  const [lote, setLote] = useState("Todos");
+  const navigate = useNavigate();
 
-  // Datos de producción
+  // Estados de filtros
+  const [finca, setFinca] = useState(""); // ID de la finca
+  const [lote, setLote] = useState("");   // ID del lote
+  const [periodo, setPeriodo] = useState("Mes");
+
+  // Datos para selects
+  const [fincas, setFincas] = useState([]);
+  const [lotes, setLotes] = useState([]);
+
+  // Datos de la gráfica
+  const [labels, setLabels] = useState([]);
+  const [values, setValues] = useState([]);
+
+  // 🔹 Función para capitalizar
+  const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+
+  // 🔹 Cargar fincas al inicio
+  useEffect(() => {
+    const fetchFincas = async () => {
+      try {
+        const res = await fincasApi.list();
+        setFincas(res.data);
+      } catch (err) {
+        console.error("❌ Error cargando fincas:", err);
+      }
+    };
+    fetchFincas();
+  }, []);
+
+  // 🔹 Cargar lotes al elegir finca
+  useEffect(() => {
+    const fetchLotes = async () => {
+      if (finca) {
+        try {
+          const res = await lotesApi.listByFinca(finca);
+          setLotes(res.data);
+        } catch (err) {
+          console.error("❌ Error cargando lotes:", err);
+        }
+      } else {
+        setLotes([]);
+      }
+    };
+    fetchLotes();
+  }, [finca]);
+
+  // 🔹 Cargar producción cuando cambien filtros
+  useEffect(() => {
+    const fetchProduccion = async () => {
+      try {
+        const params = { periodo: periodo.toLowerCase() }; // 👈 mes o año
+        if (finca) params.finca = finca;
+        if (lote) params.lote = lote;
+
+        const res = await produccionApi.resumenMensual(params);
+        const data = res.data;
+
+        setLabels(
+          data.map((item) => {
+            const fecha = new Date(item.mes);
+            return periodo === "Año"
+              ? fecha.getFullYear().toString()
+              : capitalize(
+                  fecha.toLocaleDateString("es-ES", {
+                    month: "long",
+                    year: "numeric",
+                  })
+                );
+          })
+        );
+
+        setValues(data.map((item) => item.total));
+      } catch (err) {
+        console.error("❌ Error cargando producción:", err);
+      }
+    };
+    fetchProduccion();
+  }, [finca, lote, periodo]);
+
+  // 🔹 Configurar gráfica
   const data = {
-    labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio"],
+    labels,
     datasets: [
       {
-        label: "Kilogramos",
-        data: [8000, 9000, 7500, 10000, 9500, 8700],
+        label: "Producción",
+        data: values,
         backgroundColor: (context) => {
           const chart = context.chart;
           const { ctx, chartArea } = chart;
@@ -39,7 +115,6 @@ const Produccion_agro = () => {
           gradient.addColorStop(1, "rgba(34,197,94,0.3)");
           return gradient;
         },
-        borderRadius: 0,
         borderWidth: 1,
         borderColor: "rgba(34,197,94,1)",
       },
@@ -62,11 +137,7 @@ const Produccion_agro = () => {
       },
     },
     scales: {
-      y: {
-        beginAtZero: true,
-        suggestedMax: 11000,
-        ticks: { color: "#374151" },
-      },
+      y: { beginAtZero: true, ticks: { color: "#374151" } },
       x: { ticks: { color: "#374151" } },
     },
   };
@@ -83,55 +154,41 @@ const Produccion_agro = () => {
 
       {/* Filtros */}
       <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {/* Finca */}
         <div>
           <label className="font-bold text-gray-800 block mb-1">Finca</label>
           <select
             value={finca}
-            onChange={(e) => setFinca(e.target.value)}
+            onChange={(e) => {
+              setFinca(e.target.value);
+              setLote(""); // resetear lote si cambia finca
+            }}
             className="border border-gray-300 rounded px-4 py-1 w-full"
           >
-            <option>Todas</option>
-            <option>La Esmeralda</option>
-            <option>La Carolina</option>
+            <option value="">Todas</option>
+            {fincas.map((f) => (
+              <option key={f.id} value={f.id}>
+                {f.nombre}
+              </option>
+            ))}
           </select>
         </div>
 
-        <div>
-          <label className="font-bold text-gray-800 block mb-1">Cultivo</label>
-          <select
-            value={cultivo}
-            onChange={(e) => setCultivo(e.target.value)}
-            className="border border-gray-300 rounded px-4 py-1 w-full"
-          >
-            <option>Todos</option>
-            <option>Café</option>
-            <option>Cacao</option>
-          </select>
-        </div>
-
-        <div>
-          <label className="font-bold text-gray-800 block mb-1">Variedad</label>
-          <select
-            value={variedad}
-            onChange={(e) => setVariedad(e.target.value)}
-            className="border border-gray-300 rounded px-4 py-1 w-full"
-          >
-            <option>Todas</option>
-            <option>Variedad A</option>
-            <option>Variedad B</option>
-          </select>
-        </div>
-
+        {/* Lote */}
         <div>
           <label className="font-bold text-gray-800 block mb-1">Lote</label>
           <select
             value={lote}
             onChange={(e) => setLote(e.target.value)}
             className="border border-gray-300 rounded px-4 py-1 w-full"
+            disabled={!finca}
           >
-            <option>Todos</option>
-            <option>Lote 1</option>
-            <option>Lote 2</option>
+            <option value="">Todos</option>
+            {lotes.map((l) => (
+              <option key={l.id} value={l.id}>
+                {l.lote}
+              </option>
+            ))}
           </select>
         </div>
       </div>
@@ -144,25 +201,9 @@ const Produccion_agro = () => {
           onChange={(e) => setPeriodo(e.target.value)}
           className="border border-gray-300 rounded px-4 py-1 w-60"
         >
-          <option>Día</option>
           <option>Mes</option>
           <option>Año</option>
         </select>
-      </div>
-
-      {/* Fechas */}
-      <div className="mb-8 flex flex-wrap items-center gap-4">
-        <label className="font-bold text-gray-800">Fecha:</label>
-        <span className="font-bold text-gray-800">Desde</span>
-        <input
-          type="date"
-          className="border border-gray-300 px-3 py-1 rounded w-48"
-        />
-        <span className="font-bold text-gray-800">Hasta</span>
-        <input
-          type="date"
-          className="border border-gray-300 px-3 py-1 rounded w-48"
-        />
       </div>
 
       {/* Gráfica */}
@@ -183,11 +224,19 @@ const Produccion_agro = () => {
         </div>
       </div>
 
-      {/* Botón de generar reporte */}
-      <div className="flex justify-center mt-8">
+      {/* Botones de acciones */}
+      <div className="flex justify-center mt-8 gap-4">
+        <button
+          onClick={() => navigate("/registrarproduccion")}
+          className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold"
+        >
+          <IconPlus className="w-5 h-5" />
+          Registrar producción
+        </button>
+
         <button
           onClick={generarReporte}
-          className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold"
+          className="flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold"
         >
           <IconFileText className="w-5 h-5" />
           Generar reporte
@@ -198,4 +247,3 @@ const Produccion_agro = () => {
 };
 
 export default Produccion_agro;
-

@@ -38,6 +38,7 @@ import Detalle_campo_agro from "../pages/agronomo/Detalle_campo_agro";
 import Gestion_mayordomos from "../pages/agronomo/Gestion_mayordomo";
 import Registrar_labor_maquinaria from "../pages/agronomo/Registrar_labor_maquinaria";
 import Registrar_movimiento from "../pages/agronomo/Registrar_movimiento";
+import Registrar_produccion from "../pages/agronomo/Registrar_produccion";
 
 const agronomoRoutes = [
   <Route key="home" path="/homeagro" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Home_agro /></ProtectedRoute>} />,
@@ -77,6 +78,7 @@ const agronomoRoutes = [
   <Route key="gestion-mayordomos" path="/gestionmayordomo" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Gestion_mayordomos /></ProtectedRoute>} />,
   <Route key="registrar-labor-maquinaria" path="/registrarlabormaquinaria/:id" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Registrar_labor_maquinaria /></ProtectedRoute>} />,
   <Route key="registrar-movimiento" path="/registrarmovimiento" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Registrar_movimiento /></ProtectedRoute>} />,
+  <Route key="registrar-produccion" path="/registrarproduccion" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Registrar_produccion /></ProtectedRoute>} />,
 ];
 
 export default agronomoRoutes;

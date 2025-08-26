@@ -206,5 +206,29 @@ export const cuadernoCampoApi = {
   delete: (id) => api.delete(`/api/cuaderno/${id}/`),
 };
 
+// ===== API Arboles (variedades por lote) =====
+export const arbolesApi = {
+  list: () => api.get("/api/arboles/"),
+  listByLote: (loteId) => api.get(`/api/arboles/?lote=${loteId}`),
+  get: (id) => api.get(`/api/arboles/${id}/`),
+};
+
+// ===== API Producción =====
+export const produccionApi = {
+  list: () => api.get("/api/produccion/"),
+  get: (id) => api.get(`/api/produccion/${id}/`),
+  create: (data) => api.post("/api/produccion/", data),
+  update: (id, data) => api.patch(`/api/produccion/${id}/`, data),
+  delete: (id) => api.delete(`/api/produccion/${id}/`),
+
+  // 👇 ahora acepta filtros como { finca: 4, lote: 5 }
+  resumenMensual: (params = {}) =>
+    api.get("/api/produccion/resumen_mensual/", { params }),
+
+  resumenFinca: (params = {}) =>
+    api.get("/api/produccion/resumen_finca/", { params }),
+};
+
+
 // ===== Export principal =====
 export default api;
