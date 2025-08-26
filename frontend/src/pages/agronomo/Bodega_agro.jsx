@@ -137,8 +137,8 @@ const Bodega_agro = () => {
     <LayoutAgronomo>
       <h1 className="text-3xl font-bold text-green-700 mb-6">Bodega de insumos</h1>
 
-      <div className="bg-white border border-gray-300 rounded-xl overflow-auto relative">
-        {/* 🔹 Botones acción */}
+
+       {/* 🔹 Botones acción */}
         <div className="flex justify-end gap-4 p-4">
           <button
             onClick={() => navigate("/agregarproducto")}
@@ -153,6 +153,9 @@ const Bodega_agro = () => {
             Registrar movimiento
           </button>
         </div>
+
+      <div className="bg-white border border-gray-300 rounded-xl overflow-auto relative">
+       
 
         {loading ? (
           <p className="text-center py-6">Cargando insumos...</p>

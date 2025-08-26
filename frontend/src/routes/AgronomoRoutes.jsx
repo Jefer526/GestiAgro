@@ -31,7 +31,7 @@ import Cuaderno_campo_agro from "../pages/agronomo/Cuaderno_campo_agro";
 import Registrarticketag from "../pages/agronomo/Registrarticketag"; 
 import Detalles_ticketa from "../pages/agronomo/Detalle_ticketa";
 import Gestion_fincas from "../pages/agronomo/Gestion_fincas";
-import Manejo_fitosanitario from "../pages/agronomo/Manejo_fitosanitario";
+import Fitosanitario_agro from "../pages/agronomo/Manejo_fitosanitario";
 import Historial_labor_agro from "../pages/agronomo/Historial_labor_agro";
 import Historial_campo_agro from "../pages/agronomo/Historial_campo_agro";
 import Detalle_campo_agro from "../pages/agronomo/Detalle_campo_agro";
@@ -39,6 +39,7 @@ import Gestion_mayordomos from "../pages/agronomo/Gestion_mayordomo";
 import Registrar_labor_maquinaria from "../pages/agronomo/Registrar_labor_maquinaria";
 import Registrar_movimiento from "../pages/agronomo/Registrar_movimiento";
 import Registrar_produccion from "../pages/agronomo/Registrar_produccion";
+import RegistrarMonitoreo from "../pages/agronomo/RegistrarMonitoreo";
 
 const agronomoRoutes = [
   <Route key="home" path="/homeagro" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Home_agro /></ProtectedRoute>} />,
@@ -71,7 +72,7 @@ const agronomoRoutes = [
   <Route key="cuaderno-campo-agro" path="/cuadernocampo" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Cuaderno_campo_agro /></ProtectedRoute>} />,
   <Route key="detalles-ticketa" path="/detallesticketa" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Detalles_ticketa /></ProtectedRoute>} />,
   <Route key="gestion-fincas" path="/gestionfincas" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Gestion_fincas /></ProtectedRoute>} />,
-  <Route key="manejo-fitosanitario" path="/manejofitosanitario" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Manejo_fitosanitario /></ProtectedRoute>} />,
+  <Route key="manejo-fitosanitario" path="/manejofitosanitario" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Fitosanitario_agro /></ProtectedRoute>} />,
   <Route key="historial-labor-agro" path="/historialagro" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Historial_labor_agro /></ProtectedRoute>} />,
   <Route key="historial-campo-agro" path="/historialcampo" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Historial_campo_agro /></ProtectedRoute>} />,
   <Route key="detalle-campo-agro" path="/detallecampo/:id" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Detalle_campo_agro /></ProtectedRoute>} />,
@@ -79,6 +80,9 @@ const agronomoRoutes = [
   <Route key="registrar-labor-maquinaria" path="/registrarlabormaquinaria/:id" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Registrar_labor_maquinaria /></ProtectedRoute>} />,
   <Route key="registrar-movimiento" path="/registrarmovimiento" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Registrar_movimiento /></ProtectedRoute>} />,
   <Route key="registrar-produccion" path="/registrarproduccion" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><Registrar_produccion /></ProtectedRoute>} />,
+  <Route key="registrar-monitoreo" path="/registrarmonitoreo" element={<ProtectedRoute allowedRoles={["admin", "agronomo"]}><RegistrarMonitoreo /></ProtectedRoute>} />,
+  
+
 ];
 
 export default agronomoRoutes;
