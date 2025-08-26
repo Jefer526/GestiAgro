@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     "equipos",
     "clima",
     "bodega",
+    "cuaderno_campo",
 ]
 
 
@@ -114,6 +115,10 @@ WSGI_APPLICATION = 'Backend.wsgi.application'
 DATABASES = {
     'default': env.db('DATABASE_URL')
 }
+
+# Archivos multimedia (fotos, uploads de usuarios, etc.)
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 
 # Password validation

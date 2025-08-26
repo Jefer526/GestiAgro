@@ -9,32 +9,15 @@ import {
   IconSortDescending2,
 } from "@tabler/icons-react";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
+import { cuadernoCampoApi } from "../../services/apiClient";
 
 const Historial_campo_agro = () => {
   const navigate = useNavigate();
   const filtroRef = useRef(null);
 
-  // 📌 Datos de ejemplo
-  const registros = [
-    {
-      fecha: "2025-08-15",
-      finca: "La Esmeralda",
-      lote: "Lote 1",
-      anotaciones: "Revisión de plagas en cultivo de aguacate.",
-    },
-    {
-      fecha: "2025-08-16",
-      finca: "Las Palmas",
-      lote: "Lote 2",
-      anotaciones: "Aplicación de fertilizantes orgánicos.",
-    },
-    {
-      fecha: "2025-08-17",
-      finca: "La Carolina",
-      lote: "Lote 3",
-      anotaciones: "Observación de humedad del suelo.",
-    },
-  ];
+  // 📌 Datos desde API
+  const [registros, setRegistros] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   // Columnas con filtro
   const columnas = ["fecha", "finca", "lote"];
@@ -45,6 +28,31 @@ const Historial_campo_agro = () => {
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [busquedas, setBusquedas] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
+
+  // 📌 Función para formatear fecha (dd/mm/yyyy)
+  const formatFecha = (isoDate) => {
+    if (!isoDate) return "";
+    const d = new Date(isoDate);
+    const day = String(d.getDate()).padStart(2, "0");
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
+  // 📌 Cargar registros al montar
+  useEffect(() => {
+    const fetchRegistros = async () => {
+      try {
+        const res = await cuadernoCampoApi.list();
+        setRegistros(res.data);
+      } catch (err) {
+        console.error("Error cargando registros:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRegistros();
+  }, []);
 
   // Cerrar popover si clic fuera
   useEffect(() => {
@@ -109,9 +117,8 @@ const Historial_campo_agro = () => {
 
   return (
     <LayoutAgronomo>
-      {/* ✅ Título */}
       <h1 className="text-3xl font-bold text-green-700 mb-6">
-        Historial de Campo
+        Cuaderno de Campo
       </h1>
 
       {/* ✅ Botón registro */}
@@ -127,116 +134,124 @@ const Historial_campo_agro = () => {
 
       {/* ✅ Tabla con filtros */}
       <div className="bg-white border border-gray-200 rounded-xl overflow-auto relative">
-        <table className="w-full text-base">
-          <thead className="bg-green-600 text-white">
-            <tr>
-              {["fecha", "finca", "lote", "anotaciones", "acciones"].map((col, idx) => (
-                <th key={idx} className="px-4 py-3 border text-center uppercase">
-                  {columnas.includes(col) ? (
-                    <div className="flex justify-center items-center gap-2">
-                      <span>{col}</span>
-                      <button onClick={(e) => toggleFiltro(col, e)}>
-                        <IconFilter className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ) : (
-                    col
-                  )}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {registrosFiltrados.map((r, i) => (
-              <tr
-                key={i}
-                className="border-b border-gray-200 text-center align-middle hover:bg-gray-50 transition"
-              >
-                <td className="px-4 py-2 border">{r.fecha}</td>
-                <td className="px-4 py-2 border">{r.finca}</td>
-                <td className="px-4 py-2 border">{r.lote}</td>
-                {/* ✅ ahora anotaciones centrado */}
-                <td className="px-4 py-2 border text-center">{r.anotaciones}</td>
-                <td className="px-4 py-2 border text-center">
-                  <button
-                    onClick={() => navigate("/detallecampo")}
-                    className="bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm font-medium flex items-center gap-1 justify-center mx-auto hover:bg-blue-200 transition"
-                  >
-                    <IconEye className="w-4 h-4" /> Detalles
-                  </button>
-                </td>
-              </tr>
-            ))}
-            {registrosFiltrados.length === 0 && (
+        {loading ? (
+          <p className="p-6 text-gray-500 text-center">Cargando registros...</p>
+        ) : (
+          <table className="w-full text-base">
+            <thead className="bg-green-600 text-white">
               <tr>
-                <td colSpan={5} className="p-6 text-gray-500 text-center">
-                  Sin registros
-                </td>
+                {["fecha", "finca", "lote", "anotaciones", "acciones"].map((col, idx) => (
+                  <th key={idx} className="px-4 py-3 border text-center uppercase">
+                    {col === "fecha" || col === "finca" || col === "lote" ? (
+                      <div className="flex justify-center items-center gap-2">
+                        <span>{col}</span>
+                        <button
+                          onClick={(e) =>
+                            toggleFiltro(
+                              col === "finca" ? "finca_nombre" :
+                              col === "lote" ? "lote_nombre" : col, e
+                            )
+                          }
+                        >
+                          <IconFilter className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ) : (
+                      col
+                    )}
+                  </th>
+                ))}
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {registrosFiltrados.map((r) => (
+                <tr
+                  key={r.id}
+                  className="border-b border-gray-200 text-center align-middle hover:bg-gray-50 transition"
+                >
+                  {/* 📌 Fecha formateada */}
+                  <td className="px-4 py-2 border">{formatFecha(r.fecha)}</td>
+                  <td className="px-4 py-2 border">{r.finca_nombre}</td>
+                  <td className="px-4 py-2 border">{r.lote_nombre}</td>
+                  <td className="px-4 py-2 border text-center">{r.anotaciones}</td>
+                  <td className="px-4 py-2 border text-center">
+                    <button
+                      onClick={() => navigate(`/detallecampo/${r.id}`, { state: r })}
+                      className="bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm font-medium flex items-center gap-1 justify-center mx-auto hover:bg-blue-200 transition"
+                    >
+                      <IconEye className="w-4 h-4" /> Detalles
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              {registrosFiltrados.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="p-6 text-gray-500 text-center">
+                    Sin registros
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        )}
 
         {/* === Popover de filtros === */}
-        {filtroActivo === "fecha" ? (
-          <div
-            ref={filtroRef}
-            className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60 text-left text-sm"
-            style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
-          >
-            <div className="font-semibold mb-2">Filtrar por Fecha</div>
-            {Object.entries(
-              registros.reduce((acc, { fecha }) => {
-                const [year, month, day] = fecha.split("-");
-                const monthName = new Date(fecha).toLocaleString("default", { month: "long" });
-                acc[year] = acc[year] || {};
-                acc[year][monthName] = acc[year][monthName] || { days: new Set(), monthNum: month };
-                acc[year][monthName].days.add(day);
-                return acc;
-              }, {})
-            ).map(([year, months]) => (
-              <div key={year} className="mb-2">
-                <div className="font-medium">{year}</div>
-                {Object.entries(months).map(([monthName, info]) => (
-                  <div key={monthName} className="ml-4">
-                    <div className="font-medium">{monthName}</div>
-                    {[...info.days].map((day) => {
-                      const fullDate = `${year}-${String(info.monthNum).padStart(
-                        2,
-                        "0"
-                      )}-${String(day).padStart(2, "0")}`;
-                      return (
-                        <label key={fullDate} className="ml-6 flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            checked={(valoresSeleccionados["fecha"] || []).includes(fullDate)}
-                            onChange={() => toggleValor("fecha", fullDate)}
-                            className="accent-green-600"
-                          />
-                          {String(day).padStart(2, "0")}
-                        </label>
-                      );
-                    })}
-                  </div>
-                ))}
-              </div>
-            ))}
-            <button
-              onClick={() => limpiarFiltro("fecha")}
-              className="text-blue-600 hover:underline text-xs lowercase mt-2"
+        {filtroActivo && (
+          filtroActivo === "fecha" ? (
+            <div
+              ref={filtroRef}
+              className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60 text-left text-sm"
+              style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
             >
-              borrar filtro
-            </button>
-          </div>
-        ) : (
-          filtroActivo && (
+              <div className="font-semibold mb-2">Filtrar por Fecha</div>
+              {Object.entries(
+                registros.reduce((acc, { fecha }) => {
+                  const [year, month, day] = fecha.split("-");
+                  const monthName = new Date(fecha).toLocaleString("default", { month: "long" });
+                  acc[year] = acc[year] || {};
+                  acc[year][monthName] = acc[year][monthName] || { days: new Set(), monthNum: month };
+                  acc[year][monthName].days.add(day);
+                  return acc;
+                }, {})
+              ).map(([year, months]) => (
+                <div key={year} className="mb-2">
+                  <div className="font-medium">{year}</div>
+                  {Object.entries(months).map(([monthName, info]) => (
+                    <div key={monthName} className="ml-4">
+                      <div className="font-medium">{monthName}</div>
+                      {[...info.days].map((day) => {
+                        const fullDate = `${year}-${String(info.monthNum).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+                        return (
+                          <label key={fullDate} className="ml-6 flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              checked={(valoresSeleccionados["fecha"] || []).includes(fullDate)}
+                              onChange={() => toggleValor("fecha", fullDate)}
+                              className="accent-green-600"
+                            />
+                            {String(day).padStart(2, "0")}
+                          </label>
+                        );
+                      })}
+                    </div>
+                  ))}
+                </div>
+              ))}
+              <button
+                onClick={() => limpiarFiltro("fecha")}
+                className="text-blue-600 hover:underline text-xs lowercase mt-2"
+              >
+                borrar filtro
+              </button>
+            </div>
+          ) : (
             <div
               ref={filtroRef}
               className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60 text-left text-sm"
               style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
             >
               <div className="font-semibold mb-2">
-                Filtrar por {filtroActivo.charAt(0).toUpperCase() + filtroActivo.slice(1)}
+                Filtrar por {filtroActivo.replace("_nombre", "")}
               </div>
               <button
                 onClick={() => ordenar(filtroActivo, "asc")}
@@ -285,4 +300,3 @@ const Historial_campo_agro = () => {
 };
 
 export default Historial_campo_agro;
-

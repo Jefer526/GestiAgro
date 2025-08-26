@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include
 from accounts.views import DemoSignupAPIView 
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -17,5 +19,9 @@ urlpatterns = [
     path("api/equipos/", include("equipos.urls")),
     path("api/clima/", include("clima.urls")),
     path("api/bodega/", include("bodega.urls")),  # Nueva ruta para la app bodega
+    path("api/cuaderno/", include("cuaderno_campo.urls")),
 
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

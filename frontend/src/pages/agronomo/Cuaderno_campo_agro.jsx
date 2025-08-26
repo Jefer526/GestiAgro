@@ -1,8 +1,9 @@
 // src/pages/agronomo/Cuaderno_campo_agro.jsx
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { IconCamera, IconCheck, IconChevronLeft } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
+import { cuadernoCampoApi, fincasApi, lotesApi } from "../../services/apiClient";
 
 const Cuaderno_campo_agro = () => {
   const navigate = useNavigate();
@@ -14,10 +15,43 @@ const Cuaderno_campo_agro = () => {
     anotaciones: "",
   });
 
-  const [foto, setFoto] = useState(null);
+  const [fotoPreview, setFotoPreview] = useState(null); // para mostrar vista previa
+  const [fotoArchivo, setFotoArchivo] = useState(null); // archivo real
   const fileInputRef = useRef(null);
 
   const [alertaVisible, setAlertaVisible] = useState(false);
+  const [fincas, setFincas] = useState([]);
+  const [lotes, setLotes] = useState([]);
+
+  // 📌 Cargar fincas al montar
+  useEffect(() => {
+    const fetchFincas = async () => {
+      try {
+        const res = await fincasApi.list();
+        setFincas(res.data);
+      } catch (err) {
+        console.error("Error cargando fincas:", err);
+      }
+    };
+    fetchFincas();
+  }, []);
+
+  // 📌 Cargar lotes cuando cambia la finca seleccionada
+  useEffect(() => {
+    if (filtros.finca) {
+      const fetchLotes = async () => {
+        try {
+          const res = await lotesApi.listByFinca(filtros.finca);
+          setLotes(res.data);
+        } catch (err) {
+          console.error("Error cargando lotes:", err);
+        }
+      };
+      fetchLotes();
+    } else {
+      setLotes([]);
+    }
+  }, [filtros.finca]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,18 +65,34 @@ const Cuaderno_campo_agro = () => {
   const handleFotoSeleccionada = (e) => {
     const archivo = e.target.files[0];
     if (archivo) {
+      setFotoArchivo(archivo); // archivo real para enviar
       const url = URL.createObjectURL(archivo);
-      setFoto(url);
+      setFotoPreview(url); // preview
     }
   };
 
-  const handleGuardar = (e) => {
+  const handleGuardar = async (e) => {
     e.preventDefault();
-    setAlertaVisible(true);
-    setTimeout(() => {
-      setAlertaVisible(false);
-      navigate("/Historialcampo");
-    }, 2000);
+
+    try {
+      const formData = new FormData();
+      formData.append("fecha", filtros.fecha);
+      formData.append("finca", filtros.finca);
+      formData.append("lote", filtros.lote);
+      formData.append("anotaciones", filtros.anotaciones);
+      if (fotoArchivo) formData.append("foto", fotoArchivo);
+
+      await cuadernoCampoApi.create(formData);
+
+      setAlertaVisible(true);
+      setTimeout(() => {
+        setAlertaVisible(false);
+        navigate("/historialcampo");
+      }, 1500);
+    } catch (err) {
+      console.error("Error guardando registro:", err);
+      alert("Hubo un error al guardar el registro.");
+    }
   };
 
   return (
@@ -54,7 +104,7 @@ const Cuaderno_campo_agro = () => {
         </div>
       )}
 
-      {/* ✅ Botón volver (como en Detalle_campo_agro, afuera del form) */}
+      {/* ✅ Botón volver */}
       <button
         onClick={() => navigate(-1)}
         className="flex items-center text-green-700 font-semibold mb-4 text-lg hover:underline"
@@ -98,9 +148,11 @@ const Cuaderno_campo_agro = () => {
               <option value="" disabled hidden>
                 Selecciona una finca
               </option>
-              <option value="La Esmeralda">La Esmeralda</option>
-              <option value="Las Palmas">Las Palmas</option>
-              <option value="La Carolina">La Carolina</option>
+              {fincas.map((finca) => (
+                <option key={finca.id} value={finca.id}>
+                  {finca.nombre}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -113,13 +165,16 @@ const Cuaderno_campo_agro = () => {
               onChange={handleChange}
               className="w-full border p-4 rounded text-lg"
               required
+              disabled={!filtros.finca}
             >
               <option value="" disabled hidden>
                 Selecciona un lote
               </option>
-              <option value="Lote 1">Lote 1</option>
-              <option value="Lote 2">Lote 2</option>
-              <option value="Lote 3">Lote 3</option>
+              {lotes.map((lote) => (
+                <option key={lote.id} value={lote.id}>
+                  {lote.lote}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -156,11 +211,11 @@ const Cuaderno_campo_agro = () => {
               onChange={handleFotoSeleccionada}
             />
 
-            {foto && (
+            {fotoPreview && (
               <div className="mt-2">
                 <p className="text-sm font-medium">Vista previa:</p>
                 <img
-                  src={foto}
+                  src={fotoPreview}
                   alt="Foto tomada"
                   className="mt-2 max-h-48 rounded border"
                 />
@@ -184,6 +239,3 @@ const Cuaderno_campo_agro = () => {
 };
 
 export default Cuaderno_campo_agro;
-
-
-

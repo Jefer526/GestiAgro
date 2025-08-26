@@ -190,5 +190,21 @@ export const movimientosApi = {
     api.get(`/api/bodega/movimientos/?producto=${productoId}`),
 };
 
+
+// ===== API Cuaderno de Campo =====
+export const cuadernoCampoApi = {
+  list: () => api.get("/api/cuaderno/"),             // listar registros
+  get: (id) => api.get(`/api/cuaderno/${id}/`),      // obtener un registro
+  create: (data) =>
+    api.post("/api/cuaderno/", data, {
+      headers: { "Content-Type": "multipart/form-data" }, // 👈 obligatorio para foto
+    }),
+  update: (id, data) =>
+    api.patch(`/api/cuaderno/${id}/`, data, {
+      headers: { "Content-Type": "multipart/form-data" }, // 👈 obligatorio para foto
+    }),
+  delete: (id) => api.delete(`/api/cuaderno/${id}/`),
+};
+
 // ===== Export principal =====
 export default api;
