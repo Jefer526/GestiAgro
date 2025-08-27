@@ -13,22 +13,30 @@ import {
   IconSortDescending2,
 } from "@tabler/icons-react";
 
-// 👇 Importa el layout del Mayordomo
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
+import { equiposApi } from "../../services/apiClient"; // 👈 ✅ importar API real
 
-const MENU_WIDTH_PX = 288; // w-72
+const MENU_WIDTH_PX = 288;
 const MENU_MARGIN_PX = 8;
 
 const Registrar_novedadm = () => {
   const navigate = useNavigate();
 
-  // === Datos base + columnas para filtros ===
-  const columnas = ["id", "maquina", "referencia", "estado"];
-  const [maquinas, setMaquinas] = useState([
-    { id: 1, maquina: "Tractor", referencia: "JD 5055", estado: "" },
-    { id: 2, maquina: "Guadaña", referencia: "Stihl MS 450", estado: "" },
-    { id: 3, maquina: "Podadora", referencia: "Stihl BR 130", estado: "" },
-  ]);
+  const columnas = ["codigo_equipo", "maquina", "referencia", "estado"];
+  const [maquinas, setMaquinas] = useState([]);
+
+  // 🔄 Cargar máquinas desde API
+  useEffect(() => {
+    const fetchMaquinas = async () => {
+      try {
+        const res = await equiposApi.list();
+        setMaquinas(res.data);
+      } catch (err) {
+        console.error("❌ Error cargando máquinas:", err);
+      }
+    };
+    fetchMaquinas();
+  }, []);
 
   // === Filtros ===
   const filtroRef = useRef(null);
@@ -70,7 +78,7 @@ const Registrar_novedadm = () => {
   const handleBusqueda = (campo, texto) =>
     setBusquedas({ ...busquedas, [campo]: texto });
 
-  // === Alerta guardar ===
+  // === Alerta ===
   const [alertaVisible, setAlertaVisible] = useState(false);
 
   // === Menú contextual ===
@@ -98,24 +106,29 @@ const Registrar_novedadm = () => {
 
   const closeMenu = () => setMenuIndex(null);
 
-  // Cerrar menús y filtros
   useEffect(() => {
     const manejarClickFuera = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) {
-        closeMenu();
-      }
-      if (filtroRef.current && !filtroRef.current.contains(e.target)) {
-        setFiltroActivo(null);
-      }
+      if (menuRef.current && !menuRef.current.contains(e.target)) closeMenu();
+      if (filtroRef.current && !filtroRef.current.contains(e.target)) setFiltroActivo(null);
     };
     document.addEventListener("mousedown", manejarClickFuera);
     return () => document.removeEventListener("mousedown", manejarClickFuera);
   }, []);
 
-  const handleEstadoChange = (index, marcarAveriado) => {
-    const nuevas = [...maquinas];
-    nuevas[index].estado = marcarAveriado ? "Averiado" : "";
-    setMaquinas(nuevas);
+  // ✅ Cambiar estado vía API
+  const handleEstadoChange = async (index, marcarAveriado) => {
+    try {
+      const maquina = maquinas[index];
+      const nuevoEstado = marcarAveriado ? "Averiado" : "Óptimo";
+
+      await equiposApi.update(maquina.id, { estado: nuevoEstado });
+
+      const nuevas = [...maquinas];
+      nuevas[index].estado = nuevoEstado;
+      setMaquinas(nuevas);
+    } catch (err) {
+      console.error("❌ Error actualizando estado:", err.response?.data || err);
+    }
   };
 
   const handleGuardar = () => {
@@ -126,15 +139,19 @@ const Registrar_novedadm = () => {
     }, 2000);
   };
 
-  const EstadoAveriadoBadge = ({ isAveriado }) => {
-    const classes = isAveriado
-      ? "bg-red-50 text-red-700 ring-red-200"
-      : "bg-gray-50 text-gray-600 ring-gray-300";
-    const iconClass = isAveriado ? "text-red-600" : "text-gray-500";
+  const EstadoBadge = ({ estado }) => {
+    if (estado === "Averiado") {
+      return (
+        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full ring-1 text-sm font-semibold shadow-sm bg-red-50 text-red-700 ring-red-200">
+          <IconAlertTriangle className="w-4 h-4 text-red-600" />
+          Averiado
+        </span>
+      );
+    }
     return (
-      <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full ring-1 text-sm font-semibold shadow-sm ${classes}`}>
-        <IconAlertTriangle className={`w-4 h-4 ${iconClass}`} />
-        Averiado
+      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full ring-1 text-sm font-semibold shadow-sm bg-green-50 text-green-700 ring-green-200">
+        <IconCircleCheck className="w-4 h-4 text-green-600" />
+        {estado || "Óptimo"}
       </span>
     );
   };
@@ -159,7 +176,6 @@ const Registrar_novedadm = () => {
 
   return (
     <LayoutMayordomo>
-      {/* Alerta flotante */}
       {alertaVisible && (
         <div className="fixed top-3 left-1/2 -translate-x-1/2 z-[1000] bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
           <IconCheck className="w-5 h-5" /> Estados actualizados exitosamente
@@ -177,7 +193,7 @@ const Registrar_novedadm = () => {
         Registrar novedad de máquina
       </h2>
 
-      {/* Tabla con filtros */}
+      {/* === Tabla === */}
       <div className="overflow-x-auto rounded-lg shadow-lg relative bg-white">
         <table className="min-w-full text-base">
           <thead className="bg-green-600 text-white font-bold text-center">
@@ -194,26 +210,19 @@ const Registrar_novedadm = () => {
               ))}
             </tr>
           </thead>
-
           <tbody className="text-center">
             {datosFiltrados.map((m, index) => {
-              const isAveriado = m.estado === "Averiado";
               return (
                 <tr key={m.id} className="hover:bg-gray-100">
-                  <td className="p-4 border">{m.id}</td>
+                  <td className="p-4 border">{m.codigo_equipo}</td>
                   <td className="p-4 border">{m.maquina}</td>
                   <td className="p-4 border">{m.referencia}</td>
                   <td className="p-4 border">
                     <div className="inline-flex items-center gap-2">
-                      <EstadoAveriadoBadge isAveriado={isAveriado} />
+                      <EstadoBadge estado={m.estado} />
                       <button
                         onClick={(e) => openMenu(index, e)}
-                        className={`inline-flex items-center justify-center w-9 h-9 rounded-lg border shadow-sm transition
-                          ${
-                            isAveriado
-                              ? "border-red-200 bg-red-50 text-red-600 hover:bg-red-100"
-                              : "border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100"
-                          }`}
+                        className="inline-flex items-center justify-center w-9 h-9 rounded-lg border shadow-sm transition border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100"
                       >
                         <IconDotsVertical className="w-5 h-5" />
                       </button>
@@ -224,68 +233,9 @@ const Registrar_novedadm = () => {
             })}
           </tbody>
         </table>
-
-        {/* Popover de filtros */}
-        {filtroActivo && (
-          <div
-            ref={filtroRef}
-            className="fixed bg-white text-black shadow-md border rounded z-[1100] p-3 w-60 text-left text-sm"
-            style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
-          >
-            <div className="font-semibold mb-2">
-              Filtrar por{" "}
-              {filtroActivo.charAt(0).toUpperCase() + filtroActivo.slice(1)}
-            </div>
-
-            <button
-              onClick={() => ordenar(filtroActivo, "asc")}
-              className="text-green-700 flex items-center gap-1 mb-1 capitalize"
-            >
-              <IconSortAscending2 className="w-4 h-4" /> Ordenar A → Z
-            </button>
-            <button
-              onClick={() => ordenar(filtroActivo, "desc")}
-              className="text-green-700 flex items-center gap-1 mb-2 capitalize"
-            >
-              <IconSortDescending2 className="w-4 h-4" /> Ordenar Z → A
-            </button>
-
-            <input
-              type="text"
-              placeholder="Buscar..."
-              className="w-full border border-gray-300 px-2 py-1 rounded mb-2 text-sm"
-              value={busquedas[filtroActivo] || ""}
-              onChange={(e) => handleBusqueda(filtroActivo, e.target.value)}
-            />
-
-            <div className="flex flex-col max-h-40 overflow-y-auto">
-              {getValoresUnicos(filtroActivo).map((val, idx) => (
-                <label
-                  key={idx}
-                  className="flex items-center gap-2 mb-1 capitalize"
-                >
-                  <input
-                    type="checkbox"
-                    checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
-                    onChange={() => toggleValor(filtroActivo, val)}
-                    className="accent-green-600"
-                  />
-                  {val === "" ? "—" : val}
-                </label>
-              ))}
-            </div>
-
-            <button
-              onClick={() => limpiarFiltro(filtroActivo)}
-              className="text-blue-600 hover:underline text-xs capitalize mt-2"
-            >
-              Borrar filtro
-            </button>
-          </div>
-        )}
       </div>
 
-      {/* Menú contextual en PORTAL */}
+      {/* Menú contextual */}
       {menuIndex !== null && (
         <MenuOverlay>
           <div
@@ -297,7 +247,6 @@ const Registrar_novedadm = () => {
               Selecciona una opción
             </div>
 
-            {/* Marcar como AVERIADO */}
             {maquinas[menuIndex]?.estado !== "Averiado" && (
               <button
                 onClick={() => {
@@ -318,7 +267,6 @@ const Registrar_novedadm = () => {
               </button>
             )}
 
-            {/* DESMARCAR AVERIADO */}
             {maquinas[menuIndex]?.estado === "Averiado" && (
               <button
                 onClick={() => {
@@ -331,11 +279,9 @@ const Registrar_novedadm = () => {
                   <IconCircleCheck className="w-5 h-5 text-green-600" />
                 </div>
                 <div>
-                  <div className="text-sm font-semibold text-green-700">
-                    Desmarcar averiado
-                  </div>
+                  <div className="text-sm font-semibold text-green-700">Desmarcar averiado</div>
                   <div className="text-xs text-gray-500">
-                    El equipo dejará de estar marcado.
+                    El equipo volverá a estar en estado “Óptimo”.
                   </div>
                 </div>
               </button>
@@ -357,4 +303,3 @@ const Registrar_novedadm = () => {
 };
 
 export default Registrar_novedadm;
-

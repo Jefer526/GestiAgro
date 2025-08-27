@@ -13,13 +13,11 @@ psycopg2-binary==2.9.10  # PostgreSQL
 pandas==2.3.0
 openpyxl==3.1.5        # Excel
 pillow==10.4.0         # Imágenes en Django
-pygraphviz==1.14       # Diagramas
 python-decouple==3.8   # Manejo de configuración (opcional, si lo usas)
 
 # --- Dependencias secundarias (instaladas automáticamente, no siempre necesarias fijar) ---
 asgiref==3.8.1
 sqlparse==0.5.1
 tzdata==2025.2
-numpy==1.26.4
 python-dateutil==2.9.0.post0
 pytz==2024.2

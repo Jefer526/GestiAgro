@@ -5,6 +5,7 @@ import {
   IconFilter,
   IconSortAscending2,
   IconSortDescending2,
+  IconCheck,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
@@ -16,6 +17,8 @@ const Gestion_mayordomos = () => {
 
   const [usuarios, setUsuarios] = useState([]);
   const [fincas, setFincas] = useState([]);
+  const [seleccionPendiente, setSeleccionPendiente] = useState({});
+  const [mensaje, setMensaje] = useState(null); // 👈 alerta de confirmación
 
   // --- Filtros y orden ---
   const [filtroActivo, setFiltroActivo] = useState(null);
@@ -24,8 +27,7 @@ const Gestion_mayordomos = () => {
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
 
-  // columnas sin duplicar telefono
-  const columnas = ["nombre", "rol", "estado", "finca", "telefono"];
+  const columnas = ["nombre", "rol", "estado", "fincaNombre", "telefono"];
 
   // 👉 Traer usuarios y fincas
   useEffect(() => {
@@ -33,11 +35,10 @@ const Gestion_mayordomos = () => {
       .get("/api/accounts/users/")
       .then((res) => {
         const soloMayordomos = res.data.filter((u) => u.rol === "mayordomo");
-        // Normalizamos estado y finca_nombre
         const normalizados = soloMayordomos.map((u) => ({
           ...u,
           estado: u.is_active ? "Activo" : "Inactivo",
-          finca: u.finca_asignada?.nombre || "Sin finca",
+          fincaNombre: u.finca_asignada?.nombre || "Sin finca",
           telefono: u.telefono || "-",
         }));
         setUsuarios(normalizados);
@@ -61,7 +62,11 @@ const Gestion_mayordomos = () => {
     }
   };
 
-  const handleAsignarFinca = (usuarioId, fincaId) => {
+  // 👉 Confirmar asignación
+  const handleAsignarFinca = (usuarioId) => {
+    const fincaId = seleccionPendiente[usuarioId];
+    if (!fincaId) return;
+
     api
       .patch(`/api/accounts/users/${usuarioId}/`, {
         finca_asignada: parseInt(fincaId, 10),
@@ -72,11 +77,17 @@ const Gestion_mayordomos = () => {
             u.id === usuarioId
               ? {
                   ...u,
-                  finca: res.data.finca_asignada?.nombre || "Sin finca",
+                  finca_asignada: res.data.finca_asignada,
+                  fincaNombre: res.data.finca_asignada?.nombre || "Sin finca",
                 }
               : u
           )
         );
+        setSeleccionPendiente((prev) => ({ ...prev, [usuarioId]: "" }));
+
+        // ✅ Mensaje de éxito
+        setMensaje(`Finca asignada a ${res.data.nombre}`);
+        setTimeout(() => setMensaje(null), 3000);
       })
       .catch((err) => console.error("❌ Error asignando finca:", err));
   };
@@ -176,7 +187,7 @@ const Gestion_mayordomos = () => {
                   <div className="flex items-center justify-center gap-2">
                     {campo === "nombre"
                       ? "NOMBRE"
-                      : campo === "finca"
+                      : campo === "fincaNombre"
                       ? "FINCA"
                       : campo === "telefono"
                       ? "TELÉFONO"
@@ -187,6 +198,7 @@ const Gestion_mayordomos = () => {
                   </div>
                 </th>
               ))}
+              <th className="p-4 border">Acción</th>
             </tr>
           </thead>
           <tbody>
@@ -199,8 +211,13 @@ const Gestion_mayordomos = () => {
                 </td>
                 <td className="p-4 border">
                   <select
-                    value={u.finca_asignada?.id || ""}
-                    onChange={(e) => handleAsignarFinca(u.id, e.target.value)}
+                    value={seleccionPendiente[u.id] ?? u.finca_asignada?.id ?? ""}
+                    onChange={(e) =>
+                      setSeleccionPendiente({
+                        ...seleccionPendiente,
+                        [u.id]: e.target.value,
+                      })
+                    }
                     className="border rounded px-2 py-1"
                   >
                     <option value="">-- Seleccionar finca --</option>
@@ -212,72 +229,24 @@ const Gestion_mayordomos = () => {
                   </select>
                 </td>
                 <td className="p-4 border">{u.telefono}</td>
+                <td className="p-4 border text-center">
+                  <button
+                    onClick={() => handleAsignarFinca(u.id)}
+                    className="flex items-center justify-center gap-1 bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700 transition mx-auto"
+                  >
+                    <IconCheck className="w-4 h-4" /> Asignar
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      {/* === Filtro flotante === */}
-      {filtroActivo && (
-        <div
-          ref={filtroRef}
-          className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60"
-          style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
-        >
-          <div className="font-semibold mb-2">
-            Filtrar por {filtroActivo.toUpperCase()}
-          </div>
-          <button
-            onClick={() => ordenar(filtroActivo, "asc")}
-            className="text-green-700 flex items-center gap-1 mb-1"
-          >
-            <IconSortAscending2 className="w-4 h-4" /> Ordenar A → Z
-          </button>
-          <button
-            onClick={() => ordenar(filtroActivo, "desc")}
-            className="text-green-700 flex items-center gap-1 mb-2"
-          >
-            <IconSortDescending2 className="w-4 h-4" /> Ordenar Z → A
-          </button>
-          <input
-            type="text"
-            placeholder="Buscar..."
-            className="w-full border border-gray-300 px-2 py-1 rounded mb-2 text-sm"
-            value={busquedas[filtroActivo] || ""}
-            onChange={(e) => handleBusqueda(filtroActivo, e.target.value)}
-          />
-          <div className="flex flex-col max-h-40 overflow-y-auto">
-            {getValoresUnicos(filtroActivo).map((val) => (
-              <label key={val} className="flex items-center gap-2 mb-1">
-                <input
-                  type="checkbox"
-                  checked={(valoresSeleccionados[filtroActivo] || []).includes(
-                    val
-                  )}
-                  onChange={() => toggleValor(filtroActivo, val)}
-                  className="accent-green-600"
-                />
-                {String(val)}
-              </label>
-            ))}
-          </div>
-
-          {/* Botones Borrar / Aceptar */}
-          <div className="flex justify-between mt-3">
-            <button
-              onClick={() => limpiarFiltro(filtroActivo)}
-              className="bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-xs font-medium hover:bg-gray-300 transition"
-            >
-              Borrar
-            </button>
-            <button
-              onClick={() => setFiltroActivo(null)}
-              className="bg-green-600 text-white px-3 py-1 rounded-md text-xs font-medium hover:bg-green-700 transition"
-            >
-              Aceptar
-            </button>
-          </div>
+      {/* ✅ Mensaje de confirmación */}
+      {mensaje && (
+        <div className="mt-4 p-3 text-green-800 bg-green-100 border border-green-300 rounded-lg shadow text-center font-medium">
+          {mensaje}
         </div>
       )}
     </LayoutAgronomo>

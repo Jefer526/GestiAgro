@@ -10,8 +10,6 @@ import {
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import api, { accountsApi, ENDPOINTS } from "../../services/apiClient";
-
-// Importar tu Layout que ya incluye el Sidebar
 import LayoutAdmin from "../../layouts/LayoutAdmin";
 
 const Admin_usuarios = () => {
@@ -27,7 +25,7 @@ const Admin_usuarios = () => {
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
 
-  const columnas = ["nombre_completo", "telefono", "rol", "email", "estado"];
+  const columnas = ["nombre_completo", "telefono", "rol", "email", "finca", "estado"];
 
   // Capitalizar con excepciones
   const capitalizar = (texto) => {
@@ -66,6 +64,7 @@ const Admin_usuarios = () => {
                 : "usuario")
           ),
           email: u.email || "",
+          finca: u.finca_asignada?.nombre || "Sin finca", // 👈 nueva columna
           is_active: !!u.is_active,
           estado: u.is_active ? "Activo" : "Inactivo",
           _raw: u,
@@ -187,7 +186,7 @@ const Admin_usuarios = () => {
         <table className="min-w-full text-base bg-white text-center">
           <thead className="bg-green-600 text-white">
             <tr>
-              {["NOMBRE_COMPLETO", "TELEFONO", "ROL", "EMAIL", "ESTADO"].map(
+              {["NOMBRE_COMPLETO", "TELEFONO", "ROL", "EMAIL", "FINCA", "ESTADO"].map(
                 (titulo, idx) => (
                   <th key={idx} className="p-4 border">
                     <div className="flex items-center justify-center gap-2">
@@ -195,7 +194,7 @@ const Admin_usuarios = () => {
                       <button
                         onClick={(e) =>
                           toggleFiltro(
-                            ["nombre_completo", "telefono", "rol", "email", "estado"][idx],
+                            ["nombre_completo", "telefono", "rol", "email", "finca", "estado"][idx],
                             e
                           )
                         }
@@ -219,6 +218,7 @@ const Admin_usuarios = () => {
                 <td className="p-4 border">{u.telefono}</td>
                 <td className="p-4 border">{u.rol}</td>
                 <td className="p-4 border">{u.email}</td>
+                <td className="p-4 border">{u.finca}</td> {/* 👈 nueva columna */}
                 <td className="p-4 border">
                   <span
                     className={`px-2 py-1 rounded text-sm ${

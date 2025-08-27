@@ -7,6 +7,16 @@ class MaquinaViewSet(viewsets.ModelViewSet):
     queryset = Maquina.objects.all()
     serializer_class = MaquinaSerializer
 
+    def get_queryset(self):
+        user = self.request.user
+        qs = super().get_queryset()
+
+        # ✅ Si es mayordomo → solo máquinas de su finca asignada
+        if user.rol == "mayordomo" and user.finca_asignada:
+            return qs.filter(ubicacion=user.finca_asignada)
+
+        return qs
+
 
 class MantenimientoViewSet(viewsets.ModelViewSet):
     queryset = Mantenimiento.objects.all()

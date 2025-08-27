@@ -55,7 +55,7 @@ const Home_mayo = () => {
     {
       icon: <IconBook className="w-8 h-8" />,
       label: "Cuaderno de Campo",
-      desc: "Registro de anotaciones, observaciones y fotos de campo.",
+      desc: "Registro y seguimiento de anotaciones y observaciones de campo.",
       ruta: "/historial_cuadernoc",
       gradient: "from-green-700/20 to-amber-600/20",
       ring: "ring-green-400/40",
@@ -75,7 +75,7 @@ const Home_mayo = () => {
     {
       icon: <IconChartBar className="w-8 h-8" />,
       label: "Informes",
-      desc: "Rendimiento y reportes.",
+      desc: "Consulta de reportes y análisis agrícolas.",
       ruta: "/informes_mayordomo",
       gradient: "from-fuchsia-500/20 to-pink-500/20",
       ring: "ring-fuchsia-300/40",
@@ -105,7 +105,7 @@ const Home_mayo = () => {
     {
       icon: <IconBox className="w-8 h-8" />,
       label: "Bodega",
-      desc: "Insumos y existencias.",
+      desc: "Gestión de insumos.",
       ruta: "/bodega_insumos",
       gradient: "from-amber-500/20 to-orange-500/20",
       ring: "ring-amber-300/40",
@@ -115,7 +115,7 @@ const Home_mayo = () => {
     {
       icon: <IconCloudRain className="w-8 h-8" />,
       label: "Variables climáticas",
-      desc: "Lluvia, temperatura y más.",
+      desc: "Seguimiento y registro de variables climáticas.",
       ruta: "/variables_climaticasm",
       gradient: "from-indigo-500/20 to-violet-500/20",
       ring: "ring-indigo-300/40",
@@ -124,8 +124,8 @@ const Home_mayo = () => {
     },
     {
       icon: <IconTractor className="w-8 h-8" />,
-      label: "Maquinaria",
-      desc: "Equipos y mantenimiento.",
+      label: "Maquinaria y equipos",
+      desc: "Control de equipos y mantenimientos.",
       ruta: "/equipos_mayordomo",
       gradient: "from-slate-500/20 to-gray-500/20",
       ring: "ring-slate-300/40",

@@ -2,6 +2,7 @@
 from rest_framework import serializers
 from .models import Maquina, Mantenimiento, LaborMaquinaria
 
+
 class MantenimientoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mantenimiento
@@ -9,12 +10,24 @@ class MantenimientoSerializer(serializers.ModelSerializer):
 
 
 class MaquinaSerializer(serializers.ModelSerializer):
+    # 👇 nombre legible de la finca
     ubicacion_nombre = serializers.CharField(source="ubicacion.nombre", read_only=True)
+    # 👇 lista de mantenimientos relacionados
     mantenimientos = MantenimientoSerializer(many=True, read_only=True)
 
     class Meta:
         model = Maquina
-        fields = ["id", "codigo_equipo", "maquina", "referencia", "ubicacion", "ubicacion_nombre", "estado", "mantenimientos"]
+        fields = [
+            "id",
+            "codigo_equipo",
+            "maquina",
+            "referencia",
+            "ubicacion",          # ID de la finca
+            "ubicacion_nombre",   # nombre de la finca
+            "estado",
+            "mantenimientos",     # mantenimientos asociados
+        ]
+
 
 class LaborMaquinariaSerializer(serializers.ModelSerializer):
     maquina_nombre = serializers.CharField(source="maquina.maquina", read_only=True)
@@ -54,7 +67,9 @@ class LaborMaquinariaSerializer(serializers.ModelSerializer):
             # El horómetro inicio debe coincidir con el último fin
             if horometro_inicio != ultima_labor.horometro_fin:
                 raise serializers.ValidationError(
-                    {"horometro_inicio": f"Debe ser igual al último horómetro final registrado ({ultima_labor.horometro_fin})."}
+                    {
+                        "horometro_inicio": f"Debe ser igual al último horómetro final registrado ({ultima_labor.horometro_fin})."
+                    }
                 )
 
         # Validar que el horómetro fin sea mayor

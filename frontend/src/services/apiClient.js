@@ -3,6 +3,18 @@ import axios from "axios";
 // ===== Base URL =====
 const API = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
+// ===== ENDPOINTS centralizados =====
+export const ENDPOINTS = {
+  login: "/api/accounts/token/",
+  refresh: "/api/accounts/token/refresh/",
+  me: "/api/accounts/me/",
+  logout: "/api/accounts/logout/",
+  checkEmail: "/api/accounts/check-email/",
+  sendCode: "/api/accounts/send-code/",
+  verifyCode: "/api/accounts/verify-code/",
+  resetPassword: "/api/accounts/reset-password/",
+};
+
 // ===== Axios instance =====
 const api = axios.create({
   baseURL: API,
@@ -73,18 +85,6 @@ api.interceptors.response.use(
   }
 );
 
-// ===== ENDPOINTS centralizados =====
-export const ENDPOINTS = {
-  login: "/api/accounts/token/",
-  refresh: "/api/accounts/token/refresh/",
-  me: "/api/accounts/me/",
-  logout: "/api/accounts/logout/",
-  checkEmail: "/api/accounts/check-email/",
-  sendCode: "/api/accounts/send-code/",
-  verifyCode: "/api/accounts/verify-code/",
-  resetPassword: "/api/accounts/reset-password/",
-};
-
 // ===== Funciones de autenticación =====
 export const login = (email, password) =>
   api.post(ENDPOINTS.login, { email, password });
@@ -109,9 +109,9 @@ export const verifyCode = (email, code) =>
 export const accountsApi = {
   listUsers: () => api.get("/api/accounts/users/"),
   getUser: (id) => api.get(`/api/accounts/users/${id}/`),
-  updateUser: (id, data) => api.put(`/api/accounts/users/${id}/`, data),
-  toggleActive: (id) => api.post(`/api/accounts/users/${id}/toggle-active/`),
-  updateRole: (id, data) => api.put(`/api/accounts/update-role/${id}/`, data),
+  updateUser: (id, data) => api.patch(`/api/accounts/users/${id}/`, data),   // 👈 PATCH
+  toggleActive: (id) => api.patch(`/api/accounts/users/${id}/toggle-active/`), // 👈 PATCH
+  updateRole: (id, data) => api.patch(`/api/accounts/update-role/${id}/`, data), // 👈 PATCH
 };
 
 // ===== API Soporte =====
@@ -190,23 +190,22 @@ export const movimientosApi = {
     api.get(`/api/bodega/movimientos/?producto=${productoId}`),
 };
 
-
 // ===== API Cuaderno de Campo =====
 export const cuadernoCampoApi = {
-  list: () => api.get("/api/cuaderno/"),             // listar registros
-  get: (id) => api.get(`/api/cuaderno/${id}/`),      // obtener un registro
+  list: () => api.get("/api/cuaderno/"),
+  get: (id) => api.get(`/api/cuaderno/${id}/`),
   create: (data) =>
     api.post("/api/cuaderno/", data, {
-      headers: { "Content-Type": "multipart/form-data" }, // 👈 obligatorio para foto
+      headers: { "Content-Type": "multipart/form-data" },
     }),
   update: (id, data) =>
     api.patch(`/api/cuaderno/${id}/`, data, {
-      headers: { "Content-Type": "multipart/form-data" }, // 👈 obligatorio para foto
+      headers: { "Content-Type": "multipart/form-data" },
     }),
   delete: (id) => api.delete(`/api/cuaderno/${id}/`),
 };
 
-// ===== API Arboles (variedades por lote) =====
+// ===== API Arboles =====
 export const arbolesApi = {
   list: () => api.get("/api/arboles/"),
   listByLote: (loteId) => api.get(`/api/arboles/?lote=${loteId}`),
@@ -221,7 +220,6 @@ export const produccionApi = {
   update: (id, data) => api.patch(`/api/produccion/${id}/`, data),
   delete: (id) => api.delete(`/api/produccion/${id}/`),
 
-  // 👇 ahora acepta filtros como { finca: 4, lote: 5 }
   resumenMensual: (params = {}) =>
     api.get("/api/produccion/resumen_mensual/", { params }),
 
@@ -229,8 +227,7 @@ export const produccionApi = {
     api.get("/api/produccion/resumen_finca/", { params }),
 };
 
-
-// ===== API Fitosanitario (Monitoreos de plagas) =====
+// ===== API Fitosanitario =====
 export const fitosanitarioApi = {
   list: (params = {}) => api.get("/api/fitosanitario/monitoreos/", { params }),
   get: (id) => api.get(`/api/fitosanitario/monitoreos/${id}/`),
@@ -238,8 +235,8 @@ export const fitosanitarioApi = {
   update: (id, data) => api.patch(`/api/fitosanitario/monitoreos/${id}/`, data),
   delete: (id) => api.delete(`/api/fitosanitario/monitoreos/${id}/`),
 
-  // ✅ Nuevo endpoint de resumen
-  resumen: (params = {}) => api.get("/api/fitosanitario/monitoreos/resumen/", { params }),
+  resumen: (params = {}) =>
+    api.get("/api/fitosanitario/monitoreos/resumen/", { params }),
 };
 
 // ===== Export principal =====

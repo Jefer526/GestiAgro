@@ -7,44 +7,50 @@ import {
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
+import { equiposApi } from "../../services/apiClient";
 
 const Equipos_mayor = () => {
   const navigate = useNavigate();
   const filtroRef = useRef(null);
+
+  const [maquinas, setMaquinas] = useState([]);
   const [filtroActivo, setFiltroActivo] = useState(null);
   const [filtroPosicion, setFiltroPosicion] = useState({ top: 0, left: 0 });
   const [busquedas, setBusquedas] = useState({});
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
 
-  const maquinas = [
-    {
-      id: 1,
-      maquina: "Tractor",
-      referencia: "JD 5055",
-      ubicacion: "La Esmeralda",
-      estado: "Óptimo",
-    },
-    {
-      id: 2,
-      maquina: "Guadaña",
-      referencia: "Stihl MS 450",
-      ubicacion: "Las Palmas",
-      estado: "Mantenimiento",
-    },
-    {
-      id: 3,
-      maquina: "Podadora",
-      referencia: "Stihl BR 130",
-      ubicacion: "La Carolina",
-      estado: "Averiado",
-    },
+  const campos = [
+    "codigo_equipo",
+    "maquina",
+    "referencia",
+    "ubicacion_nombre",
+    "estado",
   ];
 
-  const campos = ["id", "maquina", "referencia", "ubicacion", "estado"];
+  // 🔄 Cargar datos (el backend ya filtra solo la finca del mayordomo)
+  useEffect(() => {
+    const fetchMaquinas = async () => {
+      try {
+        const res = await equiposApi.list();
+        setMaquinas(res.data);
+      } catch (err) {
+        console.error("❌ Error cargando máquinas:", err);
+      }
+    };
+    fetchMaquinas();
+  }, []);
 
-  const toggleFiltro = (campo, event) => {
-    const icono = event.currentTarget.getBoundingClientRect();
+  // === Filtros ===
+  const getValoresUnicos = (campo) => {
+    const search = (busquedas[campo] || "").toLowerCase();
+    return [...new Set(maquinas.map((d) => String(d[campo] || "")))].filter((v) =>
+      v.toLowerCase().includes(search)
+    );
+  };
+
+  const toggleFiltro = (campo, e) => {
+    const icono = e.currentTarget.getBoundingClientRect();
     setFiltroActivo(filtroActivo === campo ? null : campo);
     setFiltroPosicion({
       top: icono.bottom + window.scrollY + 4,
@@ -69,38 +75,31 @@ const Equipos_mayor = () => {
     setValoresSeleccionados(actualizado);
   };
 
-  const ordenar = (campo, orden) => {
-    setOrdenCampo({ campo, orden });
-  };
+  const ordenar = (campo, orden) => setOrdenCampo({ campo, orden });
 
-  const handleBusqueda = (campo, texto) => {
+  const handleBusqueda = (campo, texto) =>
     setBusquedas({ ...busquedas, [campo]: texto });
-  };
 
-  const getValoresUnicos = (campo) => {
-    const search = (busquedas[campo] || "").toLowerCase();
-    return [...new Set(maquinas.map((d) => d[campo]))].filter((v) =>
-      String(v).toLowerCase().includes(search)
-    );
-  };
-
+  // === Filtrar y ordenar ===
   const maquinasFiltradas = maquinas
     .filter((d) =>
-      campos.every((campo) =>
-        !valoresSeleccionados[campo] ||
-        valoresSeleccionados[campo].length === 0
-          ? true
-          : valoresSeleccionados[campo].includes(d[campo])
-      )
+      campos.every((campo) => {
+        const seleccionados = valoresSeleccionados[campo] || [];
+        if (seleccionados.length === 0) return true;
+        return seleccionados.includes(String(d[campo]));
+      })
     )
     .sort((a, b) => {
       if (!ordenCampo) return 0;
       const { campo, orden } = ordenCampo;
+      const valA = a[campo];
+      const valB = b[campo];
       return orden === "asc"
-        ? String(a[campo]).localeCompare(String(b[campo]))
-        : String(b[campo]).localeCompare(String(a[campo]));
+        ? String(valA).localeCompare(String(valB))
+        : String(valB).localeCompare(String(valA));
     });
 
+  // Cerrar filtros al hacer click fuera
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (filtroRef.current && !filtroRef.current.contains(e.target)) {
@@ -121,10 +120,10 @@ const Equipos_mayor = () => {
         <table className="min-w-full text-center text-base bg-white">
           <thead className="bg-green-600 text-white font-bold">
             <tr>
-              {campos.map((campo, i) => (
-                <th key={i} className="p-4 border text-center">
+              {campos.map((campo) => (
+                <th key={campo} className="p-4 border text-center">
                   <div className="flex items-center justify-center gap-2">
-                    {campo.toUpperCase()}
+                    {campo.replace("_", " ").toUpperCase()}
                     <button onClick={(e) => toggleFiltro(campo, e)}>
                       <IconFilter className="w-4 h-4" />
                     </button>
@@ -138,14 +137,14 @@ const Equipos_mayor = () => {
           <tbody>
             {maquinasFiltradas.map((m) => (
               <tr key={m.id} className="hover:bg-gray-100">
-                {campos.map((campo, j) => (
-                  <td key={j} className="p-4 border text-center">
+                {campos.map((campo) => (
+                  <td key={campo} className="p-4 border text-center">
                     {m[campo]}
                   </td>
                 ))}
                 <td className="p-4 border text-center">
                   <button
-                    onClick={() => navigate("/hoja_vidam", { state: { maquina: m } })}
+                    onClick={() => navigate(`/hoja_vidam/${m.id}`)}
                     className="bg-blue-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded"
                   >
                     Ver
@@ -153,7 +152,7 @@ const Equipos_mayor = () => {
                 </td>
                 <td className="p-4 border text-center">
                   <button
-                    onClick={() => navigate("/historial_trabajom")}
+                    onClick={() => navigate(`/historial_trabajom/${m.id}`)}
                     className="bg-blue-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded"
                   >
                     Ver
@@ -165,17 +164,15 @@ const Equipos_mayor = () => {
         </table>
       </div>
 
-      {/* Filtro flotante */}
+      {/* === Filtro flotante === */}
       {filtroActivo && (
         <div
           ref={filtroRef}
-          className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60 text-left text-sm"
+          className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60"
           style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
         >
           <div className="font-semibold mb-2">
-            Filtrar por{" "}
-            {String(filtroActivo).charAt(0).toUpperCase() +
-              String(filtroActivo).slice(1)}
+            Filtrar por {filtroActivo.replace("_", " ").toUpperCase()}
           </div>
           <button
             onClick={() => ordenar(filtroActivo, "asc")}
@@ -197,36 +194,44 @@ const Equipos_mayor = () => {
             onChange={(e) => handleBusqueda(filtroActivo, e.target.value)}
           />
           <div className="flex flex-col max-h-40 overflow-y-auto">
-            {getValoresUnicos(filtroActivo).map((val, idx) => (
-              <label key={idx} className="flex items-center gap-2 mb-1">
+            {getValoresUnicos(filtroActivo).map((val) => (
+              <label key={val} className="flex items-center gap-2 mb-1">
                 <input
                   type="checkbox"
                   checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
                   onChange={() => toggleValor(filtroActivo, val)}
                   className="accent-green-600"
                 />
-                {String(val).charAt(0).toUpperCase() + String(val).slice(1)}
+                {String(val)}
               </label>
             ))}
           </div>
-          <button
-            onClick={() => limpiarFiltro(filtroActivo)}
-            className="text-blue-600 hover:underline text-xs mt-2"
-          >
-            Borrar filtro
-          </button>
+
+          {/* Botones Borrar / Aceptar */}
+          <div className="flex justify-between mt-3">
+            <button
+              onClick={() => limpiarFiltro(filtroActivo)}
+              className="bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-xs font-medium hover:bg-gray-300 transition"
+            >
+              Borrar
+            </button>
+            <button
+              onClick={() => setFiltroActivo(null)}
+              className="bg-green-600 text-white px-3 py-1 rounded-md text-xs font-medium hover:bg-green-700 transition"
+            >
+              Aceptar
+            </button>
+          </div>
         </div>
       )}
 
-      <div className="flex justify-center gap-8 mt-8">
+      {/* ✅ Solo queda Registrar novedad */}
+      <div className="flex justify-center mt-8">
         <button
           onClick={() => navigate("/registrar_novedadm")}
           className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 text-lg font-semibold"
         >
           Registrar novedad
-        </button>
-        <button className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 text-lg font-semibold">
-          Exportar
         </button>
       </div>
     </LayoutMayordomo>
