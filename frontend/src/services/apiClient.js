@@ -15,6 +15,11 @@ export const ENDPOINTS = {
   resetPassword: "/api/accounts/reset-password/",
 };
 
+// ===== API Auth =====
+export const authApi = {
+  me: () => api.get(ENDPOINTS.me),  // 👈 usa el endpoint que ya definiste
+};
+
 // ===== Axios instance =====
 const api = axios.create({
   baseURL: API,
@@ -238,6 +243,8 @@ export const fitosanitarioApi = {
   resumen: (params = {}) =>
     api.get("/api/fitosanitario/monitoreos/resumen/", { params }),
 };
+
+
 
 // ===== Export principal =====
 export default api;

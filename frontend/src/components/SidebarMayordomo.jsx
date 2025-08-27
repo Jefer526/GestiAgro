@@ -128,8 +128,10 @@ const SidebarMayordomo = () => {
               "/registrar_novedadm",
               "/hoja_vidam",
               "/registrar_novedad_hoja",
-              "/detalle_mantenimientom",
+              "/detallemantenimientom",
               "/historial_trabajom",
+              "/registrarnovedadhvm",
+              "/registrarlabormaquinariam",
             ],
           },
         ].map(({ icon, route }, i) => (

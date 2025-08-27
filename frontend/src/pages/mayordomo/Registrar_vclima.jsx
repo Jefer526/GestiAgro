@@ -1,20 +1,61 @@
 // src/pages/mayordomo/Registrar_vclima.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { IconChevronLeft, IconCheck } from "@tabler/icons-react";
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
+import { variablesClimaApi, getMe } from "../../services/apiClient";
 
 const Registrar_vclima = () => {
   const navigate = useNavigate();
   const [alertaVisible, setAlertaVisible] = useState(false);
+  const [finca, setFinca] = useState(null);
 
-  const handleSubmit = (e) => {
+  const [form, setForm] = useState({
+    finca: "",
+    fecha: "",
+    precipitacion: "",
+    temp_min: "",
+    temp_max: "",
+    humedad: "",
+  });
+
+  // 📌 Obtener finca del usuario logueado
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await getMe();
+        if (res.data.finca_asignada) {
+          setFinca(res.data.finca_asignada);
+          setForm((prev) => ({
+            ...prev,
+            finca: res.data.finca_asignada.id,
+          }));
+        } else {
+          console.warn("⚠️ El usuario logueado no tiene finca asignada");
+        }
+      } catch (error) {
+        console.error("❌ Error obteniendo usuario:", error);
+      }
+    };
+    fetchUser();
+  }, []);
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setAlertaVisible(true);
-    setTimeout(() => {
-      setAlertaVisible(false);
-      navigate("/variables_climaticasm");
-    }, 2000);
+    try {
+      await variablesClimaApi.post(form);
+      setAlertaVisible(true);
+      setTimeout(() => {
+        setAlertaVisible(false);
+        navigate("/variables_climaticasm");
+      }, 2000);
+    } catch (error) {
+      alert("⚠️ Ya existe un registro para esta fecha en esta finca.");
+    }
   };
 
   return (
@@ -43,52 +84,77 @@ const Registrar_vclima = () => {
         <h2 className="text-3xl font-bold text-green-700">
           Registrar variables climáticas
         </h2>
-        <p className="text-green-700 font-semibold text-xl">
-          Hacienda La Esmeralda
-        </p>
+
+        {/* ✅ Finca solo lectura */}
+        {finca ? (
+          <p className="text-green-700 font-semibold text-xl">
+            {finca.nombre}
+          </p>
+        ) : (
+          <p className="text-red-600">⚠️ No tienes finca asignada</p>
+        )}
 
         <div>
           <label className="block mb-1 font-semibold text-black">Fecha</label>
           <input
             type="date"
+            name="fecha"
+            value={form.fecha}
+            onChange={handleChange}
             className="w-full border p-3 rounded text-base"
             required
           />
         </div>
 
         <div>
-          <label className="block mb-1 font-semibold text-black">Precipitación (mm)</label>
+          <label className="block mb-1 font-semibold text-black">
+            Precipitación (mm)
+          </label>
           <input
-            type="text"
-            placeholder="Ej: 10"
+            type="number"
+            name="precipitacion"
+            value={form.precipitacion}
+            onChange={handleChange}
             className="w-full border p-3 rounded text-base"
           />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block mb-1 font-semibold text-black">Temperatura mínima (°C)</label>
+            <label className="block mb-1 font-semibold text-black">
+              Temperatura mínima (°C)
+            </label>
             <input
-              type="text"
-              placeholder="Ej: 16°"
+              type="number"
+              name="temp_min"
+              value={form.temp_min}
+              onChange={handleChange}
               className="w-full border p-3 rounded text-base"
             />
           </div>
           <div>
-            <label className="block mb-1 font-semibold text-black">Temperatura máxima (°C)</label>
+            <label className="block mb-1 font-semibold text-black">
+              Temperatura máxima (°C)
+            </label>
             <input
-              type="text"
-              placeholder="Ej: 29°"
+              type="number"
+              name="temp_max"
+              value={form.temp_max}
+              onChange={handleChange}
               className="w-full border p-3 rounded text-base"
             />
           </div>
         </div>
 
         <div>
-          <label className="block mb-1 font-semibold text-black">Humedad relativa (%)</label>
+          <label className="block mb-1 font-semibold text-black">
+            Humedad relativa (%)
+          </label>
           <input
-            type="text"
-            placeholder="Ej: 85%"
+            type="number"
+            name="humedad"
+            value={form.humedad}
+            onChange={handleChange}
             className="w-full border p-3 rounded text-base"
           />
         </div>
@@ -114,7 +180,3 @@ const Registrar_vclima = () => {
 };
 
 export default Registrar_vclima;
-
-
-
-
