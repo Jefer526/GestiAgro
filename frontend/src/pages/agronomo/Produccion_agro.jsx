@@ -76,19 +76,24 @@ const Produccion_agro = () => {
 
         const res = await produccionApi.resumenMensual(params);
         const data = res.data;
+        console.log("📊 Datos recibidos del API (agrupados):", data);
 
         setLabels(
           data.map((item) => {
-            const fecha = new Date(item.periodo); // 👈 usar "periodo"
+            if (periodo === "año") {
+              return item.periodo; // ya viene como "2025"
+            } else {
+              // 👇 item.periodo viene en formato "YYYY-MM"
+              const [year, month] = item.periodo.split("-");
+              const fechaNormalizada = new Date(parseInt(year), parseInt(month) - 1, 1);
 
-            return periodo === "Año"
-              ? fecha.getFullYear().toString()
-              : capitalize(
-                  fecha.toLocaleDateString("es-ES", {
-                    month: "long",
-                    year: "numeric",
-                  })
-                );
+              return capitalize(
+                fechaNormalizada.toLocaleDateString("es-ES", {
+                  month: "long",
+                  year: "numeric",
+                })
+              );
+            }
           })
         );
 
@@ -141,10 +146,6 @@ const Produccion_agro = () => {
       y: { beginAtZero: true, ticks: { color: "#374151" } },
       x: { ticks: { color: "#374151" } },
     },
-  };
-
-  const generarReporte = () => {
-    alert("📄 Reporte generado (pendiente exportar a PDF/Excel)");
   };
 
   return (
@@ -234,8 +235,6 @@ const Produccion_agro = () => {
           <IconPlus className="w-5 h-5" />
           Registrar producción
         </button>
-
-       
       </div>
     </LayoutAgronomo>
   );

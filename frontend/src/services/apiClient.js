@@ -243,6 +243,10 @@ export const produccionApi = {
 
   resumenFinca: (params = {}) =>
     api.get("/api/produccion/resumen_finca/", { params }),
+
+  // 🚨 Nuevo endpoint de depuración
+  resumenDebug: (params = {}) =>
+    api.get("/api/produccion/resumen_debug/", { params }),
 };
 
 // ===== API Fitosanitario =====

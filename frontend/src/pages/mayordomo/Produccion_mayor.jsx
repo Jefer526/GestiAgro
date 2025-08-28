@@ -1,6 +1,5 @@
 // src/pages/mayordomo/Produccion_mayor.jsx
-import React, { useState } from "react";
-import { IconFileText } from "@tabler/icons-react";
+import React, { useState, useEffect } from "react";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -11,23 +10,104 @@ import {
   Legend,
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
+import { IconPlus } from "@tabler/icons-react";
+import { useNavigate } from "react-router-dom";
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
+import { produccionApi, lotesApi, getMe } from "../../services/apiClient";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend, ChartDataLabels);
 
 const Produccion_mayor = () => {
-  const [periodo, setPeriodo] = useState("Mes");
-  const [cultivo, setCultivo] = useState("Todos");
-  const [variedad, setVariedad] = useState("Todas");
-  const [lote, setLote] = useState("Todos");
+  const navigate = useNavigate();
 
-  // Datos de ejemplo enero-junio
+  // 📌 Filtros
+  const [fincaAsignada, setFincaAsignada] = useState(null);
+  const [lote, setLote] = useState("");
+  const [periodo, setPeriodo] = useState("Mes");
+
+  // 📌 Datos
+  const [lotes, setLotes] = useState([]);
+  const [labels, setLabels] = useState([]);
+  const [values, setValues] = useState([]);
+
+  // 🔹 Función para capitalizar
+  const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+
+  // 🔹 Obtener finca asignada al Mayordomo
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await getMe();
+        if (res.data.finca_asignada) {
+          setFincaAsignada(res.data.finca_asignada);
+        }
+      } catch (err) {
+        console.error("❌ Error obteniendo usuario:", err);
+      }
+    };
+    fetchUser();
+  }, []);
+
+  // 🔹 Cargar lotes de la finca asignada
+  useEffect(() => {
+    const fetchLotes = async () => {
+      if (!fincaAsignada) return;
+      try {
+        const res = await lotesApi.listByFinca(fincaAsignada.id);
+        setLotes(res.data);
+      } catch (err) {
+        console.error("❌ Error cargando lotes:", err);
+      }
+    };
+    fetchLotes();
+  }, [fincaAsignada]);
+
+  // 🔹 Cargar producción (agrupada)
+  useEffect(() => {
+    const fetchProduccion = async () => {
+      if (!fincaAsignada) return;
+      try {
+        const params = { periodo: periodo.toLowerCase(), finca: fincaAsignada.id };
+        if (lote) params.lote = lote;
+
+        const res = await produccionApi.resumenMensual(params);
+        const data = res.data;
+        console.log("📊 Datos recibidos del API (agrupados):", data);
+
+        setLabels(
+          data.map((item) => {
+            if (periodo === "año") {
+              return item.periodo; // ya viene como "2025"
+            } else {
+              // 👇 item.periodo viene en formato "YYYY-MM"
+              const [year, month] = item.periodo.split("-");
+              const fechaNormalizada = new Date(parseInt(year), parseInt(month) - 1, 1);
+
+              return capitalize(
+                fechaNormalizada.toLocaleDateString("es-ES", {
+                  month: "long",
+                  year: "numeric",
+                })
+              );
+            }
+          })
+        );
+
+        setValues(data.map((item) => item.total));
+      } catch (err) {
+        console.error("❌ Error cargando producción:", err);
+      }
+    };
+    fetchProduccion();
+  }, [fincaAsignada, lote, periodo]);
+
+  // 🔹 Configurar gráfica
   const data = {
-    labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio"],
+    labels,
     datasets: [
       {
-        label: "Kilogramos",
-        data: [8000, 9000, 7500, 10000, 9500, 8700],
+        label: "Producción",
+        data: values,
         backgroundColor: (context) => {
           const chart = context.chart;
           const { ctx, chartArea } = chart;
@@ -37,7 +117,6 @@ const Produccion_mayor = () => {
           gradient.addColorStop(1, "rgba(34,197,94,0.3)");
           return gradient;
         },
-        borderRadius: 0,
         borderWidth: 1,
         borderColor: "rgba(34,197,94,1)",
       },
@@ -49,11 +128,7 @@ const Produccion_mayor = () => {
     maintainAspectRatio: false,
     plugins: {
       legend: { display: false },
-      tooltip: {
-        enabled: true,
-        mode: "index",
-        intersect: false,
-      },
+      tooltip: { enabled: true, mode: "index", intersect: false },
       datalabels: {
         color: "#1f2937",
         anchor: "end",
@@ -64,71 +139,38 @@ const Produccion_mayor = () => {
       },
     },
     scales: {
-      y: {
-        beginAtZero: true,
-        suggestedMax: 11000,
-        ticks: { color: "#374151" },
-      },
+      y: { beginAtZero: true, ticks: { color: "#374151" } },
       x: { ticks: { color: "#374151" } },
     },
   };
 
-  const generarReporte = () => {
-    alert("📄 Reporte generado (pendiente exportar a PDF/Excel)");
-  };
-
   return (
-    <LayoutMayordomo>
-      <h1 className="text-3xl font-bold text-green-700 mb-6 flex items-center gap-2">
-        Producción agrícola
-      </h1>
-
+    <LayoutMayordomo titulo="Producción agrícola">
       {/* Filtros */}
       <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {/* ✅ Nombre de finca */}
-          <div>
-            <label className="font-bold text-gray-800 block mb-1">Finca</label>
-            <div className="border border-gray-300 rounded px-4 py-1 w-full">
-              La Esmeralda
-            </div>
+        {/* Finca fija */}
+        <div>
+          <label className="font-bold text-gray-800 block mb-1">Finca</label>
+          <div className="border border-gray-300 rounded px-4 py-1 w-full bg-gray-100">
+            {fincaAsignada?.nombre || "Cargando..."}
           </div>
-
-        <div>
-          <label className="font-bold text-gray-800 block mb-1">Cultivo</label>
-          <select
-            value={cultivo}
-            onChange={(e) => setCultivo(e.target.value)}
-            className="border border-gray-300 rounded px-4 py-1 w-full"
-          >
-            <option>Todos</option>
-            <option>Café</option>
-            <option>Cacao</option>
-          </select>
         </div>
 
-        <div>
-          <label className="font-bold text-gray-800 block mb-1">Variedad</label>
-          <select
-            value={variedad}
-            onChange={(e) => setVariedad(e.target.value)}
-            className="border border-gray-300 rounded px-4 py-1 w-full"
-          >
-            <option>Todas</option>
-            <option>Variedad A</option>
-            <option>Variedad B</option>
-          </select>
-        </div>
-
+        {/* Lote */}
         <div>
           <label className="font-bold text-gray-800 block mb-1">Lote</label>
           <select
             value={lote}
             onChange={(e) => setLote(e.target.value)}
             className="border border-gray-300 rounded px-4 py-1 w-full"
+            disabled={!fincaAsignada}
           >
-            <option>Todos</option>
-            <option>Lote 1</option>
-            <option>Lote 2</option>
+            <option value="">Todos</option>
+            {lotes.map((l) => (
+              <option key={l.id} value={l.id}>
+                {l.lote}
+              </option>
+            ))}
           </select>
         </div>
       </div>
@@ -141,25 +183,9 @@ const Produccion_mayor = () => {
           onChange={(e) => setPeriodo(e.target.value)}
           className="border border-gray-300 rounded px-4 py-1 w-60"
         >
-          <option>Día</option>
           <option>Mes</option>
           <option>Año</option>
         </select>
-      </div>
-
-      {/* Fechas */}
-      <div className="mb-8 flex flex-wrap items-center gap-4">
-        <label className="font-bold text-gray-800">Fecha:</label>
-        <span className="font-bold text-gray-800">Desde</span>
-        <input
-          type="date"
-          className="border border-gray-300 px-3 py-1 rounded w-48"
-        />
-        <span className="font-bold text-gray-800">Hasta</span>
-        <input
-          type="date"
-          className="border border-gray-300 px-3 py-1 rounded w-48"
-        />
       </div>
 
       {/* Gráfica */}
@@ -180,14 +206,14 @@ const Produccion_mayor = () => {
         </div>
       </div>
 
-      {/* Botón de generar reporte */}
-      <div className="flex justify-center mt-8">
+      {/* Botones de acciones */}
+      <div className="flex justify-center mt-8 gap-4">
         <button
-          onClick={generarReporte}
+          onClick={() => navigate("/registrar_produccionm")}
           className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold"
         >
-          <IconFileText className="w-5 h-5" />
-          Generar reporte
+          <IconPlus className="w-5 h-5" />
+          Registrar producción
         </button>
       </div>
     </LayoutMayordomo>
@@ -195,4 +221,3 @@ const Produccion_mayor = () => {
 };
 
 export default Produccion_mayor;
-

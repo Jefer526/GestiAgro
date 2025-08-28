@@ -25,19 +25,34 @@ class ProduccionViewSet(viewsets.ModelViewSet):
         if lote_id:
             queryset = queryset.filter(lote_id=lote_id)
 
-        # 👇 Agrupamos por mes o año según el parámetro
+        # 👇 Agrupamos según el parámetro
         if periodo == "año":
             queryset = queryset.annotate(periodo=TruncYear("fecha"))
         else:
             queryset = queryset.annotate(periodo=TruncMonth("fecha"))
 
         resumen = (
-            queryset
-            .values("periodo")
+            queryset.values("periodo")
             .annotate(total=Sum("cantidad"))
             .order_by("periodo")
+            .distinct()
         )
-        return Response(resumen)
+
+        # 🔹 Convertir periodo a string (evita problemas de serialización)
+        data = []
+        for item in resumen:
+            periodo_val = item["periodo"]
+            if periodo_val:
+                if periodo == "año":
+                    periodo_str = periodo_val.strftime("%Y")
+                else:
+                    periodo_str = periodo_val.strftime("%Y-%m")  # formato AAAA-MM
+            else:
+                periodo_str = None
+
+            data.append({"periodo": periodo_str, "total": item["total"] or 0})
+
+        return Response(data)
 
     # 📊 Resumen de producción por finca
     @action(detail=False, methods=["get"])
@@ -53,9 +68,24 @@ class ProduccionViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(lote_id=lote_id)
 
         resumen = (
-            queryset
-            .values("finca__nombre")
+            queryset.values("finca__nombre")
             .annotate(total=Sum("cantidad"))
             .order_by("finca__nombre")
+            .distinct()
         )
-        return Response(resumen)
+
+        # 🔹 Normalizar salida
+        data = [{"finca": r["finca__nombre"], "total": r["total"] or 0} for r in resumen]
+        return Response(data)
+
+    # 🛠 Endpoint de depuración (opcional)
+    @action(detail=False, methods=["get"])
+    def resumen_debug(self, request):
+        finca_id = request.query_params.get("finca")
+        queryset = self.get_queryset()
+
+        if finca_id:
+            queryset = queryset.filter(finca_id=finca_id)
+
+        data = list(queryset.values("id", "fecha", "cantidad", "finca_id", "lote_id"))
+        return Response(data)

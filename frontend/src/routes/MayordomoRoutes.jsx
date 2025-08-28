@@ -30,6 +30,8 @@ import Detalle_laborm from "../pages/mayordomo/Detalle_laborm";
 import Registrar_labor_maquinariam from "../pages/mayordomo/Registrar_labor_maquinariam";
 import Registrar_movimientom from "../pages/mayordomo/Registrar_movimientom";
 import RegistrarMonitoreom from "../pages/mayordomo/RegistrarMonitoreom";
+import Registrar_produccionm from "../pages/mayordomo/Registrar_produccionm";
+
 
 
 
@@ -63,6 +65,7 @@ const mayordomoRoutes = [
   <Route key="Registrar-labor-maquinariam" path="/registrarlabormaquinariam/:id" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Registrar_labor_maquinariam /></ProtectedRoute>} />,
   <Route key="registrar-movimientom" path="/registrarmovimientom" element={<ProtectedRoute allowedRoles={["admin", "mayordomo"]}><Registrar_movimientom /></ProtectedRoute>} />,
   <Route key="registrar-monitoreo" path="/registrarmonitoreom" element={<ProtectedRoute allowedRoles={["admin", "mayordomo"]}><RegistrarMonitoreom /></ProtectedRoute>} />,
+  <Route key="registrar-produccion" path="/registrar_produccionm" element={<ProtectedRoute allowedRoles={["admin", "mayordomo"]}><Registrar_produccionm /></ProtectedRoute>} />,
 
 
 ];
