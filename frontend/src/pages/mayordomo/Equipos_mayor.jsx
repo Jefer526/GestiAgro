@@ -4,6 +4,7 @@ import {
   IconFilter,
   IconSortAscending2,
   IconSortDescending2,
+  IconPlus,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
@@ -24,11 +25,11 @@ const Equipos_mayor = () => {
     "codigo_equipo",
     "maquina",
     "referencia",
-    "ubicacion_nombre",
+    "ubicacion_nombre", // 👉 se mostrará como FINCA
     "estado",
   ];
 
-  // 🔄 Cargar datos (el backend ya filtra solo la finca del mayordomo)
+  // 🔄 Cargar datos
   useEffect(() => {
     const fetchMaquinas = async () => {
       try {
@@ -112,6 +113,18 @@ const Equipos_mayor = () => {
 
   return (
     <LayoutMayordomo titulo="Maquinaria y Equipos">
+      {/* 📌 Botones en la parte derecha */}
+      <div className="flex justify-end gap-4 mb-6">
+        <button
+          onClick={() => navigate("/registrar_novedadm")}
+          className="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 text-base font-semibold flex items-center gap-2"
+        >
+          <IconPlus className="w-5 h-5" />
+          Registrar novedad
+        </button>
+      </div>
+
+      {/* 📌 Tabla */}
       <div className="overflow-x-auto rounded-lg shadow-lg">
         <table className="min-w-full text-center text-base bg-white">
           <thead className="bg-green-600 text-white font-bold">
@@ -119,7 +132,9 @@ const Equipos_mayor = () => {
               {campos.map((campo) => (
                 <th key={campo} className="p-4 border text-center">
                   <div className="flex items-center justify-center gap-2">
-                    {campo.replace("_", " ").toUpperCase()}
+                    {campo === "ubicacion_nombre"
+                      ? "FINCA"
+                      : campo.replace("_", " ").toUpperCase()}
                     <button onClick={(e) => toggleFiltro(campo, e)}>
                       <IconFilter className="w-4 h-4" />
                     </button>
@@ -168,7 +183,10 @@ const Equipos_mayor = () => {
           style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
         >
           <div className="font-semibold mb-2">
-            Filtrar por {filtroActivo.replace("_", " ").toUpperCase()}
+            Filtrar por{" "}
+            {filtroActivo === "ubicacion_nombre"
+              ? "FINCA"
+              : filtroActivo.replace("_", " ").toUpperCase()}
           </div>
           <button
             onClick={() => ordenar(filtroActivo, "asc")}
@@ -220,16 +238,6 @@ const Equipos_mayor = () => {
           </div>
         </div>
       )}
-
-      {/* ✅ Solo queda Registrar novedad */}
-      <div className="flex justify-center mt-8">
-        <button
-          onClick={() => navigate("/registrar_novedadm")}
-          className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 text-lg font-semibold"
-        >
-          Registrar novedad
-        </button>
-      </div>
     </LayoutMayordomo>
   );
 };

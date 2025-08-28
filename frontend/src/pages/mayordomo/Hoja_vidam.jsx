@@ -6,10 +6,11 @@ import {
   IconFilter,
   IconSortAscending2,
   IconSortDescending2,
+  IconPlus,
 } from "@tabler/icons-react";
 import { useNavigate, useParams } from "react-router-dom";
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
-import { equiposApi } from "../../services/apiClient";
+import { equiposApi, getMe } from "../../services/apiClient";
 
 const Hoja_vidam = () => {
   const navigate = useNavigate();
@@ -19,13 +20,7 @@ const Hoja_vidam = () => {
   const [maquina, setMaquina] = useState(null);
   const [loading, setLoading] = useState(true);
   const [mantenimientos, setMantenimientos] = useState([]);
-
-  // --- Filtros y orden ---
-  const [filtroActivo, setFiltroActivo] = useState(null);
-  const [filtroPosicion, setFiltroPosicion] = useState({ top: 0, left: 0 });
-  const [busquedas, setBusquedas] = useState({});
-  const [valoresSeleccionados, setValoresSeleccionados] = useState({});
-  const [ordenCampo, setOrdenCampo] = useState(null);
+  const [finca, setFinca] = useState(null);
 
   // === 📌 Obtener máquina y mantenimientos ===
   useEffect(() => {
@@ -43,9 +38,28 @@ const Hoja_vidam = () => {
     fetchData();
   }, [id]);
 
+  // 📌 Obtener finca asignada
+  useEffect(() => {
+    const fetchFinca = async () => {
+      try {
+        const resUser = await getMe();
+        setFinca(resUser.data.finca_asignada || null);
+      } catch (err) {
+        console.error("❌ Error cargando finca asignada:", err);
+      }
+    };
+    fetchFinca();
+  }, []);
+
   const columnas = ["fecha", "tipo", "descripcion", "realizado_por", "estado", "detalle"];
 
   // === 🔎 Manejo de filtros ===
+  const [filtroActivo, setFiltroActivo] = useState(null);
+  const [filtroPosicion, setFiltroPosicion] = useState({ top: 0, left: 0 });
+  const [busquedas, setBusquedas] = useState({});
+  const [valoresSeleccionados, setValoresSeleccionados] = useState({});
+  const [ordenCampo, setOrdenCampo] = useState(null);
+
   const toggleFiltro = (campo, event) => {
     const icono = event.currentTarget.getBoundingClientRect();
     setFiltroActivo(filtroActivo === campo ? null : campo);
@@ -72,10 +86,7 @@ const Hoja_vidam = () => {
     setValoresSeleccionados(actualizado);
   };
 
-  const ordenar = (campo, orden) => {
-    setOrdenCampo({ campo, orden });
-  };
-
+  const ordenar = (campo, orden) => setOrdenCampo({ campo, orden });
   const handleBusqueda = (campo, texto) => {
     setBusquedas({ ...busquedas, [campo]: texto });
   };
@@ -121,30 +132,36 @@ const Hoja_vidam = () => {
 
   if (loading)
     return (
-      <LayoutMayordomo titulo="Hoja de vida">
+      <LayoutMayordomo ocultarEncabezado>
         <p>Cargando hoja de vida...</p>
       </LayoutMayordomo>
     );
 
   if (!maquina)
     return (
-      <LayoutMayordomo titulo="Hoja de vida">
+      <LayoutMayordomo ocultarEncabezado>
         <p>No se encontró la máquina.</p>
       </LayoutMayordomo>
     );
 
   return (
-    <LayoutMayordomo
-      titulo="Hoja de vida"
-      accionesTop={
-        <button
-          onClick={() => navigate("/equipos_mayordomo")}
-          className="flex items-center text-green-700 font-semibold text-lg hover:underline"
-        >
-          <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
-        </button>
-      }
-    >
+    <LayoutMayordomo ocultarEncabezado>
+      {/* Botón volver */}
+      <button
+        onClick={() => navigate("/equipos_mayordomo")}
+        className="flex items-center text-green-700 font-semibold mb-4 text-lg hover:underline"
+      >
+        <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
+      </button>
+
+      {/* Título + finca al mismo nivel */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-green-700">Hoja de vida</h1>
+        {finca && (
+          <span className="text-2xl font-bold text-green-700">{finca.nombre}</span>
+        )}
+      </div>
+
       {/* Info general */}
       <div className="bg-white border border-gray-300 rounded-xl shadow-md mb-8 p-6 max-w-4xl">
         <h2 className="text-2xl font-bold mb-4 text-green-700">Información general</h2>
@@ -157,8 +174,23 @@ const Hoja_vidam = () => {
         </div>
       </div>
 
+      {/* Subtítulo */}
+      <h2 className="text-3xl font-bold text-green-700 mb-2">
+        Historial de mantenimiento
+      </h2>
+
+      {/* Botón Registrar debajo del subtítulo, alineado a la derecha */}
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={() => navigate(`/registrarnovedadhvm/${id}`)}
+          className="bg-green-600 text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2 hover:bg-green-700"
+        >
+          <IconPlus className="w-5 h-5" />
+          Registrar mantenimiento
+        </button>
+      </div>
+
       {/* Tabla mantenimientos */}
-      <h2 className="text-3xl font-bold text-green-700 mb-4">Historial de mantenimiento</h2>
       <div className="overflow-x-auto rounded-lg shadow-lg bg-white">
         <table className="min-w-full text-center text-base">
           <thead className="bg-green-600 text-white font-bold">
@@ -185,7 +217,15 @@ const Hoja_vidam = () => {
             {mantenimientosFiltrados.length > 0 ? (
               mantenimientosFiltrados.map((item, idx) => (
                 <tr key={idx} className="hover:bg-gray-100">
-                  <td className="p-4 border">{item.fecha}</td>
+                  <td className="p-4 border">
+                    {item.fecha
+                      ? new Date(item.fecha).toLocaleDateString("es-ES", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                        })
+                      : ""}
+                  </td>
                   <td className="p-4 border">
                     {item.tipo
                       ? item.tipo.charAt(0).toUpperCase() + item.tipo.slice(1).toLowerCase()
@@ -275,16 +315,6 @@ const Hoja_vidam = () => {
           </div>
         </div>
       )}
-
-      {/* Botón registrar mantenimiento */}
-      <div className="flex justify-center mt-10">
-        <button
-          onClick={() => navigate(`/registrarnovedadhvm/${id}`)}
-          className="bg-green-600 text-white px-8 py-3 rounded-xl text-lg font-bold shadow-lg hover:bg-green-700"
-        >
-          Registrar mantenimiento
-        </button>
-      </div>
     </LayoutMayordomo>
   );
 };

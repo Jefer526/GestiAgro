@@ -9,24 +9,27 @@ import {
   IconSortDescending2,
 } from "@tabler/icons-react";
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
-import { equiposApi, laboresMaquinariaApi } from "../../services/apiClient";
+import { equiposApi, laboresMaquinariaApi, getMe } from "../../services/apiClient";
 
 const Historial_trabajom = () => {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { id } = useParams(); // 👈 id de la máquina
   const filtroRef = useRef(null);
 
   const [maquina, setMaquina] = useState(null);
   const [historial, setHistorial] = useState([]);
+  const [finca, setFinca] = useState(null);
 
-  // 🔄 Cargar datos de máquina + labores
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // 📌 Obtener la máquina actual
         const resMaquina = await equiposApi.get(id);
         setMaquina(resMaquina.data);
 
-        const resLabores = await laboresMaquinariaApi.list(id);
+        // 📌 Traer SOLO las labores de esta máquina
+        const resLabores = await laboresMaquinariaApi.list({ maquina: id });
+
         const mapped = resLabores.data.map((l) => {
           const horasMaquina = Math.abs(l.horometro_fin - l.horometro_inicio);
           return {
@@ -46,6 +49,19 @@ const Historial_trabajom = () => {
     fetchData();
   }, [id]);
 
+  // 📌 Obtener finca asignada
+  useEffect(() => {
+    const fetchFinca = async () => {
+      try {
+        const resUser = await getMe();
+        setFinca(resUser.data.finca_asignada || null);
+      } catch (err) {
+        console.error("❌ Error cargando finca asignada:", err);
+      }
+    };
+    fetchFinca();
+  }, []);
+
   const columnas = [
     "fecha",
     "labor",
@@ -55,7 +71,6 @@ const Historial_trabajom = () => {
     "observaciones",
   ];
 
-  // === Estados para filtros ===
   const [filtroActivo, setFiltroActivo] = useState(null);
   const [filtroPosicion, setFiltroPosicion] = useState({ top: 0, left: 0 });
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
@@ -65,8 +80,9 @@ const Historial_trabajom = () => {
   const getValoresUnicos = (campo) => {
     if (campo === "observaciones") return [];
     const search = (busquedas[campo] || "").toLowerCase();
-    return [...new Set(historial.map((e) => String(e[campo] || "")))]
-      .filter((v) => v.toLowerCase().includes(search));
+    return [...new Set(historial.map((e) => String(e[campo] || "")))].filter((v) =>
+      v.toLowerCase().includes(search)
+    );
   };
 
   const toggleFiltro = (campo, e) => {
@@ -81,7 +97,6 @@ const Historial_trabajom = () => {
 
   const toggleValor = (campo, valor, hijos = []) => {
     let seleccionados = new Set(valoresSeleccionados[campo] || []);
-
     if (hijos.length > 0) {
       const todosIncluidos = hijos.every((h) => seleccionados.has(h));
       if (todosIncluidos) {
@@ -90,13 +105,9 @@ const Historial_trabajom = () => {
         hijos.forEach((h) => seleccionados.add(h));
       }
     } else if (valor) {
-      if (seleccionados.has(valor)) {
-        seleccionados.delete(valor);
-      } else {
-        seleccionados.add(valor);
-      }
+      if (seleccionados.has(valor)) seleccionados.delete(valor);
+      else seleccionados.add(valor);
     }
-
     setValoresSeleccionados({ ...valoresSeleccionados, [campo]: [...seleccionados] });
   };
 
@@ -132,7 +143,14 @@ const Historial_trabajom = () => {
         : String(b[campo]).localeCompare(String(a[campo]));
     });
 
-  // Cerrar filtros al hacer click fuera
+  // ✅ Formato DD/MM/YYYY
+  const formatFecha = (isoDate) => {
+    if (!isoDate) return "—";
+    const [y, m, d] = isoDate.split("-");
+    return `${d}/${m}/${y}`;
+  };
+
+  // Cerrar al hacer click fuera
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (filtroRef.current && !filtroRef.current.contains(e.target)) {
@@ -143,15 +161,8 @@ const Historial_trabajom = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // ✅ Formatear fecha dd/mm/yyyy
-  const formatFecha = (isoDate) => {
-    if (!isoDate) return "—";
-    const [y, m, d] = isoDate.split("-");
-    return `${d}/${m}/${y}`;
-  };
-
   return (
-    <LayoutMayordomo>
+    <LayoutMayordomo ocultarEncabezado>
       {/* Volver */}
       <button
         onClick={() => navigate("/equipos_mayordomo")}
@@ -160,11 +171,17 @@ const Historial_trabajom = () => {
         <IconChevronLeft className="w-6 h-6 mr-1" /> Volver
       </button>
 
-      <h1 className="text-3xl font-bold text-green-700 mb-6">Historial de trabajo</h1>
+      {/* Título + finca en el mismo nivel */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-green-700">Historial de trabajo</h1>
+        {finca && (
+          <span className="text-2xl font-bold text-green-700">{finca.nombre}</span>
+        )}
+      </div>
 
       {/* Info general */}
-      {maquina ? (
-        <div className="bg-white border border-gray-300 p-6 rounded-xl mb-6 max-w-4xl shadow-md">
+      {maquina && (
+        <div className="bg-white border border-gray-300 p-6 rounded-xl mb-8 max-w-4xl shadow-md">
           <h2 className="text-2xl font-bold mb-4 text-green-700">Información general</h2>
           <div className="grid grid-cols-2 gap-x-12 gap-y-2 text-lg">
             <p><strong>Código Equipo:</strong> {maquina.codigo_equipo}</p>
@@ -174,30 +191,31 @@ const Historial_trabajom = () => {
             <p><strong>Referencia:</strong> {maquina.referencia}</p>
           </div>
         </div>
-      ) : (
-        <p className="text-gray-500">Cargando información de la máquina...</p>
+      )}
+
+      {/* Subtítulo */}
+      <h2 className="text-3xl font-bold text-green-700 mb-2">Historial de labores</h2>
+
+      {/* Botón debajo del subtítulo */}
+      {maquina && (
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={() => navigate(`/registrarlabormaquinariam/${maquina.id}`)}
+            className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2"
+          >
+            <IconPlus className="w-5 h-5" />
+            Registrar labores
+          </button>
+        </div>
       )}
 
       {/* Tabla historial */}
-      <div className="bg-white border border-gray-300 rounded-xl shadow-md overflow-x-auto relative">
-        <div className="flex justify-between items-center px-4 py-3 border-b">
-          <h2 className="text-xl font-bold text-green-700">Historial de labores</h2>
-          {maquina && (
-            <button
-              onClick={() => navigate(`/registrarlabormaquinariam/${maquina.id}`)}
-              className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-semibold text-lg flex items-center gap-2"
-            >
-              <IconPlus className="w-6 h-6" />
-              Registrar labores
-            </button>
-          )}
-        </div>
-
-        <table className="w-full text-base text-center">
-          <thead className="bg-green-600 text-white">
+      <div className="overflow-x-auto rounded-lg shadow-lg bg-white">
+        <table className="min-w-full text-center text-base">
+          <thead className="bg-green-600 text-white font-bold">
             <tr>
               {columnas.map((col) => (
-                <th key={col} className="px-4 py-4 font-bold border">
+                <th key={col} className="p-4 border text-center">
                   <div className="flex justify-center items-center gap-2">
                     <span className="uppercase">{col}</span>
                     {col !== "observaciones" && (
@@ -212,14 +230,21 @@ const Historial_trabajom = () => {
           </thead>
           <tbody>
             {historialFiltrado.map((item, i) => (
-              <tr key={i} className="border-t hover:bg-gray-50 transition">
+              <tr key={i} className="hover:bg-gray-100">
                 {columnas.map((campo) => (
-                  <td key={campo} className="px-6 py-4 border border-gray-200">
+                  <td key={campo} className="p-4 border">
                     {campo === "fecha" ? formatFecha(item[campo]) : item[campo]}
                   </td>
                 ))}
               </tr>
             ))}
+            {historialFiltrado.length === 0 && (
+              <tr>
+                <td colSpan={columnas.length} className="p-4 border text-gray-500">
+                  No hay labores registradas.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

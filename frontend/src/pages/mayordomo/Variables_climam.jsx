@@ -11,6 +11,7 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import ChartDataLabels from "chartjs-plugin-datalabels";
+import { IconPlus } from "@tabler/icons-react";
 
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
 import { variablesClimaApi, getMe } from "../../services/apiClient";
@@ -160,15 +161,8 @@ const Variables_climam = () => {
         </div>
       </div>
 
-      {/* Botón Registrar + Selector de variable */}
-      <div className="mb-4 flex gap-4 items-center">
-        <button
-          onClick={() => navigate("/registrar_climam")}
-          className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition font-semibold"
-        >
-          Registrar
-        </button>
-
+      {/* Selector de variable + Botón Registrar alineados */}
+      <div className="mb-4 flex justify-between items-center">
         <select
           value={variableGrafica}
           onChange={(e) => setVariableGrafica(e.target.value)}
@@ -179,6 +173,14 @@ const Variables_climam = () => {
           <option value="temp_max">Temperatura máxima (°C)</option>
           <option value="humedad">Humedad relativa (%)</option>
         </select>
+
+        <button
+          onClick={() => navigate("/registrar_climam")}
+          className="flex items-center gap-2 bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition font-semibold"
+        >
+          <IconPlus className="w-5 h-5" />
+          Registrar
+        </button>
       </div>
 
       {/* Configuración de etiquetas */}

@@ -157,9 +157,7 @@ const Bodega_agro = () => {
           </button>
         </div>
 
-      <div className="bg-white border border-gray-300 rounded-xl overflow-auto relative">
-       
-
+      <div className="overflow-x-auto rounded-lg shadow-lg">
         {loading ? (
           <p className="text-center py-6">Cargando insumos...</p>
         ) : (
@@ -167,7 +165,7 @@ const Bodega_agro = () => {
             <thead className="bg-green-600 text-white font-bold">
               <tr>
                 {columnas.map((col) => (
-                  <th key={col} className="px-4 py-3 border">
+                  <th key={col} className="p-4 border text-center">
                     <div className="flex items-center gap-2 justify-center">
                       {col.toUpperCase()}
                       <button onClick={(e) => toggleFiltro(col, e)}>
@@ -176,21 +174,21 @@ const Bodega_agro = () => {
                     </div>
                   </th>
                 ))}
-                <th className="px-4 py-3 border">DETALLE</th>
+                <th className="p-4 border text-center">DETALLE</th>
               </tr>
             </thead>
             <tbody>
               {datosFiltrados.map((d, i) => (
-                <tr key={i} className="border-b border-gray-200">
-                  <td className="px-4 py-2 border">{d.finca}</td>
-                  <td className="px-4 py-2 border">{d.categoria}</td>
-                  <td className="px-4 py-2 border">{d.producto}</td>
-                  <td className="px-4 py-2 border">{d.ingrediente}</td>
-                  <td className="px-4 py-2 border">
+                <tr key={i} className="border-b border-gray-100">
+                  <td className="p-4 border">{d.finca}</td>
+                  <td className="p-4 border">{d.categoria}</td>
+                  <td className="p-4 border">{d.producto}</td>
+                  <td className="p-4 borderr">{d.ingrediente}</td>
+                  <td className="p-4 border">
                     {d.saldo} {d.unidad}
                   </td>
-                  <td className="px-4 py-2 border">{d.unidad}</td>
-                  <td className="px-4 py-2 border text-center">
+                  <td className="p-4 border">{d.unidad}</td>
+                  <td className="p-4 border text-center">
                     <button
                       onClick={() =>
                         navigate(`/detallesagrop/${d.id}/${encodeURIComponent(d.finca)}`)

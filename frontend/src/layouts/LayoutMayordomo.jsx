@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import SidebarMayordomo from "../components/SidebarMayordomo";
 import { getMe } from "../services/apiClient";
 
-const LayoutMayordomo = ({ children, titulo, accionesTop }) => {
+const LayoutMayordomo = ({ children, titulo, accionesTop, ocultarEncabezado = false }) => {
   const [finca, setFinca] = useState(null);
 
   useEffect(() => {
@@ -19,23 +19,25 @@ const LayoutMayordomo = ({ children, titulo, accionesTop }) => {
   }, []);
 
   return (
-    <div className="flex">
+    <div className="min-h-[100dvh] bg-gray-50 flex">
       <SidebarMayordomo />
       <main className="ml-28 min-h-[100dvh] p-10 w-full">
         {/* 🔹 Acciones superiores (ej: botón Volver) */}
         {accionesTop && <div className="mb-4">{accionesTop}</div>}
 
-        {/* 🔹 Encabezado unificado */}
-        <div className="flex justify-between items-center mb-8">
-          {titulo && (
-            <h1 className="text-3xl font-bold text-green-700">{titulo}</h1>
-          )}
-          {finca && (
-            <span className="text-3xl font-bold text-green-700">
-              {finca.nombre}
-            </span>
-          )}
-        </div>
+        {/* 🔹 Encabezado unificado (solo si no se oculta) */}
+        {!ocultarEncabezado && (
+          <div className="flex justify-between items-center mb-4 gap-4">
+            {titulo && (
+              <h1 className="text-3xl font-bold text-green-700">{titulo}</h1>
+            )}
+            {finca && (
+              <span className="text-3xl font-bold text-green-700">
+                {finca.nombre}
+              </span>
+            )}
+          </div>
+        )}
 
         {children}
       </main>

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { IconChevronLeft, IconCheck } from "@tabler/icons-react";
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
-import { equiposApi, mantenimientosApi } from "../../services/apiClient";
+import { equiposApi, mantenimientosApi, getMe } from "../../services/apiClient";
 
 const Registrar_novedad_hoja = () => {
   const navigate = useNavigate();
@@ -11,6 +11,7 @@ const Registrar_novedad_hoja = () => {
 
   const [alertaVisible, setAlertaVisible] = useState(false);
   const [maquina, setMaquina] = useState(null);
+  const [finca, setFinca] = useState(null);
   const [formData, setFormData] = useState({
     fecha: "",
     tipo: "",
@@ -32,6 +33,19 @@ const Registrar_novedad_hoja = () => {
     fetchMaquina();
   }, [id]);
 
+  // 📌 Traer finca asignada
+  useEffect(() => {
+    const fetchFinca = async () => {
+      try {
+        const resUser = await getMe();
+        setFinca(resUser.data.finca_asignada || null);
+      } catch (err) {
+        console.error("❌ Error cargando finca asignada:", err);
+      }
+    };
+    fetchFinca();
+  }, []);
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -43,7 +57,6 @@ const Registrar_novedad_hoja = () => {
     e.preventDefault();
     try {
       const payload = { maquina: id, ...formData };
-      console.log("📤 Enviando mantenimiento:", payload);
 
       // 1️⃣ Crear mantenimiento
       await mantenimientosApi.create(payload);
@@ -65,17 +78,7 @@ const Registrar_novedad_hoja = () => {
   };
 
   return (
-    <LayoutMayordomo
-      titulo="Registrar mantenimiento"
-      accionesTop={
-        <button
-          onClick={() => navigate(`/hoja_vidam/${id}`)}
-          className="flex items-center text-green-700 font-semibold text-lg hover:underline"
-        >
-          <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
-        </button>
-      }
-    >
+    <LayoutMayordomo ocultarEncabezado>
       {alertaVisible && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold z-[10000]">
           <IconCheck className="w-5 h-5" />
@@ -83,7 +86,29 @@ const Registrar_novedad_hoja = () => {
         </div>
       )}
 
+      {/* Botón volver */}
+      <button
+        onClick={() => navigate(`/hoja_vidam/${id}`)}
+        className="flex items-center text-green-700 font-semibold mb-6 text-lg hover:underline"
+      >
+        <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
+      </button>
+
+      {/* Encabezado: finca afuera, título en la card */}
+      <div className="flex justify-between items-center mb-6">
+        {/* La finca queda afuera, alineada a la derecha */}
+        <div></div>
+        {finca && (
+          <span className="text-2xl font-bold text-green-700">{finca.nombre}</span>
+        )}
+      </div>
+
+      {/* Card con el título adentro */}
       <div className="bg-white border border-gray-200 rounded-xl shadow-md p-8 w-[850px] mx-auto">
+        <h1 className="text-3xl font-bold text-green-700 mb-6">
+          Registrar mantenimiento
+        </h1>
+
         {maquina ? (
           <div className="bg-gray-50 border border-gray-300 rounded-lg p-4 mb-6">
             <p><strong>Código:</strong> {maquina.codigo_equipo}</p>
