@@ -1,187 +1,314 @@
 // src/pages/mayordomo/Manejo_fitosanitariom.jsx
-import React, { useState } from "react";
-import { IconTrash, IconPlus, IconCheck } from "@tabler/icons-react";
+import React, { useState, useEffect } from "react";
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels";
+import { IconPlus } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
+import Select from "react-select";
+import { lotesApi, fitosanitarioApi, getMe } from "../../services/apiClient";
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend, ChartDataLabels);
 
 const Manejo_fitosanitariom = () => {
   const navigate = useNavigate();
 
-  // Estados de formulario
-  const [fecha, setFecha] = useState("");
-  const [lote, setLote] = useState("");
-  const [plaga, setPlaga] = useState("");
-  const [producto, setProducto] = useState("");
-  const [dosis, setDosis] = useState("");
-  const [observacion, setObservacion] = useState("");
+  // 📌 Filtros
+  const [finca, setFinca] = useState(null);   // solo la finca asignada
+  const [lote, setLote] = useState("");       // único
+  const [familia, setFamilia] = useState(""); // único
+  const [plaga, setPlaga] = useState("");     // único
+  const [anio, setAnio] = useState(new Date().getFullYear().toString());
+  const [meses, setMeses] = useState([]);
 
-  // Lista de aplicaciones registradas
-  const [aplicaciones, setAplicaciones] = useState([]);
-  const [alertaVisible, setAlertaVisible] = useState(false);
+  // 📌 Datos backend
+  const [lotes, setLotes] = useState([]);
+  const [resumen, setResumen] = useState([]);
 
-  // Agregar aplicación
-  const añadirAplicacion = () => {
-    if (!fecha || !lote || !plaga || !producto || !dosis) {
-      return alert("Completa todos los campos obligatorios");
+  // 🔹 Obtener finca asignada
+  useEffect(() => {
+    const fetchFinca = async () => {
+      try {
+        const res = await getMe();
+        if (res.data.finca_asignada) {
+          setFinca(res.data.finca_asignada);
+        }
+      } catch (err) {
+        console.error("❌ Error cargando finca:", err);
+      }
+    };
+    fetchFinca();
+  }, []);
+
+  // 🔹 Cargar lotes según finca
+  useEffect(() => {
+    if (finca) {
+      lotesApi.listByFinca(finca.id)
+        .then((res) => setLotes(res.data))
+        .catch(console.error);
     }
-    setAplicaciones([
-      ...aplicaciones,
-      { fecha, lote, plaga, producto, dosis, observacion },
-    ]);
-    // limpiar
-    setFecha("");
-    setLote("");
-    setPlaga("");
-    setProducto("");
-    setDosis("");
-    setObservacion("");
-  };
+  }, [finca]);
 
-  const eliminarAplicacion = (idx) =>
-    setAplicaciones((prev) => prev.filter((_, i) => i !== idx));
+  // 🔹 Cargar resumen
+  useEffect(() => {
+    if (!finca) return;
+    const params = { finca: finca.id };
+    if (lote) params.lote = lote;
+    if (familia) params.familia = familia;
+    if (plaga) params.plaga = plaga;
+    if (anio) params.anio = anio;
 
-  // Guardar
-  const handleGuardar = () => {
-    if (aplicaciones.length === 0) return alert("No has añadido aplicaciones");
+    fitosanitarioApi
+      .resumen(params)
+      .then((res) => setResumen(res.data))
+      .catch((err) => console.error("Error cargando resumen:", err));
+  }, [finca, lote, familia, plaga, anio, meses]);
 
-    setAlertaVisible(true);
-    setTimeout(() => {
-      setAlertaVisible(false);
-      navigate("/historial_fitosanitario"); // 👉 redirige a historial
-    }, 2000);
+  // 📌 Años disponibles
+  const aniosDisponibles = [...new Set(resumen.map((r) => r.anio))].sort((a, b) => b - a);
+
+  // 📌 Meses disponibles (según año)
+  const mesesDisponibles = [
+    ...new Set(resumen.filter((r) => r.anio === Number(anio)).map((r) => r.mes)),
+  ].map((m) => {
+    const fecha = new Date(Number(anio), m - 1);
+    let nombreMes = fecha.toLocaleDateString("es-ES", { month: "long" });
+    nombreMes = nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1);
+    return { value: String(m), label: nombreMes };
+  });
+
+  // 📌 Filtrado en memoria
+  const resumenFiltrado = resumen.filter((row) => {
+    if (meses.length > 0 && !meses.includes(String(row.mes))) return false;
+    return true;
+  });
+
+  // 📊 Configuración de gráfica
+  let labels = [];
+  let datasets = [];
+
+  if (meses.length > 1) {
+    const mesesNumericos = [...new Set(resumenFiltrado.map((i) => i.mes))].sort((a, b) => a - b);
+    labels = mesesNumericos.map((m) =>
+      new Date(Number(anio), m - 1).toLocaleDateString("es-ES", { month: "long" })
+    );
+
+    const plagasUnicas = [...new Set(resumenFiltrado.map((i) => i.plaga))];
+    datasets = plagasUnicas.map((p, i) => ({
+      label: p,
+      data: mesesNumericos.map((mNum) => {
+        const filas = resumenFiltrado.filter((r) => r.plaga === p && r.mes === mNum);
+        if (filas.length === 0) return 0;
+        return filas.reduce((acc, f) => acc + f.promedio, 0) / filas.length;
+      }),
+      backgroundColor: `hsla(${i * 70}, 70%, 50%, 0.7)`,
+      borderColor: `hsla(${i * 70}, 70%, 40%, 1)`,
+      borderWidth: 1,
+    }));
+  } else {
+    labels = [...new Set(resumenFiltrado.map((i) => i.familia))];
+    const plagasUnicas = [...new Set(resumenFiltrado.map((i) => i.plaga))];
+    datasets = plagasUnicas.map((p, i) => ({
+      label: p,
+      data: labels.map((fam) => {
+        const filas = resumenFiltrado.filter((r) => r.familia === fam && r.plaga === p);
+        if (filas.length === 0) return 0;
+        return filas.reduce((acc, f) => acc + f.promedio, 0) / filas.length;
+      }),
+      backgroundColor: `hsla(${i * 70}, 70%, 50%, 0.7)`,
+      borderColor: `hsla(${i * 70}, 70%, 40%, 1)`,
+      borderWidth: 1,
+    }));
+  }
+
+  const data = { labels, datasets };
+
+  const opcionesChart = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "top",
+        labels: {
+          padding: 20,
+          generateLabels: (chart) => {
+            const labels = ChartJS.defaults.plugins.legend.labels.generateLabels(chart);
+            labels.forEach((l) => {
+              l.text = l.text.replace(/[0-9.,]+/g, "").trim();
+            });
+            return labels;
+          },
+        },
+      },
+      datalabels: {
+        color: "#1f2937",
+        anchor: "end",
+        align: "end",
+        offset: -7,
+        font: { weight: "bold" },
+        formatter: (value) => (value > 0 ? value.toFixed(1) : ""),
+      },
+    },
+    scales: {
+      y: { beginAtZero: true, title: { display: true, text: "Promedio de individuos" } },
+      x: { title: { display: true, text: meses.length > 1 ? "Meses" : "Familias de plagas" } },
+    },
   };
 
   return (
     <LayoutMayordomo>
-      {/* ✅ Alerta */}
-      {alertaVisible && (
-        <div className="fixed top-3 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
-          <IconCheck className="w-5 h-5" /> Registro guardado
+      <h1 className="text-3xl font-bold text-green-700 mb-6">Manejo fitosanitario</h1>
+
+      {/* 📌 Filtros */}
+      <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {/* Finca fija */}
+        <div>
+          <label className="font-bold block mb-1">Finca</label>
+          <input
+            type="text"
+            value={finca?.nombre || ""}
+            disabled
+            className="border rounded px-3 py-1 w-full bg-gray-100"
+          />
         </div>
-      )}
 
-      <h1 className="text-3xl font-bold text-green-700 mb-6">
-        Manejo de Fitosanitarios
-      </h1>
-
-      <div className="flex justify-center">
-        <div className="bg-white border border-gray-300 rounded-xl p-6 space-y-6 w-full max-w-5xl text-lg">
-          {/* --- Formulario --- */}
-          <div className="grid md:grid-cols-2 gap-4">
-            <div>
-              <p className="font-bold mb-1">Fecha de aplicación</p>
-              <input
-                type="date"
-                value={fecha}
-                onChange={(e) => setFecha(e.target.value)}
-                className="border border-gray-300 p-2 rounded-md text-lg w-full"
-              />
-            </div>
-
-            <div>
-              <p className="font-bold mb-1">Lote</p>
-              <input
-                value={lote}
-                onChange={(e) => setLote(e.target.value)}
-                placeholder="Ej: T2"
-                className="border border-gray-300 p-2 rounded-md text-lg w-full"
-              />
-            </div>
-
-            <div>
-              <p className="font-bold mb-1">Plaga o enfermedad</p>
-              <input
-                value={plaga}
-                onChange={(e) => setPlaga(e.target.value)}
-                placeholder="Ej: Roya, Trips"
-                className="border border-gray-300 p-2 rounded-md text-lg w-full"
-              />
-            </div>
-
-            <div>
-              <p className="font-bold mb-1">Producto aplicado</p>
-              <input
-                value={producto}
-                onChange={(e) => setProducto(e.target.value)}
-                placeholder="Ej: Fungicida X"
-                className="border border-gray-300 p-2 rounded-md text-lg w-full"
-              />
-            </div>
-
-            <div>
-              <p className="font-bold mb-1">Dosis (UM)</p>
-              <input
-                value={dosis}
-                onChange={(e) => setDosis(e.target.value)}
-                placeholder="Ej: 1.5 L/ha"
-                className="border border-gray-300 p-2 rounded-md text-lg w-full"
-              />
-            </div>
-
-            <div className="md:col-span-2">
-              <p className="font-bold mb-1">Observación</p>
-              <textarea
-                value={observacion}
-                onChange={(e) => setObservacion(e.target.value)}
-                placeholder="Detalles adicionales"
-                className="border border-gray-300 p-2 rounded-md w-full text-lg"
-                rows={2}
-              />
-            </div>
-          </div>
-
-          {/* Botón añadir */}
-          <button
-            onClick={añadirAplicacion}
-            className="flex items-center gap-2 bg-green-600 text-white px-6 py-2 rounded-full hover:bg-green-700 transition"
+        {/* Lote */}
+        <div>
+          <label className="font-bold block mb-1">Lote</label>
+          <select
+            value={lote}
+            onChange={(e) => setLote(e.target.value)}
+            className="border rounded px-3 py-1 w-full"
           >
-            <IconPlus className="w-5 h-5" /> Añadir aplicación
-          </button>
+            <option value="">Todos</option>
+            {lotes.map((l) => (
+              <option key={l.id} value={l.id}>{l.lote}</option>
+            ))}
+          </select>
+        </div>
 
-          {/* --- Tabla de aplicaciones --- */}
-          {aplicaciones.length > 0 && (
-            <div className="overflow-x-auto mt-4">
-              <table className="w-full text-left border border-gray-300 rounded-lg overflow-hidden">
-                <thead className="bg-green-600 text-white">
-                  <tr>
-                    <th className="p-2">FECHA</th>
-                    <th className="p-2">LOTE</th>
-                    <th className="p-2">PLAGA / ENFERMEDAD</th>
-                    <th className="p-2">PRODUCTO</th>
-                    <th className="p-2">DOSIS</th>
-                    <th className="p-2">OBSERVACIÓN</th>
-                    <th className="p-2">ACCIONES</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {aplicaciones.map((a, i) => (
-                    <tr key={i} className="border-b">
-                      <td className="p-2">{a.fecha}</td>
-                      <td className="p-2">{a.lote}</td>
-                      <td className="p-2">{a.plaga}</td>
-                      <td className="p-2">{a.producto}</td>
-                      <td className="p-2">{a.dosis}</td>
-                      <td className="p-2">{a.observacion}</td>
-                      <td className="p-2">
-                        <button onClick={() => eliminarAplicacion(i)}>
-                          <IconTrash className="w-6 h-6 text-red-500" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          {/* Guardar */}
-          <button
-            onClick={handleGuardar}
-            className="bg-green-600 text-white px-8 py-2 rounded-full mt-4 hover:bg-green-700 text-lg"
+        {/* Familia */}
+        <div>
+          <label className="font-bold block mb-1">Familia</label>
+          <select
+            value={familia}
+            onChange={(e) => setFamilia(e.target.value)}
+            className="border rounded px-3 py-1 w-full"
           >
-            Guardar registro
+            <option value="">Todas</option>
+            {[...new Set(resumen.map((r) => r.familia))].map((f) => (
+              <option key={f} value={f}>{f}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* Plaga */}
+        <div>
+          <label className="font-bold block mb-1">Plaga</label>
+          <select
+            value={plaga}
+            onChange={(e) => setPlaga(e.target.value)}
+            className="border rounded px-3 py-1 w-full"
+          >
+            <option value="">Todas</option>
+            {[...new Set(resumen.map((r) => r.plaga))].map((p) => (
+              <option key={p} value={p}>{p}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {/* Año y Mes */}
+      <div className="mb-6 flex gap-6 flex-wrap">
+        <div>
+          <label className="font-bold block mb-1">Año</label>
+          <select
+            value={anio}
+            onChange={(e) => {
+              setAnio(e.target.value);
+              setMeses([]);
+            }}
+            className="border rounded px-3 py-1 w-40"
+          >
+            {aniosDisponibles.map((a) => (
+              <option key={a} value={a}>{a}</option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="font-bold block mb-1">Mes</label>
+          <Select
+            isMulti
+            options={mesesDisponibles}
+            value={mesesDisponibles.filter((m) => meses.includes(m.value))}
+            onChange={(selected) => setMeses(selected.map((s) => s.value))}
+            className="w-80"
+            placeholder="Selecciona mes(es)..."
+            noOptionsMessage={() => "No hay meses disponibles"}
+          />
+        </div>
+      </div>
+
+      {/* 📊 Gráfica */}
+      <div className="w-full h-[400px] bg-white p-4 rounded-xl shadow mb-8">
+        <Bar data={data} options={opcionesChart} />
+      </div>
+
+      {/* 📋 Tabla resumen */}
+      <div className="bg-white p-4 rounded-xl shadow">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold text-green-700">Resumen filtrado</h2>
+          <button
+            onClick={() => navigate("/registrarmonitoreom")}
+            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold"
+          >
+            <IconPlus className="w-5 h-5" />
+            Registrar Monitoreo
           </button>
         </div>
+
+        <table className="w-full border-collapse border border-gray-300 text-sm text-center">
+          <thead className="bg-green-600 text-white">
+            <tr>
+              <th className="border px-3 py-2">Finca</th>
+              <th className="border px-3 py-2">Lote</th>
+              <th className="border px-3 py-2">Familia</th>
+              <th className="border px-3 py-2">Plaga</th>
+              <th className="border px-3 py-2">Año</th>
+              <th className="border px-3 py-2">Mes</th>
+              <th className="border px-3 py-2">Promedio</th>
+            </tr>
+          </thead>
+          <tbody>
+            {resumenFiltrado.map((row, idx) => {
+              let mesLabel = new Date(row.anio, row.mes - 1).toLocaleDateString("es-ES", {
+                month: "long",
+              });
+              mesLabel = mesLabel.charAt(0).toUpperCase() + mesLabel.slice(1);
+
+              return (
+                <tr key={idx} className="hover:bg-gray-50">
+                  <td className="border px-3 py-2">{finca?.nombre}</td>
+                  <td className="border px-3 py-2">{row["monitoreo__lote__lote"] || "-"}</td>
+                  <td className="border px-3 py-2">{row.familia}</td>
+                  <td className="border px-3 py-2">{row.plaga}</td>
+                  <td className="border px-3 py-2">{row.anio}</td>
+                  <td className="border px-3 py-2">{mesLabel}</td>
+                  <td className="border px-3 py-2">{row.promedio.toFixed(1)}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
     </LayoutMayordomo>
   );

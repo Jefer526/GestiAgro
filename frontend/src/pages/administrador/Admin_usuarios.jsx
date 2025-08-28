@@ -325,7 +325,7 @@ const Admin_usuarios = () => {
               }}
               className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100"
             >
-              <IconPencil className="w-4 h-4 text-blue-600" /> Editar Rol y Permisos
+              <IconPencil className="w-4 h-4 text-blue-600" /> Editar Rol y Usuario
             </button>
             <button
               onClick={() => handleToggleActivo(menuAbiertoId)}

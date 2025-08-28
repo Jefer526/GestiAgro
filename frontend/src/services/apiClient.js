@@ -17,7 +17,7 @@ export const ENDPOINTS = {
 
 // ===== API Auth =====
 export const authApi = {
-  me: () => api.get(ENDPOINTS.me),  // 👈 usa el endpoint que ya definiste
+  me: () => api.get(ENDPOINTS.me), // 👈 usa el endpoint que ya definiste
 };
 
 // ===== Axios instance =====
@@ -79,7 +79,9 @@ api.interceptors.response.use(
         localStorage.removeItem("access");
         localStorage.removeItem("refresh");
         localStorage.removeItem("user");
-        window.location.href = "/login";
+
+        // ❌ antes: window.location.href = "/login"
+        // ✅ ahora: solo rechazamos el error, Login.jsx se encarga de mostrar mensaje
         return Promise.reject(err);
       } finally {
         isRefreshing = false;
@@ -114,7 +116,7 @@ export const verifyCode = (email, code) =>
 export const accountsApi = {
   listUsers: () => api.get("/api/accounts/users/"),
   getUser: (id) => api.get(`/api/accounts/users/${id}/`),
-  updateUser: (id, data) => api.patch(`/api/accounts/users/${id}/`, data),   // 👈 PATCH
+  updateUser: (id, data) => api.patch(`/api/accounts/users/${id}/`, data), // 👈 PATCH
   toggleActive: (id) => api.patch(`/api/accounts/users/${id}/toggle-active/`), // 👈 PATCH
   updateRole: (id, data) => api.patch(`/api/accounts/update-role/${id}/`, data), // 👈 PATCH
 };
@@ -246,8 +248,6 @@ export const fitosanitarioApi = {
   resumen: (params = {}) =>
     api.get("/api/fitosanitario/monitoreos/resumen/", { params }),
 };
-
-
 
 // ===== Export principal =====
 export default api;

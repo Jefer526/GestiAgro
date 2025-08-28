@@ -124,7 +124,7 @@ const Editar_roluser = () => {
       {/* Formulario */}
       <div className="bg-white shadow-xl border-2 border-gray-200 rounded-xl p-8 max-w-5xl mx-auto">
         <h2 className="text-2xl font-bold text-green-700 mb-8">
-          Editar roles y usuarios
+          Editar Rol y Usuario
         </h2>
 
         {/* Datos */}

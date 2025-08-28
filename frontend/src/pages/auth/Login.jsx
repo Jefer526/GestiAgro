@@ -8,6 +8,7 @@ const API = import.meta.env.VITE_API_URL || "";
 
 const Login = () => {
   const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberEmail, setRememberEmail] = useState(false);
@@ -16,7 +17,7 @@ const Login = () => {
   const [errorMsg, setErrorMsg] = useState("");
   const [capsOn, setCapsOn] = useState(false);
 
-  // Cargar correo guardado si existe
+  // 📌 Cargar correo guardado si existe y validar sesión previa
   useEffect(() => {
     const savedEmail = localStorage.getItem("rememberedEmail");
     if (savedEmail) {
@@ -24,9 +25,18 @@ const Login = () => {
       setRememberEmail(true);
     }
 
-    if (localStorage.getItem("access")) {
-      const user = JSON.parse(localStorage.getItem("user"));
-      if (user) redirectByRole(user);
+    const access = localStorage.getItem("access");
+    const user = localStorage.getItem("user");
+
+    if (access && user) {
+      try {
+        const parsed = JSON.parse(user);
+        if (parsed?.rol || parsed?.is_superuser) {
+          redirectByRole(parsed);
+        }
+      } catch {
+        localStorage.clear();
+      }
     }
   }, [navigate]);
 
@@ -45,13 +55,15 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (loading) return;
-    setErrorMsg("");
 
+    setErrorMsg("");
     const emailTrim = email.trim();
+
     if (!emailTrim || !password.trim()) {
       setErrorMsg("Ingresa tu correo y contraseña.");
       return;
     }
+
     const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailTrim);
     if (!emailOk) {
       setErrorMsg("Formato de correo no válido.");
@@ -61,24 +73,32 @@ const Login = () => {
     setLoading(true);
     try {
       const response = await login(emailTrim, password);
-      const { access, refresh, user } = response.data; // 👈 asegúrate de que tu backend lo devuelva así
+      const { access, refresh, user } = response.data;
 
-      // guardar tokens y usuario
       localStorage.setItem("access", access);
       localStorage.setItem("refresh", refresh);
       localStorage.setItem("user", JSON.stringify(user));
 
-      // guardar o eliminar correo según checkbox
       if (rememberEmail) {
         localStorage.setItem("rememberedEmail", emailTrim);
       } else {
         localStorage.removeItem("rememberedEmail");
       }
 
-      // redirigir según rol
       redirectByRole(user);
     } catch (err) {
-      setErrorMsg(err.message || "Error al iniciar sesión.");
+      console.log("DEBUG ERROR:", err);       // 👀 Para verificar en consola
+      console.log("DEBUG RESPONSE:", err.response);
+
+      if (err.response?.status === 401) {
+        setErrorMsg("Correo o contraseña incorrectos.");
+      } else if (err.response?.data?.detail) {
+        setErrorMsg(err.response.data.detail);
+      } else if (err.response) {
+        setErrorMsg("Error al iniciar sesión.");
+      } else {
+        setErrorMsg("Error de conexión con el servidor.");
+      }
     } finally {
       setLoading(false);
     }
@@ -120,7 +140,11 @@ const Login = () => {
           </div>
         </div>
 
-        <form className="space-y-6" onSubmit={handleSubmit} noValidate>
+        <form
+          className="space-y-6"
+          onSubmit={handleSubmit}
+          noValidate
+        >
           <div>
             <label className="block mb-2 font-medium text-gray-800 text-base">
               Correo electrónico
@@ -185,7 +209,6 @@ const Login = () => {
                 Recordar correo
               </label>
             </div>
-
             <Link
               to="/recuperar-cuenta"
               className="text-green-600 hover:underline text-sm"
@@ -204,7 +227,9 @@ const Login = () => {
             type="submit"
             disabled={loading}
             className={`w-full bg-green-600 text-white py-3 rounded-lg text-lg font-semibold shadow-md transition-all mt-4 ${
-              loading ? "opacity-80 cursor-not-allowed" : "hover:bg-green-700"
+              loading
+                ? "opacity-80 cursor-not-allowed"
+                : "hover:bg-green-700"
             }`}
           >
             {loading ? "Ingresando..." : "Iniciar sesión"}

@@ -23,7 +23,7 @@ const AuthRoutes = [
   path="/seleccion-rol"
   element={
     <ProtectedRoute allowedRoles={["admin"]}>
-      <Seleccion_rol />
+      <Seleccion_rol />   
     </ProtectedRoute>
   }
 />
