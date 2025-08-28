@@ -6,43 +6,72 @@ import {
   IconSortAscending2,
   IconSortDescending2,
 } from "@tabler/icons-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
+import { productosApi, movimientosApi } from "../../services/apiClient";
 
 const Detalle_produc = () => {
   const navigate = useNavigate();
+  const { id, finca } = useParams();
   const filtroRef = useRef(null);
 
-  // Estados de filtros
+  // Estados
   const [filtroActivo, setFiltroActivo] = useState(null);
   const [filtroPosicion, setFiltroPosicion] = useState({ top: 0, left: 0 });
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [busquedas, setBusquedas] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
 
-  // Columnas y datos
-  const columnas = ["fecha", "tipo", "lote", "cantidad", "um", "saldo"];
-  const movimientos = [
-    { fecha: "2025-06-15", tipo: "Entrada", lote: "1", cantidad: "50", um: "Kg", saldo: "350" },
-    { fecha: "2025-06-16", tipo: "Salida", lote: "2", cantidad: "10", um: "Kg", saldo: "340" },
-    { fecha: "2025-06-17", tipo: "Salida", lote: "3", cantidad: "25", um: "Kg", saldo: "315" },
-  ];
+  const [producto, setProducto] = useState(null);
+  const [movimientos, setMovimientos] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Cierre filtros flotantes
+  const columnas = ["fecha", "finca", "lote", "tipo", "movimiento", "saldo", "unidad"];
+
+  // 🔹 Cargar datos
   useEffect(() => {
-    const clickFuera = (e) => {
-      if (filtroRef.current && !filtroRef.current.contains(e.target)) setFiltroActivo(null);
-    };
-    document.addEventListener("mousedown", clickFuera);
-    return () => document.removeEventListener("mousedown", clickFuera);
-  }, []);
+    const fetchData = async () => {
+      try {
+        const [prodRes, movRes] = await Promise.all([
+          productosApi.get(id),
+          movimientosApi.listByProducto(id),
+        ]);
 
-  // Funciones de filtros
+        const fincaDecodificada = decodeURIComponent(finca);
+
+        const movsOrdenados = movRes.data
+          .filter((m) => m.finca_nombre === fincaDecodificada)
+          .sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+        // calcular saldo acumulado
+        let saldo = 0;
+        const movimientosConSaldo = movsOrdenados
+          .slice()
+          .reverse()
+          .map((m) => {
+            if (m.tipo === "Entrada") saldo += parseFloat(m.cantidad);
+            else if (m.tipo === "Salida") saldo -= parseFloat(m.cantidad);
+            return { ...m, movimiento: m.cantidad, saldo: saldo.toFixed(2) };
+          })
+          .reverse();
+
+        setProducto(prodRes.data);
+        setMovimientos(movimientosConSaldo);
+      } catch (err) {
+        console.error("❌ Error cargando detalles:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [id, finca]);
+
+  // 🔹 Filtros
   const getValoresUnicos = (campo) => {
     if (campo === "fecha") return [];
     const search = (busquedas[campo] || "").toLowerCase();
-    return [...new Set(movimientos.map((e) => e[campo]))].filter((v) =>
-      String(v).toLowerCase().includes(search)
+    return [...new Set(movimientos.map((e) => e[campo]?.toString() || ""))].filter((v) =>
+      v.toLowerCase().includes(search)
     );
   };
 
@@ -72,11 +101,11 @@ const Detalle_produc = () => {
 
   const movimientosFiltrados = movimientos
     .filter((item) =>
-      columnas.every((campo) =>
-        !valoresSeleccionados[campo] || valoresSeleccionados[campo].length === 0
-          ? true
-          : valoresSeleccionados[campo].includes(item[campo])
-      )
+      columnas.every((campo) => {
+        const seleccionados = valoresSeleccionados[campo] || [];
+        if (seleccionados.length === 0) return true;
+        return seleccionados.includes(item[campo]?.toString());
+      })
     )
     .sort((a, b) => {
       if (!ordenCampo) return 0;
@@ -86,9 +115,18 @@ const Detalle_produc = () => {
         : String(b[campo]).localeCompare(String(a[campo]));
     });
 
+  // 🔹 Cerrar filtro al hacer click fuera
+  useEffect(() => {
+    const clickFuera = (e) => {
+      if (filtroRef.current && !filtroRef.current.contains(e.target)) setFiltroActivo(null);
+    };
+    document.addEventListener("mousedown", clickFuera);
+    return () => document.removeEventListener("mousedown", clickFuera);
+  }, []);
+
   return (
     <LayoutMayordomo active="/bodega_insumos">
-      {/* Botón volver */}
+      {/* Volver */}
       <button
         onClick={() => navigate("/bodega_insumos")}
         className="flex items-center text-green-700 font-semibold mb-4 text-lg hover:underline"
@@ -96,166 +134,122 @@ const Detalle_produc = () => {
         <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
       </button>
 
-      {/* Título */}
       <h1 className="text-3xl font-bold text-green-700 mb-6">Detalle del producto</h1>
 
-      {/* Card info */}
-      <div className="bg-white border border-gray-300 rounded-xl shadow-md mb-8 p-6 grid grid-cols-1 sm:grid-cols-2 gap-y-2 text-[17px] leading-relaxed max-w-3xl">
-        <div><strong>Producto:</strong> Urea</div>
-        <div><strong>Ingrediente activo:</strong> Nitrógeno 46%</div>
-        <div><strong>Finca:</strong> La Esmeralda</div>
-        <div><strong>Categoría:</strong> Fertilizante</div>
-        <div><strong>Saldo:</strong> 315 Kg</div>
-      </div>
+      {loading ? (
+        <p className="text-center py-6">Cargando detalles...</p>
+      ) : (
+        <>
+          {/* Card producto */}
+          <div className="bg-white border border-gray-300 rounded-xl shadow-md mb-8 p-6 grid grid-cols-1 sm:grid-cols-2 gap-y-2 text-[17px] leading-relaxed max-w-3xl">
+            <div><strong>Producto:</strong> {producto?.nombre}</div>
+            <div><strong>Ingrediente activo:</strong> {producto?.ingrediente || "-"}</div>
+            <div><strong>Categoría:</strong> {producto?.categoria}</div>
+            <div><strong>Unidad:</strong> {producto?.unidad}</div>
+            <div className="sm:col-span-2"><strong>Finca:</strong> {decodeURIComponent(finca)}</div>
+            <div className="sm:col-span-2">
+              <strong>Saldo actual:</strong>{" "}
+              {movimientos.length > 0
+                ? `${movimientos[0].saldo} ${movimientos[0].unidad}`
+                : `0 ${producto?.unidad}`}
+            </div>
+          </div>
 
-      <h2 className="text-3xl font-bold text-green-700 mb-6">Movimiento del producto</h2>
+          <h2 className="text-3xl font-bold text-green-700 mb-6">Movimientos del producto</h2>
 
-      {/* === TABLA IGUAL A AGRO === */}
-      <div className="bg-white border border-gray-300 rounded-xl shadow-md overflow-x-auto relative">
-        <table className="w-full text-base text-center">
-          <thead className="bg-green-600 text-white">
-            <tr>
-              {columnas.map((col, idx) => (
-                <th key={idx} className="px-4 py-4 font-bold border">
-                  <div className="flex justify-center items-center gap-2">
-                    <span className="uppercase">{col}</span>
-                    <button onClick={(e) => toggleFiltro(col, e)}>
-                      <IconFilter className="w-4 h-4" />
-                    </button>
-                  </div>
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {movimientosFiltrados.map((m, i) => (
-              <tr key={i} className="border-t hover:bg-gray-50 transition">
-                <td className="px-6 py-4 border border-gray-200">{m.fecha}</td>
-                <td className="px-6 py-4 border border-gray-200">{m.tipo}</td>
-                <td className="px-6 py-4 border border-gray-200">{m.lote}</td>
-                <td className="px-6 py-4 border border-gray-200">{m.cantidad}</td>
-                <td className="px-6 py-4 border border-gray-200">{m.um}</td>
-                <td className="px-6 py-4 border border-gray-200">{m.saldo}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        {/* Filtros popover */}
-        {filtroActivo === "fecha" ? (
-          <div
-            ref={filtroRef}
-            className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60 text-left text-sm"
-            style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
-          >
-            <div className="font-semibold mb-2">Filtrar por Fecha</div>
-            {Object.entries(
-              movimientos.reduce((acc, { fecha }) => {
-                const [year, month, day] = fecha.split("-");
-                const monthName = new Date(fecha).toLocaleString("default", { month: "long" });
-                acc[year] = acc[year] || {};
-                acc[year][monthName] = acc[year][monthName] || { days: new Set(), monthNum: month };
-                acc[year][monthName].days.add(day);
-                return acc;
-              }, {})
-            ).map(([year, months]) => (
-              <div key={year} className="mb-2">
-                <div className="font-medium">{year}</div>
-                {Object.entries(months).map(([monthName, info]) => (
-                  <div key={monthName} className="ml-4">
-                    <div className="font-medium">{monthName}</div>
-                    {[...info.days].map((day) => {
-                      const fullDate = `${year}-${String(info.monthNum).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-                      return (
-                        <label key={fullDate} className="ml-6 flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            checked={(valoresSeleccionados["fecha"] || []).includes(fullDate)}
-                            onChange={() => toggleValor("fecha", fullDate)}
-                            className="accent-green-600"
-                          />
-                          {String(day).padStart(2, "0")}
-                        </label>
-                      );
-                    })}
-                  </div>
+          {/* Tabla movimientos */}
+          <div className="bg-white border border-gray-300 rounded-xl shadow-md overflow-x-auto relative">
+            <table className="w-full text-base text-center">
+              <thead className="bg-green-600 text-white">
+                <tr>
+                  {columnas.map((col, idx) => (
+                    <th key={idx} className="px-4 py-4 font-bold border">
+                      <div className="flex justify-center items-center gap-2">
+                        <span className="uppercase">{col}</span>
+                        <button onClick={(e) => toggleFiltro(col, e)}>
+                          <IconFilter className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {movimientosFiltrados.map((m, i) => (
+                  <tr key={i} className="border-t hover:bg-gray-50 transition">
+                    <td className="px-6 py-4 border border-gray-200">{m.fecha}</td>
+                    <td className="px-6 py-4 border border-gray-200">{m.finca_nombre}</td>
+                    <td className="px-6 py-4 border border-gray-200">{m.lote_nombre || "-"}</td>
+                    <td className="px-6 py-4 border border-gray-200">{m.tipo}</td>
+                    <td className="px-6 py-4 border border-gray-200">{m.movimiento}</td>
+                    <td className="px-6 py-4 border border-gray-200">{m.saldo}</td>
+                    <td className="px-6 py-4 border border-gray-200">{m.unidad}</td>
+                  </tr>
                 ))}
-              </div>
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
+
+      {/* Panel de filtro */}
+      {filtroActivo && (
+        <div
+          ref={filtroRef}
+          className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60"
+          style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
+        >
+          <div className="font-semibold mb-2">Filtrar por {filtroActivo.toUpperCase()}</div>
+          <button
+            onClick={() => ordenar(filtroActivo, "asc")}
+            className="text-green-700 flex items-center gap-1 mb-1"
+          >
+            <IconSortAscending2 className="w-4 h-4" /> Ordenar A → Z
+          </button>
+          <button
+            onClick={() => ordenar(filtroActivo, "desc")}
+            className="text-green-700 flex items-center gap-1 mb-2"
+          >
+            <IconSortDescending2 className="w-4 h-4" /> Ordenar Z → A
+          </button>
+          <input
+            type="text"
+            placeholder="Buscar..."
+            className="w-full border px-2 py-1 rounded mb-2 text-sm"
+            value={busquedas[filtroActivo] || ""}
+            onChange={(e) => handleBusqueda(filtroActivo, e.target.value)}
+          />
+          <div className="flex flex-col max-h-40 overflow-y-auto">
+            {getValoresUnicos(filtroActivo).map((val, idx) => (
+              <label key={idx} className="flex items-center gap-2 mb-1">
+                <input
+                  type="checkbox"
+                  checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
+                  onChange={() => toggleValor(filtroActivo, val)}
+                  className="accent-green-600"
+                />
+                {val}
+              </label>
             ))}
+          </div>
+          <div className="flex justify-between mt-3">
             <button
-              onClick={() => limpiarFiltro("fecha")}
-              className="text-blue-600 hover:underline text-xs lowercase mt-2"
+              onClick={() => limpiarFiltro(filtroActivo)}
+              className="bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-xs font-medium hover:bg-gray-300"
             >
-              borrar filtro
+              Borrar
+            </button>
+            <button
+              onClick={() => setFiltroActivo(null)}
+              className="bg-green-600 text-white px-3 py-1 rounded-md text-xs font-medium hover:bg-green-700"
+            >
+              Aceptar
             </button>
           </div>
-        ) : (
-          filtroActivo && (
-            <div
-              ref={filtroRef}
-              className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60 text-left text-sm"
-              style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
-            >
-              <div className="font-semibold mb-2">
-                Filtrar por {filtroActivo.charAt(0).toUpperCase() + filtroActivo.slice(1)}
-              </div>
-
-              <button
-                onClick={() => ordenar(filtroActivo, "asc")}
-                className="text-green-700 flex items-center gap-1 mb-1"
-              >
-                <IconSortAscending2 className="w-4 h-4" />Ordenar A → Z
-              </button>
-              <button
-                onClick={() => ordenar(filtroActivo, "desc")}
-                className="text-green-700 flex items-center gap-1 mb-2"
-              >
-                <IconSortDescending2 className="w-4 h-4" />Ordenar Z → A
-              </button>
-
-              <input
-                type="text"
-                placeholder="Buscar..."
-                className="w-full border border-gray-300 px-2 py-1 rounded mb-2 text-sm"
-                value={busquedas[filtroActivo] || ""}
-                onChange={(e) => handleBusqueda(filtroActivo, e.target.value)}
-              />
-
-              <div className="flex flex-col max-h-40 overflow-y-auto">
-                {getValoresUnicos(filtroActivo).map((val, idx) => (
-                  <label key={idx} className="flex items-center gap-2 mb-1">
-                    <input
-                      type="checkbox"
-                      checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
-                      onChange={() => toggleValor(filtroActivo, val)}
-                      className="accent-green-600"
-                    />
-                    {String(val).charAt(0).toUpperCase() + String(val).slice(1)}
-                  </label>
-                ))}
-              </div>
-
-              <button
-                onClick={() => limpiarFiltro(filtroActivo)}
-                className="text-blue-600 hover:underline text-xs mt-2"
-              >
-                Borrar filtro
-              </button>
-            </div>
-          )
-        )}
-      </div>
-
-      {/* Botón exportar */}
-      <div className="mt-4 flex justify-end">
-        <button className="bg-green-600 text-white px-8 py-2 rounded-md hover:bg-green-700 text-lg font-semibold">
-          Exportar historial
-        </button>
-      </div>
+        </div>
+      )}
     </LayoutMayordomo>
   );
 };
 
 export default Detalle_produc;
-
-

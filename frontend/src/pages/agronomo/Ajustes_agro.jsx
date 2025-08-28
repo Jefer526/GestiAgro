@@ -93,7 +93,7 @@ const Ajustes_agro = () => {
   return (
     <LayoutAgronomo active="ajustes">
       <main className="p-8">
-        <h1 className="text-3xl font-bold text-green-600 mb-6">
+        <h1 className="text-3xl font-bold text-green-700 mb-6">
           Perfil de la cuenta
         </h1>
 
@@ -124,26 +124,6 @@ const Ajustes_agro = () => {
             </button>
           </div>
 
-          {/* Preferencias */}
-          <div className="flex items-center justify-between">
-            <label className="text-gray-700">Notificaciones</label>
-            <input
-              type="checkbox"
-              checked={notificaciones}
-              onChange={() => setNotificaciones(!notificaciones)}
-              className="h-5 w-5 accent-green-600"
-            />
-          </div>
-
-          <div className="flex items-center justify-between">
-            <label className="text-gray-700">Tema oscuro</label>
-            <input
-              type="checkbox"
-              checked={modoOscuro}
-              onChange={() => setModoOscuro(!modoOscuro)}
-              className="h-5 w-5 accent-green-600"
-            />
-          </div>
         </div>
       </main>
 

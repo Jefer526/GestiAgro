@@ -131,26 +131,7 @@ const Ajustes_adm = () => {
             </button>
           </div>
 
-          {/* Preferencias */}
-          <div className="flex items-center justify-between">
-            <label className="text-gray-700">Notificaciones</label>
-            <input
-              type="checkbox"
-              checked={notificaciones}
-              onChange={() => setNotificaciones(!notificaciones)}
-              className="h-5 w-5 accent-green-600"
-            />
-          </div>
 
-          <div className="flex items-center justify-between">
-            <label className="text-gray-700">Tema oscuro</label>
-            <input
-              type="checkbox"
-              checked={modoOscuro}
-              onChange={() => setModoOscuro(!modoOscuro)}
-              className="h-5 w-5 accent-green-600"
-            />
-          </div>
         </div>
       </main>
 
