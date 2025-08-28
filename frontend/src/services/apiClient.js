@@ -17,7 +17,7 @@ export const ENDPOINTS = {
 
 // ===== API Auth =====
 export const authApi = {
-  me: () => api.get(ENDPOINTS.me), // 👈 usa el endpoint que ya definiste
+  me: () => api.get(ENDPOINTS.me),
 };
 
 // ===== Axios instance =====
@@ -64,7 +64,18 @@ api.interceptors.response.use(
 
       try {
         const refresh = localStorage.getItem("refresh");
-        if (!refresh) throw new Error("No refresh token");
+
+        // 🚀 FIX: si no hay refresh, devolvemos un error estructurado
+        if (!refresh) {
+          processQueue(null, null);
+          localStorage.removeItem("access");
+          localStorage.removeItem("refresh");
+          localStorage.removeItem("user");
+
+          return Promise.reject({
+            response: { status: 401, data: { detail: "Unauthorized" } },
+          });
+        }
 
         const res = await axios.post(`${API}${ENDPOINTS.refresh}`, { refresh });
         const newAccess = res.data.access;
@@ -79,9 +90,6 @@ api.interceptors.response.use(
         localStorage.removeItem("access");
         localStorage.removeItem("refresh");
         localStorage.removeItem("user");
-
-        // ❌ antes: window.location.href = "/login"
-        // ✅ ahora: solo rechazamos el error, Login.jsx se encarga de mostrar mensaje
         return Promise.reject(err);
       } finally {
         isRefreshing = false;
@@ -100,14 +108,12 @@ export const getMe = () => api.get(ENDPOINTS.me);
 
 export const logout = () => api.post(ENDPOINTS.logout);
 
-export const checkEmail = (email) =>
-  api.post(ENDPOINTS.checkEmail, { email });
+export const checkEmail = (email) => api.post(ENDPOINTS.checkEmail, { email });
 
 export const resetPassword = (email, password) =>
   api.post(ENDPOINTS.resetPassword, { email, password });
 
-export const sendCode = (email) =>
-  api.post(ENDPOINTS.sendCode, { email });
+export const sendCode = (email) => api.post(ENDPOINTS.sendCode, { email });
 
 export const verifyCode = (email, code) =>
   api.post(ENDPOINTS.verifyCode, { email, code });
@@ -116,9 +122,9 @@ export const verifyCode = (email, code) =>
 export const accountsApi = {
   listUsers: () => api.get("/api/accounts/users/"),
   getUser: (id) => api.get(`/api/accounts/users/${id}/`),
-  updateUser: (id, data) => api.patch(`/api/accounts/users/${id}/`, data), // 👈 PATCH
-  toggleActive: (id) => api.patch(`/api/accounts/users/${id}/toggle-active/`), // 👈 PATCH
-  updateRole: (id, data) => api.patch(`/api/accounts/update-role/${id}/`, data), // 👈 PATCH
+  updateUser: (id, data) => api.patch(`/api/accounts/users/${id}/`, data),
+  toggleActive: (id) => api.patch(`/api/accounts/users/${id}/toggle-active/`),
+  updateRole: (id, data) => api.patch(`/api/accounts/update-role/${id}/`, data),
 };
 
 // ===== API Soporte =====
@@ -149,7 +155,8 @@ export const mantenimientosApi = {
 
 // ===== API Labores Maquinaria =====
 export const laboresMaquinariaApi = {
-  list: (params = {}) => api.get("/api/equipos/labores-maquinaria/", { params }),
+  list: (params = {}) =>
+    api.get("/api/equipos/labores-maquinaria/", { params }),
   get: (id) => api.get(`/api/equipos/labores-maquinaria/${id}/`),
   create: (data) => {
     const payload = Array.isArray(data) ? data : [data];
@@ -161,7 +168,7 @@ export const laboresMaquinariaApi = {
 
 // ===== API Lotes =====
 export const lotesApi = {
-  list: () => api.get("/api/lotes/"), // 👈 traer todos los lotes
+  list: () => api.get("/api/lotes/"),
   listByFinca: (fincaId) => api.get(`/api/lotes/?finca=${fincaId}`),
 };
 
