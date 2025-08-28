@@ -147,16 +147,19 @@ export const mantenimientosApi = {
 
 // ===== API Labores Maquinaria =====
 export const laboresMaquinariaApi = {
-  list: (maquinaId) =>
-    api.get(`/api/equipos/labores-maquinaria/?maquina=${maquinaId}`),
+  list: (params = {}) => api.get("/api/equipos/labores-maquinaria/", { params }),
+  get: (id) => api.get(`/api/equipos/labores-maquinaria/${id}/`),
   create: (data) => {
     const payload = Array.isArray(data) ? data : [data];
     return api.post("/api/equipos/labores-maquinaria/", payload);
   },
+  update: (id, data) => api.patch(`/api/equipos/labores-maquinaria/${id}/`, data),
+  delete: (id) => api.delete(`/api/equipos/labores-maquinaria/${id}/`),
 };
 
 // ===== API Lotes =====
 export const lotesApi = {
+  list: () => api.get("/api/lotes/"), // 👈 traer todos los lotes
   listByFinca: (fincaId) => api.get(`/api/lotes/?finca=${fincaId}`),
 };
 

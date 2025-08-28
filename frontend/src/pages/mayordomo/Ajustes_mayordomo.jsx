@@ -89,61 +89,55 @@ const Ajustes_mayordomo = () => {
   };
 
   return (
-    <LayoutMayordomo active="ajustes">
-      <main className="p-8">
-        <h1 className="text-3xl font-bold text-green-600 mb-6">
-          Perfil de la cuenta
-        </h1>
-
-        <div className="bg-white border border-gray-300 rounded-xl p-6 shadow-md w-full max-w-xl space-y-6">
-          {/* Perfil */}
-          <div className="flex items-center space-x-4">
-            <div className="bg-green-600 text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold">
-              {letraInicial}
-            </div>
-            <div>
-              <h2 className="text-xl font-semibold">
-                {usuario?.nombre || "Cargando..."}
-              </h2>
-              <p className="text-gray-500">
-                {rolesMap[usuario?.rol] || usuario?.rol || ""}
-              </p>
-              <p className="text-gray-500 text-sm">{usuario?.email || ""}</p>
-            </div>
+    <LayoutMayordomo titulo="Perfil de la cuenta">
+      <div className="bg-white border border-gray-300 rounded-xl p-6 shadow-md w-full max-w-xl space-y-6">
+        {/* Perfil */}
+        <div className="flex items-center space-x-4">
+          <div className="bg-green-600 text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold">
+            {letraInicial}
           </div>
-
-          {/* Botón cambiar contraseña */}
-          <div className="pt-2">
-            <button
-              onClick={() => setOpenPwd(true)}
-              className="inline-flex items-center gap-2 bg-green-600 text-white px-5 py-3 rounded-xl font-semibold hover:opacity-90"
-            >
-              <IconLock className="w-5 h-5" /> Cambiar contraseña
-            </button>
-          </div>
-
-          {/* Preferencias */}
-          <div className="flex items-center justify-between">
-            <label className="text-gray-700">Notificaciones</label>
-            <input
-              type="checkbox"
-              checked={notificaciones}
-              onChange={() => setNotificaciones(!notificaciones)}
-              className="h-5 w-5 accent-green-600"
-            />
-          </div>
-
-          <div className="flex items-center justify-between">
-            <label className="text-gray-700">Tema oscuro</label>
-            <input
-              type="checkbox"
-              checked={modoOscuro}
-              onChange={() => setModoOscuro(!modoOscuro)}
-              className="h-5 w-5 accent-green-600"
-            />
+          <div>
+            <h2 className="text-xl font-semibold">
+              {usuario?.nombre || "Cargando..."}
+            </h2>
+            <p className="text-gray-500">
+              {rolesMap[usuario?.rol] || usuario?.rol || ""}
+            </p>
+            <p className="text-gray-500 text-sm">{usuario?.email || ""}</p>
           </div>
         </div>
-      </main>
+
+        {/* Botón cambiar contraseña */}
+        <div className="pt-2">
+          <button
+            onClick={() => setOpenPwd(true)}
+            className="inline-flex items-center gap-2 bg-green-600 text-white px-5 py-3 rounded-xl font-semibold hover:opacity-90"
+          >
+            <IconLock className="w-5 h-5" /> Cambiar contraseña
+          </button>
+        </div>
+
+        {/* Preferencias */}
+        <div className="flex items-center justify-between">
+          <label className="text-gray-700">Notificaciones</label>
+          <input
+            type="checkbox"
+            checked={notificaciones}
+            onChange={() => setNotificaciones(!notificaciones)}
+            className="h-5 w-5 accent-green-600"
+          />
+        </div>
+
+        <div className="flex items-center justify-between">
+          <label className="text-gray-700">Tema oscuro</label>
+          <input
+            type="checkbox"
+            checked={modoOscuro}
+            onChange={() => setModoOscuro(!modoOscuro)}
+            className="h-5 w-5 accent-green-600"
+          />
+        </div>
+      </div>
 
       {/* Modal cambio contraseña */}
       {openPwd && (

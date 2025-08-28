@@ -121,30 +121,30 @@ const Hoja_vidam = () => {
 
   if (loading)
     return (
-      <LayoutMayordomo>
+      <LayoutMayordomo titulo="Hoja de vida">
         <p>Cargando hoja de vida...</p>
       </LayoutMayordomo>
     );
 
   if (!maquina)
     return (
-      <LayoutMayordomo>
+      <LayoutMayordomo titulo="Hoja de vida">
         <p>No se encontró la máquina.</p>
       </LayoutMayordomo>
     );
 
   return (
-    <LayoutMayordomo active="/equipos_mayordomo">
-      {/* Botón volver */}
-      <button
-        onClick={() => navigate("/equipos_mayordomo")}
-        className="flex items-center text-green-700 font-semibold mb-4 text-lg hover:underline"
-      >
-        <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
-      </button>
-
-      <h1 className="text-3xl font-bold text-green-700 mb-6">Hoja de vida</h1>
-
+    <LayoutMayordomo
+      titulo="Hoja de vida"
+      accionesTop={
+        <button
+          onClick={() => navigate("/equipos_mayordomo")}
+          className="flex items-center text-green-700 font-semibold text-lg hover:underline"
+        >
+          <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
+        </button>
+      }
+    >
       {/* Info general */}
       <div className="bg-white border border-gray-300 rounded-xl shadow-md mb-8 p-6 max-w-4xl">
         <h2 className="text-2xl font-bold mb-4 text-green-700">Información general</h2>

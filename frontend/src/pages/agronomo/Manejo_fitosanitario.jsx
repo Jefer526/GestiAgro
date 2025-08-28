@@ -10,7 +10,7 @@ import {
   Legend,
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import { IconFileText, IconPlus } from "@tabler/icons-react";
+import { IconPlus } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
 import Select from "react-select";
@@ -22,10 +22,10 @@ const Fitosanitario_agro = () => {
   const navigate = useNavigate();
 
   // 📌 Filtros
-  const [finca, setFinca] = useState("");
-  const [lote, setLote] = useState("");
-  const [familia, setFamilia] = useState("");
-  const [plaga, setPlaga] = useState("");
+  const [fincasSel, setFincasSel] = useState([]); // múltiple
+  const [lote, setLote] = useState("");           // único
+  const [familia, setFamilia] = useState("");     // único
+  const [plaga, setPlaga] = useState("");         // único
   const [anio, setAnio] = useState(new Date().getFullYear().toString());
   const [meses, setMeses] = useState([]);
 
@@ -39,19 +39,23 @@ const Fitosanitario_agro = () => {
     fincasApi.list().then((res) => setFincas(res.data)).catch(console.error);
   }, []);
 
-  // 📌 Cargar lotes cuando cambie la finca
+  // 📌 Cargar lotes según finca
   useEffect(() => {
-    if (finca) {
-      lotesApi.listByFinca(finca).then((res) => setLotes(res.data)).catch(console.error);
+    if (fincasSel.length === 1) {
+      // si hay solo una finca seleccionada, cargar sus lotes
+      lotesApi.listByFinca(fincasSel[0])
+        .then((res) => setLotes(res.data))
+        .catch(console.error);
     } else {
-      setLotes([]);
+      setLotes([]); // varias fincas → no mostramos lotes
+      setLote("");
     }
-  }, [finca]);
+  }, [fincasSel]);
 
   // 📌 Cargar resumen cuando cambien los filtros
   useEffect(() => {
     const params = {};
-    if (finca) params.finca = finca;
+    if (fincasSel.length > 0) params.finca = fincasSel.join(",");
     if (lote) params.lote = lote;
     if (familia) params.familia = familia;
     if (plaga) params.plaga = plaga;
@@ -61,7 +65,7 @@ const Fitosanitario_agro = () => {
       .resumen(params)
       .then((res) => setResumen(res.data))
       .catch((err) => console.error("Error cargando resumen:", err));
-  }, [finca, lote, familia, plaga, anio, meses]);
+  }, [fincasSel, lote, familia, plaga, anio, meses]);
 
   // 📌 Años disponibles
   const aniosDisponibles = [...new Set(resumen.map((r) => r.anio))].sort((a, b) => b - a);
@@ -132,8 +136,7 @@ const Fitosanitario_agro = () => {
       legend: {
         position: "top",
         labels: {
-          // ✅ Solo mostrar texto en la leyenda, sin números
-           padding: 20,
+          padding: 20,
           generateLabels: (chart) => {
             const labels = ChartJS.defaults.plugins.legend.labels.generateLabels(chart);
             labels.forEach((l) => {
@@ -146,8 +149,8 @@ const Fitosanitario_agro = () => {
       datalabels: {
         color: "#1f2937",
         anchor: "end",
-        align: "end",    // 👈 en vez de "top"
-        offset: -7,      // 👈 mueve el número arriba de la barra
+        align: "end",
+        offset: -7,
         font: { weight: "bold" },
         formatter: (value) => (value > 0 ? value.toFixed(1) : ""),
       },
@@ -158,42 +161,32 @@ const Fitosanitario_agro = () => {
     },
   };
 
-  const generarReporte = () => {
-    alert("📄 Reporte generado (simulado)");
-  };
-
   return (
     <LayoutAgronomo>
       <h1 className="text-3xl font-bold text-green-700 mb-6">Manejo fitosanitario</h1>
 
       {/* Filtros finca/lote/familia/plaga */}
       <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {/* Finca */}
+        {/* Finca (múltiple) */}
         <div>
           <label className="font-bold block mb-1">Finca</label>
-          <select
-            value={finca}
-            onChange={(e) => {
-              setFinca(e.target.value);
-              setLote("");
-            }}
-            className="border rounded px-3 py-1 w-full"
-          >
-            <option value="">Todas</option>
-            {fincas.map((f) => (
-              <option key={f.id} value={f.id}>{f.nombre}</option>
-            ))}
-          </select>
+          <Select
+            isMulti
+            options={fincas.map((f) => ({ value: f.id, label: f.nombre }))}
+            value={fincas.filter((f) => fincasSel.includes(f.id)).map((f) => ({ value: f.id, label: f.nombre }))}
+            onChange={(selected) => setFincasSel(selected.map((s) => s.value))}
+            placeholder="Todas"
+          />
         </div>
 
-        {/* Lote */}
+        {/* Lote (único) */}
         <div>
           <label className="font-bold block mb-1">Lote</label>
           <select
             value={lote}
             onChange={(e) => setLote(e.target.value)}
             className="border rounded px-3 py-1 w-full"
-            disabled={!finca}
+            disabled={fincasSel.length !== 1}
           >
             <option value="">Todos</option>
             {lotes.map((l) => (
@@ -202,7 +195,7 @@ const Fitosanitario_agro = () => {
           </select>
         </div>
 
-        {/* Familia */}
+        {/* Familia (único) */}
         <div>
           <label className="font-bold block mb-1">Familia</label>
           <select
@@ -217,7 +210,7 @@ const Fitosanitario_agro = () => {
           </select>
         </div>
 
-        {/* Plaga */}
+        {/* Plaga (único) */}
         <div>
           <label className="font-bold block mb-1">Plaga</label>
           <select
@@ -270,11 +263,21 @@ const Fitosanitario_agro = () => {
         <Bar data={data} options={opcionesChart} />
       </div>
 
-      {/* Tabla resumen */}
+      {/* Tabla resumen con botón en el header */}
       <div className="bg-white p-4 rounded-xl shadow">
-        <h2 className="text-xl font-bold text-gray-700 mb-4">Resumen filtrado</h2>
-        <table className="w-full border-collapse border border-gray-300 text-sm">
-          <thead className="bg-green-100">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold text-green-700">Resumen filtrado</h2>
+          <button
+            onClick={() => navigate("/registrarmonitoreo")}
+            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold"
+          >
+            <IconPlus className="w-5 h-5" />
+            Registrar Monitoreo
+          </button>
+        </div>
+
+        <table className="w-full border-collapse border border-gray-300 text-sm text-center">
+          <thead className="bg-green-600 text-white">
             <tr>
               <th className="border px-3 py-2">Finca</th>
               <th className="border px-3 py-2">Lote</th>
@@ -287,42 +290,26 @@ const Fitosanitario_agro = () => {
           </thead>
           <tbody>
             {resumenFiltrado.map((row, idx) => {
-              const fincaName = fincas.find((f) => f.id === row.monitoreo__finca_id)?.nombre || "-";
-              const loteName = lotes.find((l) => l.id === row.monitoreo__lote_id)?.lote || "-";
-              let mesLabel = new Date(row.anio, row.mes - 1).toLocaleDateString("es-ES", { month: "long" });
+              let mesLabel = new Date(row.anio, row.mes - 1).toLocaleDateString("es-ES", {
+                month: "long",
+              });
               mesLabel = mesLabel.charAt(0).toUpperCase() + mesLabel.slice(1);
+
               return (
                 <tr key={idx} className="hover:bg-gray-50">
-                  <td className="border px-3 py-2">{fincaName}</td>
-                  <td className="border px-3 py-2">{loteName}</td>
+                  <td className="border px-3 py-2">{row["monitoreo__finca__nombre"]}</td>
+                  <td className="border px-3 py-2">{row["monitoreo__lote__lote"] || "-"}</td>
                   <td className="border px-3 py-2">{row.familia}</td>
                   <td className="border px-3 py-2">{row.plaga}</td>
                   <td className="border px-3 py-2">{row.anio}</td>
                   <td className="border px-3 py-2">{mesLabel}</td>
-                  <td className="border px-3 py-2 text-center">{row.promedio.toFixed(1)}</td>
+                  <td className="border px-3 py-2">{row.promedio.toFixed(1)}</td>
                 </tr>
               );
             })}
           </tbody>
+          
         </table>
-      </div>
-
-      {/* Acciones */}
-      <div className="flex justify-center mt-8 gap-4">
-        <button
-          onClick={() => navigate("/registrarmonitoreo")}
-          className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold"
-        >
-          <IconPlus className="w-5 h-5" />
-          Registrar Monitoreo
-        </button>
-        <button
-          onClick={generarReporte}
-          className="flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold"
-        >
-          <IconFileText className="w-5 h-5" />
-          Generar reporte
-        </button>
       </div>
     </LayoutAgronomo>
   );

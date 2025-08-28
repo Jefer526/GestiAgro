@@ -16,7 +16,7 @@ const Home_adm = () => {
     {
       icon: <IconUsers className="w-8 h-8" />,
       label: "Gestionar usuarios",
-      desc: "Crea, edita y asigna permisos.",
+      desc: "Crea, edita y asigna roles.",
       route: "/admuser",
       gradient: "from-purple-500/20 to-indigo-500/20",
       ring: "ring-purple-300/40",
@@ -36,7 +36,7 @@ const Home_adm = () => {
     {
       icon: <IconTool className="w-8 h-8" />,
       label: "Soporte",
-      desc: "Solicita ayuda y gestiona tickets.",
+      desc: "Provee ayuda y gestiona tickets.",
       route: "/soporte",
       gradient: "from-slate-500/20 to-gray-500/20",
       ring: "ring-slate-300/40",
@@ -54,7 +54,7 @@ const Home_adm = () => {
       <div className="bg-gradient-to-r from-green-600 to-emerald-500 text-white px-6 py-5 rounded-2xl w-full max-w-3xl mb-10 shadow-lg">
         <p className="text-3xl font-semibold">¡Bienvenido!</p>
         <p className="opacity-90 text-lg">
-          Accede rápidamente a las secciones más usadas.
+
         </p>
       </div>
 

@@ -18,7 +18,7 @@ const Registrar_labor_maquinaria = () => {
   const [formData, setFormData] = useState({
     fecha: "",
     labor: "",
-    horometro_inicio: "",
+    horometro_inicio: 0,
     horometro_fin: "",
     finca: "",
     lote: "",
@@ -42,17 +42,17 @@ const Registrar_labor_maquinaria = () => {
           setLotes(lotesRes.data);
         }
 
-        // 👇 traer última labor de esta máquina
-        const laboresRes = await laboresMaquinariaApi.list(id);
+        // ✅ traer última labor de esta máquina (sin anidar params)
+        const laboresRes = await laboresMaquinariaApi.list({ maquina: id });
         if (laboresRes.data.length > 0) {
-          const ultima = laboresRes.data[0]; // asumimos que viene ordenado
+          const ultima = laboresRes.data[0]; // ordenadas por fecha desc desde backend
           setUltimoHorometro(ultima.horometro_fin);
           setFormData((prev) => ({
             ...prev,
-            horometro_inicio: Number(ultima.horometro_fin).toFixed(1),
+            horometro_inicio: Number(ultima.horometro_fin),
           }));
         } else {
-          setFormData((prev) => ({ ...prev, horometro_inicio: Number(0).toFixed(1) }));
+          setFormData((prev) => ({ ...prev, horometro_inicio: 0 }));
         }
       } catch (err) {
         console.error("❌ Error cargando datos:", err.response?.data || err);
@@ -64,14 +64,10 @@ const Registrar_labor_maquinaria = () => {
   // Inputs
   const handleChange = (e) => {
     let value = e.target.value;
-    // 👇 permitir escribir números y decimales, sin forzar .toFixed
     if (["horometro_inicio", "horometro_fin"].includes(e.target.name) && value !== "") {
       if (!/^\d*\.?\d*$/.test(value)) return;
     }
-    setFormData({
-      ...formData,
-      [e.target.name]: value,
-    });
+    setFormData({ ...formData, [e.target.name]: value });
   };
 
   // 📌 función para mostrar fecha en formato DD/MM/YYYY
@@ -89,8 +85,8 @@ const Registrar_labor_maquinaria = () => {
       return alert("Completa todos los campos obligatorios");
     }
 
-    if (Number(horometro_fin) < Number(horometro_inicio)) {
-      return alert("El horómetro fin no puede ser menor al horómetro inicio");
+    if (Number(horometro_fin) <= Number(horometro_inicio)) {
+      return alert("El horómetro fin debe ser mayor al horómetro inicio");
     }
 
     const loteObj = lotes.find((lt) => lt.id === Number(lote));
@@ -107,7 +103,7 @@ const Registrar_labor_maquinaria = () => {
     setFormData((prev) => ({
       ...prev,
       labor: "",
-      horometro_inicio: Number(horometro_fin).toFixed(1),
+      horometro_inicio: Number(horometro_fin),
       horometro_fin: "",
       lote: "",
       observaciones: "",
@@ -123,13 +119,10 @@ const Registrar_labor_maquinaria = () => {
       const ultima = nuevasLabores[nuevasLabores.length - 1];
       setFormData((prev) => ({
         ...prev,
-        horometro_inicio: Number(ultima.horometro_fin).toFixed(1),
+        horometro_inicio: Number(ultima.horometro_fin),
       }));
     } else {
-      setFormData((prev) => ({
-        ...prev,
-        horometro_inicio: Number(0).toFixed(1),
-      }));
+      setFormData((prev) => ({ ...prev, horometro_inicio: ultimoHorometro || 0 }));
     }
   };
 
@@ -142,14 +135,14 @@ const Registrar_labor_maquinaria = () => {
         maquina: Number(id),
         fecha: l.fecha,
         labor: l.labor,
-        horometro_inicio: Number(l.horometro_inicio).toFixed(2), // 👈 dos decimales para backend
-        horometro_fin: Number(l.horometro_fin).toFixed(2),       // 👈 dos decimales para backend
+        horometro_inicio: Number(l.horometro_inicio),
+        horometro_fin: Number(l.horometro_fin),
         finca: Number(l.finca),
         lote: Number(l.loteId),
         observaciones: l.observaciones || "",
       }));
 
-      console.log("📤 Enviando labores maquinaria (en bloque):", payload);
+      console.log("📤 Enviando labores maquinaria:", payload);
 
       await laboresMaquinariaApi.create(payload);
 
@@ -224,9 +217,8 @@ const Registrar_labor_maquinaria = () => {
               type="number"
               name="horometro_inicio"
               value={formData.horometro_inicio}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded px-3 py-1.5 bg-gray-100"
               readOnly
+              className="w-full border border-gray-300 rounded px-3 py-1.5 bg-gray-100"
             />
           </div>
           <div>

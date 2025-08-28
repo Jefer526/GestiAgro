@@ -27,6 +27,15 @@ class LaborMaquinariaViewSet(viewsets.ModelViewSet):
     queryset = LaborMaquinaria.objects.all().order_by("-fecha", "-id")
     serializer_class = LaborMaquinariaSerializer
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        maquina_id = self.request.query_params.get("maquina")
+
+        if maquina_id:
+            qs = qs.filter(maquina_id=maquina_id)
+
+        return qs
+
     def create(self, request, *args, **kwargs):
         data = request.data
 
@@ -45,13 +54,10 @@ class LaborMaquinariaViewSet(viewsets.ModelViewSet):
                 inicio = float(item.get("horometro_inicio"))
                 fin = float(item.get("horometro_fin"))
 
-                # Validación secuencial de horómetros
                 if round(inicio, 1) != round(horometro_actual, 1):
                     return Response(
-                        {
-                            "error": f"El horómetro inicial ({inicio:.1f}) "
-                                     f"no coincide con el esperado ({horometro_actual:.1f})."
-                        },
+                        {"error": f"El horómetro inicial ({inicio:.1f}) "
+                                  f"no coincide con el esperado ({horometro_actual:.1f})."},
                         status=status.HTTP_400_BAD_REQUEST,
                     )
 
@@ -66,10 +72,8 @@ class LaborMaquinariaViewSet(viewsets.ModelViewSet):
                 self.perform_create(serializer)
                 created.append(serializer.data)
 
-                # Actualizar para la siguiente iteración
                 horometro_actual = fin
 
             return Response(created, status=status.HTTP_201_CREATED)
 
-        # Caso normal (una sola labor)
         return super().create(request, *args, **kwargs)

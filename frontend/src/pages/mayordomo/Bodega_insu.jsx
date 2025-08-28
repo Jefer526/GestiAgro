@@ -95,9 +95,7 @@ const Bodega_insu = () => {
      📌 RENDER
   ---------------------------------- */
   return (
-    <LayoutMayordomo>
-      <h1 className="text-3xl font-bold text-green-700 mb-6">Bodega de insumos</h1>
-
+    <LayoutMayordomo titulo="Bodega de insumos">
       {/* Selector de finca */}
       <div className="mb-6 max-w-md">
         <label className="block font-semibold mb-2 text-lg">Finca</label>

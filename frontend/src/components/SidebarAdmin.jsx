@@ -7,6 +7,7 @@ import {
   IconTool,
   IconSettings,
   IconLogout,
+  IconSwitchHorizontal, // 👈 Nuevo icono para cambiar rol
 } from "@tabler/icons-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import faviconBlanco from "../assets/favicon-blanco.png";
@@ -146,6 +147,16 @@ const SidebarAdmin = () => {
               className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100"
             >
               <IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes
+            </button>
+            {/* 👉 Nuevo botón para cambiar rol */}
+            <button
+              onClick={() => {
+                setMostrarTarjeta(false);
+                navigate("/seleccion-rol");
+              }}
+              className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100"
+            >
+              <IconSwitchHorizontal className="w-5 h-5 mr-2 text-green-600" /> Cambiar rol
             </button>
             <button
               onClick={handleLogout}

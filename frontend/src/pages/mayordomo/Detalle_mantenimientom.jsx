@@ -35,7 +35,7 @@ const Detalle_mantenimientom = () => {
 
   if (loading) {
     return (
-      <LayoutMayordomo>
+      <LayoutMayordomo titulo="Detalle de Mantenimiento">
         <p>Cargando detalle del mantenimiento...</p>
       </LayoutMayordomo>
     );
@@ -43,7 +43,7 @@ const Detalle_mantenimientom = () => {
 
   if (!mantenimiento || !maquina) {
     return (
-      <LayoutMayordomo>
+      <LayoutMayordomo titulo="Detalle de Mantenimiento">
         <p>No se encontró el detalle del mantenimiento.</p>
       </LayoutMayordomo>
     );
@@ -56,21 +56,19 @@ const Detalle_mantenimientom = () => {
     : "—";
 
   return (
-    <LayoutMayordomo active="/equipos_mayordomo">
-      {/* Botón volver */}
-      <button
-        onClick={() => navigate(-1)}
-        className="flex items-center text-green-700 font-semibold mb-4 text-lg hover:underline"
-      >
-        <IconChevronLeft className="w-5 h-5 mr-2" /> Volver
-      </button>
-
+    <LayoutMayordomo
+      titulo="Detalle de Mantenimiento"
+      accionesTop={
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center text-green-700 font-semibold text-lg hover:underline"
+        >
+          <IconChevronLeft className="w-5 h-5 mr-2" /> Volver
+        </button>
+      }
+    >
       {/* Card de detalle */}
       <div className="bg-white border border-gray-200 rounded-xl shadow-md p-10 w-[900px] max-w-full mx-auto">
-        <h1 className="text-3xl font-bold text-green-700 mb-6">
-          Detalle de Mantenimiento
-        </h1>
-
         <div className="space-y-5 text-lg">
           <p>
             <strong>Código equipo:</strong> {maquina.codigo_equipo}

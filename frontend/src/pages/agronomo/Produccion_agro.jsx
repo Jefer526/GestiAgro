@@ -79,7 +79,8 @@ const Produccion_agro = () => {
 
         setLabels(
           data.map((item) => {
-            const fecha = new Date(item.mes);
+            const fecha = new Date(item.periodo); // 👈 usar "periodo"
+
             return periodo === "Año"
               ? fecha.getFullYear().toString()
               : capitalize(
@@ -234,13 +235,7 @@ const Produccion_agro = () => {
           Registrar producción
         </button>
 
-        <button
-          onClick={generarReporte}
-          className="flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold"
-        >
-          <IconFileText className="w-5 h-5" />
-          Generar reporte
-        </button>
+       
       </div>
     </LayoutAgronomo>
   );

@@ -13,7 +13,7 @@ import { equiposApi, laboresMaquinariaApi } from "../../services/apiClient";
 
 const Historial_trabajo_agro = () => {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { id } = useParams(); // 👈 id de la máquina
   const filtroRef = useRef(null);
 
   const [maquina, setMaquina] = useState(null);
@@ -22,14 +22,18 @@ const Historial_trabajo_agro = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // 📌 Obtener la máquina actual
         const resMaquina = await equiposApi.get(id);
         setMaquina(resMaquina.data);
 
-        const resLabores = await laboresMaquinariaApi.list(id);
+        // 📌 Traer SOLO las labores de esta máquina
+        // 👇 CORREGIDO: ya no se anidan los params
+        const resLabores = await laboresMaquinariaApi.list({ maquina: id });
+
         const mapped = resLabores.data.map((l) => {
           const horasMaquina = Math.abs(l.horometro_fin - l.horometro_inicio);
           return {
-            fecha: new Date(l.fecha).toISOString().split("T")[0], // ISO para filtros
+            fecha: new Date(l.fecha).toISOString().split("T")[0],
             labor: l.labor,
             "horómetro inicio": l.horometro_inicio,
             "horómetro fin": l.horometro_fin,
@@ -63,8 +67,9 @@ const Historial_trabajo_agro = () => {
   const getValoresUnicos = (campo) => {
     if (campo === "observaciones") return [];
     const search = (busquedas[campo] || "").toLowerCase();
-    return [...new Set(historial.map((e) => String(e[campo] || "")))]
-      .filter((v) => v.toLowerCase().includes(search));
+    return [...new Set(historial.map((e) => String(e[campo] || "")))].filter((v) =>
+      v.toLowerCase().includes(search)
+    );
   };
 
   const toggleFiltro = (campo, e) => {
@@ -79,7 +84,6 @@ const Historial_trabajo_agro = () => {
 
   const toggleValor = (campo, valor, hijos = []) => {
     let seleccionados = new Set(valoresSeleccionados[campo] || []);
-
     if (hijos.length > 0) {
       const todosIncluidos = hijos.every((h) => seleccionados.has(h));
       if (todosIncluidos) {
@@ -88,13 +92,9 @@ const Historial_trabajo_agro = () => {
         hijos.forEach((h) => seleccionados.add(h));
       }
     } else if (valor) {
-      if (seleccionados.has(valor)) {
-        seleccionados.delete(valor);
-      } else {
-        seleccionados.add(valor);
-      }
+      if (seleccionados.has(valor)) seleccionados.delete(valor);
+      else seleccionados.add(valor);
     }
-
     setValoresSeleccionados({ ...valoresSeleccionados, [campo]: [...seleccionados] });
   };
 
@@ -130,6 +130,13 @@ const Historial_trabajo_agro = () => {
         : String(b[campo]).localeCompare(String(a[campo]));
     });
 
+  // ✅ Formato DD/MM/YYYY
+  const formatFecha = (isoDate) => {
+    if (!isoDate) return "—";
+    const [y, m, d] = isoDate.split("-");
+    return `${d}/${m}/${y}`;
+  };
+
   // Cerrar al hacer click fuera
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -140,13 +147,6 @@ const Historial_trabajo_agro = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  // ✅ Formatear fecha para tabla
-  const formatFecha = (isoDate) => {
-    if (!isoDate) return "—";
-    const [y, m, d] = isoDate.split("-");
-    return `${d}/${m}/${y}`;
-  };
 
   return (
     <LayoutAgronomo>
@@ -161,8 +161,8 @@ const Historial_trabajo_agro = () => {
       <h1 className="text-3xl font-bold text-green-700 mb-6">Historial de trabajo</h1>
 
       {/* Info general */}
-      {maquina ? (
-        <div className="bg-white border border-gray-300 p-6 rounded-xl mb-6 max-w-4xl shadow-md">
+      {maquina && (
+        <div className="bg-white border border-gray-300 p-6 rounded-xl mb-8 max-w-4xl shadow-md">
           <h2 className="text-2xl font-bold mb-4 text-green-700">Información general</h2>
           <div className="grid grid-cols-2 gap-x-12 gap-y-2 text-lg">
             <p><strong>Código Equipo:</strong> {maquina.codigo_equipo}</p>
@@ -172,30 +172,31 @@ const Historial_trabajo_agro = () => {
             <p><strong>Referencia:</strong> {maquina.referencia}</p>
           </div>
         </div>
-      ) : (
-        <p className="text-gray-500">Cargando información de la máquina...</p>
+      )}
+
+      {/* Subtítulo */}
+      <h2 className="text-3xl font-bold text-green-700 mb-2">Historial de labores</h2>
+
+      {/* Botón debajo del subtítulo */}
+      {maquina && (
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={() => navigate(`/registrarlabormaquinaria/${maquina.id}`)}
+            className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2"
+          >
+            <IconPlus className="w-5 h-5" />
+            Registrar labores
+          </button>
+        </div>
       )}
 
       {/* Tabla historial */}
-      <div className="bg-white border border-gray-300 rounded-xl shadow-md overflow-x-auto relative">
-        <div className="flex justify-between items-center px-4 py-3 border-b">
-          <h2 className="text-xl font-bold text-green-700">Historial de labores</h2>
-          {maquina && (
-            <button
-              onClick={() => navigate(`/registrarlabormaquinaria/${maquina.id}`)}
-              className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-semibold text-lg flex items-center gap-2"
-            >
-              <IconPlus className="w-6 h-6" />
-              Registrar labores
-            </button>
-          )}
-        </div>
-
-        <table className="w-full text-base text-center">
-          <thead className="bg-green-600 text-white">
+      <div className="overflow-x-auto rounded-lg shadow-lg bg-white">
+        <table className="min-w-full text-center text-base">
+          <thead className="bg-green-600 text-white font-bold">
             <tr>
               {columnas.map((col) => (
-                <th key={col} className="px-4 py-4 font-bold border">
+                <th key={col} className="p-4 border text-center">
                   <div className="flex justify-center items-center gap-2">
                     <span className="uppercase">{col}</span>
                     {col !== "observaciones" && (
@@ -210,156 +211,24 @@ const Historial_trabajo_agro = () => {
           </thead>
           <tbody>
             {historialFiltrado.map((item, i) => (
-              <tr key={i} className="border-t hover:bg-gray-50 transition">
+              <tr key={i} className="hover:bg-gray-100">
                 {columnas.map((campo) => (
-                  <td key={campo} className="px-6 py-4 border border-gray-200">
+                  <td key={campo} className="p-4 border">
                     {campo === "fecha" ? formatFecha(item[campo]) : item[campo]}
                   </td>
                 ))}
               </tr>
             ))}
+            {historialFiltrado.length === 0 && (
+              <tr>
+                <td colSpan={columnas.length} className="p-4 border text-gray-500">
+                  No hay labores registradas.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
-
-      {/* === Filtro flotante === */}
-      {filtroActivo && (
-        <div
-          ref={filtroRef}
-          className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60"
-          style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
-        >
-          <div className="font-semibold mb-2">
-            Filtrar por {filtroActivo.toUpperCase()}
-          </div>
-          <button
-            onClick={() => ordenar(filtroActivo, "asc")}
-            className="text-green-700 flex items-center gap-1 mb-1"
-          >
-            <IconSortAscending2 className="w-4 h-4" /> Ordenar A → Z
-          </button>
-          <button
-            onClick={() => ordenar(filtroActivo, "desc")}
-            className="text-green-700 flex items-center gap-1 mb-2"
-          >
-            <IconSortDescending2 className="w-4 h-4" /> Ordenar Z → A
-          </button>
-          <input
-            type="text"
-            placeholder="Buscar..."
-            className="w-full border border-gray-300 px-2 py-1 rounded mb-2 text-sm"
-            value={busquedas[filtroActivo] || ""}
-            onChange={(e) => handleBusqueda(filtroActivo, e.target.value)}
-          />
-          <div className="flex flex-col max-h-40 overflow-y-auto">
-            {filtroActivo === "fecha"
-              ? (() => {
-                  const agrupado = {};
-                  historial.forEach((h) => {
-                    if (!h.fecha) return;
-                    const [year, month, day] = h.fecha.split("-");
-                    const fecha = new Date(year, month - 1, day);
-
-                    const monthName = fecha.toLocaleString("es-ES", {
-                      month: "long",
-                    });
-                    const diaStr = `${year}-${month}-${day}`;
-
-                    if (!agrupado[year]) agrupado[year] = {};
-                    if (!agrupado[year][monthName]) agrupado[year][monthName] = [];
-                    if (!agrupado[year][monthName].includes(diaStr)) {
-                      agrupado[year][monthName].push(diaStr);
-                    }
-                  });
-
-                  return Object.entries(agrupado).map(([year, meses]) => {
-                    const diasYear = Object.values(meses).flat();
-                    return (
-                      <div key={year} className="mb-2">
-                        {/* Año */}
-                        <label className="font-bold flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            checked={diasYear.every((d) =>
-                              (valoresSeleccionados["fecha"] || []).includes(d)
-                            )}
-                            onChange={() => toggleValor("fecha", null, diasYear)}
-                            className="accent-green-600"
-                          />
-                          {year}
-                        </label>
-
-                        {Object.entries(meses).map(([mes, dias]) => (
-                          <div key={mes} className="ml-4">
-                            {/* Mes */}
-                            <label className="font-semibold flex items-center gap-2">
-                              <input
-                                type="checkbox"
-                                checked={dias.every((d) =>
-                                  (valoresSeleccionados["fecha"] || []).includes(d)
-                                )}
-                                onChange={() => toggleValor("fecha", null, dias)}
-                                className="accent-green-600"
-                              />
-                              {mes.charAt(0).toUpperCase() + mes.slice(1)}
-                            </label>
-
-                            {/* Días */}
-                            <div className="ml-6">
-                              {dias.sort().map((dia) => {
-                                const d = dia.split("-")[2];
-                                return (
-                                  <label
-                                    key={dia}
-                                    className="flex items-center gap-2 ml-2"
-                                  >
-                                    <input
-                                      type="checkbox"
-                                      checked={(
-                                        valoresSeleccionados["fecha"] || []
-                                      ).includes(dia)}
-                                      onChange={() => toggleValor("fecha", dia)}
-                                      className="accent-green-600"
-                                    />
-                                    {d}
-                                  </label>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    );
-                  });
-                })()
-              : getValoresUnicos(filtroActivo).map((val) => (
-                  <label key={val} className="flex items-center gap-2 mb-1">
-                    <input
-                      type="checkbox"
-                      checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
-                      onChange={() => toggleValor(filtroActivo, val)}
-                      className="accent-green-600"
-                    />
-                    {String(val)}
-                  </label>
-                ))}
-          </div>
-          <div className="flex justify-between mt-3">
-            <button
-              onClick={() => limpiarFiltro(filtroActivo)}
-              className="bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-xs font-medium hover:bg-gray-300 transition"
-            >
-              Borrar
-            </button>
-            <button
-              onClick={() => setFiltroActivo(null)}
-              className="bg-green-600 text-white px-3 py-1 rounded-md text-xs font-medium hover:bg-green-700 transition"
-            >
-              Aceptar
-            </button>
-          </div>
-        </div>
-      )}
     </LayoutAgronomo>
   );
 };

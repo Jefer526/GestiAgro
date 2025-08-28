@@ -141,7 +141,7 @@ const Home_agro = () => {
 
       <div className="bg-gradient-to-r from-green-600 to-emerald-500 text-white px-6 py-5 rounded-2xl w-full max-w-3xl mb-10 shadow-lg">
         <p className="text-3xl font-semibold">¡Bienvenido!</p>
-        <p className="opacity-90 text-lg">Accede rápidamente a las secciones.</p>
+        <p className="opacity-90 text-lg"></p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">

@@ -154,7 +154,7 @@ const Labores_agro = () => {
                 <td className="px-4 py-2 border text-center">
                   <button
                     onClick={() =>
-                      navigate("/historial", { state: { laborData: l } })
+                      navigate("/historiallabores", { state: { laborData: l } })
                     }
                     className="bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm font-medium flex items-center gap-1 justify-center mx-auto hover:bg-blue-200 transition"
                   >

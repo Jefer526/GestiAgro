@@ -14,7 +14,7 @@ import {
 } from "@tabler/icons-react";
 
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
-import { equiposApi } from "../../services/apiClient"; // 👈 ✅ importar API real
+import { equiposApi } from "../../services/apiClient";
 
 const MENU_WIDTH_PX = 288;
 const MENU_MARGIN_PX = 8;
@@ -175,23 +175,22 @@ const Registrar_novedadm = () => {
   const MenuOverlay = ({ children }) => createPortal(children, document.body);
 
   return (
-    <LayoutMayordomo>
+    <LayoutMayordomo
+      titulo="Registrar novedad de máquina"
+      accionesTop={
+        <button
+          onClick={() => navigate("/equipos_mayordomo")}
+          className="flex items-center text-green-700 font-semibold text-lg hover:underline"
+        >
+          <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
+        </button>
+      }
+    >
       {alertaVisible && (
         <div className="fixed top-3 left-1/2 -translate-x-1/2 z-[1000] bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
           <IconCheck className="w-5 h-5" /> Estados actualizados exitosamente
         </div>
       )}
-
-      <button
-        onClick={() => navigate("/equipos_mayordomo")}
-        className="flex items-center text-green-700 font-semibold mb-6 text-lg hover:underline"
-      >
-        <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
-      </button>
-
-      <h2 className="text-3xl font-bold text-green-700 mb-4">
-        Registrar novedad de máquina
-      </h2>
 
       {/* === Tabla === */}
       <div className="overflow-x-auto rounded-lg shadow-lg relative bg-white">

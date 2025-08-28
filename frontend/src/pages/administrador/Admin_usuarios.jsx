@@ -186,7 +186,7 @@ const Admin_usuarios = () => {
         <table className="min-w-full text-base bg-white text-center">
           <thead className="bg-green-600 text-white">
             <tr>
-              {["NOMBRE_COMPLETO", "TELEFONO", "ROL", "EMAIL", "FINCA", "ESTADO"].map(
+              {["NOMBRE COMPLETO", "TELEFONO", "ROL", "EMAIL", "FINCA", "ESTADO"].map(
                 (titulo, idx) => (
                   <th key={idx} className="p-4 border">
                     <div className="flex items-center justify-center gap-2">

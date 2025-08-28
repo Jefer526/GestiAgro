@@ -7,6 +7,7 @@ import {
   IconDotsVertical,
   IconSortAscending2,
   IconSortDescending2,
+  IconRefresh,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import LayoutAdmin from "../../layouts/LayoutAdmin";
@@ -25,6 +26,10 @@ const Copias_segu = () => {
   const [busquedas, setBusquedas] = useState({});
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
+
+  // Modal confirmación
+  const [confirmarRestaurar, setConfirmarRestaurar] = useState(false);
+  const [copiaSeleccionada, setCopiaSeleccionada] = useState(null);
 
   const columnas = ["id", "fecha", "hora"];
 
@@ -123,6 +128,13 @@ const Copias_segu = () => {
     return () => document.removeEventListener("mousedown", clickFuera);
   }, []);
 
+  // ====== Confirmar restauración ======
+  const confirmarAccionRestaurar = () => {
+    alert(`✅ Copia con ID ${copiaSeleccionada} restaurada correctamente.`);
+    setConfirmarRestaurar(false);
+    setCopiaSeleccionada(null);
+  };
+
   return (
     <LayoutAdmin letraInicial="J">
       <h1 className="text-3xl font-bold text-green-700 mb-6">Copias de seguridad</h1>
@@ -167,111 +179,11 @@ const Copias_segu = () => {
           </tbody>
         </table>
 
-        {/* Filtro jerárquico para FECHA */}
-        {filtroActivo === "fecha" && (
-          <div
-            ref={filtroRef}
-            className="fixed bg-white text-black shadow-md border rounded z-[9999] p-3 w-60 text-left text-sm"
-            style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
-          >
-            <div className="font-semibold mb-2 capitalize">Filtrar por fecha</div>
-            <div className="space-y-2 max-h-64 overflow-y-auto">
-              {Object.entries(estructuraFecha).map(([anio, meses]) => (
-                <div key={anio}>
-                  <div className="font-semibold capitalize text-green-700">{anio}</div>
-                  {Object.entries(meses).map(([mesTexto, dias]) => (
-                    <div key={mesTexto} className="ml-3">
-                      <div className="text-green-600 font-medium">{mesTexto}</div>
-                      {[...dias].map((dia) => {
-                        const fechaStr = `${anio}-${(mesesTexto.indexOf(mesTexto) + 1)
-                          .toString()
-                          .padStart(2, "0")}-${dia}`;
-                        return (
-                          <label key={fechaStr} className="ml-5 flex items-center gap-2">
-                            <input
-                              type="checkbox"
-                              checked={(valoresSeleccionados.fecha || []).includes(fechaStr)}
-                              onChange={() => toggleValor("fecha", fechaStr)}
-                              className="accent-green-600"
-                            />
-                            {dia}
-                          </label>
-                        );
-                      })}
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
-            <button
-              onClick={() => limpiarFiltro("fecha")}
-              className="text-blue-600 hover:underline text-xs mt-2 capitalize"
-            >
-              Borrar filtro
-            </button>
-          </div>
-        )}
-
-        {/* Filtro normal para ID y HORA */}
-        {filtroActivo && filtroActivo !== "fecha" && (
-          <div
-            ref={filtroRef}
-            className="fixed bg-white text-black shadow-md border rounded z-[9999] p-3 w-60 text-left text-sm"
-            style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
-          >
-            <div className="font-semibold mb-2">
-              Filtrar por {filtroActivo.toUpperCase()}
-            </div>
-            <button
-              onClick={() => ordenar(filtroActivo, "asc")}
-              className="text-green-700 flex items-center gap-1 mb-1 capitalize"
-            >
-              <IconSortAscending2 className="w-4 h-4" /> Ordenar A → Z
-            </button>
-            <button
-              onClick={() => ordenar(filtroActivo, "desc")}
-              className="text-green-700 flex items-center gap-1 mb-2 capitalize"
-            >
-              <IconSortDescending2 className="w-4 h-4" /> Ordenar Z → A
-            </button>
-            <input
-              type="text"
-              placeholder="Buscar..."
-              className="w-full border border-gray-300 px-2 py-1 rounded mb-2 text-sm"
-              value={busquedas[filtroActivo] || ""}
-              onChange={(e) => handleBusqueda(filtroActivo, e.target.value)}
-            />
-            <div className="flex flex-col max-h-40 overflow-y-auto">
-              {[...new Set(copias.map((e) => e[filtroActivo]?.toString()))]
-                .filter((v) =>
-                  v.toLowerCase().includes((busquedas[filtroActivo] || "").toLowerCase())
-                )
-                .map((val, idx) => (
-                  <label key={idx} className="flex items-center gap-2 mb-1 capitalize">
-                    <input
-                      type="checkbox"
-                      checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
-                      onChange={() => toggleValor(filtroActivo, val)}
-                      className="accent-green-600"
-                    />
-                    {val.charAt(0).toUpperCase() + val.slice(1)}
-                  </label>
-                ))}
-            </div>
-            <button
-              onClick={() => limpiarFiltro(filtroActivo)}
-              className="text-blue-600 hover:underline text-xs capitalize mt-2"
-            >
-              Borrar filtro
-            </button>
-          </div>
-        )}
-
         {/* Menú de acciones */}
         {menuAbiertoId !== null && (
           <div
             id="floating-menu"
-            className="fixed bg-white border border-gray-200 rounded shadow-lg w-40 z-[9999]"
+            className="fixed bg-white border border-gray-200 rounded shadow-lg w-44 z-[9999]"
             style={{ top: `${menuPosition.y}px`, left: `${menuPosition.x}px` }}
           >
             <button
@@ -280,6 +192,16 @@ const Copias_segu = () => {
             >
               <IconPencil className="w-4 h-4 text-green-600" /> Ver Copia
             </button>
+            <button
+              onClick={() => {
+                setCopiaSeleccionada(menuAbiertoId);
+                setConfirmarRestaurar(true);
+                setMenuAbiertoId(null);
+              }}
+              className="flex items-center gap-2 w-full px-4 py-2 text-sm text-blue-600 hover:bg-blue-50"
+            >
+              <IconRefresh className="w-4 h-4" /> Restaurar
+            </button>
             <button className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50">
               <IconTrash className="w-4 h-4" /> Eliminar
             </button>
@@ -287,12 +209,32 @@ const Copias_segu = () => {
         )}
       </div>
 
-      {/* Botón Restaurar */}
-      <div className="flex justify-end mt-6">
-        <button className="bg-green-600 text-white px-10 py-3 text-lg rounded-md font-semibold hover:bg-green-700 transition-all">
-          Restaurar
-        </button>
-      </div>
+      {/* Modal Confirmación */}
+      {confirmarRestaurar && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-[99999]">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full text-center">
+            <h2 className="text-lg font-bold text-gray-800 mb-4">Confirmar Restauración</h2>
+            <p className="text-gray-600 mb-6">
+              ¿Estás seguro que deseas restaurar la copia con ID{" "}
+              <span className="font-semibold text-green-700">{copiaSeleccionada}</span>?
+            </p>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={() => setConfirmarRestaurar(false)}
+                className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={confirmarAccionRestaurar}
+                className="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700"
+              >
+                Restaurar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </LayoutAdmin>
   );
 };

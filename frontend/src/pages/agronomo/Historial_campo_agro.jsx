@@ -122,7 +122,7 @@ const Historial_campo_agro = () => {
       </h1>
 
       {/* ✅ Botón registro */}
-      <div className="mb-6">
+      <div className="mb-6 flex justify-end">
         <button
           onClick={() => navigate("/cuadernocampo")}
           className="bg-green-600 text-white px-5 py-2 rounded-md hover:bg-green-700 text-lg font-semibold flex items-center gap-2"
@@ -131,6 +131,7 @@ const Historial_campo_agro = () => {
           Nuevo registro de campo
         </button>
       </div>
+     
 
       {/* ✅ Tabla con filtros */}
       <div className="bg-white border border-gray-200 rounded-xl overflow-auto relative">

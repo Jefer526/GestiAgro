@@ -6,6 +6,7 @@ import {
   IconSortDescending2,
   IconPencil,
   IconUserCog,
+  IconPlus,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
@@ -22,7 +23,7 @@ const Manejo_personal_agro = () => {
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
 
-  const columnas = ["codigo", "nombre", "cargo", "estado", "finca_nombre", "telefono"];
+  const columnas = ["codigo", "nombre completo", "cargo", "estado", "finca_nombre", "telefono"];
 
   useEffect(() => {
     api
@@ -120,9 +121,18 @@ const Manejo_personal_agro = () => {
 
   return (
     <LayoutAgronomo>
-      {/* Encabezado con botón a la derecha */}
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold text-green-700">Manejo Personal</h1>
+      {/* Título */}
+      <h1 className="text-3xl font-bold text-green-700 mb-4">Manejo Personal</h1>
+
+      {/* Botones debajo del título, alineados a la derecha */}
+      <div className="flex justify-end gap-4 mb-6">
+        <button
+          onClick={() => navigate("/registrarempleado")}
+          className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 font-semibold shadow"
+        >
+          <IconPlus className="w-5 h-5" />
+          Registrar empleado
+        </button>
         <button
           onClick={() => navigate("/gestionmayordomo")}
           className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 font-semibold shadow"
@@ -132,6 +142,7 @@ const Manejo_personal_agro = () => {
         </button>
       </div>
 
+      {/* === Tabla === */}
       <div className="overflow-x-auto rounded-lg shadow-lg">
         <table className="min-w-full text-center text-base bg-white">
           <thead className="bg-green-600 text-white font-bold">
@@ -182,15 +193,6 @@ const Manejo_personal_agro = () => {
         </table>
       </div>
 
-      <div className="flex justify-center gap-8 mt-8">
-        <button
-          onClick={() => navigate("/registrarempleado")}
-          className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 text-lg font-semibold"
-        >
-          Registrar empleado
-        </button>
-      </div>
-
       {/* === Filtro flotante === */}
       {filtroActivo && (
         <div
@@ -225,9 +227,7 @@ const Manejo_personal_agro = () => {
               <label key={val} className="flex items-center gap-2 mb-1">
                 <input
                   type="checkbox"
-                  checked={(valoresSeleccionados[filtroActivo] || []).includes(
-                    val
-                  )}
+                  checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
                   onChange={() => toggleValor(filtroActivo, val)}
                   className="accent-green-600"
                 />

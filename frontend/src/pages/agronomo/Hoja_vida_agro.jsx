@@ -6,6 +6,7 @@ import {
   IconFilter,
   IconSortAscending2,
   IconSortDescending2,
+  IconPlus,
 } from "@tabler/icons-react";
 import { useNavigate, useParams } from "react-router-dom";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
@@ -157,8 +158,23 @@ const Hoja_vida_agro = () => {
         </div>
       </div>
 
+      {/* Subtítulo */}
+      <h2 className="text-3xl font-bold text-green-700 mb-2">
+        Historial de mantenimiento
+      </h2>
+
+      {/* Botón Registrar debajo del subtítulo, alineado a la derecha */}
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={() => navigate(`/registrarnovedadhv/${id}`)}
+          className="bg-green-600 text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2 hover:bg-green-700"
+        >
+          <IconPlus className="w-5 h-5" />
+          Registrar mantenimiento
+        </button>
+      </div>
+
       {/* Tabla mantenimientos */}
-      <h2 className="text-3xl font-bold text-green-700 mb-4">Historial de mantenimiento</h2>
       <div className="overflow-x-auto rounded-lg shadow-lg bg-white">
         <table className="min-w-full text-center text-base">
           <thead className="bg-green-600 text-white font-bold">
@@ -185,7 +201,15 @@ const Hoja_vida_agro = () => {
             {mantenimientosFiltrados.length > 0 ? (
               mantenimientosFiltrados.map((item, idx) => (
                 <tr key={idx} className="hover:bg-gray-100">
-                  <td className="p-4 border">{item.fecha}</td>
+                  <td className="p-4 border">
+                    {item.fecha
+                      ? new Date(item.fecha).toLocaleDateString("es-ES", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                        })
+                      : ""}
+                  </td>
                   <td className="p-4 border">
                     {item.tipo
                       ? item.tipo.charAt(0).toUpperCase() + item.tipo.slice(1).toLowerCase()
@@ -275,16 +299,6 @@ const Hoja_vida_agro = () => {
           </div>
         </div>
       )}
-
-      {/* Botón registrar mantenimiento */}
-      <div className="flex justify-center mt-10">
-        <button
-          onClick={() => navigate(`/registrarnovedadhv/${id}`)}
-          className="bg-green-600 text-white px-8 py-3 rounded-xl text-lg font-bold shadow-lg hover:bg-green-700"
-        >
-          Registrar mantenimiento
-        </button>
-      </div>
     </LayoutAgronomo>
   );
 };

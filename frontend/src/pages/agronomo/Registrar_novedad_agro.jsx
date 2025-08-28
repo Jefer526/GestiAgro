@@ -194,9 +194,20 @@ const Registrar_novedad_agro = () => {
         <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
       </button>
 
-      <h2 className="text-3xl font-bold text-green-700 mb-4">
+      {/* Título */}
+      <h2 className="text-3xl font-bold text-green-700 mb-2">
         Registrar novedad de máquina
       </h2>
+
+      {/* Botón Guardar debajo del título, alineado a la derecha */}
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={handleGuardar}
+          className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold"
+        >
+          Guardar
+        </button>
+      </div>
 
       {/* Tabla con filtros */}
       <div className="overflow-x-auto rounded-lg shadow-lg relative bg-white">
@@ -333,17 +344,9 @@ const Registrar_novedad_agro = () => {
           </div>
         </MenuOverlay>
       )}
-
-      <div className="flex justify-end mt-4">
-        <button
-          onClick={handleGuardar}
-          className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold"
-        >
-          Guardar
-        </button>
-      </div>
     </LayoutAgronomo>
   );
 };
 
 export default Registrar_novedad_agro;
+ 

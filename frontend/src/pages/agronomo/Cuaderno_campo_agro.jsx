@@ -199,7 +199,7 @@ const Cuaderno_campo_agro = () => {
               onClick={handleTomarFoto}
               className="bg-green-600 text-white px-8 py-3 rounded hover:bg-green-700 text-lg flex items-center gap-2 self-start"
             >
-              <IconCamera className="w-5 h-5" /> Tomar Foto
+              <IconCamera className="w-5 h-5" /> Seleccionar foto
             </button>
 
             <input

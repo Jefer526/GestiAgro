@@ -5,6 +5,7 @@ import {
   IconFilter,
   IconSortAscending2,
   IconSortDescending2,
+  IconPlus
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
@@ -17,7 +18,7 @@ const Bodega_agro = () => {
   const [registros, setRegistros] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const columnas = ["finca", "categoria", "producto", "ingrediente", "saldo", "unidad"];
+  const columnas = ["finca", "categoria", "producto", "ingrediente activo", "saldo", "unidad"];
   const [filtroActivo, setFiltroActivo] = useState(null);
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
@@ -142,14 +143,16 @@ const Bodega_agro = () => {
         <div className="flex justify-end gap-4 p-4">
           <button
             onClick={() => navigate("/agregarproducto")}
-            className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 text-base font-semibold"
+            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold"
           >
+            <IconPlus className="w-5 h-5" />
             Agregar producto
           </button>
           <button
             onClick={() => navigate("/registrarmovimiento")}
-            className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 text-base font-semibold"
+            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold"
           >
+            <IconPlus className="w-5 h-5" />
             Registrar movimiento
           </button>
         </div>

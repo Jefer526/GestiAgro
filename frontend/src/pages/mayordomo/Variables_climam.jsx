@@ -2,12 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  IconTemperature,
-  IconDroplet,
-  IconCloudRain,
-} from "@tabler/icons-react";
-
-import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
@@ -32,10 +26,8 @@ const Variables_climam = () => {
   const [climas, setClimas] = useState([]);
   const [finca, setFinca] = useState(null);
 
-  // variable seleccionada
   const [variableGrafica, setVariableGrafica] = useState("precipitacion");
 
-  // configuración de etiquetas
   const [decimales, setDecimales] = useState(1);
   const [colorEtiquetas, setColorEtiquetas] = useState("#000");
   const [mostrarEtiquetas, setMostrarEtiquetas] = useState(true);
@@ -43,18 +35,14 @@ const Variables_climam = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // 1️⃣ Obtener usuario logueado con finca asignada
         const resUser = await getMe();
         const fincaAsignada = resUser.data.finca_asignada;
-
         if (!fincaAsignada) {
           console.warn("⚠️ El usuario logueado no tiene finca asignada");
           return;
         }
-
         setFinca(fincaAsignada);
 
-        // 2️⃣ Traer datos climáticos de esa finca
         const resClima = await variablesClimaApi.getAll();
         const datosFinca = resClima.data.filter(
           (c) => String(c.finca) === String(fincaAsignada.id)
@@ -67,20 +55,17 @@ const Variables_climam = () => {
     fetchData();
   }, []);
 
-  // 📌 Filtrar por rango
   const datosFiltrados = climas.filter((c) => {
     if (desde && c.fecha < desde) return false;
     if (hasta && c.fecha > hasta) return false;
     return true;
   });
 
-  // 📌 Agrupación
   const agrupados = {};
   datosFiltrados.forEach((d) => {
     let key = d.fecha;
-    if (filtro === "Mes") key = d.fecha.slice(0, 7); // yyyy-mm
-    if (filtro === "Año") key = d.fecha.slice(0, 4); // yyyy
-
+    if (filtro === "Mes") key = d.fecha.slice(0, 7);
+    if (filtro === "Año") key = d.fecha.slice(0, 4);
     if (!agrupados[key]) agrupados[key] = 0;
     agrupados[key] += Number(d[variableGrafica] || 0);
   });
@@ -123,23 +108,12 @@ const Variables_climam = () => {
     scales: { y: { beginAtZero: true } },
   };
 
-  // 📌 Último registro
   const ultimo = datosFiltrados.sort((a, b) =>
     a.fecha < b.fecha ? 1 : -1
   )[0];
 
   return (
-    <LayoutMayordomo>
-      {/* Encabezado */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-green-700">Variables climáticas</h1>
-        {finca && (
-          <span className="text-2xl text-black font-bold">
-            {finca.nombre}
-          </span>
-        )}
-      </div>
-
+    <LayoutMayordomo titulo="Variables climáticas">
       {/* Último registro */}
       {ultimo && (
         <div className="mb-4 text-gray-600">

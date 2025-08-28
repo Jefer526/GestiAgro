@@ -164,10 +164,14 @@ const Gestion_mayordomos = () => {
   return (
     <LayoutAgronomo>
       {/* Encabezado */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="mb-2">
         <h1 className="text-3xl font-bold text-green-700">
           Gestión de Mayordomos
         </h1>
+      </div>
+
+      {/* Botón volver alineado a la derecha */}
+      <div className="flex justify-end mb-6">
         <button
           onClick={() => navigate("/manejopersonal")}
           className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 font-semibold shadow"
@@ -252,5 +256,4 @@ const Gestion_mayordomos = () => {
     </LayoutAgronomo>
   );
 };
-
 export default Gestion_mayordomos;

@@ -7,6 +7,7 @@ from django.db.models.functions import ExtractMonth, ExtractYear
 from .models import Monitoreo, RegistroPlaga
 from .serializers import MonitoreoSerializer
 
+
 class MonitoreoViewSet(viewsets.ModelViewSet):
     queryset = Monitoreo.objects.all().order_by("-fecha")
     serializer_class = MonitoreoSerializer
@@ -20,23 +21,47 @@ class MonitoreoViewSet(viewsets.ModelViewSet):
         plaga = request.query_params.get("plaga")
         anio = request.query_params.get("anio")
 
-        registros = RegistroPlaga.objects.select_related("monitoreo", "monitoreo__finca", "monitoreo__lote")
+        registros = RegistroPlaga.objects.select_related(
+            "monitoreo", "monitoreo__finca", "monitoreo__lote"
+        )
 
+        # 🔹 Soporte múltiple en filtros
         if finca:
-            registros = registros.filter(monitoreo__finca_id=finca)
+            finca_ids = finca.split(",")
+            registros = registros.filter(monitoreo__finca_id__in=finca_ids)
+
         if lote:
-            registros = registros.filter(monitoreo__lote_id=lote)
+            lote_ids = lote.split(",")
+            registros = registros.filter(monitoreo__lote_id__in=lote_ids)
+
         if familia:
-            registros = registros.filter(familia=familia)
+            familias = familia.split(",")
+            registros = registros.filter(familia__in=familias)
+
         if plaga:
-            registros = registros.filter(plaga=plaga)
+            plagas = plaga.split(",")
+            registros = registros.filter(plaga__in=plagas)
+
         if anio:
             registros = registros.filter(monitoreo__fecha__year=anio)
 
+        # 📊 Resumen con nombres incluidos
         resumen = (
             registros
-            .annotate(anio=ExtractYear("monitoreo__fecha"), mes=ExtractMonth("monitoreo__fecha"))
-            .values("monitoreo__finca_id", "monitoreo__lote_id", "familia", "plaga", "anio", "mes")
+            .annotate(
+                anio=ExtractYear("monitoreo__fecha"),
+                mes=ExtractMonth("monitoreo__fecha"),
+            )
+            .values(
+                "monitoreo__finca_id",
+                "monitoreo__finca__nombre",   # 👈 nombre finca
+                "monitoreo__lote_id",
+                "monitoreo__lote__lote",      # 👈 nombre lote
+                "familia",
+                "plaga",
+                "anio",
+                "mes",
+            )
             .annotate(promedio=Avg("promedio"))
             .order_by("anio", "mes")
         )

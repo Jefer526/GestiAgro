@@ -1,11 +1,7 @@
 // src/pages/agronomo/Variables_climaticas.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  IconTemperature,
-  IconDroplet,
-  IconCloudRain,
-} from "@tabler/icons-react";
+import { IconPlus } from "@tabler/icons-react";
 
 import {
   Chart as ChartJS,
@@ -43,7 +39,7 @@ const Variables_climaticas = () => {
   const [mostrarEtiquetas, setMostrarEtiquetas] = useState(true);
 
   // 🔹 modo de rango
-  const [modoRango, setModoRango] = useState("por_dia"); // "junto" o "por_dia"
+  const [modoRango, setModoRango] = useState("por_dia");
 
   // 📌 Traer fincas y datos de clima
   useEffect(() => {
@@ -80,16 +76,13 @@ const Variables_climaticas = () => {
     let key;
 
     if (modoRango === "junto" && desde && hasta) {
-      // 🔹 1 sola barra para todo el rango
       key = `${desde} a ${hasta}`;
     } else if (modoRango === "por_dia" && desde && hasta) {
-      // 🔹 siempre por día cuando hay rango
       key = d.fecha;
     } else {
-      // 🔹 sin rango → depende del filtro
       key = d.fecha;
-      if (filtro === "Mes") key = d.fecha.slice(0, 7); // yyyy-mm
-      if (filtro === "Año") key = d.fecha.slice(0, 4); // yyyy
+      if (filtro === "Mes") key = d.fecha.slice(0, 7);
+      if (filtro === "Año") key = d.fecha.slice(0, 4);
     }
 
     if (!agrupados[key]) agrupados[key] = {};
@@ -115,7 +108,7 @@ const Variables_climaticas = () => {
       const [year, month, day] = key.split("-");
       return `${day}-${month}-${year}`;
     }
-    return key; // Año
+    return key;
   };
 
   const labelsRaw = Object.keys(agrupados).sort();
@@ -207,7 +200,7 @@ const Variables_climaticas = () => {
             value={filtro}
             onChange={(e) => setFiltro(e.target.value)}
             className="border border-gray-300 rounded px-4 py-1"
-            disabled={modoRango === "junto"} // 👈 se desactiva si es "junto"
+            disabled={modoRango === "junto"}
           >
             <option>Día</option>
             <option>Mes</option>
@@ -246,15 +239,8 @@ const Variables_climaticas = () => {
         </div>
       </div>
 
-      {/* Botón Registrar + switch de variable */}
-      <div className="mb-4 flex gap-4 items-center">
-        <button
-          onClick={() => navigate("/Registrarclima")}
-          className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition font-semibold"
-        >
-          Registrar
-        </button>
-
+      {/* 🔹 Selector de variable + Botón Registrar en la misma fila */}
+      <div className="mb-4 flex justify-between items-center">
         <select
           value={variableGrafica}
           onChange={(e) => setVariableGrafica(e.target.value)}
@@ -265,6 +251,14 @@ const Variables_climaticas = () => {
           <option value="temp_max">Temperatura máxima (°C)</option>
           <option value="humedad">Humedad relativa (%)</option>
         </select>
+
+        <button
+          onClick={() => navigate("/Registrarclima")}
+          className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold"
+        >
+          <IconPlus className="w-5 h-5" />
+          Registrar
+        </button>
       </div>
 
       {/* 🔹 Panel configuración etiquetas */}

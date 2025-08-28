@@ -4,6 +4,7 @@ import {
   IconFilter,
   IconSortAscending2,
   IconSortDescending2,
+  IconPlus,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
@@ -24,7 +25,7 @@ const Maquinaria_equipos = () => {
     "codigo_equipo",
     "maquina",
     "referencia",
-    "ubicacion_nombre",
+    "ubicacion_nombre", // 👉 se mostrará como "FINCA"
     "estado",
   ];
 
@@ -112,10 +113,30 @@ const Maquinaria_equipos = () => {
 
   return (
     <LayoutAgronomo>
-      <h1 className="text-3xl font-bold text-green-700 mb-6">
+      {/* 📌 Título */}
+      <h1 className="text-3xl font-bold text-green-700 mb-4">
         Maquinaria y Equipos
       </h1>
 
+      {/* 📌 Botones en la parte derecha */}
+      <div className="flex justify-end gap-4 mb-6">
+        <button
+          onClick={() => navigate("/registrarmaquina")}
+          className="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 text-base font-semibold flex items-center gap-2"
+        >
+          <IconPlus className="w-5 h-5" />
+          Registrar nueva máquina
+        </button>
+        <button
+          onClick={() => navigate("/registrarnovedad")}
+          className="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 text-base font-semibold flex items-center gap-2"
+        >
+          <IconPlus className="w-5 h-5" />
+          Registrar novedad
+        </button>
+      </div>
+
+      {/* 📌 Tabla */}
       <div className="overflow-x-auto rounded-lg shadow-lg">
         <table className="min-w-full text-center text-base bg-white">
           <thead className="bg-green-600 text-white font-bold">
@@ -123,7 +144,9 @@ const Maquinaria_equipos = () => {
               {campos.map((campo) => (
                 <th key={campo} className="p-4 border text-center">
                   <div className="flex items-center justify-center gap-2">
-                    {campo.replace("_", " ").toUpperCase()}
+                    {campo === "ubicacion_nombre"
+                      ? "FINCA"
+                      : campo.replace("_", " ").toUpperCase()}
                     <button onClick={(e) => toggleFiltro(campo, e)}>
                       <IconFilter className="w-4 h-4" />
                     </button>
@@ -172,7 +195,10 @@ const Maquinaria_equipos = () => {
           style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
         >
           <div className="font-semibold mb-2">
-            Filtrar por {filtroActivo.replace("_", " ").toUpperCase()}
+            Filtrar por{" "}
+            {filtroActivo === "ubicacion_nombre"
+              ? "FINCA"
+              : filtroActivo.replace("_", " ").toUpperCase()}
           </div>
           <button
             onClick={() => ordenar(filtroActivo, "asc")}
@@ -224,21 +250,6 @@ const Maquinaria_equipos = () => {
           </div>
         </div>
       )}
-
-      <div className="flex justify-center gap-8 mt-8">
-        <button
-          onClick={() => navigate("/registrarmaquina")}
-          className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 text-lg font-semibold"
-        >
-          Registrar nueva máquina
-        </button>
-        <button
-          onClick={() => navigate("/registrarnovedad")}
-          className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 text-lg font-semibold"
-        >
-          Registrar novedad
-        </button>
-      </div>
     </LayoutAgronomo>
   );
 };

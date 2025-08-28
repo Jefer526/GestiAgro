@@ -111,11 +111,7 @@ const Equipos_mayor = () => {
   }, []);
 
   return (
-    <LayoutMayordomo>
-      <h1 className="text-3xl font-bold text-green-700 mb-6">
-        Maquinaria y Equipos
-      </h1>
-
+    <LayoutMayordomo titulo="Maquinaria y Equipos">
       <div className="overflow-x-auto rounded-lg shadow-lg">
         <table className="min-w-full text-center text-base bg-white">
           <thead className="bg-green-600 text-white font-bold">

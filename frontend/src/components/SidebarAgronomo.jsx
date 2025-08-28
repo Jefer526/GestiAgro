@@ -111,7 +111,7 @@ const SidebarAgronomo = () => {
       >
         {[
           { icon: <IconHome />, routes: ["/homeagro"] },
-          { icon: <IconCheckupList />, routes: ["/Laboresagro", "/historial"] },
+          { icon: <IconCheckupList />, routes: ["/Laboresagro", "/historiallabores"] },
           { icon: <IconHistory />, routes: ["/Historialagro"] },
           { icon: <IconBook />, routes: ["/Historialcampo", "/detallecampo", "/cuadernocampo"] },
           { icon: <IconPlant2 />, routes: ["/produccionagro"] },
