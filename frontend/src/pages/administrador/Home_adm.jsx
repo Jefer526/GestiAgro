@@ -1,5 +1,5 @@
 // src/pages/administrador/Home_adm.jsx
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   IconUsers,
@@ -11,6 +11,19 @@ import LayoutAdmin from "../../layouts/LayoutAdmin";
 
 const Home_adm = () => {
   const navigate = useNavigate();
+
+  // 🚫 Bloquear botón "Atrás" en Home_adm
+  useEffect(() => {
+    const blockBack = () => {
+      window.history.go(1); // fuerza siempre hacia adelante
+    };
+    window.history.pushState(null, "", window.location.href);
+    window.addEventListener("popstate", blockBack);
+
+    return () => {
+      window.removeEventListener("popstate", blockBack);
+    };
+  }, []);
 
   const cards = [
     {
@@ -53,9 +66,7 @@ const Home_adm = () => {
 
       <div className="bg-gradient-to-r from-green-600 to-emerald-500 text-white px-6 py-5 rounded-2xl w-full max-w-3xl mb-10 shadow-lg">
         <p className="text-3xl font-semibold">¡Bienvenido!</p>
-        <p className="opacity-90 text-lg">
-
-        </p>
+        <p className="opacity-90 text-lg"></p>
       </div>
 
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -63,7 +74,7 @@ const Home_adm = () => {
           ({ icon, label, desc, route, gradient, ring, iconBg, text }, i) => (
             <button
               key={i}
-              onClick={() => navigate(route)}
+              onClick={() => navigate(route, { replace: true })} // 👈 evitar duplicados en historial
               className={`group relative overflow-hidden rounded-2xl border border-transparent
                 bg-white shadow-lg px-5 py-8 min-h-[160px] text-left transition-all
                 hover:-translate-y-0.5 hover:shadow-xl focus:outline-none focus:ring-2

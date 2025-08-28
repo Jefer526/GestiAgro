@@ -1,5 +1,5 @@
 // src/pages/agronomo/Home_agro.jsx
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   IconCheckupList,
@@ -9,7 +9,6 @@ import {
   IconTractor,
   IconUsersGroup,
   IconPlant,
-  IconFrame,
   IconChevronRight,
   IconPlant2,
   IconBook,
@@ -20,6 +19,19 @@ import LayoutAgronomo from "../../layouts/LayoutAgronomo";
 
 const Home_agro = () => {
   const navigate = useNavigate();
+
+  // 🚫 Bloquear botón "Atrás"
+  useEffect(() => {
+    const blockBack = () => {
+      window.history.go(1); // fuerza siempre hacia adelante
+    };
+    window.history.pushState(null, "", window.location.href);
+    window.addEventListener("popstate", blockBack);
+
+    return () => {
+      window.removeEventListener("popstate", blockBack);
+    };
+  }, []);
 
   const opciones = [
     {
@@ -132,7 +144,6 @@ const Home_agro = () => {
       iconBg: "bg-white/70",
       text: "text-teal-700",
     },
-
   ];
 
   return (

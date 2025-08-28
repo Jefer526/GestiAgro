@@ -1,5 +1,5 @@
 // src/pages/mayordomo/Home_mayo.jsx
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   IconChevronRight,
@@ -20,6 +20,19 @@ import LayoutMayordomo from "../../layouts/LayoutMayordomo";
 
 const Home_mayo = () => {
   const navigate = useNavigate();
+
+  // 🚫 Bloquear botón "Atrás" en Home_mayo
+  useEffect(() => {
+    const blockBack = () => {
+      window.history.go(1); // fuerza siempre hacia adelante
+    };
+    window.history.pushState(null, "", window.location.href);
+    window.addEventListener("popstate", blockBack);
+
+    return () => {
+      window.removeEventListener("popstate", blockBack);
+    };
+  }, []);
 
   const opciones = [
     {
@@ -83,7 +96,7 @@ const Home_mayo = () => {
       text: "text-fuchsia-700",
     },
     {
-      icon: <IconCalendarClock className="w-8 h-8" />, 
+      icon: <IconCalendarClock className="w-8 h-8" />,
       label: "Programación de labores",
       desc: "Programación de labores semanales.",
       ruta: "/programacion_labores",
@@ -147,7 +160,7 @@ const Home_mayo = () => {
         {opciones.map(({ icon, label, desc, ruta, gradient, ring, iconBg, text }, i) => (
           <button
             key={i}
-            onClick={() => navigate(ruta)}
+            onClick={() => navigate(ruta, { replace: true })} // 👈 evitar duplicados en historial
             className="group relative overflow-hidden rounded-2xl border border-transparent bg-white shadow-lg px-5 py-8 min-h-[160px] text-left transition-all hover:-translate-y-0.5 hover:shadow-xl focus:outline-none focus:ring-2 ring-0 hover:ring-0 focus:ring-emerald-600/40"
           >
             <div className={`absolute inset-0 pointer-events-none bg-gradient-to-br ${gradient} opacity-70`} />
@@ -171,4 +184,3 @@ const Home_mayo = () => {
 };
 
 export default Home_mayo;
-

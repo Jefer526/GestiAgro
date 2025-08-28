@@ -20,6 +20,9 @@ const RegistrarMonitoreom = () => {
   // 📌 Registros de plagas dinámicos
   const [registros, setRegistros] = useState([{ familia: "", plaga: "", promedio: "" }]);
 
+  // 📌 Alertita tipo popup
+  const [alertaVisible, setAlertaVisible] = useState(false);
+
   // 📌 Campos fijos
   const familias = ["Hemípteros", "Homópteros", "Curculiónidos", "Tisanópteros"];
   const plagas = {
@@ -91,8 +94,13 @@ const RegistrarMonitoreom = () => {
         observaciones,
         registros,
       });
-      alert("✅ Monitoreo registrado correctamente");
-      navigate("/manejofitosanitario");
+
+      // ✅ Mostrar popup
+      setAlertaVisible(true);
+      setTimeout(() => {
+        setAlertaVisible(false);
+        navigate("/manejo_fitosanitariom");
+      }, 2000);
     } catch (err) {
       console.error("Error guardando monitoreo:", err);
       alert("❌ Error al guardar monitoreo");
@@ -100,7 +108,14 @@ const RegistrarMonitoreom = () => {
   };
 
   return (
-    <LayoutMayordomo>
+    <LayoutMayordomo ocultarEncabezado>
+      {/* Popup de confirmación */}
+      {alertaVisible && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold z-[10000]">
+          <IconCheck className="w-5 h-5" /> Monitoreo registrado correctamente
+        </div>
+      )}
+
       {/* Botón volver */}
       <div className="flex items-center mb-6">
         <button
@@ -112,7 +127,17 @@ const RegistrarMonitoreom = () => {
         </button>
       </div>
 
+      {/* Encabezado: finca afuera, título dentro de la card */}
+      <div className="flex justify-between items-center mb-6">
+        <div></div>
+        {fincaAsignada && (
+          <span className="text-2xl font-bold text-green-700">{fincaAsignada.nombre}</span>
+        )}
+      </div>
+
+      {/* Card principal */}
       <div className="bg-white border border-gray-200 rounded-xl shadow-md p-8 w-[1050px] mx-auto">
+        {/* Título dentro de la card */}
         <h1 className="text-3xl font-bold text-green-700 mb-6">Registrar Monitoreo</h1>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -173,7 +198,7 @@ const RegistrarMonitoreom = () => {
             </div>
           </div>
 
-          {/* Tabla de registros de plagas */}
+          {/* Tabla de registros */}
           {registros.length > 0 && (
             <div className="overflow-x-auto mb-6">
               <table className="w-full border border-gray-400 rounded-xl text-center">
