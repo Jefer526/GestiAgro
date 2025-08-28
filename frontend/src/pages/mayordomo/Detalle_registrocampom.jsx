@@ -1,29 +1,45 @@
 // src/pages/mayordomo/Detalle_registrocampom.jsx
-import React from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { IconChevronLeft } from "@tabler/icons-react";
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
+import { cuadernoCampoApi } from "../../services/apiClient";
 
 const Detalle_registrocampom = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { id } = useParams();
 
-  // 📌 Fallback si entran directo a la ruta
-  const fallback = {
-    fecha: "2025-08-15",
-    finca: "La Esmeralda",
-    lote: "Lote 1",
-    anotaciones: `Revisión de plagas en cultivo de aguacate. 
-Se detectaron algunos focos de insectos, se programará control fitosanitario.`,
-    foto: "https://via.placeholder.com/400x250.png?text=Ejemplo+Foto+Campo", // ✅ ejemplo de foto
-  };
+  const [registro, setRegistro] = useState(null);
+  const [alertaVisible, setAlertaVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const state = location.state;
-  const data = { ...fallback, ...(state && typeof state === "object" ? state : {}) };
+  // 📌 Cargar registro
+  useEffect(() => {
+    const fetchRegistro = async () => {
+      try {
+        if (location.state) {
+          setRegistro(location.state);
+          setAlertaVisible(true);
+          setTimeout(() => setAlertaVisible(false), 1500);
+        } else if (id) {
+          const res = await cuadernoCampoApi.retrieve(id);
+          setRegistro(res.data);
+          setAlertaVisible(true);
+          setTimeout(() => setAlertaVisible(false), 1500);
+        }
+      } catch (err) {
+        console.error("Error cargando registro:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRegistro();
+  }, [id, location.state]);
 
   return (
-    <LayoutMayordomo active="/historial_cuadernoc">
-      {/* Botón volver */}
+    <LayoutMayordomo ocultarEncabezado>
+      {/* ✅ Botón volver */}
       <button
         onClick={() => navigate(-1)}
         className="flex items-center text-green-700 font-semibold mb-4 text-lg hover:underline"
@@ -31,43 +47,67 @@ Se detectaron algunos focos de insectos, se programará control fitosanitario.`,
         <IconChevronLeft className="w-5 h-5 mr-2" /> Volver
       </button>
 
-      {/* Card de detalle */}
-      <div className="bg-white border border-gray-200 rounded-xl shadow-md p-10 w-[900px] max-w-full mx-auto">
-        <h1 className="text-3xl font-bold text-green-700 mb-6">
-          Detalle de Registro de Campo
-        </h1>
+      {/* ✅ Encabezado: finca afuera a la derecha */}
+      <div className="flex justify-between items-center mb-6">
+        <div></div>
+        {registro?.finca_nombre && (
+          <span className="text-2xl font-bold text-green-700">
+            {registro.finca_nombre}
+          </span>
+        )}
+      </div>
 
-        <div className="space-y-5 text-lg">
-          <p>
-            <strong>Fecha:</strong> {data.fecha}
-          </p>
-          <p>
-            <strong>Finca:</strong> {data.finca}
-          </p>
-          <p>
-            <strong>Lote:</strong> {data.lote}
-          </p>
-          <div>
-            <strong>Anotaciones:</strong>
-            <p className="mt-2 text-justify whitespace-pre-line">{data.anotaciones}</p>
-          </div>
+      {/* ✅ Card de detalle */}
+      <div className="flex justify-center p-8 overflow-auto -mt-6">
+        {loading ? (
+          <p className="text-gray-500">Cargando registro...</p>
+        ) : registro ? (
+          <div className="bg-white border border-gray-200 shadow-md p-10 rounded-xl w-full max-w-3xl space-y-6 text-black">
+            {/* Título dentro de la card */}
+            <h1 className="text-3xl font-bold text-green-700">
+              Detalle de Registro de Campo
+            </h1>
 
-          {/* ✅ Foto siempre con ejemplo */}
-          <div>
-            <strong>Foto:</strong>
-            <div className="mt-3">
-              <img
-                src={data.foto}
-                alt="Registro de campo"
-                className="max-h-72 rounded-lg border shadow-sm"
-              />
+            {/* Fecha */}
+            <div>
+              <label className="font-bold text-lg block mb-1">Fecha</label>
+              <p className="text-lg">{registro.fecha}</p>
             </div>
+
+            {/* Lote */}
+            <div>
+              <label className="font-bold text-lg block mb-1">Lote</label>
+              <p className="text-lg">{registro.lote_nombre}</p>
+            </div>
+
+            {/* Anotaciones */}
+            <div>
+              <label className="font-bold text-lg block mb-1">Anotaciones</label>
+              <p className="text-lg text-justify whitespace-pre-line">
+                {registro.anotaciones}
+              </p>
+            </div>
+
+            {/* Foto */}
+            {registro.foto && (
+              <div>
+                <label className="font-bold text-lg block mb-1">Foto</label>
+                <div className="mt-2">
+                  <img
+                    src={registro.foto}
+                    alt="Registro de campo"
+                    className="max-h-64 rounded-lg border shadow-sm"
+                  />
+                </div>
+              </div>
+            )}
           </div>
-        </div>
+        ) : (
+          <p className="text-red-500">No se encontró el registro.</p>
+        )}
       </div>
     </LayoutMayordomo>
   );
 };
 
 export default Detalle_registrocampom;
-

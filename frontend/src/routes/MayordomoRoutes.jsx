@@ -17,7 +17,7 @@ import Registrar_novedad from "../pages/mayordomo/Registrar_novedad";
 import Soporte_mayordomo from "../pages/mayordomo/Soporte_mayordomo";
 import Ajustes_mayordomo from "../pages/mayordomo/Ajustes_mayordomo";
 import Produccion_mayor from "../pages/mayordomo/Produccion_mayor";
-import Historial_cuadernoc from "../pages/mayordomo/Historial_cuadernoc";
+import Cuadernocampom  from "../pages/mayordomo/Cuadernocampom";
 import Detalle_mantenimientom from "../pages/mayordomo/Detalle_mantenimientom";
 import Registrarticketm from "../pages/mayordomo/Registrarticketm";
 import Detalles_ticketm from "../pages/mayordomo/Detalle_ticketm";
@@ -53,14 +53,14 @@ const mayordomoRoutes = [
   <Route key="registrarticketm" path="/registrarticketm" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Registrarticketm /></ProtectedRoute>} />, 
   <Route key="ajustes-mayordomo" path="/ajustesmayordomo" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Ajustes_mayordomo /></ProtectedRoute>} />,
   <Route key="Produccion-mayor" path="/produccion_mayor" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Produccion_mayor /></ProtectedRoute>} />,
-  <Route key="historialcuadernoc" path="/historial_cuadernoc" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Historial_cuadernoc /></ProtectedRoute>} />,
+  <Route key="Cuadernocampom " path="/cuadernocampom" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Cuadernocampom /></ProtectedRoute>} />,
   <Route key="detalle-mantenimientom" path="/detallemantenimientom/:id" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Detalle_mantenimientom /></ProtectedRoute>} />,
   <Route key="detalles-ticketm" path="/detallesticketm" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Detalles_ticketm /></ProtectedRoute>} />,
   <Route key="programacionlabores" path="/programacion_labores" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Programacion_labores /></ProtectedRoute>} />,
   <Route key="manejofitosanitariom" path="/manejo_fitosanitariom" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Manejo_fitosanitariom /></ProtectedRoute>} />,
   <Route key="registrocampom" path="/registro_campom" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Registro_campom /></ProtectedRoute>} />,
   <Route key="seguimientolaboresm" path="/seguimiento_laboresm" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Seguimiento_laboresm /></ProtectedRoute>} />,
-  <Route key="detalleregistrocampom" path="/detalle_registrocampom" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Detalle_registrocampom /></ProtectedRoute>} />,
+  <Route key="detalleregistrocampom" path="/detallecampom/:id" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Detalle_registrocampom /></ProtectedRoute>} />,
   <Route key="detallelabor" path="/detalle_laborm" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Detalle_laborm /></ProtectedRoute>} />,
   <Route key="Registrar-labor-maquinariam" path="/registrarlabormaquinariam/:id" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Registrar_labor_maquinariam /></ProtectedRoute>} />,
   <Route key="registrar-movimientom" path="/registrarmovimientom" element={<ProtectedRoute allowedRoles={["admin", "mayordomo"]}><Registrar_movimientom /></ProtectedRoute>} />,
