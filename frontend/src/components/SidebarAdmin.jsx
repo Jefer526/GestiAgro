@@ -7,7 +7,7 @@ import {
   IconTool,
   IconSettings,
   IconLogout,
-  IconSwitchHorizontal, // 👈 Nuevo icono para cambiar rol
+  IconSwitchHorizontal,
 } from "@tabler/icons-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import faviconBlanco from "../assets/favicon-blanco.png";
@@ -34,7 +34,32 @@ const SidebarAdmin = () => {
 
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
   const tarjetaRef = useRef(null);
+  const botonRef = useRef(null); // 👉 ref del botón para excluirlo
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  // 🔹 Detectar clic fuera
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (
+        tarjetaRef.current &&
+        !tarjetaRef.current.contains(e.target) &&
+        botonRef.current &&
+        !botonRef.current.contains(e.target)
+      ) {
+        setMostrarTarjeta(false);
+      }
+    };
+
+    if (mostrarTarjeta) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [mostrarTarjeta]);
 
   // 🔹 Ref para manejar scroll persistente
   const scrollRef = useRef(null);
@@ -129,6 +154,7 @@ const SidebarAdmin = () => {
       {/* Perfil */}
       <div className="relative mb-6 flex justify-center">
         <button
+          ref={botonRef}
           onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
           className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
         >
@@ -148,7 +174,6 @@ const SidebarAdmin = () => {
             >
               <IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes
             </button>
-            {/* 👉 Nuevo botón para cambiar rol */}
             <button
               onClick={() => {
                 setMostrarTarjeta(false);

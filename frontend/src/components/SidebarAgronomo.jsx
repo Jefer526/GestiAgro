@@ -9,7 +9,6 @@ import {
   IconTractor,
   IconUsersGroup,
   IconPlant,
-  IconFrame,
   IconSettings,
   IconTool,
   IconLogout,
@@ -17,6 +16,7 @@ import {
   IconBook,
   IconBug,
   IconHistory,
+  IconSwitchHorizontal,
 } from "@tabler/icons-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import faviconBlanco from "../assets/favicon-blanco.png";
@@ -28,6 +28,7 @@ const SidebarAgronomo = () => {
 
   // 🔹 Estado para inicial dinámica
   const [letraInicial, setLetraInicial] = useState("U");
+  const [rolUsuario, setRolUsuario] = useState(null);
 
   useEffect(() => {
     try {
@@ -36,6 +37,7 @@ const SidebarAgronomo = () => {
         const inicial = userData.nombre.trim()[0].toUpperCase();
         setLetraInicial(inicial);
       }
+      if (userData?.rol) setRolUsuario(userData.rol);
     } catch {
       setLetraInicial("U");
     }
@@ -43,9 +45,31 @@ const SidebarAgronomo = () => {
 
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
   const tarjetaRef = useRef(null);
+  const botonRef = useRef(null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const scrollRef = useRef(null);
+
+  // 🔹 Detectar clic fuera
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (
+        tarjetaRef.current &&
+        !tarjetaRef.current.contains(e.target) &&
+        botonRef.current &&
+        !botonRef.current.contains(e.target)
+      ) {
+        setMostrarTarjeta(false);
+      }
+    };
+
+    if (mostrarTarjeta) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [mostrarTarjeta]);
 
   // 🔹 Restaurar scroll guardado
   useLayoutEffect(() => {
@@ -104,7 +128,7 @@ const SidebarAgronomo = () => {
         <img src={faviconBlanco} alt="Logo" className="w-11 h-11" />
       </div>
 
-      {/* Zona de iconos con scroll persistente */}
+      {/* Zona de iconos */}
       <div
         ref={scrollRef}
         className="flex-1 flex flex-col items-center space-y-8 mt-6 overflow-y-auto scrollbar-hide-only"
@@ -122,7 +146,6 @@ const SidebarAgronomo = () => {
           { icon: <IconTractor />, routes: ["/maquinariaequipos", "/registrarmaquina", "/registrarnovedad", "/hojadevida", "/historialtrabajo", "/detallemantenimiento", "/registrarlabormaquinaria"] },
           { icon: <IconUsersGroup />, routes: ["/manejopersonal", "/registrarempleado", "/editarempleado" , "/gestionmayordomo"] },
           { icon: <IconPlant />, routes: ["/gestionfincas", "/crearfinca", "/editarfinca", "/Detallelote" ] },
-
         ].map(({ icon, routes }, i) => (
           <div key={i} className="relative">
             {isActive(routes) && (
@@ -136,7 +159,7 @@ const SidebarAgronomo = () => {
                     scrollRef.current.scrollTop.toString()
                   );
                 }
-                navigate(routes[0]); // 👉 siempre navega a la primera ruta
+                navigate(routes[0]);
               }}
               className="hover:scale-110 hover:bg-white/10 p-2 rounded-lg transition"
             >
@@ -149,6 +172,7 @@ const SidebarAgronomo = () => {
       {/* Perfil */}
       <div className="relative mb-6 flex justify-center">
         <button
+          ref={botonRef}
           onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
           className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
         >
@@ -168,15 +192,30 @@ const SidebarAgronomo = () => {
             >
               <IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes
             </button>
-            <button
-              onClick={() => {
-                setMostrarTarjeta(false);
-                navigate("/soporteagro");
-              }}
-              className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100"
-            >
-              <IconTool className="w-5 h-5 mr-2 text-green-600" /> Soporte
-            </button>
+
+            {/* 👇 Condicional según rol */}
+            {rolUsuario === "admin" ? (
+              <button
+                onClick={() => {
+                  setMostrarTarjeta(false);
+                  navigate("/seleccion-rol");
+                }}
+                className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100"
+              >
+                <IconSwitchHorizontal className="w-5 h-5 mr-2 text-green-600" /> Cambiar rol
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  setMostrarTarjeta(false);
+                  navigate("/soporteagro");
+                }}
+                className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100"
+              >
+                <IconTool className="w-5 h-5 mr-2 text-green-600" /> Soporte
+              </button>
+            )}
+
             <button
               onClick={handleLogout}
               disabled={isLoggingOut}

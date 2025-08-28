@@ -297,7 +297,7 @@ const Landing = () => {
             </button>
             <button
               onClick={() => scrollTo(serviciosRef)}
-              className="rounded-xl border border-green-600 px-6 py-3 font-bold hover:border-green-600 hover:text-white"
+              className="rounded-xl bg-green-600 px-6 py-3 text-white font-semibold hover:bg-green-700 transition"
             >
               Ver servicios
             </button>
@@ -376,17 +376,12 @@ const Landing = () => {
               <p className="mt-2">¿Tienes dudas? Escríbenos y agenda una demo guiada.</p>
 
               <div className="mt-6 space-y-3">
-                <p className="flex items-center gap-2"><IconPhone className="w-5 h-5 text-green-700" /> +57 300 000 0000</p>
-                <p className="flex items-center gap-2"><IconMail className="w-5 h-5 text-green-700" /> soporte@gestiagro.com</p>
-                <p className="flex items-center gap-2"><IconMapPin className="w-5 h-5 text-green-700" /> Medellín, Colombia</p>
+                <p className="flex items-center gap-2"><IconPhone className="w-5 h-5 text-green-700" /> +57 318 229 7346</p>
+                <p className="flex items-center gap-2"><IconMail className="w-5 h-5 text-green-700" /> jefer5261@gmail.com</p>
+                <p className="flex items-center gap-2"><IconMapPin className="w-5 h-5 text-green-700" /> Palmira, Valle del Cauca, Colombia</p>
               </div>
 
-              <div className="mt-6 flex items-center gap-4">
-                <a href="#" className="p-2 rounded-lg border hover:bg-gray-100"><IconBrandFacebook className="w-6 h-6 text-blue-600" /></a>
-                <a href="#" className="p-2 rounded-lg border hover:bg-gray-100"><IconBrandInstagram className="w-6 h-6 text-pink-600" /></a>
-                <a href="#" className="p-2 rounded-lg border hover:bg-gray-100"><IconBrandLinkedin className="w-6 h-6 text-blue-700" /></a>
-                <a href="#" className="p-2 rounded-lg border hover:bg-gray-100"><IconBrandWhatsapp className="w-6 h-6 text-green-500" /></a>
-              </div>
+
             </div>
 
             <form onSubmit={onSubmit} className="rounded-2xl border bg-white p-6 shadow">

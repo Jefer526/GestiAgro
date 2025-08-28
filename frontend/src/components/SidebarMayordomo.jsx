@@ -16,6 +16,7 @@ import {
   IconCheckupList,
   IconCalendarClock,
   IconBug,
+  IconSwitchHorizontal,
 } from "@tabler/icons-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import faviconBlanco from "../assets/favicon-blanco.png";
@@ -27,6 +28,7 @@ const SidebarMayordomo = () => {
 
   // 🔹 Estado para inicial dinámica
   const [letraInicial, setLetraInicial] = useState("U");
+  const [rolUsuario, setRolUsuario] = useState(null);
 
   useEffect(() => {
     try {
@@ -35,6 +37,7 @@ const SidebarMayordomo = () => {
         const inicial = userData.nombre.trim()[0].toUpperCase();
         setLetraInicial(inicial);
       }
+      if (userData?.rol) setRolUsuario(userData.rol);
     } catch {
       setLetraInicial("U");
     }
@@ -42,10 +45,32 @@ const SidebarMayordomo = () => {
 
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
   const tarjetaRef = useRef(null);
+  const botonRef = useRef(null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   // 🔹 Ref para manejar el scroll del contenedor
   const scrollRef = useRef(null);
+
+  // 🔹 Detectar clic fuera
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (
+        tarjetaRef.current &&
+        !tarjetaRef.current.contains(e.target) &&
+        botonRef.current &&
+        !botonRef.current.contains(e.target)
+      ) {
+        setMostrarTarjeta(false);
+      }
+    };
+
+    if (mostrarTarjeta) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [mostrarTarjeta]);
 
   // 🔹 Restaurar scroll guardado ANTES del render visual
   useLayoutEffect(() => {
@@ -160,6 +185,7 @@ const SidebarMayordomo = () => {
       {/* Perfil */}
       <div className="relative mb-6 flex justify-center">
         <button
+          ref={botonRef}
           onClick={() => setMostrarTarjeta(!mostrarTarjeta)}
           className="bg-white w-12 h-12 rounded-full flex items-center justify-center text-green-600 font-bold text-xl shadow hover:scale-110 transition"
         >
@@ -179,15 +205,30 @@ const SidebarMayordomo = () => {
             >
               <IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes
             </button>
-            <button
-              onClick={() => {
-                setMostrarTarjeta(false);
-                navigate("/soportemayordomo");
-              }}
-              className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100"
-            >
-              <IconTool className="w-5 h-5 mr-2 text-green-600" /> Soporte
-            </button>
+
+            {/* 👇 Condicional según rol */}
+            {rolUsuario === "admin" ? (
+              <button
+                onClick={() => {
+                  setMostrarTarjeta(false);
+                  navigate("/seleccion-rol");
+                }}
+                className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100"
+              >
+                <IconSwitchHorizontal className="w-5 h-5 mr-2 text-green-600" /> Cambiar rol
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  setMostrarTarjeta(false);
+                  navigate("/soportemayordomo");
+                }}
+                className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100"
+              >
+                <IconTool className="w-5 h-5 mr-2 text-green-600" /> Soporte
+              </button>
+            )}
+
             <button
               onClick={handleLogout}
               disabled={isLoggingOut}
