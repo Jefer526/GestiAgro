@@ -65,7 +65,6 @@ api.interceptors.response.use(
       try {
         const refresh = localStorage.getItem("refresh");
 
-        // 🚀 FIX: si no hay refresh, devolvemos un error estructurado
         if (!refresh) {
           processQueue(null, null);
           localStorage.removeItem("access");
@@ -125,6 +124,8 @@ export const accountsApi = {
   updateUser: (id, data) => api.patch(`/api/accounts/users/${id}/`, data),
   toggleActive: (id) => api.patch(`/api/accounts/users/${id}/toggle-active/`),
   updateRole: (id, data) => api.patch(`/api/accounts/update-role/${id}/`, data),
+  sendTempPassword: (id) =>
+    api.post(`/api/accounts/users/${id}/send-temp-password/`),
 };
 
 // ===== API Soporte =====
