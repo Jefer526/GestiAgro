@@ -8,23 +8,23 @@ import {
 } from "@tabler/icons-react";
 import { useNavigate, useParams } from "react-router-dom";
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
-import { productosApi, movimientosApi } from "../../services/apiClient";
+import { productosApi, movimientosApi, getMe } from "../../services/apiClient";
 
 const Detalle_produc = () => {
   const navigate = useNavigate();
   const { id, finca } = useParams();
   const filtroRef = useRef(null);
 
-  // Estados
+  const [fincaAsignada, setFincaAsignada] = useState(null);
+  const [producto, setProducto] = useState(null);
+  const [movimientos, setMovimientos] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   const [filtroActivo, setFiltroActivo] = useState(null);
   const [filtroPosicion, setFiltroPosicion] = useState({ top: 0, left: 0 });
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [busquedas, setBusquedas] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
-
-  const [producto, setProducto] = useState(null);
-  const [movimientos, setMovimientos] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   const columnas = ["fecha", "finca", "lote", "tipo", "movimiento", "saldo", "unidad"];
 
@@ -32,18 +32,22 @@ const Detalle_produc = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [prodRes, movRes] = await Promise.all([
+        const [prodRes, movRes, userRes] = await Promise.all([
           productosApi.get(id),
           movimientosApi.listByProducto(id),
+          getMe(),
         ]);
 
-        const fincaDecodificada = decodeURIComponent(finca);
+        setProducto(prodRes.data);
+        if (userRes.data.finca_asignada) {
+          setFincaAsignada(userRes.data.finca_asignada);
+        }
 
+        const fincaDecodificada = decodeURIComponent(finca);
         const movsOrdenados = movRes.data
           .filter((m) => m.finca_nombre === fincaDecodificada)
           .sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
-        // calcular saldo acumulado
         let saldo = 0;
         const movimientosConSaldo = movsOrdenados
           .slice()
@@ -55,7 +59,6 @@ const Detalle_produc = () => {
           })
           .reverse();
 
-        setProducto(prodRes.data);
         setMovimientos(movimientosConSaldo);
       } catch (err) {
         console.error("❌ Error cargando detalles:", err);
@@ -125,8 +128,8 @@ const Detalle_produc = () => {
   }, []);
 
   return (
-    <LayoutMayordomo active="/bodega_insumos">
-      {/* Volver */}
+    <LayoutMayordomo active="/bodega_insumos" ocultarEncabezado>
+      {/* Botón volver */}
       <button
         onClick={() => navigate("/bodega_insumos")}
         className="flex items-center text-green-700 font-semibold mb-4 text-lg hover:underline"
@@ -134,7 +137,13 @@ const Detalle_produc = () => {
         <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
       </button>
 
-      <h1 className="text-3xl font-bold text-green-700 mb-6">Detalle del producto</h1>
+      {/* Encabezado: título + finca al mismo nivel */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-green-700">Detalle del producto</h1>
+        {fincaAsignada && (
+          <span className="text-3xl font-bold text-green-700">{fincaAsignada.nombre}</span>
+        )}
+      </div>
 
       {loading ? (
         <p className="text-center py-6">Cargando detalles...</p>
@@ -190,63 +199,6 @@ const Detalle_produc = () => {
             </table>
           </div>
         </>
-      )}
-
-      {/* Panel de filtro */}
-      {filtroActivo && (
-        <div
-          ref={filtroRef}
-          className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60"
-          style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
-        >
-          <div className="font-semibold mb-2">Filtrar por {filtroActivo.toUpperCase()}</div>
-          <button
-            onClick={() => ordenar(filtroActivo, "asc")}
-            className="text-green-700 flex items-center gap-1 mb-1"
-          >
-            <IconSortAscending2 className="w-4 h-4" /> Ordenar A → Z
-          </button>
-          <button
-            onClick={() => ordenar(filtroActivo, "desc")}
-            className="text-green-700 flex items-center gap-1 mb-2"
-          >
-            <IconSortDescending2 className="w-4 h-4" /> Ordenar Z → A
-          </button>
-          <input
-            type="text"
-            placeholder="Buscar..."
-            className="w-full border px-2 py-1 rounded mb-2 text-sm"
-            value={busquedas[filtroActivo] || ""}
-            onChange={(e) => handleBusqueda(filtroActivo, e.target.value)}
-          />
-          <div className="flex flex-col max-h-40 overflow-y-auto">
-            {getValoresUnicos(filtroActivo).map((val, idx) => (
-              <label key={idx} className="flex items-center gap-2 mb-1">
-                <input
-                  type="checkbox"
-                  checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
-                  onChange={() => toggleValor(filtroActivo, val)}
-                  className="accent-green-600"
-                />
-                {val}
-              </label>
-            ))}
-          </div>
-          <div className="flex justify-between mt-3">
-            <button
-              onClick={() => limpiarFiltro(filtroActivo)}
-              className="bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-xs font-medium hover:bg-gray-300"
-            >
-              Borrar
-            </button>
-            <button
-              onClick={() => setFiltroActivo(null)}
-              className="bg-green-600 text-white px-3 py-1 rounded-md text-xs font-medium hover:bg-green-700"
-            >
-              Aceptar
-            </button>
-          </div>
-        </div>
       )}
     </LayoutMayordomo>
   );

@@ -37,7 +37,7 @@ const mayordomoRoutes = [
   <Route key="registro-labores" path="/registrolabores" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Regis_labores /></ProtectedRoute>} />,
   <Route key="historial-labores" path="/historial_labores" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Historial_labor /></ProtectedRoute>} />,
   <Route key="bodega-insumos" path="/bodega_insumos" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Bodega_insu /></ProtectedRoute>} />,
-  <Route key="detalle-producto" path="/detalle_producto/:id" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Detalle_produc /></ProtectedRoute>} />,
+  <Route key="detalle-producto" path="/detalle_producto/:id/:finca" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Detalle_produc /></ProtectedRoute>} />,
   <Route key="variables-clima" path="/variables_climaticasm" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Variables_climam /></ProtectedRoute>} />,
   <Route key="registrar-clima" path="/registrar_climam" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Registrar_vclima /></ProtectedRoute>} />,
   <Route key="informes-mayor" path="/informes_mayordomo" element={<ProtectedRoute allowedRoles={["admin","mayordomo"]}><Informes_mayor /></ProtectedRoute>} />,

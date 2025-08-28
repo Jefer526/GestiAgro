@@ -203,7 +203,7 @@ const Bodega_insu = () => {
                       <button
                         onClick={() =>
                           navigate(
-                            `/detalleprodmay/${d.id}/${encodeURIComponent(finca.nombre || finca)}`
+                            `/detalle_producto/${d.id}/${encodeURIComponent(finca.nombre || finca)}`
                           )
                         }
                         className="bg-blue-100 text-blue-800 px-4 py-1 rounded-full text-sm font-medium flex items-center gap-1 justify-center mx-auto"
