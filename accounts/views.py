@@ -6,6 +6,11 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
+from django.core.cache import cache
+from django.utils import timezone
+from datetime import timedelta
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -166,8 +171,11 @@ class ChangePasswordAPIView(APIView):
         if not user.check_password(old_password):
             return Response({"detail": "Contraseña actual incorrecta."}, status=400)
 
-        if len(new_password) < 8:
-            return Response({"detail": "La nueva contraseña debe tener al menos 8 caracteres."}, status=400)
+        # ✅ Validación con los AUTH_PASSWORD_VALIDATORS
+        try:
+            validate_password(new_password, user=user)
+        except ValidationError as e:
+            return Response({"detail": e.messages}, status=400)
 
         user.set_password(new_password)
         user.save()
@@ -341,15 +349,41 @@ class SendVerificationCodeAPIView(APIView):
         except User.DoesNotExist:
             return Response({"detail": "Correo no registrado."}, status=404)
 
-        code = get_random_string(length=6, allowed_chars="0123456789")
+        limit_key = f"verify_count_{user.id}"
+        expire_key = f"verify_expire_{user.id}"
+        count = cache.get(limit_key, 0)
 
-        from django.core.cache import cache
-        cache.set(f"verify_code_{user.id}", code, timeout=300)
+        # 🚦 Si ya superó el límite
+        if count >= settings.PASSWORD_RESET_LIMIT:
+            expire_at = cache.get(expire_key)
+            if expire_at:
+                now = timezone.now()
+                remaining = int((expire_at - now).total_seconds())
+                if remaining > 0:
+                    minutos = remaining // 60
+                    segundos = remaining % 60
+                    return Response(
+                        {"detail": f"Has alcanzado el límite de envíos. Intenta de nuevo en {minutos} min {segundos} seg."},
+                        status=429,
+                    )
+            return Response(
+                {"detail": "Has alcanzado el límite de envíos. Intenta más tarde."},
+                status=429,
+            )
+
+        # Generar código
+        code = get_random_string(length=6, allowed_chars="0123456789")
+        cache.set(f"verify_code_{user.id}", code, timeout=settings.PASSWORD_RESET_CODE_TIMEOUT)
+
+        # Incrementar contador y registrar expiración
+        window = settings.PASSWORD_RESET_LIMIT_WINDOW
+        cache.set(limit_key, count + 1, timeout=window)
+        cache.set(expire_key, timezone.now() + timedelta(seconds=window), timeout=window)
 
         try:
             send_mail(
                 subject="Código de verificación - GestiAgro",
-                message=f"Tu código de verificación es para su cambio de clave es: {code} // Si usted no ha solicitado este cambio, por favor ignore este mensaje.",
+                message=f"Tu código de verificación es: {code}\n\nSi no solicitaste este cambio, ignora este mensaje.",
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[user.email],
                 fail_silently=False,
@@ -376,13 +410,16 @@ class VerifyCodeAPIView(APIView):
         except User.DoesNotExist:
             return Response({"detail": "Correo no registrado."}, status=404)
 
-        from django.core.cache import cache
         saved_code = cache.get(f"verify_code_{user.id}")
 
         if not saved_code or saved_code != code:
             return Response({"detail": "Código inválido o expirado."}, status=400)
 
+        # ✅ Código correcto → limpiar código y contador
         cache.delete(f"verify_code_{user.id}")
+        cache.delete(f"verify_count_{user.id}")
+        cache.delete(f"verify_expire_{user.id}")
+
         return Response({"detail": "Código verificado."}, status=200)
 
 
@@ -397,13 +434,16 @@ class ResetPasswordAPIView(APIView):
         if not email or not password:
             return Response({"detail": "Faltan datos."}, status=400)
 
-        if len(password) < 8:
-            return Response({"detail": "La contraseña debe tener al menos 8 caracteres."}, status=400)
-
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
             return Response({"detail": "Usuario no encontrado."}, status=404)
+
+        # ✅ Validación con los AUTH_PASSWORD_VALIDATORS
+        try:
+            validate_password(password, user=user)
+        except ValidationError as e:
+            return Response({"detail": e.messages}, status=400)
 
         user.set_password(password)
         user.save()

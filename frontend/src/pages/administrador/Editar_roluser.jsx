@@ -86,7 +86,7 @@ const Editar_roluser = () => {
 
   const handleSave = async () => {
     try {
-      await accountsApi.patchUser(usuario.id, {
+      await accountsApi.updateUser(usuario.id, {
         nombre: usuario.nombre,
         telefono: usuario.telefono,
         email: usuario.email,

@@ -20,7 +20,12 @@ const C_correo = () => {
       navigate("/confirmar-codigo", { state: { email } });
     } catch (err) {
       console.error("Error enviando código:", err);
-      setError("No se pudo enviar el código. Intenta más tarde.");
+
+      // 👇 Captura el mensaje del backend si existe (ej: tiempo de espera)
+      const backendMsg =
+        err.response?.data?.detail || "No se pudo enviar el código. Intenta más tarde.";
+
+      setError(backendMsg);
     } finally {
       setCargando(false);
     }
@@ -63,9 +68,12 @@ const C_correo = () => {
           Enviar email a: <span className="underline">{email}</span>
         </p>
 
-        {error && <p className="text-red-200 text-sm mb-4">{error}</p>}
-
-
+        {/* ⚠️ Alerta de error */}
+        {error && (
+          <div className="bg-red-500/90 text-white px-4 py-2 rounded-md mb-4 text-sm shadow">
+            {error}
+          </div>
+        )}
 
         {/* Botón Confirmar */}
         <button
