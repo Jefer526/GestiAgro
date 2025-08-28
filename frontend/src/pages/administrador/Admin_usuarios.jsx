@@ -64,7 +64,7 @@ const Admin_usuarios = () => {
                 : "usuario")
           ),
           email: u.email || "",
-          finca: u.finca_asignada?.nombre || "Sin finca", // 👈 nueva columna
+          finca: u.finca_asignada?.nombre || "Sin finca",
           is_active: !!u.is_active,
           estado: u.is_active ? "Activo" : "Inactivo",
           _raw: u,
@@ -146,6 +146,26 @@ const Admin_usuarios = () => {
     }, 0);
   };
 
+  // === cerrar menú al hacer click fuera ===
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      const menu = document.getElementById("floating-menu");
+      if (
+        menuAbiertoId !== null &&
+        menu &&
+        !menu.contains(e.target) &&
+        !e.target.closest(".menu-trigger")
+      ) {
+        setMenuAbiertoId(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [menuAbiertoId]);
+
   // === TOGGLE ACTIVAR/INACTIVAR ===
   const handleToggleActivo = async (id_usuario) => {
     const u = usuarios.find((x) => x.id_usuario === id_usuario);
@@ -218,7 +238,7 @@ const Admin_usuarios = () => {
                 <td className="p-4 border">{u.telefono}</td>
                 <td className="p-4 border">{u.rol}</td>
                 <td className="p-4 border">{u.email}</td>
-                <td className="p-4 border">{u.finca}</td> {/* 👈 nueva columna */}
+                <td className="p-4 border">{u.finca}</td>
                 <td className="p-4 border">
                   <span
                     className={`px-2 py-1 rounded text-sm ${
