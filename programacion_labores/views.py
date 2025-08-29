@@ -5,6 +5,7 @@ from rest_framework.exceptions import PermissionDenied, ValidationError
 from .models import ProgramacionLabor
 from .serializers import ProgramacionLaborSerializer
 
+
 class ProgramacionLaborViewSet(viewsets.ModelViewSet):
     queryset = ProgramacionLabor.objects.all()
     serializer_class = ProgramacionLaborSerializer
@@ -18,12 +19,12 @@ class ProgramacionLaborViewSet(viewsets.ModelViewSet):
             return ProgramacionLabor.objects.filter(finca=finca) if finca else ProgramacionLabor.objects.none()
 
         if user.rol == "agronomo":
-            return ProgramacionLabor.objects.filter(finca__agronomo=user)
+            # ✅ Ahora ve TODAS las labores, no filtradas por finca
+            return ProgramacionLabor.objects.all()
 
         if user.rol == "admin":
             return ProgramacionLabor.objects.all()
 
-        # 🚨 En lugar de error 500, devolvemos vacío
         return ProgramacionLabor.objects.none()
 
     def perform_create(self, serializer):
@@ -45,7 +46,6 @@ class ProgramacionLaborViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         user = request.user
 
-        # 📌 Mayordomo: solo puede cambiar el estado
         if user.rol == "mayordomo":
             estado = request.data.get("estado")
             if not estado:
@@ -54,5 +54,5 @@ class ProgramacionLaborViewSet(viewsets.ModelViewSet):
             instance.save()
             return Response(self.get_serializer(instance).data)
 
-        # 📌 Admin y Agrónomo: pueden actualizar todo
+        # ✅ Admin y Agrónomo pueden actualizar todo
         return super().partial_update(request, *args, **kwargs)
