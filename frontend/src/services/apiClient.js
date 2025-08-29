@@ -261,5 +261,29 @@ export const fitosanitarioApi = {
     api.get("/api/fitosanitario/monitoreos/resumen/", { params }),
 };
 
+// ===== API Labores =====
+export const laboresApi = {
+  list: (params = {}) => api.get("/api/labores/", { params }),
+  get: (id) => api.get(`/api/labores/${id}/`),
+  create: (data) => api.post("/api/labores/", data),
+  update: (id, data) => api.patch(`/api/labores/${id}/`, data),
+  delete: (id) => api.delete(`/api/labores/${id}/`),
+};
+
+
+// ===== API Trabajadores =====
+export const trabajadoresApi = {
+  // todos
+  list: () => api.get("/api/trabajadores/"),
+  get: (id) => api.get(`/api/trabajadores/${id}/`),
+
+  // trabajadores asignados a una finca
+  internos: (fincaId) => api.get(`/api/trabajadores/?finca=${fincaId}`),
+
+  // trabajadores NO asignados a esa finca
+  externos: (fincaId) => api.get(`/api/trabajadores/?externos_de=${fincaId}`),
+};
+
+
 // ===== Export principal =====
 export default api;

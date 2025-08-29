@@ -1,40 +1,124 @@
 // src/pages/mayordomo/Regis_labores.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   IconTrash,
   IconPlus,
-  IconSearch,
   IconCheck,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
-
-// ✅ Importa el layout del Mayordomo
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
+
+// ✅ APIs
+import {
+  getMe,
+  lotesApi,
+  trabajadoresApi,
+  laboresApi,
+} from "../../services/apiClient";
 
 const Regis_labores = () => {
   const navigate = useNavigate();
 
-  // Estado de filas
-  const [filasLocal, setFilasLocal] = useState([{}]);
+  // Datos iniciales
+  const [finca, setFinca] = useState(null);
+  const [lotes, setLotes] = useState([]);
+  const [trabajadoresLocales, setTrabajadoresLocales] = useState([]);
+  const [trabajadoresExternos, setTrabajadoresExternos] = useState([]);
+
+  // Formulario principal
+  const [form, setForm] = useState({
+    fecha: "",
+    lote: "",
+    descripcion: "",
+  });
+
+  // Filas de trabajadores
+  const [filasLocal, setFilasLocal] = useState([
+    { trabajador: "", jornal: "", ejecucion: "", um: "" },
+  ]);
   const [filasOtraFinca, setFilasOtraFinca] = useState([]);
 
   const [alertaVisible, setAlertaVisible] = useState(false);
 
+  // === Cargar datos de backend ===
+  useEffect(() => {
+    getMe().then((res) => {
+      const fincaAsignada = res.data.finca_asignada;
+      setFinca(fincaAsignada);
+
+      // 🔹 Lotes filtrados por finca asignada
+      lotesApi.list().then((r) => {
+        const filtrados = r.data.filter((l) => l.finca === fincaAsignada.id);
+        setLotes(filtrados);
+      });
+
+      // 🔹 Trabajadores: filtro en frontend según finca
+      trabajadoresApi.list().then((r) => {
+        const internos = r.data.filter((t) => t.finca === fincaAsignada.id);
+        const externos = r.data.filter((t) => t.finca !== fincaAsignada.id);
+        setTrabajadoresLocales(internos);
+        setTrabajadoresExternos(externos);
+      });
+    });
+  }, []);
+
+  // === Manejo de cambios ===
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleChangeFila = (tipo, idx, field, value) => {
+    if (tipo === "local") {
+      const nuevas = [...filasLocal];
+      nuevas[idx][field] = value;
+      setFilasLocal(nuevas);
+    } else {
+      const nuevas = [...filasOtraFinca];
+      nuevas[idx][field] = value;
+      setFilasOtraFinca(nuevas);
+    }
+  };
+
   // === Funciones tabla ===
-  const añadirFilaLocal = () => setFilasLocal((prev) => [...prev, {}]);
-  const añadirFilaOtra = () => setFilasOtraFinca((prev) => [...prev, {}]);
+  const añadirFilaLocal = () =>
+    setFilasLocal((prev) => [
+      ...prev,
+      { trabajador: "", jornal: "", ejecucion: "", um: "" },
+    ]);
+  const añadirFilaOtra = () =>
+    setFilasOtraFinca((prev) => [
+      ...prev,
+      { trabajador: "", jornal: "", ejecucion: "", um: "" },
+    ]);
   const eliminarFilaLocal = (idx) =>
     setFilasLocal((prev) => prev.filter((_, i) => i !== idx));
   const eliminarFilaOtra = (idx) =>
     setFilasOtraFinca((prev) => prev.filter((_, i) => i !== idx));
 
   // === Registrar ===
-  const handleRegistrar = () => {
-    setAlertaVisible(true);
-    setTimeout(() => {
-      setAlertaVisible(false);
-      navigate("/historial_labores");
-    }, 2000);
+  const handleRegistrar = async () => {
+    try {
+      const payload = {
+        fecha: form.fecha,
+        lote: form.lote,
+        descripcion: form.descripcion,
+        trabajador_interno: filasLocal.length ? filasLocal[0].trabajador : null,
+        trabajador_externo: filasOtraFinca.length
+          ? filasOtraFinca[0].trabajador
+          : null,
+      };
+
+      await laboresApi.create(payload);
+
+      setAlertaVisible(true);
+      setTimeout(() => {
+        setAlertaVisible(false);
+        navigate("/historial_labores");
+      }, 2000);
+    } catch (err) {
+      console.error("❌ Error registrando labor:", err);
+      alert("Hubo un error al registrar la labor.");
+    }
   };
 
   return (
@@ -56,29 +140,45 @@ const Regis_labores = () => {
           <div className="grid md:grid-cols-2 gap-x-4 gap-y-6">
             <div>
               <p className="font-bold mb-1">Finca</p>
-              <select className="border border-gray-300 p-2 rounded-md text-lg w-full">
-                <option>Seleccionar finca</option>
-                <option>La esmeralda</option>
-                <option>Las palmas</option>
-                <option>Las carolinas</option>
-              </select>
+              <input
+                value={finca?.nombre || ""}
+                disabled
+                className="border border-gray-300 p-2 rounded-md text-lg w-full bg-gray-100"
+              />
             </div>
             <div>
               <p className="font-bold mb-1">Lote</p>
-              <select className="border border-gray-300 p-2 rounded-md text-lg w-full">
-                <option>Seleccionar lote</option>
+              <select
+                name="lote"
+                value={form.lote}
+                onChange={handleChange}
+                className="border border-gray-300 p-2 rounded-md text-lg w-full"
+              >
+                <option value="">Seleccionar lote</option>
+                {lotes.map((l) => (
+                  <option key={l.id} value={l.id}>
+                    {l.lote}
+                  </option>
+                ))}
               </select>
             </div>
             <div>
               <p className="font-bold mb-1">Labor</p>
-              <select className="border border-gray-300 p-2 rounded-md text-lg w-full">
-                <option>Seleccionar labor</option>
-              </select>
+              <input
+                name="descripcion"
+                value={form.descripcion}
+                onChange={handleChange}
+                placeholder="Ej: Podar, Fertilizar..."
+                className="border border-gray-300 p-2 rounded-md text-lg w-full"
+              />
             </div>
             <div>
               <p className="font-bold mb-1">Fecha</p>
               <input
                 type="date"
+                name="fecha"
+                value={form.fecha}
+                onChange={handleChange}
                 className="border border-gray-300 p-2 rounded-md text-lg w-full"
               />
             </div>
@@ -89,7 +189,6 @@ const Regis_labores = () => {
             <table className="w-full text-left text-lg">
               <thead>
                 <tr className="border-b border-gray-300">
-                  <th className="p-2">ID</th>
                   <th className="p-2">Trabajador</th>
                   <th className="p-2">Jornal</th>
                   <th className="p-2">Ejecución</th>
@@ -98,25 +197,52 @@ const Regis_labores = () => {
                 </tr>
               </thead>
 
-              {/* Sección: misma finca */}
               <tbody>
-                {filasLocal.map((_, i) => (
+                {/* Sección: misma finca */}
+                {filasLocal.map((fila, i) => (
                   <tr key={`local-${i}`}>
-                    <td className="p-2 flex items-center">
-                      <IconSearch className="w-5 h-5 text-gray-600 mr-1" />
-                      <input className="border border-gray-300 p-1 w-full rounded-md text-lg" />
+                    <td className="p-2">
+                      <select
+                        value={fila.trabajador}
+                        onChange={(e) =>
+                          handleChangeFila("local", i, "trabajador", e.target.value)
+                        }
+                        className="border border-gray-300 p-2 rounded-md text-lg w-full"
+                      >
+                        <option value="">Seleccione</option>
+                        {trabajadoresLocales.map((t) => (
+                          <option key={t.id} value={t.id}>
+                            {t.nombre}
+                          </option>
+                        ))}
+                      </select>
                     </td>
                     <td className="p-2">
-                      <input className="border border-gray-300 p-1 w-56 rounded-md text-lg" />
+                      <input
+                        value={fila.jornal}
+                        onChange={(e) =>
+                          handleChangeFila("local", i, "jornal", e.target.value)
+                        }
+                        className="border border-gray-300 p-1 w-full rounded-md text-lg"
+                      />
                     </td>
                     <td className="p-2">
-                      <input className="border border-gray-300 p-1 w-56 rounded-md text-lg" />
+                      <input
+                        value={fila.ejecucion}
+                        onChange={(e) =>
+                          handleChangeFila("local", i, "ejecucion", e.target.value)
+                        }
+                        className="border border-gray-300 p-1 w-full rounded-md text-lg"
+                      />
                     </td>
                     <td className="p-2">
-                      <input className="border border-gray-300 p-1 w-56 rounded-md text-lg" />
-                    </td>
-                    <td className="p-2">
-                      <input className="border border-gray-300 p-1 w-full rounded-md text-lg" />
+                      <input
+                        value={fila.um}
+                        onChange={(e) =>
+                          handleChangeFila("local", i, "um", e.target.value)
+                        }
+                        className="border border-gray-300 p-1 w-full rounded-md text-lg"
+                      />
                     </td>
                     <td className="p-2">
                       <button onClick={() => eliminarFilaLocal(i)}>
@@ -126,9 +252,8 @@ const Regis_labores = () => {
                   </tr>
                 ))}
 
-                {/* Botón debajo de su sección */}
                 <tr>
-                  <td colSpan={6} className="p-2">
+                  <td colSpan={5} className="p-2">
                     <button
                       onClick={añadirFilaLocal}
                       className="flex items-center gap-2 text-green-700 hover:text-green-800 text-lg"
@@ -138,40 +263,59 @@ const Regis_labores = () => {
                   </td>
                 </tr>
 
-                {/* Separador visual */}
+                {/* Sección: otra finca */}
                 <tr>
-                  <td colSpan={6} className="pt-4">
-                    <div className="h-px bg-gray-200" />
-                  </td>
-                </tr>
-
-                {/* Título segunda sección */}
-                <tr>
-                  <td colSpan={6} className="pb-2">
+                  <td colSpan={5} className="pt-4">
                     <p className="font-semibold text-gray-700">
                       Trabajador de otra finca
                     </p>
                   </td>
                 </tr>
 
-                {/* Sección: otra finca */}
-                {filasOtraFinca.map((_, i) => (
+                {filasOtraFinca.map((fila, i) => (
                   <tr key={`otra-${i}`}>
-                    <td className="p-2 flex items-center">
-                      <IconSearch className="w-5 h-5 text-gray-600 mr-1" />
-                      <input className="border border-gray-300 p-1 w-full rounded-md text-lg" />
+                    <td className="p-2">
+                      <select
+                        value={fila.trabajador}
+                        onChange={(e) =>
+                          handleChangeFila("otra", i, "trabajador", e.target.value)
+                        }
+                        className="border border-gray-300 p-2 rounded-md text-lg w-full"
+                      >
+                        <option value="">Seleccione</option>
+                        {trabajadoresExternos.map((t) => (
+                          <option key={t.id} value={t.nombre}>
+                            {t.nombre}
+                          </option>
+                        ))}
+                      </select>
                     </td>
                     <td className="p-2">
-                      <input className="border border-gray-300 p-1 w-56 rounded-md text-lg" />
+                      <input
+                        value={fila.jornal}
+                        onChange={(e) =>
+                          handleChangeFila("otra", i, "jornal", e.target.value)
+                        }
+                        className="border border-gray-300 p-1 w-full rounded-md text-lg"
+                      />
                     </td>
                     <td className="p-2">
-                      <input className="border border-gray-300 p-1 w-56 rounded-md text-lg" />
+                      <input
+                        value={fila.ejecucion}
+                        onChange={(e) =>
+                          handleChangeFila("otra", i, "ejecucion", e.target.value)
+                        }
+                        className="border border-gray-300 p-1 w-full rounded-md text-lg"
+                      />
                     </td>
                     <td className="p-2">
-                      <input className="border border-gray-300 p-1 w-56 rounded-md text-lg" />
-                    </td>
-                    <td className="p-2">
-                      <input className="border border-gray-300 p-1 w-full rounded-md text-lg" />
+                      <input
+                        value={fila.um}
+                        onChange={(e) =>
+                          handleChangeFila("otra", i, "um", e.target.value)
+                        }
+                        className="border border-gray-300 p-1 w-full rounded-md text-lg"
+                      />
                     </td>
                     <td className="p-2">
                       <button onClick={() => eliminarFilaOtra(i)}>
@@ -181,15 +325,13 @@ const Regis_labores = () => {
                   </tr>
                 ))}
 
-                {/* Botón debajo de su sección */}
                 <tr>
-                  <td colSpan={6} className="p-2">
+                  <td colSpan={5} className="p-2">
                     <button
                       onClick={añadirFilaOtra}
                       className="flex items-center gap-2 text-green-700 hover:text-green-800 text-lg"
                     >
-                      <IconPlus className="w-6 h-6" /> Añadir Trabajador de otra
-                      finca
+                      <IconPlus className="w-6 h-6" /> Añadir Trabajador de otra finca
                     </button>
                   </td>
                 </tr>
@@ -198,7 +340,10 @@ const Regis_labores = () => {
           </div>
 
           <textarea
-            placeholder="Observación"
+            name="descripcion"
+            placeholder="Observación adicional"
+            value={form.descripcion}
+            onChange={handleChange}
             className="border border-gray-300 p-2 rounded-md w-full mt-4 text-lg"
             rows={2}
           ></textarea>

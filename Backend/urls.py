@@ -22,7 +22,7 @@ urlpatterns = [
     path("api/cuaderno/", include("cuaderno_campo.urls")),
     path("api/produccion/", include("produccion.urls")),
     path("api/fitosanitario/", include("fitosanitario.urls")),
-    
+    path("api/labores", include("labores.urls")),
 
 ]
 
