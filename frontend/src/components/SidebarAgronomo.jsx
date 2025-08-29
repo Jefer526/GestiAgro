@@ -139,7 +139,6 @@ const SidebarAgronomo = () => {
           { icon: <IconHistory />, routes: ["/Historialagro"] },
           { icon: <IconBook />, routes: ["/Historialcampo", "/detallecampo", "/cuadernocampo"] },
           { icon: <IconPlant2 />, routes: ["/produccionagro"] },
-          { icon: <IconChartBar />, routes: ["/Informesagro"] },
           { icon: <IconBug />, routes: ["/manejofitosanitario"] },
           { icon: <IconBox />, routes: ["/Bodegaagro", "/agregarproducto", "/detallesagrop", "/bodegaagro", "/registrarmovimiento"] },
           { icon: <IconCloudRain />, routes: ["/variablesclimaticas", "/Registrarclima"] },

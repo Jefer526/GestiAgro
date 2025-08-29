@@ -141,7 +141,6 @@ const SidebarMayordomo = () => {
           { icon: <IconHistory />, route: "/historial_labores" },
           { icon: <IconBook />, route: ["/cuadernocampom", "/registro_campom", "/detalle_registrocampom"] },
           { icon: <IconPlant2 />, route: "/produccion_mayor" },
-          { icon: <IconChartBar />, route: "/informes_mayordomo" },
           { icon: <IconCalendarClock />, route: "/programacion_labores" },
           { icon: <IconBug />, route: "/manejo_fitosanitariom" },
           { icon: <IconBox />, route: ["/bodega_insumos", "/detalle_producto"] },

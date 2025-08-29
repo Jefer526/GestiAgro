@@ -85,16 +85,7 @@ const Home_mayo = () => {
       iconBg: "bg-white/70",
       text: "text-green-700",
     },
-    {
-      icon: <IconChartBar className="w-8 h-8" />,
-      label: "Informes",
-      desc: "Consulta de reportes y análisis agrícolas.",
-      ruta: "/informes_mayordomo",
-      gradient: "from-fuchsia-500/20 to-pink-500/20",
-      ring: "ring-fuchsia-300/40",
-      iconBg: "bg-white/70",
-      text: "text-fuchsia-700",
-    },
+
     {
       icon: <IconCalendarClock className="w-8 h-8" />,
       label: "Programación de labores",
