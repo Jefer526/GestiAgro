@@ -74,6 +74,17 @@ const Home_agro = () => {
       iconBg: "bg-white/70",
       text: "text-green-700",
     },
+  
+    {
+      icon: <IconChartBar className="w-8 h-8" />,
+      label: "Informes",
+      desc: "Consulta de reportes y análisis agrícolas.",
+      ruta: "/Informesagro",
+      gradient: "from-sky-500/20 to-blue-500/20",
+      ring: "ring-sky-300/40",
+      iconBg: "bg-white/70",
+      text: "text-sky-700",
+    },
     {
       icon: <IconBug className="w-8 h-8" />,
       label: "Manejo fitosanitario",

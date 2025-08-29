@@ -180,6 +180,7 @@ export const variablesClimaApi = {
   post: (data) => api.post("/api/clima/variablesclimaticas/", data),
   put: (id, data) => api.put(`/api/clima/variablesclimaticas/${id}/`, data),
   delete: (id) => api.delete(`/api/clima/variablesclimaticas/${id}/`),
+  resumen: (params = {}) => api.get("/api/clima/variablesclimaticas/resumen/", { params }),
 };
 
 // ===== API Fincas =====
@@ -241,12 +242,18 @@ export const produccionApi = {
   resumenMensual: (params = {}) =>
     api.get("/api/produccion/resumen_mensual/", { params }),
 
+  resumenFincaMensual: (params = {}) =>       // 👈 nuevo
+    api.get("/api/produccion/resumen_finca_mensual/", { params }),
+
   resumenFinca: (params = {}) =>
     api.get("/api/produccion/resumen_finca/", { params }),
 
   // 🚨 Nuevo endpoint de depuración
   resumenDebug: (params = {}) =>
     api.get("/api/produccion/resumen_debug/", { params }),
+
+
+
 };
 
 // ===== API Fitosanitario =====
