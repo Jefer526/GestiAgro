@@ -284,6 +284,12 @@ export const trabajadoresApi = {
   externos: (fincaId) => api.get(`/api/trabajadores/?externos_de=${fincaId}`),
 };
 
+export const programacionLaboresApi = {
+  list: () => api.get("/api/programacionlabores/"),
+  create: (data) => api.post("/api/programacionlabores/", data),
+  update: (id, data) => api.patch(`/api/programacionlabores/${id}/`, data),
+  delete: (id) => api.delete(`/api/programacionlabores/${id}/`),
+};
 
 // ===== Export principal =====
 export default api;

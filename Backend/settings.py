@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     "produccion",
     "fitosanitario",
     "labores",
+    "programacion_labores",
 ]
 
 

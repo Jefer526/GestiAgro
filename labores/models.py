@@ -1,9 +1,8 @@
-# labores/models.py
 from django.db import models
 from fincas.models import Finca, Lote
 from trabajadores.models import Trabajador
 
-# labores/models.py
+
 class Labor(models.Model):
     fecha = models.DateField()
     finca = models.ForeignKey(
@@ -19,27 +18,25 @@ class Labor(models.Model):
         related_name="labores"
     )
     
-    # Campo de la labor (qué se hizo)
+    # Qué se hizo
     descripcion = models.TextField()
     
-    # Nuevo campo para observaciones adicionales
+    # Observaciones adicionales
     observaciones = models.TextField(null=True, blank=True)
-
-    trabajador_interno = models.ForeignKey(
-        Trabajador,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="labores_internas"
-    )
-    trabajador_externo = models.CharField(
-        max_length=200,
-        null=True,
-        blank=True,
-        help_text="Si la labor fue realizada por alguien no asignado a la finca."
-    )
 
     creado_en = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Labor {self.id} - {self.fecha} - {self.finca.nombre}"
+
+
+class DetalleLabor(models.Model):
+    labor = models.ForeignKey(Labor, on_delete=models.CASCADE, related_name="detalles")
+    trabajador = models.ForeignKey(Trabajador, on_delete=models.SET_NULL, null=True, blank=True)
+    trabajador_externo = models.CharField(max_length=200, null=True, blank=True)  # 👈 varios externos aquí
+    jornal = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    ejecucion = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    um = models.CharField(max_length=50, null=True, blank=True)
+
+    def __str__(self):
+        return f"Detalle {self.id} - {self.trabajador or self.trabajador_externo} - {self.labor}"
