@@ -3,14 +3,15 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Avg
 from django.db.models.functions import ExtractMonth, ExtractYear
-
 from .models import Monitoreo, RegistroPlaga
 from .serializers import MonitoreoSerializer
-
 
 class MonitoreoViewSet(viewsets.ModelViewSet):
     queryset = Monitoreo.objects.all().order_by("-fecha")
     serializer_class = MonitoreoSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(creado_por=self.request.user)
 
     # 📊 Endpoint de resumen
     @action(detail=False, methods=["get"], url_path="resumen")
@@ -21,11 +22,8 @@ class MonitoreoViewSet(viewsets.ModelViewSet):
         plaga = request.query_params.get("plaga")
         anio = request.query_params.get("anio")
 
-        registros = RegistroPlaga.objects.select_related(
-            "monitoreo", "monitoreo__finca", "monitoreo__lote"
-        )
+        registros = RegistroPlaga.objects.select_related("monitoreo", "monitoreo__finca", "monitoreo__lote")
 
-        # 🔹 Soporte múltiple en filtros
         if finca:
             finca_ids = finca.split(",")
             registros = registros.filter(monitoreo__finca_id__in=finca_ids)
@@ -45,18 +43,14 @@ class MonitoreoViewSet(viewsets.ModelViewSet):
         if anio:
             registros = registros.filter(monitoreo__fecha__year=anio)
 
-        # 📊 Resumen con nombres incluidos
         resumen = (
             registros
-            .annotate(
-                anio=ExtractYear("monitoreo__fecha"),
-                mes=ExtractMonth("monitoreo__fecha"),
-            )
+            .annotate(anio=ExtractYear("monitoreo__fecha"), mes=ExtractMonth("monitoreo__fecha"))
             .values(
                 "monitoreo__finca_id",
-                "monitoreo__finca__nombre",   # 👈 nombre finca
+                "monitoreo__finca__nombre",
                 "monitoreo__lote_id",
-                "monitoreo__lote__lote",      # 👈 nombre lote
+                "monitoreo__lote__lote",
                 "familia",
                 "plaga",
                 "anio",

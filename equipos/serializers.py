@@ -1,18 +1,18 @@
-# equipos/serializers.py
 from rest_framework import serializers
 from .models import Maquina, Mantenimiento, LaborMaquinaria
 
 
 class MantenimientoSerializer(serializers.ModelSerializer):
+    # 👇 Forzar que se trate como fecha plana sin TZ
+    fecha = serializers.DateField(format="%Y-%m-%d", input_formats=["%Y-%m-%d"])
+
     class Meta:
         model = Mantenimiento
         fields = "__all__"
-
+        read_only_fields = ["creado_por", "fecha_creacion"]
 
 class MaquinaSerializer(serializers.ModelSerializer):
-    # 👇 nombre legible de la finca
     ubicacion_nombre = serializers.CharField(source="ubicacion.nombre", read_only=True)
-    # 👇 lista de mantenimientos relacionados
     mantenimientos = MantenimientoSerializer(many=True, read_only=True)
 
     class Meta:
@@ -22,11 +22,12 @@ class MaquinaSerializer(serializers.ModelSerializer):
             "codigo_equipo",
             "maquina",
             "referencia",
-            "ubicacion",          # ID de la finca
-            "ubicacion_nombre",   # nombre de la finca
+            "ubicacion",
+            "ubicacion_nombre",
             "estado",
-            "mantenimientos",     # mantenimientos asociados
+            "mantenimientos",
         ]
+        read_only_fields = ["creado_por", "fecha_creacion"]
 
 
 class LaborMaquinariaSerializer(serializers.ModelSerializer):
@@ -38,25 +39,22 @@ class LaborMaquinariaSerializer(serializers.ModelSerializer):
         model = LaborMaquinaria
         fields = [
             "id",
-            "maquina",
-            "maquina_nombre",
+            "maquina", "maquina_nombre",
             "fecha",
             "labor",
             "horometro_inicio",
             "horometro_fin",
-            "finca",
-            "finca_nombre",
-            "lote",
-            "lote_nombre",
+            "finca", "finca_nombre",
+            "lote", "lote_nombre",
             "observaciones",
         ]
+        read_only_fields = ["creado_por", "fecha_creacion"]
 
     def validate(self, data):
         maquina = data.get("maquina")
         horometro_inicio = data.get("horometro_inicio")
         horometro_fin = data.get("horometro_fin")
 
-        # Buscar la última labor de esa máquina
         ultima_labor = (
             LaborMaquinaria.objects.filter(maquina=maquina)
             .order_by("-fecha", "-id")
@@ -64,18 +62,16 @@ class LaborMaquinariaSerializer(serializers.ModelSerializer):
         )
 
         if ultima_labor:
-            # El horómetro inicio debe coincidir con el último fin
             if horometro_inicio != ultima_labor.horometro_fin:
                 raise serializers.ValidationError(
-                    {
-                        "horometro_inicio": f"Debe ser igual al último horómetro final registrado ({ultima_labor.horometro_fin})."
-                    }
+                    {"horometro_inicio": f"Debe ser igual al último horómetro final registrado ({ultima_labor.horometro_fin})."}
                 )
 
-        # Validar que el horómetro fin sea mayor
         if horometro_fin <= horometro_inicio:
             raise serializers.ValidationError(
                 {"horometro_fin": "El horómetro final debe ser mayor que el inicial."}
             )
 
+        if horometro_fin is None:
+            raise serializers.ValidationError({"horometro_fin": "Este campo es obligatorio."})
         return data

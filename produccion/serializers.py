@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Produccion
 
+
 class ProduccionSerializer(serializers.ModelSerializer):
     finca_nombre = serializers.CharField(source="finca.nombre", read_only=True)
     lote_nombre = serializers.CharField(source="lote.lote", read_only=True)
@@ -14,3 +15,4 @@ class ProduccionSerializer(serializers.ModelSerializer):
             "lote", "lote_nombre", "cultivo_nombre",
             "cantidad", "unidad", "observaciones"
         ]
+        read_only_fields = ["creado_por", "fecha_creacion"]

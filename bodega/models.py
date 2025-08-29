@@ -1,8 +1,8 @@
 from django.db import models
-from fincas.models import Finca, Lote   # suponiendo que ya existen
+from fincas.models import Finca, Lote
+from core.models import BaseAuditModel
 
-
-class Producto(models.Model):
+class Producto(BaseAuditModel):
     CATEGORIAS = [
         ("Combustible", "Combustible"),
         ("Fertilizante", "Fertilizante"),
@@ -22,7 +22,7 @@ class Producto(models.Model):
         return self.nombre
 
 
-class StockFinca(models.Model):
+class StockFinca(BaseAuditModel):
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name="stocks")
     finca = models.ForeignKey(Finca, on_delete=models.CASCADE, related_name="stocks")
     cantidad = models.DecimalField(max_digits=12, decimal_places=2, default=0)
@@ -32,9 +32,9 @@ class StockFinca(models.Model):
 
     def __str__(self):
         return f"{self.producto.nombre} - {self.finca.nombre} ({self.cantidad}{self.producto.unidad})"
-    
 
-class Movimiento(models.Model):
+
+class Movimiento(BaseAuditModel):
     TIPOS = [("Entrada", "Entrada"), ("Salida", "Salida")]
 
     fecha = models.DateField()

@@ -42,7 +42,17 @@ const Registrar_novedad_hv = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const payload = { maquina: id, ...formData };
+      // 🔹 Normalizar fecha para evitar desfase por zona horaria
+      const fechaLocal = formData.fecha
+        ? new Date(formData.fecha).toISOString().split("T")[0]
+        : null;
+
+      const payload = { 
+        maquina: id, 
+        ...formData, 
+        fecha: fechaLocal 
+      };
+
       console.log("📤 Enviando mantenimiento:", payload);
 
       // 1️⃣ Crear mantenimiento
@@ -50,7 +60,7 @@ const Registrar_novedad_hv = () => {
 
       // 2️⃣ Actualizar estado de la máquina si fue cambiado
       if (formData.estado && formData.estado !== maquina.estado) {
-        await equiposApi.update(id, { estado: formData.estado }); // ✅ CORREGIDO
+        await equiposApi.update(id, { estado: formData.estado });
       }
 
       // 3️⃣ Mostrar alerta y redirigir

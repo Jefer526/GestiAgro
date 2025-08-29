@@ -29,20 +29,26 @@ const Hoja_vida_agro = () => {
   const [ordenCampo, setOrdenCampo] = useState(null);
 
   // === 📌 Obtener máquina y mantenimientos ===
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await equiposApi.get(id);
-        setMaquina(res.data);
-        setMantenimientos(res.data.mantenimientos || []);
-      } catch (err) {
-        console.error("❌ Error al cargar máquina:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [id]);
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const res = await equiposApi.get(id);
+      setMaquina(res.data);
+      let data = res.data.mantenimientos || [];
+
+      // 🔹 Ordenar de más reciente a más antiguo
+      data.sort((a, b) => b.fecha.localeCompare(a.fecha));
+
+      setMantenimientos(data);
+    } catch (err) {
+      console.error("❌ Error al cargar máquina:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchData();
+}, [id]);
+
 
   const columnas = ["fecha", "tipo", "descripcion", "realizado_por", "estado", "detalle"];
 
@@ -201,13 +207,10 @@ const Hoja_vida_agro = () => {
             {mantenimientosFiltrados.length > 0 ? (
               mantenimientosFiltrados.map((item, idx) => (
                 <tr key={idx} className="hover:bg-gray-100">
+                  {/* 🔹 Aquí está la corrección: no usamos new Date */}
                   <td className="p-4 border">
                     {item.fecha
-                      ? new Date(item.fecha).toLocaleDateString("es-ES", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                        })
+                      ? item.fecha.split("-").reverse().join("/") // dd/mm/yyyy
                       : ""}
                   </td>
                   <td className="p-4 border">

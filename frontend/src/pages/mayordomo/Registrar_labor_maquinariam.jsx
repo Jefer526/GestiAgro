@@ -61,6 +61,22 @@ const Registrar_labor_maquinariam = () => {
     fetchData();
   }, [id]);
 
+  // 📌 Mantener horometro_inicio sincronizado con la última labor
+  useEffect(() => {
+    if (labores.length > 0) {
+      const ultima = labores[labores.length - 1];
+      setFormData((prev) => ({
+        ...prev,
+        horometro_inicio: Number(ultima.horometro_fin),
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        horometro_inicio: ultimoHorometro || 0,
+      }));
+    }
+  }, [labores, ultimoHorometro]);
+
   // Inputs
   const handleChange = (e) => {
     let value = e.target.value;
@@ -91,19 +107,18 @@ const Registrar_labor_maquinariam = () => {
 
     const loteObj = lotes.find((lt) => lt.id === Number(lote));
 
-    setLabores([
-      ...labores,
-      {
-        ...formData,
-        loteId: Number(lote),
-        loteNombre: loteObj ? `Lote ${loteObj.lote}` : "—",
-      },
-    ]);
+    const nuevaLabor = {
+      ...formData,
+      loteId: Number(lote),
+      loteNombre: loteObj ? `Lote ${loteObj.lote}` : "—",
+    };
 
+    setLabores([...labores, nuevaLabor]);
+
+    // ⚡ limpiar otros campos (horometro_inicio lo maneja el useEffect)
     setFormData((prev) => ({
       ...prev,
       labor: "",
-      horometro_inicio: Number(horometro_fin),
       horometro_fin: "",
       lote: "",
       observaciones: "",
@@ -114,16 +129,6 @@ const Registrar_labor_maquinariam = () => {
   const eliminarLabor = (idx) => {
     const nuevasLabores = labores.filter((_, i) => i !== idx);
     setLabores(nuevasLabores);
-
-    if (nuevasLabores.length > 0) {
-      const ultima = nuevasLabores[nuevasLabores.length - 1];
-      setFormData((prev) => ({
-        ...prev,
-        horometro_inicio: Number(ultima.horometro_fin),
-      }));
-    } else {
-      setFormData((prev) => ({ ...prev, horometro_inicio: ultimoHorometro || 0 }));
-    }
   };
 
   // ➡️ Guardar todas las labores

@@ -1,7 +1,8 @@
 from django.db import models
-from fincas.models import Finca, Lote  # 👈 importar, no duplicar
+from fincas.models import Finca, Lote
+from core.models import BaseAuditModel
 
-class Produccion(models.Model):
+class Produccion(BaseAuditModel):
     fecha = models.DateField()
     finca = models.ForeignKey(Finca, on_delete=models.CASCADE)
     lote = models.ForeignKey(Lote, on_delete=models.CASCADE)

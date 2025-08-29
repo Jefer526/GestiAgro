@@ -7,15 +7,8 @@ class DetalleLaborSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DetalleLabor
-        fields = [
-            "id",
-            "trabajador",          # FK si es trabajador interno
-            "trabajador_nombre",   # nombre solo lectura
-            "trabajador_externo",  # texto si es trabajador externo
-            "jornal",
-            "ejecucion",
-            "um",
-        ]
+        fields = ["id", "trabajador", "trabajador_nombre", "trabajador_externo", "jornal", "ejecucion", "um"]
+        read_only_fields = ["creado_por", "fecha_creacion"]
 
 
 class LaborSerializer(serializers.ModelSerializer):
@@ -23,16 +16,8 @@ class LaborSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Labor
-        fields = [
-            "id",
-            "fecha",
-            "finca",
-            "lote",
-            "descripcion",
-            "observaciones",
-            "detalles",
-        ]
-        read_only_fields = ["finca"]
+        fields = ["id", "fecha", "finca", "lote", "descripcion", "observaciones", "detalles"]
+        read_only_fields = ["finca", "creado_por", "fecha_creacion"]
 
     def create(self, validated_data):
         detalles_data = validated_data.pop("detalles", [])

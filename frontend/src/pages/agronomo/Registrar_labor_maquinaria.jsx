@@ -1,4 +1,4 @@
-// src/pages/mayordomo/Registrar_labor_maquinaria.jsx
+// src/pages/agronomo/Registrar_labor_maquinaria.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { IconChevronLeft, IconCheck, IconPlus, IconTrash } from "@tabler/icons-react";
@@ -42,7 +42,7 @@ const Registrar_labor_maquinaria = () => {
           setLotes(lotesRes.data);
         }
 
-        // ✅ traer última labor de esta máquina (sin anidar params)
+        // ✅ traer última labor de esta máquina
         const laboresRes = await laboresMaquinariaApi.list({ maquina: id });
         if (laboresRes.data.length > 0) {
           const ultima = laboresRes.data[0]; // ordenadas por fecha desc desde backend
@@ -60,6 +60,22 @@ const Registrar_labor_maquinaria = () => {
     };
     fetchData();
   }, [id]);
+
+  // 📌 Mantener horometro_inicio sincronizado con la última labor
+  useEffect(() => {
+    if (labores.length > 0) {
+      const ultima = labores[labores.length - 1];
+      setFormData((prev) => ({
+        ...prev,
+        horometro_inicio: Number(ultima.horometro_fin),
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        horometro_inicio: ultimoHorometro || 0,
+      }));
+    }
+  }, [labores, ultimoHorometro]);
 
   // Inputs
   const handleChange = (e) => {
@@ -91,19 +107,20 @@ const Registrar_labor_maquinaria = () => {
 
     const loteObj = lotes.find((lt) => lt.id === Number(lote));
 
-    setLabores([
-      ...labores,
-      {
-        ...formData,
-        loteId: Number(lote),
-        loteNombre: loteObj ? `Lote ${loteObj.lote}` : "—",
-      },
-    ]);
+    const nuevaLabor = {
+      ...formData,
+      horometro_inicio: Number(horometro_inicio), // ✅ fuerza valor correcto
+      horometro_fin: Number(horometro_fin),
+      loteId: Number(lote),
+      loteNombre: loteObj ? `Lote ${loteObj.lote}` : "—",
+    };
 
+    setLabores([...labores, nuevaLabor]);
+
+    // ⚡ limpiar campos (horometro_inicio lo maneja el useEffect)
     setFormData((prev) => ({
       ...prev,
       labor: "",
-      horometro_inicio: Number(horometro_fin),
       horometro_fin: "",
       lote: "",
       observaciones: "",
@@ -114,16 +131,6 @@ const Registrar_labor_maquinaria = () => {
   const eliminarLabor = (idx) => {
     const nuevasLabores = labores.filter((_, i) => i !== idx);
     setLabores(nuevasLabores);
-
-    if (nuevasLabores.length > 0) {
-      const ultima = nuevasLabores[nuevasLabores.length - 1];
-      setFormData((prev) => ({
-        ...prev,
-        horometro_inicio: Number(ultima.horometro_fin),
-      }));
-    } else {
-      setFormData((prev) => ({ ...prev, horometro_inicio: ultimoHorometro || 0 }));
-    }
   };
 
   // ➡️ Guardar todas las labores
@@ -141,8 +148,6 @@ const Registrar_labor_maquinaria = () => {
         lote: Number(l.loteId),
         observaciones: l.observaciones || "",
       }));
-
-      console.log("📤 Enviando labores maquinaria:", payload);
 
       await laboresMaquinariaApi.create(payload);
 

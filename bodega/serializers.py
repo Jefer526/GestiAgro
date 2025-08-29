@@ -2,13 +2,14 @@ from rest_framework import serializers
 from .models import Producto, Movimiento, StockFinca
 
 
-
 class StockFincaSerializer(serializers.ModelSerializer):
     finca_nombre = serializers.CharField(source="finca.nombre", read_only=True)
 
     class Meta:
         model = StockFinca
         fields = ["id", "finca", "finca_nombre", "cantidad"]
+        read_only_fields = ["creado_por", "fecha_creacion"]
+
 
 class ProductoSerializer(serializers.ModelSerializer):
     stocks = StockFincaSerializer(many=True, read_only=True)
@@ -16,9 +17,7 @@ class ProductoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Producto
         fields = ["id", "nombre", "categoria", "ingrediente", "unidad", "stocks"]
-
-from rest_framework import serializers
-from .models import Producto, Movimiento, StockFinca
+        read_only_fields = ["creado_por", "fecha_creacion"]
 
 
 class MovimientoSerializer(serializers.ModelSerializer):
@@ -35,6 +34,7 @@ class MovimientoSerializer(serializers.ModelSerializer):
             "lote", "lote_nombre",
             "cantidad", "unidad"
         ]
+        read_only_fields = ["creado_por", "fecha_creacion"]
 
     def get_lote_nombre(self, obj):
-        return obj.lote.lote if obj.lote else "-"  # ✅ si no hay lote devuelve "-"
+        return obj.lote.lote if obj.lote else "-"

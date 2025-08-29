@@ -10,9 +10,11 @@ class TrabajadorViewSet(viewsets.ModelViewSet):
         qs = super().get_queryset()
         finca_id = self.request.query_params.get("finca")
         externos_de = self.request.query_params.get("externos_de")
-
         if finca_id:
             qs = qs.filter(finca_id=finca_id)
         if externos_de:
             qs = qs.exclude(finca_id=externos_de)
         return qs
+
+    def perform_create(self, serializer):
+        serializer.save(creado_por=self.request.user)

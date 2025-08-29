@@ -1,7 +1,8 @@
 from django.db import models
 from fincas.models import Finca
+from core.models import BaseAuditModel
 
-class Trabajador(models.Model):
+class Trabajador(BaseAuditModel):
     ESTADOS = [
         ("activo", "Activo"),
         ("inactivo", "Inactivo"),
@@ -13,17 +14,10 @@ class Trabajador(models.Model):
     nombre = models.CharField(max_length=200)
     cargo = models.CharField(max_length=100)
     estado = models.CharField(max_length=20, choices=ESTADOS, default="activo")
-    finca = models.ForeignKey(
-        Finca,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="trabajadores"
-    )
+    finca = models.ForeignKey(Finca, on_delete=models.SET_NULL, null=True, blank=True, related_name="trabajadores")
     telefono = models.CharField(max_length=15)
 
     def save(self, *args, **kwargs):
-        # Si el trabajador no tiene código, generarlo
         if not self.codigo:
             ultimo = Trabajador.objects.all().order_by("-id").first()
             if ultimo and ultimo.codigo:
@@ -33,7 +27,7 @@ class Trabajador(models.Model):
                     numero = 1
             else:
                 numero = 1
-            self.codigo = f"CE-{numero:03d}"  # CE-001, CE-002, etc.
+            self.codigo = f"CE-{numero:03d}"
         super().save(*args, **kwargs)
 
     def __str__(self):

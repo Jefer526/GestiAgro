@@ -1,8 +1,8 @@
 from rest_framework import serializers
 from .models import RegistroCampo
 
+
 class RegistroCampoSerializer(serializers.ModelSerializer):
-    # 👇 campos "extra" que se calculan desde las relaciones
     finca_nombre = serializers.CharField(source="finca.nombre", read_only=True)
     lote_nombre = serializers.CharField(source="lote.lote", read_only=True)
 
@@ -17,6 +17,6 @@ class RegistroCampoSerializer(serializers.ModelSerializer):
             "lote_nombre",
             "anotaciones",
             "foto",
-            "creado",
-            "actualizado",
+            "fecha_creacion"
         ]
+        read_only_fields = ["creado_por", "fecha_creacion"]

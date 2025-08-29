@@ -9,7 +9,7 @@ import {
   IconSortDescending2,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
-import api, { accountsApi, ENDPOINTS } from "../../services/apiClient";
+import { accountsApi } from "../../services/apiClient";
 import LayoutAdmin from "../../layouts/LayoutAdmin";
 
 const Admin_usuarios = () => {
@@ -46,7 +46,7 @@ const Admin_usuarios = () => {
       .join(" ");
   };
 
-  // Cargar usuarios
+  // 🔄 Cargar usuarios
   useEffect(() => {
     (async () => {
       try {
@@ -78,6 +78,13 @@ const Admin_usuarios = () => {
   }, []);
 
   // === FILTROS ===
+  const getValoresUnicos = (campo) => {
+    const search = (busquedas[campo] || "").toLowerCase();
+    return [...new Set(usuarios.map((d) => String(d[campo] || "")))].filter((v) =>
+      v.toLowerCase().includes(search)
+    );
+  };
+
   const toggleFiltro = (campo, e) => {
     e.stopPropagation();
     const icono = e.currentTarget.getBoundingClientRect();
@@ -86,13 +93,6 @@ const Admin_usuarios = () => {
       top: icono.bottom + window.scrollY + 4,
       left: icono.left + window.scrollX,
     });
-  };
-
-  const getValoresUnicos = (campo) => {
-    const search = (busquedas[campo] || "").toLowerCase();
-    return [...new Set(usuarios.map((e) => (e[campo] ?? "").toString()))].filter(
-      (v) => v.toLowerCase().includes(search)
-    );
   };
 
   const toggleValor = (campo, valor) => {
@@ -114,21 +114,38 @@ const Admin_usuarios = () => {
 
   const ordenar = (campo, orden) => setOrdenCampo({ campo, orden });
 
+  const handleBusqueda = (campo, texto) =>
+    setBusquedas({ ...busquedas, [campo]: texto });
+
+  // Filtrar y ordenar
   const datosFiltrados = usuarios
-    .filter((item) =>
+    .filter((d) =>
       columnas.every((campo) => {
-        const vals = valoresSeleccionados[campo];
-        if (!vals || vals.length === 0) return true;
-        return vals.includes((item[campo] ?? "").toString());
+        const seleccionados = valoresSeleccionados[campo] || [];
+        if (seleccionados.length === 0) return true;
+        return seleccionados.includes(String(d[campo]));
       })
     )
     .sort((a, b) => {
       if (!ordenCampo) return 0;
       const { campo, orden } = ordenCampo;
-      const av = (a[campo] ?? "").toString();
-      const bv = (b[campo] ?? "").toString();
-      return orden === "asc" ? av.localeCompare(bv) : bv.localeCompare(av);
+      const valA = a[campo];
+      const valB = b[campo];
+      return orden === "asc"
+        ? String(valA).localeCompare(String(valB))
+        : String(valB).localeCompare(String(valA));
     });
+
+  // Cerrar filtros al hacer click fuera
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (filtroRef.current && !filtroRef.current.contains(e.target)) {
+        setFiltroActivo(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // === MENÚ OPCIONES ===
   const handleMenuOpen = (id_usuario, event) => {
@@ -146,7 +163,6 @@ const Admin_usuarios = () => {
     }, 0);
   };
 
-  // === cerrar menú al hacer click fuera ===
   useEffect(() => {
     const handleClickOutside = (e) => {
       const menu = document.getElementById("floating-menu");
@@ -159,39 +175,36 @@ const Admin_usuarios = () => {
         setMenuAbiertoId(null);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [menuAbiertoId]);
 
   // === TOGGLE ACTIVAR/INACTIVAR ===
-const handleToggleActivo = async (id_usuario) => {
-  const u = usuarios.find((x) => x.id_usuario === id_usuario);
-  if (!u) return;
-  if (u.is_superuser) {
-    alert("No puedes desactivar al superusuario principal.");
-    return;
-  }
-  const accion = u.is_active ? "inactivar" : "activar";
-  if (!window.confirm(`¿Seguro que deseas ${accion} este usuario?`)) return;
-  try {
-    const res = await accountsApi.toggleActive(id_usuario);
-    const nuevoActivo = !!res.data?.is_active;
-    setUsuarios((prev) =>
-      prev.map((it) =>
-        it.id_usuario === id_usuario
-          ? { ...it, is_active: nuevoActivo, estado: nuevoActivo ? "Activo" : "Inactivo" }
-          : it
-      )
-    );
-    setMenuAbiertoId(null);
-  } catch (err) {
-    console.error("Error al cambiar estado:", err);
-    alert(err.response?.data?.detail || "No se pudo cambiar el estado.");
-  }
-};
+  const handleToggleActivo = async (id_usuario) => {
+    const u = usuarios.find((x) => x.id_usuario === id_usuario);
+    if (!u) return;
+    if (u.is_superuser) {
+      alert("No puedes desactivar al superusuario principal.");
+      return;
+    }
+    const accion = u.is_active ? "inactivar" : "activar";
+    if (!window.confirm(`¿Seguro que deseas ${accion} este usuario?`)) return;
+    try {
+      const res = await accountsApi.toggleActive(id_usuario);
+      const nuevoActivo = !!res.data?.is_active;
+      setUsuarios((prev) =>
+        prev.map((it) =>
+          it.id_usuario === id_usuario
+            ? { ...it, is_active: nuevoActivo, estado: nuevoActivo ? "Activo" : "Inactivo" }
+            : it
+        )
+      );
+      setMenuAbiertoId(null);
+    } catch (err) {
+      console.error("Error al cambiar estado:", err);
+      alert(err.response?.data?.detail || "No se pudo cambiar el estado.");
+    }
+  };
 
   return (
     <LayoutAdmin>
@@ -210,13 +223,8 @@ const handleToggleActivo = async (id_usuario) => {
                       <span>{titulo}</span>
                       <button
                         onClick={(e) =>
-                          toggleFiltro(
-                            ["nombre_completo", "telefono", "rol", "email", "finca", "estado"][idx],
-                            e
-                          )
+                          toggleFiltro(columnas[idx], e)
                         }
-                        className="z-10"
-                        onMouseDown={(e) => e.stopPropagation()}
                       >
                         <IconFilter className="w-4 h-4" />
                       </button>
@@ -250,7 +258,7 @@ const handleToggleActivo = async (id_usuario) => {
                 <td className="p-4 border">
                   <button
                     onClick={(e) => handleMenuOpen(u.id_usuario, e)}
-                    className="menu-trigger p-1 rounded hover:bg-gray-200 z-50 relative"
+                    className="menu-trigger p-1 rounded hover:bg-gray-200"
                   >
                     <IconDotsVertical className="w-5 h-5 text-gray-600" />
                   </button>
@@ -260,25 +268,25 @@ const handleToggleActivo = async (id_usuario) => {
           </tbody>
         </table>
 
-        {/* Popup filtro */}
+        {/* === Filtro flotante === */}
         {filtroActivo && (
           <div
             ref={filtroRef}
-            className="fixed bg-white text-black shadow-md border rounded z-[9999] p-3 w-60 text-left text-sm"
+            className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60"
             style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
           >
             <div className="font-semibold mb-2">
-              Filtrar por {filtroActivo}
+              Filtrar por {filtroActivo.toUpperCase()}
             </div>
             <button
               onClick={() => ordenar(filtroActivo, "asc")}
-              className="text-green-700 flex items-center gap-1 mb-1 capitalize"
+              className="text-green-700 flex items-center gap-1 mb-1"
             >
               <IconSortAscending2 className="w-4 h-4" /> Ordenar A → Z
             </button>
             <button
               onClick={() => ordenar(filtroActivo, "desc")}
-              className="text-green-700 flex items-center gap-1 mb-2 capitalize"
+              className="text-green-700 flex items-center gap-1 mb-2"
             >
               <IconSortDescending2 className="w-4 h-4" /> Ordenar Z → A
             </button>
@@ -287,36 +295,40 @@ const handleToggleActivo = async (id_usuario) => {
               placeholder="Buscar..."
               className="w-full border border-gray-300 px-2 py-1 rounded mb-2 text-sm"
               value={busquedas[filtroActivo] || ""}
-              onChange={(e) =>
-                setBusquedas({ ...busquedas, [filtroActivo]: e.target.value })
-              }
+              onChange={(e) => handleBusqueda(filtroActivo, e.target.value)}
             />
             <div className="flex flex-col max-h-40 overflow-y-auto">
-              {getValoresUnicos(filtroActivo).map((val, idx) => (
-                <label
-                  key={idx}
-                  className="flex items-center gap-2 mb-1 capitalize"
-                >
+              {getValoresUnicos(filtroActivo).map((val) => (
+                <label key={val} className="flex items-center gap-2 mb-1">
                   <input
                     type="checkbox"
                     checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
                     onChange={() => toggleValor(filtroActivo, val)}
                     className="accent-green-600"
                   />
-                  {val || "(vacío)"}
+                  {String(val)}
                 </label>
               ))}
             </div>
-            <button
-              onClick={() => limpiarFiltro(filtroActivo)}
-              className="text-blue-600 hover:underline text-xs capitalize mt-2"
-            >
-              Borrar filtro
-            </button>
+
+            <div className="flex justify-between mt-3">
+              <button
+                onClick={() => limpiarFiltro(filtroActivo)}
+                className="bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-xs font-medium hover:bg-gray-300"
+              >
+                Borrar
+              </button>
+              <button
+                onClick={() => setFiltroActivo(null)}
+                className="bg-green-600 text-white px-3 py-1 rounded-md text-xs font-medium hover:bg-green-700"
+              >
+                Aceptar
+              </button>
+            </div>
           </div>
         )}
 
-        {/* Menu contextual */}
+        {/* === Menú contextual === */}
         {menuAbiertoId !== null && (
           <div
             id="floating-menu"

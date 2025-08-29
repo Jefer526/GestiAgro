@@ -1,17 +1,16 @@
-# views.py
 from rest_framework import viewsets
+from rest_framework.response import Response
+from rest_framework import status
 from .models import Producto, Movimiento, StockFinca
 from .serializers import ProductoSerializer, MovimientoSerializer
 from fincas.models import Finca
-from rest_framework.response import Response
-from rest_framework import status
 
 class ProductoViewSet(viewsets.ModelViewSet):
     queryset = Producto.objects.all()
     serializer_class = ProductoSerializer
 
     def perform_create(self, serializer):
-        producto = serializer.save()
+        producto = serializer.save(creado_por=self.request.user)  # 👈 asigna creado_por
         # Asociar a todas las fincas con stock 0
         for finca in Finca.objects.all():
             StockFinca.objects.create(producto=producto, finca=finca, cantidad=0)
@@ -32,19 +31,14 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         return qs
 
     def perform_create(self, serializer):
-        movimiento = serializer.save()
-
-        # Buscar el stock correspondiente
+        movimiento = serializer.save(creado_por=self.request.user)  # 👈 asigna creado_por
         stock, _ = StockFinca.objects.get_or_create(
             producto=movimiento.producto,
             finca=movimiento.finca,
             defaults={"cantidad": 0},
         )
-
-        # Actualizar cantidad según tipo
         if movimiento.tipo == "Entrada":
             stock.cantidad += movimiento.cantidad
         elif movimiento.tipo == "Salida":
             stock.cantidad -= movimiento.cantidad
-
         stock.save()

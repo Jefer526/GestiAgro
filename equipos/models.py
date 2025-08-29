@@ -1,10 +1,10 @@
-# equipos/models.py
 from django.db import models
-from fincas.models import Finca, Lote  # si ya tienes fincas creadas
+from fincas.models import Finca, Lote
+from core.models import BaseAuditModel
 
-class Maquina(models.Model):
-    codigo_equipo = models.CharField(max_length=50, unique=True)  # asignado por el usuario
-    maquina = models.CharField(max_length=100)  # ej: Tractor
+class Maquina(BaseAuditModel):
+    codigo_equipo = models.CharField(max_length=50, unique=True)
+    maquina = models.CharField(max_length=100)
     referencia = models.CharField(max_length=100)
     ubicacion = models.ForeignKey(Finca, on_delete=models.SET_NULL, null=True, blank=True)
     estado = models.CharField(
@@ -15,11 +15,9 @@ class Maquina(models.Model):
 
     def __str__(self):
         return f"{self.codigo_equipo} - {self.maquina}"
-    
 
 
-
-class Mantenimiento(models.Model):
+class Mantenimiento(BaseAuditModel):
     maquina = models.ForeignKey(Maquina, related_name="mantenimientos", on_delete=models.CASCADE)
     fecha = models.DateField()
     tipo = models.CharField(max_length=50, choices=[("preventivo", "Preventivo"), ("correctivo", "Correctivo")])
@@ -31,8 +29,7 @@ class Mantenimiento(models.Model):
         return f"{self.maquina.codigo_equipo} - {self.fecha} ({self.tipo})"
 
 
-
-class LaborMaquinaria(models.Model):
+class LaborMaquinaria(BaseAuditModel):
     maquina = models.ForeignKey(Maquina, related_name="labores", on_delete=models.CASCADE)
     fecha = models.DateField()
     labor = models.CharField(max_length=100)
@@ -40,7 +37,7 @@ class LaborMaquinaria(models.Model):
     horometro_fin = models.DecimalField(max_digits=10, decimal_places=2)
     finca = models.ForeignKey(Finca, on_delete=models.SET_NULL, null=True, blank=True)
     lote = models.ForeignKey(Lote, on_delete=models.SET_NULL, null=True, blank=True)
-    observaciones = models.TextField(blank=True, null=True)  # opcional
+    observaciones = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.maquina.codigo_equipo} - {self.fecha} - {self.labor}"

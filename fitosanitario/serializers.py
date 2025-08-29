@@ -1,10 +1,13 @@
 from rest_framework import serializers
 from .models import Monitoreo, RegistroPlaga
 
+
 class RegistroPlagaSerializer(serializers.ModelSerializer):
     class Meta:
         model = RegistroPlaga
         fields = ["id", "familia", "plaga", "promedio"]
+        read_only_fields = ["creado_por", "fecha_creacion"]
+
 
 class MonitoreoSerializer(serializers.ModelSerializer):
     registros = RegistroPlagaSerializer(many=True)
@@ -12,6 +15,7 @@ class MonitoreoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Monitoreo
         fields = ["id", "fecha", "finca", "lote", "observaciones", "registros"]
+        read_only_fields = ["creado_por", "fecha_creacion"]
 
     def create(self, validated_data):
         registros_data = validated_data.pop("registros")
