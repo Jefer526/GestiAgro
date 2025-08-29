@@ -1,6 +1,6 @@
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework.exceptions import PermissionDenied, ValidationError
 
 from .models import ProgramacionLabor
 from .serializers import ProgramacionLaborSerializer
@@ -23,6 +23,7 @@ class ProgramacionLaborViewSet(viewsets.ModelViewSet):
         if user.rol == "admin":
             return ProgramacionLabor.objects.all()
 
+        # 🚨 En lugar de error 500, devolvemos vacío
         return ProgramacionLabor.objects.none()
 
     def perform_create(self, serializer):
@@ -31,31 +32,27 @@ class ProgramacionLaborViewSet(viewsets.ModelViewSet):
         if user.rol == "mayordomo":
             finca = getattr(user, "finca_asignada", None)
             if not finca:
-                raise ValueError("El mayordomo no tiene una finca asignada")
+                raise ValidationError("El mayordomo no tiene una finca asignada.")
             serializer.save(creado_por=user, finca=finca)
 
         elif user.rol == "admin":
             serializer.save(creado_por=user)
 
         else:
-            raise PermissionError("No tienes permisos para crear labores")
+            raise PermissionDenied("No tienes permisos para crear labores.")
 
-    # 👇 Nuevo método
     def partial_update(self, request, *args, **kwargs):
         instance = self.get_object()
         user = request.user
 
-        # Mayordomo: solo puede cambiar el estado
+        # 📌 Mayordomo: solo puede cambiar el estado
         if user.rol == "mayordomo":
             estado = request.data.get("estado")
             if not estado:
-                return Response(
-                    {"detail": "Debes enviar el estado"},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+                raise ValidationError("Debes enviar el estado.")
             instance.estado = estado
             instance.save()
             return Response(self.get_serializer(instance).data)
 
-        # Admin y agrónomo: pueden actualizar todo
+        # 📌 Admin y Agrónomo: pueden actualizar todo
         return super().partial_update(request, *args, **kwargs)

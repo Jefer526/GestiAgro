@@ -61,22 +61,6 @@ const Registrar_labor_maquinaria = () => {
     fetchData();
   }, [id]);
 
-  // 📌 Mantener horometro_inicio sincronizado con la última labor
-  useEffect(() => {
-    if (labores.length > 0) {
-      const ultima = labores[labores.length - 1];
-      setFormData((prev) => ({
-        ...prev,
-        horometro_inicio: Number(ultima.horometro_fin),
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        horometro_inicio: ultimoHorometro || 0,
-      }));
-    }
-  }, [labores, ultimoHorometro]);
-
   // Inputs
   const handleChange = (e) => {
     let value = e.target.value;
@@ -95,13 +79,21 @@ const Registrar_labor_maquinaria = () => {
 
   // ➡️ Añadir labor
   const añadirLabor = () => {
-    const { fecha, labor, horometro_inicio, horometro_fin, lote } = formData;
+    const { fecha, labor, horometro_fin, lote } = formData;
 
-    if (!fecha || !labor || horometro_inicio === "" || horometro_fin === "" || !lote) {
+    // calcular horometro_inicio correcto
+    let horometro_inicio_actual = 0;
+    if (labores.length > 0) {
+      horometro_inicio_actual = Number(labores[labores.length - 1].horometro_fin);
+    } else {
+      horometro_inicio_actual = Number(ultimoHorometro) || 0;
+    }
+
+    if (!fecha || !labor || horometro_fin === "" || !lote) {
       return alert("Completa todos los campos obligatorios");
     }
 
-    if (Number(horometro_fin) <= Number(horometro_inicio)) {
+    if (Number(horometro_fin) <= horometro_inicio_actual) {
       return alert("El horómetro fin debe ser mayor al horómetro inicio");
     }
 
@@ -109,18 +101,20 @@ const Registrar_labor_maquinaria = () => {
 
     const nuevaLabor = {
       ...formData,
-      horometro_inicio: Number(horometro_inicio), // ✅ fuerza valor correcto
+      horometro_inicio: horometro_inicio_actual, // ✅ ahora siempre correcto
       horometro_fin: Number(horometro_fin),
       loteId: Number(lote),
       loteNombre: loteObj ? `Lote ${loteObj.lote}` : "—",
     };
 
-    setLabores([...labores, nuevaLabor]);
+    const nuevasLabores = [...labores, nuevaLabor];
+    setLabores(nuevasLabores);
 
-    // ⚡ limpiar campos (horometro_inicio lo maneja el useEffect)
+    // actualizar formulario con el fin de la labor añadida
     setFormData((prev) => ({
       ...prev,
       labor: "",
+      horometro_inicio: Number(horometro_fin),
       horometro_fin: "",
       lote: "",
       observaciones: "",
@@ -131,6 +125,19 @@ const Registrar_labor_maquinaria = () => {
   const eliminarLabor = (idx) => {
     const nuevasLabores = labores.filter((_, i) => i !== idx);
     setLabores(nuevasLabores);
+
+    if (nuevasLabores.length > 0) {
+      const ultima = nuevasLabores[nuevasLabores.length - 1];
+      setFormData((prev) => ({
+        ...prev,
+        horometro_inicio: Number(ultima.horometro_fin),
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        horometro_inicio: ultimoHorometro || 0,
+      }));
+    }
   };
 
   // ➡️ Guardar todas las labores
