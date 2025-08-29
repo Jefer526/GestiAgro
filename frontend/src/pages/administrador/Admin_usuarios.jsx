@@ -167,34 +167,31 @@ const Admin_usuarios = () => {
   }, [menuAbiertoId]);
 
   // === TOGGLE ACTIVAR/INACTIVAR ===
-  const handleToggleActivo = async (id_usuario) => {
-    const u = usuarios.find((x) => x.id_usuario === id_usuario);
-    if (!u) return;
-    if (u.is_superuser) {
-      alert("No puedes desactivar al superusuario principal.");
-      return;
-    }
-    const accion = u.is_active ? "inactivar" : "activar";
-    if (!window.confirm(`¿Seguro que deseas ${accion} este usuario?`)) return;
-    try {
-      const res = await api.patch(
-        `${ENDPOINTS.users}${id_usuario}/toggle-active/`,
-        {}
-      );
-      const nuevoActivo = !!res.data?.is_active;
-      setUsuarios((prev) =>
-        prev.map((it) =>
-          it.id_usuario === id_usuario
-            ? { ...it, is_active: nuevoActivo, estado: nuevoActivo ? "Activo" : "Inactivo" }
-            : it
-        )
-      );
-      setMenuAbiertoId(null);
-    } catch (err) {
-      console.error("Error al cambiar estado:", err);
-      alert(err.response?.data?.detail || "No se pudo cambiar el estado.");
-    }
-  };
+const handleToggleActivo = async (id_usuario) => {
+  const u = usuarios.find((x) => x.id_usuario === id_usuario);
+  if (!u) return;
+  if (u.is_superuser) {
+    alert("No puedes desactivar al superusuario principal.");
+    return;
+  }
+  const accion = u.is_active ? "inactivar" : "activar";
+  if (!window.confirm(`¿Seguro que deseas ${accion} este usuario?`)) return;
+  try {
+    const res = await accountsApi.toggleActive(id_usuario);
+    const nuevoActivo = !!res.data?.is_active;
+    setUsuarios((prev) =>
+      prev.map((it) =>
+        it.id_usuario === id_usuario
+          ? { ...it, is_active: nuevoActivo, estado: nuevoActivo ? "Activo" : "Inactivo" }
+          : it
+      )
+    );
+    setMenuAbiertoId(null);
+  } catch (err) {
+    console.error("Error al cambiar estado:", err);
+    alert(err.response?.data?.detail || "No se pudo cambiar el estado.");
+  }
+};
 
   return (
     <LayoutAdmin>
