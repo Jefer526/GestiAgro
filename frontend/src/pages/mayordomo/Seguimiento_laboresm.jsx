@@ -178,7 +178,7 @@ const Seguimiento_laboresm = () => {
             {laboresFiltradas.length === 0 && (
               <tr>
                 <td colSpan={5} className="p-6 text-gray-500 text-center">
-                  Sin registros
+                  Cargando ...
                 </td>
               </tr>
             )}
