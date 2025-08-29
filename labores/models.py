@@ -3,6 +3,7 @@ from django.db import models
 from fincas.models import Finca, Lote
 from trabajadores.models import Trabajador
 
+# labores/models.py
 class Labor(models.Model):
     fecha = models.DateField()
     finca = models.ForeignKey(
@@ -17,9 +18,13 @@ class Labor(models.Model):
         blank=True,
         related_name="labores"
     )
+    
+    # Campo de la labor (qué se hizo)
     descripcion = models.TextField()
+    
+    # Nuevo campo para observaciones adicionales
+    observaciones = models.TextField(null=True, blank=True)
 
-    # Relación con trabajadores
     trabajador_interno = models.ForeignKey(
         Trabajador,
         on_delete=models.SET_NULL,

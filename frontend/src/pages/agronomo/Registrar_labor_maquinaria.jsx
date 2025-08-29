@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { IconChevronLeft, IconCheck, IconPlus, IconTrash } from "@tabler/icons-react";
-import LayoutMayordomo from "../../layouts/LayoutMayordomo";
+import LayoutAgronomo from "../../layouts/LayoutAgronomo";
 import { equiposApi, lotesApi, laboresMaquinariaApi } from "../../services/apiClient";
 
 const Registrar_labor_maquinaria = () => {
@@ -157,7 +157,7 @@ const Registrar_labor_maquinaria = () => {
   };
 
   return (
-    <LayoutMayordomo>
+    <LayoutAgronomo>
       {alertaVisible && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold z-[10000]">
           <IconCheck className="w-5 h-5" /> Labores registradas exitosamente
@@ -327,7 +327,7 @@ const Registrar_labor_maquinaria = () => {
           </button>
         </div>
       </div>
-    </LayoutMayordomo>
+    </LayoutAgronomo>
   );
 };
 
