@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Monitoreo, RegistroPlaga
 
 
+# Serializer para registrar y mostrar plagas observadas en un monitoreo
 class RegistroPlagaSerializer(serializers.ModelSerializer):
     class Meta:
         model = RegistroPlaga
@@ -9,6 +10,7 @@ class RegistroPlagaSerializer(serializers.ModelSerializer):
         read_only_fields = ["creado_por", "fecha_creacion"]
 
 
+# Serializer para registrar y mostrar datos de un monitoreo fitosanitario
 class MonitoreoSerializer(serializers.ModelSerializer):
     registros = RegistroPlagaSerializer(many=True)
 

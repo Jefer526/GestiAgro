@@ -1,6 +1,8 @@
 from django.db import models
 from django.conf import settings
 
+
+# Modelo para gestionar tickets de soporte en el sistema
 class Ticket(models.Model):
     ESTADOS = [
         ("abierto", "Abierto"),

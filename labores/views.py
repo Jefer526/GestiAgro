@@ -3,6 +3,8 @@ from .models import Labor
 from .serializers import LaborSerializer
 from .permissions import EsMayordomoOAgronomoOAdmin
 
+
+# ViewSet para gestionar las labores agrícolas
 class LaborViewSet(viewsets.ModelViewSet):
     serializer_class = LaborSerializer
     permission_classes = [EsMayordomoOAgronomoOAdmin]

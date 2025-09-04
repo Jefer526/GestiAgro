@@ -2,6 +2,8 @@ from django.db import models
 from fincas.models import Finca, Lote
 from core.models import BaseAuditModel
 
+
+# Modelo para registrar los monitoreos fitosanitarios en una finca y lote
 class Monitoreo(BaseAuditModel):
     fecha = models.DateField()
     finca = models.ForeignKey(Finca, on_delete=models.CASCADE, related_name="monitoreos")
@@ -12,6 +14,7 @@ class Monitoreo(BaseAuditModel):
         return f"Monitoreo {self.id} - {self.fecha} ({self.finca.nombre} / {self.lote.lote})"
 
 
+# Modelo para registrar plagas observadas durante un monitoreo
 class RegistroPlaga(BaseAuditModel):
     monitoreo = models.ForeignKey(Monitoreo, on_delete=models.CASCADE, related_name="registros")
     familia = models.CharField(max_length=100)

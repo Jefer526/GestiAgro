@@ -30,13 +30,12 @@ from .serializers import (
 )
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-# 👇 importamos tu permiso nuevo
 from .permissions import EsAdminOAgronomo  
 
 User = get_user_model()
 
 
-# ===== Login extendido (tokens + usuario) =====
+# Serializador para login extendido con información adicional del usuario
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
@@ -52,18 +51,19 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         return data
 
 
+# Vista para obtener token JWT con datos de usuario
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
 
-# ===== Registro normal (con contraseña) =====
+# Vista para registro de usuario con contraseña
 class RegisterView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = RegisterSerializer
     throttle_classes = [AnonRateThrottle]
 
 
-# ===== Yo mismo =====
+# Vista para obtener datos del usuario autenticado
 class MeView(generics.RetrieveAPIView):
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -73,7 +73,7 @@ class MeView(generics.RetrieveAPIView):
         return self.request.user
 
 
-# ===== Logout (blacklist JWT) =====
+# Vista para cierre de sesión (blacklist de token)
 class LogoutView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     throttle_classes = [UserRateThrottle]
@@ -96,7 +96,7 @@ class LogoutView(APIView):
         return Response({"detail": "Logout correcto."}, status=status.HTTP_200_OK)
 
 
-# ===== Alta DEMO (sin contraseña) =====
+# Vista para registro de usuarios demo (sin contraseña inicial)
 class DemoSignupAPIView(APIView):
     permission_classes = [permissions.AllowAny]
     throttle_classes = [AnonRateThrottle]
@@ -121,7 +121,7 @@ class DemoSignupAPIView(APIView):
         )
 
 
-# ===== Establecer contraseña =====
+# Vista para establecer contraseña en usuarios demo o con link de recuperación
 class SetPasswordAPIView(APIView):
     permission_classes = [permissions.AllowAny]
     throttle_classes = [AnonRateThrottle]
@@ -155,7 +155,7 @@ class SetPasswordAPIView(APIView):
             )
 
 
-# ===== Cambiar contraseña (usuario autenticado) =====
+# Vista para cambiar contraseña de un usuario autenticado
 class ChangePasswordAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     throttle_classes = [UserRateThrottle]
@@ -171,7 +171,6 @@ class ChangePasswordAPIView(APIView):
         if not user.check_password(old_password):
             return Response({"detail": "Contraseña actual incorrecta."}, status=400)
 
-        # ✅ Validación con los AUTH_PASSWORD_VALIDATORS
         try:
             validate_password(new_password, user=user)
         except ValidationError as e:
@@ -182,7 +181,7 @@ class ChangePasswordAPIView(APIView):
         return Response({"detail": "Contraseña cambiada correctamente."}, status=200)
 
 
-# ===== Listado de usuarios =====
+# Vista para listar usuarios
 class UsersListView(generics.ListAPIView):
     queryset = User.objects.all().order_by('id')
     serializer_class = UserSerializer
@@ -190,7 +189,7 @@ class UsersListView(generics.ListAPIView):
     authentication_classes = [JWTAuthentication]
 
 
-# ===== Activar / desactivar usuario =====
+# Vista para activar o desactivar usuarios
 class AccountsUserToggleActiveAPIView(APIView):
     permission_classes = [EsAdminOAgronomo]
 
@@ -216,7 +215,7 @@ class AccountsUserToggleActiveAPIView(APIView):
         return Response({"id": user.id, "is_active": user.is_active}, status=200)
 
 
-# ===== Detalle y actualización de usuario =====
+# Vista para detalle y actualización de usuario
 class UserDetailUpdateView(generics.RetrieveUpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserUpdateSerializer
@@ -235,7 +234,7 @@ class UserDetailUpdateView(generics.RetrieveUpdateAPIView):
         return Response(serializer.data)
 
 
-# ===== Enviar contraseña temporal =====
+# Vista para enviar contraseña temporal por correo
 class SendTemporaryPasswordAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -270,7 +269,7 @@ class SendTemporaryPasswordAPIView(APIView):
         return Response({"detail": "Contraseña temporal enviada por correo."}, status=200)
 
 
-# ===== Actualizar rol de usuario =====
+# Vista para actualizar el rol de un usuario
 class UpdateUserRoleView(generics.UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserRoleUpdateSerializer
@@ -293,7 +292,7 @@ class UpdateUserRoleView(generics.UpdateAPIView):
         return Response(UserSerializer(instance).data, status=200)
 
 
-# ===== Listado de roles =====
+# Vista para listar los roles disponibles
 class RolesListView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [JWTAuthentication]
@@ -307,6 +306,7 @@ class RolesListView(APIView):
         return Response(roles, status=200)
 
 
+# Vista para obtener el rol del usuario autenticado
 class MyRolesView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -315,7 +315,7 @@ class MyRolesView(APIView):
         return Response([user.get_rol_display()])
 
 
-# ===== Verificar email =====
+# Vista para verificar si un email existe en el sistema
 class CheckEmailView(APIView):
     permission_classes = [permissions.AllowAny]
     throttle_classes = [AnonRateThrottle]
@@ -335,7 +335,7 @@ class CheckEmailView(APIView):
         return Response({"detail": "Correo válido.", "tiene_password": tiene_password}, status=200)
 
 
-# ===== Enviar código de verificación =====
+# Vista para enviar código de verificación por email
 class SendVerificationCodeAPIView(APIView):
     permission_classes = [permissions.AllowAny]
 
@@ -353,7 +353,6 @@ class SendVerificationCodeAPIView(APIView):
         expire_key = f"verify_expire_{user.id}"
         count = cache.get(limit_key, 0)
 
-        # 🚦 Si ya superó el límite
         if count >= settings.PASSWORD_RESET_LIMIT:
             expire_at = cache.get(expire_key)
             if expire_at:
@@ -371,11 +370,9 @@ class SendVerificationCodeAPIView(APIView):
                 status=429,
             )
 
-        # Generar código
         code = get_random_string(length=6, allowed_chars="0123456789")
         cache.set(f"verify_code_{user.id}", code, timeout=settings.PASSWORD_RESET_CODE_TIMEOUT)
 
-        # Incrementar contador y registrar expiración
         window = settings.PASSWORD_RESET_LIMIT_WINDOW
         cache.set(limit_key, count + 1, timeout=window)
         cache.set(expire_key, timezone.now() + timedelta(seconds=window), timeout=window)
@@ -394,7 +391,7 @@ class SendVerificationCodeAPIView(APIView):
         return Response({"detail": "Código enviado al correo."}, status=200)
 
 
-# ===== Verificar código =====
+# Vista para verificar el código recibido por email
 class VerifyCodeAPIView(APIView):
     permission_classes = [permissions.AllowAny]
 
@@ -415,7 +412,6 @@ class VerifyCodeAPIView(APIView):
         if not saved_code or saved_code != code:
             return Response({"detail": "Código inválido o expirado."}, status=400)
 
-        # ✅ Código correcto → limpiar código y contador
         cache.delete(f"verify_code_{user.id}")
         cache.delete(f"verify_count_{user.id}")
         cache.delete(f"verify_expire_{user.id}")
@@ -423,7 +419,7 @@ class VerifyCodeAPIView(APIView):
         return Response({"detail": "Código verificado."}, status=200)
 
 
-# ===== Resetear contraseña =====
+# Vista para resetear contraseña de usuario
 class ResetPasswordAPIView(APIView):
     permission_classes = [permissions.AllowAny]
 
@@ -439,7 +435,6 @@ class ResetPasswordAPIView(APIView):
         except User.DoesNotExist:
             return Response({"detail": "Usuario no encontrado."}, status=404)
 
-        # ✅ Validación con los AUTH_PASSWORD_VALIDATORS
         try:
             validate_password(password, user=user)
         except ValidationError as e:

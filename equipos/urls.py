@@ -2,6 +2,7 @@
 from rest_framework.routers import DefaultRouter
 from .views import MaquinaViewSet, MantenimientoViewSet, LaborMaquinariaViewSet
 
+# Definición de rutas para la aplicación Equipos
 router = DefaultRouter()
 router.register(r"maquinas", MaquinaViewSet)
 router.register(r"mantenimientos", MantenimientoViewSet)

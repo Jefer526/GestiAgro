@@ -2,6 +2,8 @@ from django.db import models
 from fincas.models import Finca, Lote
 from core.models import BaseAuditModel
 
+
+# Modelo para registrar productos de la bodega
 class Producto(BaseAuditModel):
     CATEGORIAS = [
         ("Combustible", "Combustible"),
@@ -22,6 +24,7 @@ class Producto(BaseAuditModel):
         return self.nombre
 
 
+# Modelo para el stock de productos por finca
 class StockFinca(BaseAuditModel):
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name="stocks")
     finca = models.ForeignKey(Finca, on_delete=models.CASCADE, related_name="stocks")
@@ -34,6 +37,7 @@ class StockFinca(BaseAuditModel):
         return f"{self.producto.nombre} - {self.finca.nombre} ({self.cantidad}{self.producto.unidad})"
 
 
+# Modelo para registrar movimientos de productos en la bodega
 class Movimiento(BaseAuditModel):
     TIPOS = [("Entrada", "Entrada"), ("Salida", "Salida")]
 

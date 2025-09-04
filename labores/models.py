@@ -3,6 +3,8 @@ from fincas.models import Finca, Lote
 from trabajadores.models import Trabajador
 from core.models import BaseAuditModel
 
+
+# Modelo para registrar labores realizadas en una finca o lote
 class Labor(BaseAuditModel):
     fecha = models.DateField()
     finca = models.ForeignKey(Finca, on_delete=models.CASCADE, related_name="labores")
@@ -14,6 +16,7 @@ class Labor(BaseAuditModel):
         return f"Labor {self.id} - {self.fecha} - {self.finca.nombre}"
 
 
+# Modelo para registrar los detalles de cada labor (trabajadores y ejecución)
 class DetalleLabor(BaseAuditModel):
     labor = models.ForeignKey(Labor, on_delete=models.CASCADE, related_name="detalles")
     trabajador = models.ForeignKey(Trabajador, on_delete=models.SET_NULL, null=True, blank=True)

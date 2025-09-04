@@ -7,6 +7,7 @@ from .models import Produccion
 from .serializers import ProduccionSerializer
 
 
+# ViewSet para gestionar producción y generar resúmenes agregados
 class ProduccionViewSet(viewsets.ModelViewSet):
     queryset = Produccion.objects.all().order_by("-fecha")
     serializer_class = ProduccionSerializer
@@ -20,7 +21,6 @@ class ProduccionViewSet(viewsets.ModelViewSet):
         lote_id = request.query_params.get("lote")
         periodo = request.query_params.get("periodo", "mes").lower()
 
-        # 🔹 Captura meses (acepta ?meses=3 o ?meses[]=3)
         meses = request.query_params.getlist("meses") or request.query_params.getlist("meses[]")
         meses = [int(m) for m in meses if str(m).isdigit()]
 
@@ -30,13 +30,11 @@ class ProduccionViewSet(viewsets.ModelViewSet):
         if lote_id:
             queryset = queryset.filter(lote_id=lote_id)
 
-        # 🔹 Filtro por meses
         if meses:
             queryset = queryset.annotate(mes=ExtractMonth("fecha")).filter(mes__in=meses)
 
-        # 🔹 Agrupación dinámica
         if len(meses) == 1 and periodo == "mes":
-            queryset = queryset.annotate(periodo=TruncDay("fecha"))  # 👈 agrupación diaria
+            queryset = queryset.annotate(periodo=TruncDay("fecha"))
         elif periodo == "año":
             queryset = queryset.annotate(periodo=TruncYear("fecha"))
         else:
@@ -53,7 +51,7 @@ class ProduccionViewSet(viewsets.ModelViewSet):
             periodo_val = item["periodo"]
             if periodo_val:
                 if len(meses) == 1 and periodo == "mes":
-                    periodo_str = periodo_val.strftime("%Y-%m-%d")  # 👈 formato diario
+                    periodo_str = periodo_val.strftime("%Y-%m-%d")
                 elif periodo == "año":
                     periodo_str = periodo_val.strftime("%Y")
                 else:
@@ -70,7 +68,6 @@ class ProduccionViewSet(viewsets.ModelViewSet):
         meses = request.query_params.getlist("meses")
         periodo = request.query_params.get("periodo", "mes").lower()
 
-        # Normalizamos meses
         meses = [int(m) for m in meses if str(m).isdigit()]
         fincas = [int(f) for f in fincas if str(f).isdigit()]
 
@@ -80,9 +77,8 @@ class ProduccionViewSet(viewsets.ModelViewSet):
         if meses:
             queryset = queryset.annotate(mes=ExtractMonth("fecha")).filter(mes__in=meses)
 
-        # 🔹 Agrupación dinámica
         if len(meses) == 1 and periodo == "mes":
-            queryset = queryset.annotate(periodo=TruncDay("fecha"))  # 👈 diario
+            queryset = queryset.annotate(periodo=TruncDay("fecha"))
         elif periodo == "año":
             queryset = queryset.annotate(periodo=TruncYear("fecha"))
         else:
@@ -99,7 +95,7 @@ class ProduccionViewSet(viewsets.ModelViewSet):
             periodo_val = item["periodo"]
             if periodo_val:
                 if len(meses) == 1 and periodo == "mes":
-                    periodo_str = periodo_val.strftime("%Y-%m-%d")  # 👈 diario
+                    periodo_str = periodo_val.strftime("%Y-%m-%d")
                 elif periodo == "año":
                     periodo_str = periodo_val.strftime("%Y")
                 else:

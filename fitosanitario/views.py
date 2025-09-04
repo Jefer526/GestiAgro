@@ -6,6 +6,8 @@ from django.db.models.functions import ExtractMonth, ExtractYear
 from .models import Monitoreo, RegistroPlaga
 from .serializers import MonitoreoSerializer
 
+
+# ViewSet para gestionar monitoreos fitosanitarios y generar resúmenes de plagas
 class MonitoreoViewSet(viewsets.ModelViewSet):
     queryset = Monitoreo.objects.all().order_by("-fecha")
     serializer_class = MonitoreoSerializer
@@ -13,7 +15,6 @@ class MonitoreoViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(creado_por=self.request.user)
 
-    # 📊 Endpoint de resumen
     @action(detail=False, methods=["get"], url_path="resumen")
     def resumen(self, request):
         finca = request.query_params.get("finca")

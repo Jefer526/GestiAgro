@@ -3,6 +3,8 @@ from rest_framework.response import Response
 from .models import Maquina, Mantenimiento, LaborMaquinaria
 from .serializers import MaquinaSerializer, MantenimientoSerializer, LaborMaquinariaSerializer
 
+
+# ViewSet para gestionar las máquinas o equipos
 class MaquinaViewSet(viewsets.ModelViewSet):
     queryset = Maquina.objects.all()
     serializer_class = MaquinaSerializer
@@ -18,6 +20,7 @@ class MaquinaViewSet(viewsets.ModelViewSet):
         serializer.save(creado_por=self.request.user)
 
 
+# ViewSet para registrar mantenimientos de las máquinas
 class MantenimientoViewSet(viewsets.ModelViewSet):
     queryset = Mantenimiento.objects.all()
     serializer_class = MantenimientoSerializer
@@ -26,6 +29,7 @@ class MantenimientoViewSet(viewsets.ModelViewSet):
         serializer.save(creado_por=self.request.user)
 
 
+# ViewSet para registrar y consultar labores realizadas con maquinaria
 class LaborMaquinariaViewSet(viewsets.ModelViewSet):
     queryset = LaborMaquinaria.objects.all().order_by("-fecha", "-id")
     serializer_class = LaborMaquinariaSerializer
@@ -42,8 +46,6 @@ class LaborMaquinariaViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         data = request.data
-
-        # 👇 Normalizamos: si viene un solo dict, lo convertimos en lista
         many = isinstance(data, list)
         if not many:
             data = [data]
@@ -55,5 +57,4 @@ class LaborMaquinariaViewSet(viewsets.ModelViewSet):
             serializer.save(creado_por=request.user)
             created.append(serializer.data)
 
-        # 👇 Si fue un solo objeto, devolvemos objeto. Si fue lista, devolvemos lista.
         return Response(created if many else created[0], status=status.HTTP_201_CREATED)

@@ -2,6 +2,8 @@ from django.db import models
 from fincas.models import Finca, Lote
 from core.models import BaseAuditModel
 
+
+# Modelo para registrar actividades y observaciones en el cuaderno de campo
 class RegistroCampo(BaseAuditModel):
     fecha = models.DateField()
     finca = models.ForeignKey(Finca, on_delete=models.CASCADE, related_name="registros_campo")

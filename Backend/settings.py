@@ -183,6 +183,6 @@ EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default=EMAIL_HOST_USER)
 
 # === Configuración de recuperación de contraseña ===
-PASSWORD_RESET_CODE_TIMEOUT = 300        # segundos que dura el código (5 min)
-PASSWORD_RESET_LIMIT = 3                 # máximo envíos permitidos
+PASSWORD_RESET_CODE_TIMEOUT = 300        
+PASSWORD_RESET_LIMIT = 3                 
 PASSWORD_RESET_LIMIT_WINDOW = 3600 

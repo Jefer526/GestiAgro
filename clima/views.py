@@ -1,4 +1,3 @@
-# views.py
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -8,6 +7,7 @@ from .models import VariableClimatica
 from .serializers import VariableClimaticaSerializer
 
 
+# ViewSet para gestionar variables climáticas y exponer resumen agregado
 class VariableClimaticaViewSet(viewsets.ModelViewSet):
     queryset = VariableClimatica.objects.all()
     serializer_class = VariableClimaticaSerializer
@@ -22,7 +22,6 @@ class VariableClimaticaViewSet(viewsets.ModelViewSet):
         periodo = request.query_params.get("periodo", "mes").lower()
         variables = request.query_params.getlist("variables")
 
-        # Normalizamos
         fincas = [int(f) for f in fincas if f.isdigit()]
         meses = [int(m) for m in meses if m.isdigit()]
 
@@ -32,7 +31,6 @@ class VariableClimaticaViewSet(viewsets.ModelViewSet):
         if meses:
             queryset = queryset.annotate(mes=ExtractMonth("fecha")).filter(mes__in=meses)
 
-        # 🔹 Detectar si solo se pidió 1 mes → agrupar por día
         if len(meses) == 1 and periodo == "mes":
             queryset = queryset.annotate(periodo=TruncDay("fecha"))
         elif periodo == "año":
@@ -52,7 +50,7 @@ class VariableClimaticaViewSet(viewsets.ModelViewSet):
             periodo_val = item["periodo"]
             if periodo_val:
                 if len(meses) == 1 and periodo == "mes":
-                    periodo_str = periodo_val.strftime("%Y-%m-%d")  # 🔹 formato diario
+                    periodo_str = periodo_val.strftime("%Y-%m-%d")
                 elif periodo == "año":
                     periodo_str = periodo_val.strftime("%Y")
                 else:

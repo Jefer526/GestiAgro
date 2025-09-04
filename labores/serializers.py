@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Labor, DetalleLabor
 
 
+# Serializer para registrar y mostrar los detalles de una labor
 class DetalleLaborSerializer(serializers.ModelSerializer):
     trabajador_nombre = serializers.CharField(source="trabajador.nombre", read_only=True)
 
@@ -19,9 +20,9 @@ class DetalleLaborSerializer(serializers.ModelSerializer):
         read_only_fields = ["creado_por", "fecha_creacion"]
 
 
+# Serializer para registrar y mostrar labores
 class LaborSerializer(serializers.ModelSerializer):
     detalles = DetalleLaborSerializer(many=True)
-    # 👇 Campo extra para mostrar el nombre de la finca
     finca_nombre = serializers.CharField(source="finca.nombre", read_only=True)
     lote_nombre = serializers.CharField(source="lote.nombre", read_only=True, default="")
 
@@ -31,9 +32,9 @@ class LaborSerializer(serializers.ModelSerializer):
             "id",
             "fecha",
             "finca",
-            "finca_nombre",   # 👈 ahora disponible en JSON
+            "finca_nombre",
             "lote",
-            "lote_nombre",    # 👈 igual para lote
+            "lote_nombre",
             "descripcion",
             "observaciones",
             "detalles",

@@ -1,8 +1,9 @@
 from rest_framework import serializers
 from .models import ProgramacionLabor
 
+
+# Serializer para registrar y mostrar la programación de labores agrícolas
 class ProgramacionLaborSerializer(serializers.ModelSerializer):
-    # 🔹 Campos adicionales de solo lectura
     finca_nombre = serializers.CharField(source="finca.nombre", read_only=True)
     lote_nombre = serializers.CharField(source="lote.lote", read_only=True)
 
@@ -11,10 +12,10 @@ class ProgramacionLaborSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "semana",
-            "finca",         # ID de la finca
-            "finca_nombre",  # Nombre de la finca
-            "lote",          # ID del lote
-            "lote_nombre",   # Nombre del lote
+            "finca",
+            "finca_nombre",
+            "lote",
+            "lote_nombre",
             "labor",
             "jornales",
             "estado",
