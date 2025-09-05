@@ -5,17 +5,20 @@ from .models import Producto, Movimiento, StockFinca
 from .serializers import ProductoSerializer, MovimientoSerializer
 from fincas.models import Finca
 
+
+# ViewSet para gestionar productos de la bodega
 class ProductoViewSet(viewsets.ModelViewSet):
     queryset = Producto.objects.all()
     serializer_class = ProductoSerializer
 
     def perform_create(self, serializer):
-        producto = serializer.save(creado_por=self.request.user)  # 👈 asigna creado_por
-        # Asociar a todas las fincas con stock 0
+        producto = serializer.save(creado_por=self.request.user)
+        # Asociar a todas las fincas con stock inicial en 0
         for finca in Finca.objects.all():
             StockFinca.objects.create(producto=producto, finca=finca, cantidad=0)
 
 
+# ViewSet para registrar y consultar movimientos de productos
 class MovimientoViewSet(viewsets.ModelViewSet):
     queryset = Movimiento.objects.all()
     serializer_class = MovimientoSerializer
@@ -31,7 +34,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         return qs
 
     def perform_create(self, serializer):
-        movimiento = serializer.save(creado_por=self.request.user)  # 👈 asigna creado_por
+        movimiento = serializer.save(creado_por=self.request.user)
         stock, _ = StockFinca.objects.get_or_create(
             producto=movimiento.producto,
             finca=movimiento.finca,

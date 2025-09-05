@@ -1,4 +1,3 @@
-// src/pages/mayordomo/RegistrarMonitoreom.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
@@ -8,22 +7,22 @@ import { lotesApi, fitosanitarioApi, getMe } from "../../services/apiClient";
 const RegistrarMonitoreom = () => {
   const navigate = useNavigate();
 
-  // 📌 Encabezado del monitoreo
+  // Encabezado del monitoreo
   const [fecha, setFecha] = useState("");
   const [fincaAsignada, setFincaAsignada] = useState(null);
   const [lote, setLote] = useState("");
   const [observaciones, setObservaciones] = useState("");
 
-  // 📌 Listados desde backend
+  // Listados desde backend
   const [lotes, setLotes] = useState([]);
 
-  // 📌 Registros de plagas dinámicos
+  // Registros de plagas dinámicos
   const [registros, setRegistros] = useState([{ familia: "", plaga: "", promedio: "" }]);
 
-  // 📌 Alertita tipo popup
+  // Alertita tipo popup
   const [alertaVisible, setAlertaVisible] = useState(false);
 
-  // 📌 Campos fijos
+  // Campos fijos
   const familias = ["Hemípteros", "Homópteros", "Curculiónidos", "Tisanópteros"];
   const plagas = {
     Hemípteros: ["Loxa sp.", "Antiteuchus"],
@@ -47,7 +46,7 @@ const RegistrarMonitoreom = () => {
     fetchUser();
   }, []);
 
-  // 🔹 Cargar lotes de la finca asignada
+  // Cargar lotes de la finca asignada
   useEffect(() => {
     const fetchLotes = async () => {
       if (!fincaAsignada) return;
@@ -61,7 +60,7 @@ const RegistrarMonitoreom = () => {
     fetchLotes();
   }, [fincaAsignada]);
 
-  // 📌 Funciones para manejar filas
+  // Funciones para manejar filas
   const addRegistro = () => {
     setRegistros([...registros, { familia: "", plaga: "", promedio: "" }]);
   };
@@ -79,7 +78,7 @@ const RegistrarMonitoreom = () => {
     setRegistros(nuevos);
   };
 
-  // 📌 Guardar monitoreo
+  // Guardar monitoreo
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!fincaAsignada) {
@@ -89,13 +88,13 @@ const RegistrarMonitoreom = () => {
     try {
       await fitosanitarioApi.create({
         fecha,
-        finca: fincaAsignada.id, // 👈 siempre la finca del mayordomo
+        finca: fincaAsignada.id, // siempre la finca del mayordomo
         lote,
         observaciones,
         registros,
       });
 
-      // ✅ Mostrar popup
+      // Mostrar popup
       setAlertaVisible(true);
       setTimeout(() => {
         setAlertaVisible(false);

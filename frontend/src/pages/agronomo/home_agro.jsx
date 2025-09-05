@@ -73,6 +73,7 @@ const Home_agro = () => {
       iconBg: "bg-white/70",
       text: "text-green-700",
     },
+  
     {
       icon: <IconChartBar className="w-8 h-8" />,
       label: "Informes",

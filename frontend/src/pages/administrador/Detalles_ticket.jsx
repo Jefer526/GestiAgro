@@ -1,4 +1,3 @@
-// src/pages/admin/Detalles_ticket.jsx
 import React, { useState } from "react";
 import {
   IconChevronLeft,
@@ -7,7 +6,7 @@ import {
 } from "@tabler/icons-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import LayoutAdmin from "../../layouts/LayoutAdmin";
-import { soporteApi } from "../../services/apiClient"; // ✅ usamos soporteApi
+import { soporteApi } from "../../services/apiClient"; // usamos soporteApi
 
 const Detalles_ticket = () => {
   const navigate = useNavigate();
@@ -27,7 +26,7 @@ const Detalles_ticket = () => {
       setAlertaVisible(true);
       setTimeout(() => {
         setAlertaVisible(false);
-        navigate("/soporte"); // ✅ vuelve al listado soporte admin
+        navigate("/soporte"); // vuelve al listado soporte admin
       }, 2000);
     } catch (err) {
       console.error("Error guardando cambios:", err);
@@ -88,7 +87,7 @@ const Detalles_ticket = () => {
                 value={estado}
                 onChange={(e) => setEstado(e.target.value)}
               >
-                {/* 👇 valores reales que espera el backend */}
+                {/* valores reales que espera el backend */}
                 <option value="abierto">Abierto</option>
                 <option value="proceso">En proceso</option>
                 <option value="cerrado">Cerrado</option>

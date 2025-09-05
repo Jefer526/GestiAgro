@@ -1,7 +1,9 @@
 from django.db import models
 from django.conf import settings
-from fincas.models import Finca, Lote  # asumiendo que ya tienes estas apps
+from fincas.models import Finca, Lote
 
+
+# Modelo para programar labores agrícolas en fincas y lotes
 class ProgramacionLabor(models.Model):
     ESTADOS = [
         ("Iniciada", "Iniciada"),

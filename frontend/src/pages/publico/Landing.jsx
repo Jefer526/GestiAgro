@@ -13,11 +13,6 @@ import {
   IconPhone,
   IconMail,
   IconMapPin,
-  IconBrandFacebook,
-  IconBrandInstagram,
-  IconBrandLinkedin,
-  IconBrandWhatsapp,
-  IconPlant,
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 import heroBg from "../../assets/Fondo_pantalla_principal.png";

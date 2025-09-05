@@ -2,8 +2,8 @@ from rest_framework import serializers
 from .models import Maquina, Mantenimiento, LaborMaquinaria
 
 
+# Serializer para registrar y mostrar mantenimientos de máquinas
 class MantenimientoSerializer(serializers.ModelSerializer):
-    # 👇 Forzar que se trate como fecha plana sin TZ
     fecha = serializers.DateField(format="%Y-%m-%d", input_formats=["%Y-%m-%d"])
 
     class Meta:
@@ -11,6 +11,8 @@ class MantenimientoSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = ["creado_por", "fecha_creacion"]
 
+
+# Serializer para registrar y mostrar máquinas
 class MaquinaSerializer(serializers.ModelSerializer):
     ubicacion_nombre = serializers.CharField(source="ubicacion.nombre", read_only=True)
     mantenimientos = MantenimientoSerializer(many=True, read_only=True)
@@ -30,6 +32,7 @@ class MaquinaSerializer(serializers.ModelSerializer):
         read_only_fields = ["creado_por", "fecha_creacion"]
 
 
+# Serializer para registrar y mostrar labores realizadas con maquinaria
 class LaborMaquinariaSerializer(serializers.ModelSerializer):
     maquina_nombre = serializers.CharField(source="maquina.maquina", read_only=True)
     finca_nombre = serializers.CharField(source="finca.nombre", read_only=True)

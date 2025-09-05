@@ -1,4 +1,3 @@
-// src/pages/mayordomo/Registrar_movimientom.jsx
 import React, { useState, useEffect } from "react";
 import { IconChevronLeft, IconCheck, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
@@ -25,7 +24,7 @@ const Registrar_movimientom = () => {
 
   const [movimientos, setMovimientos] = useState([]);
 
-  /* 🔹 Cargar productos y finca asignada al inicio */
+  /* Cargar productos y finca asignada al inicio */
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -49,7 +48,7 @@ const Registrar_movimientom = () => {
     fetchData();
   }, []);
 
-  /* 🔹 Cargar lotes según finca asignada */
+  /* Cargar lotes según finca asignada */
   useEffect(() => {
     const fetchLotes = async () => {
       if (formData.finca) {
@@ -66,7 +65,7 @@ const Registrar_movimientom = () => {
     fetchLotes();
   }, [formData.finca]);
 
-  /* 🔹 Handlers */
+  /* Handlers */
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "producto") {

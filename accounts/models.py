@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
+
+# Manager personalizado para manejar la creación de usuarios y superusuarios
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, nombre, password=None, **extra_fields):
         if not email:
@@ -19,6 +21,8 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault("is_superuser", True)
         return self.create_user(email, nombre, password, **extra_fields)
 
+
+# Modelo de usuario personalizado que incluye roles y finca asignada
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     ROLES = (
         ("admin", "Administrador"),
@@ -32,15 +36,13 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     rol = models.CharField(max_length=20, choices=ROLES, default="mayordomo")
 
-
-    finca_asignada = models.ForeignKey(   # 👈 nuevo
+    finca_asignada = models.ForeignKey(   
         "fincas.Finca",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
         related_name="mayordomos"
     )
-
 
     is_demo = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)

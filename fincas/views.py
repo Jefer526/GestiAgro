@@ -2,6 +2,8 @@ from rest_framework import viewsets
 from .models import Finca, Lote
 from .serializers import FincaSerializer, LoteSerializer
 
+
+# ViewSet para gestionar las fincas
 class FincaViewSet(viewsets.ModelViewSet):
     queryset = Finca.objects.all()
     serializer_class = FincaSerializer
@@ -17,6 +19,7 @@ class FincaViewSet(viewsets.ModelViewSet):
         serializer.save(creado_por=self.request.user)
 
 
+# ViewSet para gestionar los lotes de una finca
 class LoteViewSet(viewsets.ModelViewSet):
     queryset = Lote.objects.all().order_by("lote")
     serializer_class = LoteSerializer

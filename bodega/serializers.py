@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Producto, Movimiento, StockFinca
 
 
+# Serializer para el stock de productos en una finca
 class StockFincaSerializer(serializers.ModelSerializer):
     finca_nombre = serializers.CharField(source="finca.nombre", read_only=True)
 
@@ -11,6 +12,7 @@ class StockFincaSerializer(serializers.ModelSerializer):
         read_only_fields = ["creado_por", "fecha_creacion"]
 
 
+# Serializer para productos de la bodega
 class ProductoSerializer(serializers.ModelSerializer):
     stocks = StockFincaSerializer(many=True, read_only=True)
 
@@ -20,6 +22,7 @@ class ProductoSerializer(serializers.ModelSerializer):
         read_only_fields = ["creado_por", "fecha_creacion"]
 
 
+# Serializer para movimientos de productos en la bodega
 class MovimientoSerializer(serializers.ModelSerializer):
     producto_nombre = serializers.CharField(source="producto.nombre", read_only=True)
     finca_nombre = serializers.CharField(source="finca.nombre", read_only=True)

@@ -1,13 +1,14 @@
-# soporte/serializers.py
 from rest_framework import serializers
 from .models import Ticket
 
+
+# Serializer para registrar y mostrar los tickets de soporte
 class TicketSerializer(serializers.ModelSerializer):
     solicitado_por_nombre = serializers.CharField(
         source="solicitado_por.nombre", 
         read_only=True
     )
-    solicitado_por_rol = serializers.SerializerMethodField()  # 👈 para traer el display
+    solicitado_por_rol = serializers.SerializerMethodField()
     estado_display = serializers.SerializerMethodField()
 
     class Meta:
@@ -19,5 +20,4 @@ class TicketSerializer(serializers.ModelSerializer):
         return obj.get_estado_display()
 
     def get_solicitado_por_rol(self, obj):
-        # devuelve "Administrador", "Agrónomo", "Mayordomo"
         return obj.solicitado_por.get_rol_display()

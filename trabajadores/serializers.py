@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Trabajador
 
 
+# Serializer para registrar y mostrar los trabajadores
 class TrabajadorSerializer(serializers.ModelSerializer):
     finca_nombre = serializers.SerializerMethodField()
 

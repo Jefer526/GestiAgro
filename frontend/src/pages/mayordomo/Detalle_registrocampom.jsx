@@ -1,4 +1,3 @@
-// src/pages/mayordomo/Detalle_registrocampom.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { IconChevronLeft } from "@tabler/icons-react";
@@ -14,7 +13,7 @@ const Detalle_registrocampom = () => {
   const [alertaVisible, setAlertaVisible] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // 📌 Cargar registro
+  // Cargar registro
   useEffect(() => {
     const fetchRegistro = async () => {
       try {
@@ -39,7 +38,7 @@ const Detalle_registrocampom = () => {
 
   return (
     <LayoutMayordomo ocultarEncabezado>
-      {/* ✅ Botón volver */}
+      {/* Botón volver */}
       <button
         onClick={() => navigate(-1)}
         className="flex items-center text-green-700 font-semibold mb-4 text-lg hover:underline"
@@ -47,7 +46,7 @@ const Detalle_registrocampom = () => {
         <IconChevronLeft className="w-5 h-5 mr-2" /> Volver
       </button>
 
-      {/* ✅ Encabezado: finca afuera a la derecha */}
+      {/* Encabezado: finca afuera a la derecha */}
       <div className="flex justify-between items-center mb-6">
         <div></div>
         {registro?.finca_nombre && (
@@ -57,7 +56,7 @@ const Detalle_registrocampom = () => {
         )}
       </div>
 
-      {/* ✅ Card de detalle */}
+      {/* Card de detalle */}
       <div className="flex justify-center p-8 overflow-auto -mt-6">
         {loading ? (
           <p className="text-gray-500">Cargando registro...</p>

@@ -1,4 +1,3 @@
-// src/pages/administrador/Editar_copias.jsx
 import React, { useState } from "react";
 import { IconChevronLeft } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
@@ -7,7 +6,7 @@ import LayoutAdmin from "../../layouts/LayoutAdmin";
 const Detalle_copias = () => {
   const navigate = useNavigate();
 
-  // Simulamos los datos recibidos (pueden venir por props, state o API)
+  // Simulamos los datos recibidos 
   const [fecha] = useState("2025-06-12");
   const [hora] = useState("14:21");
 

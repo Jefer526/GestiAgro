@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 
-// Ajusta esta base según tu backend (o usa tu apiClient centralizado)
+// ( apiClient)
 const API_BASE = "http://127.0.0.1:8000/api";
 
 const Register = () => {
@@ -182,7 +182,7 @@ const Register = () => {
               placeholder="Ingrese su número de teléfono"
               className={`w-full border text-lg rounded-md px-4 py-3 outline-none transition-all ${
                 errors.telefono ? "border-red-400 focus:ring-2 focus:ring-red-300"
-                                 : "border-gray-300 focus:ring-2 focus:ring-green-400"
+                                : "border-gray-300 focus:ring-2 focus:ring-green-400"
               }`}
               required
             />

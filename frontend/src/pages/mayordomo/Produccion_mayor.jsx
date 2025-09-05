@@ -1,4 +1,3 @@
-// src/pages/mayordomo/Produccion_mayor.jsx
 import React, { useState, useEffect } from "react";
 import { Bar } from "react-chartjs-2";
 import {
@@ -20,20 +19,20 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend, ChartD
 const Produccion_mayor = () => {
   const navigate = useNavigate();
 
-  // 📌 Filtros
+  // Filtros
   const [fincaAsignada, setFincaAsignada] = useState(null);
   const [lote, setLote] = useState("");
-  const [periodo, setPeriodo] = useState("Mes");
+  const [periodo, setPeriodo] = useState("mes"); // controlado en minúscula
 
-  // 📌 Datos
+  // Datos
   const [lotes, setLotes] = useState([]);
   const [labels, setLabels] = useState([]);
   const [values, setValues] = useState([]);
 
-  // 🔹 Función para capitalizar
+  // Función para capitalizar
   const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
-  // 🔹 Obtener finca asignada al Mayordomo
+  // Obtener finca asignada al Mayordomo
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -48,7 +47,7 @@ const Produccion_mayor = () => {
     fetchUser();
   }, []);
 
-  // 🔹 Cargar lotes de la finca asignada
+  // Cargar lotes de la finca asignada
   useEffect(() => {
     const fetchLotes = async () => {
       if (!fincaAsignada) return;
@@ -62,12 +61,12 @@ const Produccion_mayor = () => {
     fetchLotes();
   }, [fincaAsignada]);
 
-  // 🔹 Cargar producción (agrupada)
+  // Cargar producción (agrupada)
   useEffect(() => {
     const fetchProduccion = async () => {
       if (!fincaAsignada) return;
       try {
-        const params = { periodo: periodo.toLowerCase(), finca: fincaAsignada.id };
+        const params = { periodo, finca: fincaAsignada.id }; // ya es "mes" o "año"
         if (lote) params.lote = lote;
 
         const res = await produccionApi.resumenMensual(params);
@@ -77,9 +76,9 @@ const Produccion_mayor = () => {
         setLabels(
           data.map((item) => {
             if (periodo === "año") {
-              return item.periodo; // ya viene como "2025"
+              return item.periodo; 
             } else {
-              // 👇 item.periodo viene en formato "YYYY-MM"
+              // item.periodo viene en formato "YYYY-MM"
               const [year, month] = item.periodo.split("-");
               const fechaNormalizada = new Date(parseInt(year), parseInt(month) - 1, 1);
 
@@ -101,7 +100,7 @@ const Produccion_mayor = () => {
     fetchProduccion();
   }, [fincaAsignada, lote, periodo]);
 
-  // 🔹 Configurar gráfica
+  // Configurar gráfica
   const data = {
     labels,
     datasets: [
@@ -183,8 +182,8 @@ const Produccion_mayor = () => {
           onChange={(e) => setPeriodo(e.target.value)}
           className="border border-gray-300 rounded px-4 py-1 w-60"
         >
-          <option>Mes</option>
-          <option>Año</option>
+          <option value="mes">Mes</option>
+          <option value="año">Año</option>
         </select>
       </div>
 

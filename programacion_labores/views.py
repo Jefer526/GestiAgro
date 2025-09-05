@@ -6,6 +6,7 @@ from .models import ProgramacionLabor
 from .serializers import ProgramacionLaborSerializer
 
 
+# ViewSet para gestionar la programación de labores agrícolas según el rol del usuario
 class ProgramacionLaborViewSet(viewsets.ModelViewSet):
     queryset = ProgramacionLabor.objects.all()
     serializer_class = ProgramacionLaborSerializer
@@ -19,7 +20,6 @@ class ProgramacionLaborViewSet(viewsets.ModelViewSet):
             return ProgramacionLabor.objects.filter(finca=finca) if finca else ProgramacionLabor.objects.none()
 
         if user.rol == "agronomo":
-            # ✅ Ahora ve TODAS las labores, no filtradas por finca
             return ProgramacionLabor.objects.all()
 
         if user.rol == "admin":
@@ -54,5 +54,4 @@ class ProgramacionLaborViewSet(viewsets.ModelViewSet):
             instance.save()
             return Response(self.get_serializer(instance).data)
 
-        # ✅ Admin y Agrónomo pueden actualizar todo
         return super().partial_update(request, *args, **kwargs)

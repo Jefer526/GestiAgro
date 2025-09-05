@@ -1,4 +1,3 @@
-// src/pages/mayordomo/Home_mayo.jsx
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -21,7 +20,7 @@ import LayoutMayordomo from "../../layouts/LayoutMayordomo";
 const Home_mayo = () => {
   const navigate = useNavigate();
 
-  // 🚫 Bloquear botón "Atrás" en Home_mayo
+  // Bloquear botón "Atrás" en Home_mayo
   useEffect(() => {
     const blockBack = () => {
       window.history.go(1); // fuerza siempre hacia adelante
@@ -160,7 +159,7 @@ const Home_mayo = () => {
         {opciones.map(({ icon, label, desc, ruta, gradient, ring, iconBg, text }, i) => (
           <button
             key={i}
-            onClick={() => navigate(ruta, { replace: true })} // 👈 evitar duplicados en historial
+            onClick={() => navigate(ruta, { replace: true })} // evitar duplicados en historial
             className="group relative overflow-hidden rounded-2xl border border-transparent bg-white shadow-lg px-5 py-8 min-h-[160px] text-left transition-all hover:-translate-y-0.5 hover:shadow-xl focus:outline-none focus:ring-2 ring-0 hover:ring-0 focus:ring-emerald-600/40"
           >
             <div className={`absolute inset-0 pointer-events-none bg-gradient-to-br ${gradient} opacity-70`} />

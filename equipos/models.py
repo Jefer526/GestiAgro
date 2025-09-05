@@ -2,6 +2,8 @@ from django.db import models
 from fincas.models import Finca, Lote
 from core.models import BaseAuditModel
 
+
+# Modelo para registrar la información de las máquinas o equipos
 class Maquina(BaseAuditModel):
     codigo_equipo = models.CharField(max_length=50, unique=True)
     maquina = models.CharField(max_length=100)
@@ -17,6 +19,7 @@ class Maquina(BaseAuditModel):
         return f"{self.codigo_equipo} - {self.maquina}"
 
 
+# Modelo para registrar mantenimientos de las máquinas
 class Mantenimiento(BaseAuditModel):
     maquina = models.ForeignKey(Maquina, related_name="mantenimientos", on_delete=models.CASCADE)
     fecha = models.DateField()
@@ -29,6 +32,7 @@ class Mantenimiento(BaseAuditModel):
         return f"{self.maquina.codigo_equipo} - {self.fecha} ({self.tipo})"
 
 
+# Modelo para registrar labores realizadas con las máquinas
 class LaborMaquinaria(BaseAuditModel):
     maquina = models.ForeignKey(Maquina, related_name="labores", on_delete=models.CASCADE)
     fecha = models.DateField()

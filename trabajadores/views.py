@@ -2,6 +2,8 @@ from rest_framework import viewsets
 from .models import Trabajador
 from .serializers import TrabajadorSerializer
 
+
+# ViewSet para gestionar los trabajadores
 class TrabajadorViewSet(viewsets.ModelViewSet):
     serializer_class = TrabajadorSerializer
     queryset = Trabajador.objects.all()

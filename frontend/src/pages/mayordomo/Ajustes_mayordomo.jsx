@@ -1,4 +1,3 @@
-// src/pages/mayordomo/Ajustes_mayordomo.jsx
 import React, { useState, useEffect } from "react";
 import { IconLock, IconEye, IconEyeOff, IconX } from "@tabler/icons-react";
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
@@ -84,21 +83,13 @@ const Ajustes_mayordomo = () => {
 
   return (
     <LayoutMayordomo active="ajustes" ocultarEncabezado>
-      <main className="p-8">
-        {/* Encabezado: título a la izquierda y finca a la derecha */}
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold text-green-700">
-            Perfil de la cuenta
-          </h1>
-          {usuario?.finca_asignada && (
-            <span className="text-3xl font-bold text-green-700">
-              {usuario.finca_asignada.nombre}
-            </span>
-          )}
-        </div>
+  <main className="p-8">
+        <h1 className="text-3xl font-bold text-green-700 mb-6">
+          Perfil de la cuenta
+        </h1>
 
-        {/* Tarjeta perfil */}
         <div className="bg-white border border-gray-300 rounded-xl p-6 shadow-md w-full max-w-xl space-y-6">
+          {/* Perfil */}
           <div className="flex items-center space-x-4">
             <div className="bg-green-600 text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold">
               {letraInicial}
@@ -114,6 +105,7 @@ const Ajustes_mayordomo = () => {
             </div>
           </div>
 
+          {/* Botón cambiar contraseña */}
           <div className="pt-2">
             <button
               onClick={() => setOpenPwd(true)}
@@ -122,6 +114,7 @@ const Ajustes_mayordomo = () => {
               <IconLock className="w-5 h-5" /> Cambiar contraseña
             </button>
           </div>
+
         </div>
       </main>
 
@@ -143,7 +136,64 @@ const Ajustes_mayordomo = () => {
                 <IconX className="w-5 h-5" />
               </button>
             </div>
-            {/* Campos contraseña... */}
+
+            {/* Inputs */}
+            {[
+              {
+                label: "Contraseña actual",
+                value: pwdActual,
+                setValue: setPwdActual,
+                show: show1,
+                setShow: setShow1,
+              },
+              {
+                label: "Nueva contraseña",
+                value: pwdNueva,
+                setValue: setPwdNueva,
+                show: show2,
+                setShow: setShow2,
+              },
+              {
+                label: "Confirmar nueva contraseña",
+                value: pwdConfirm,
+                setValue: setPwdConfirm,
+                show: show3,
+                setShow: setShow3,
+              },
+            ].map(({ label, value, setValue, show, setShow }, idx) => (
+              <div key={idx} className="mb-4">
+                <label className="block text-gray-600 mb-1">{label}</label>
+                <div className="relative">
+                  <input
+                    type={show ? "text" : "password"}
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)}
+                    className="w-full border-b border-gray-300 focus:border-gray-600 outline-none py-2 pr-10"
+                    placeholder={label}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShow(!show)}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 p-2 text-gray-500 hover:text-gray-700"
+                  >
+                    {show ? (
+                      <IconEyeOff className="w-5 h-5" />
+                    ) : (
+                      <IconEye className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
+              </div>
+            ))}
+
+            {msg && <div className="mb-4 text-sm text-gray-700">{msg}</div>}
+
+            <button
+              onClick={handleCambiarPwd}
+              className="w-full bg-green-600 text-white py-3 rounded-xl font-semibold hover:opacity-90"
+            >
+              Cambiar contraseña
+            </button>
           </div>
         </div>
       )}

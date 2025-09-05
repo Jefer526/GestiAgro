@@ -2,6 +2,8 @@ from django.db import models
 from fincas.models import Finca
 from core.models import BaseAuditModel
 
+
+# Modelo para registrar variables climáticas asociadas a una finca
 class VariableClimatica(BaseAuditModel):
     finca = models.ForeignKey(Finca, on_delete=models.CASCADE, related_name="climas")
     fecha = models.DateField()

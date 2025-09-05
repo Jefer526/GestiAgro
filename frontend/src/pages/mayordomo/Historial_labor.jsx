@@ -1,7 +1,5 @@
 import {
   IconFilter,
-  IconSortAscending2,
-  IconSortDescending2,
 } from "@tabler/icons-react";
 import { useState, useRef, useEffect } from "react";
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
@@ -11,7 +9,7 @@ const Historial_labor = () => {
   const filtroRef = useRef(null);
   const [expandido, setExpandido] = useState(null);
 
-  // 📌 Estados
+  // Estados
   const [labores, setLabores] = useState([]);
   const [finca, setFinca] = useState(null);
 
@@ -41,7 +39,7 @@ const Historial_labor = () => {
 
         const res = await laboresApi.list();
 
-        // 🔹 Adaptar datos: 1 fila por cada detalle
+        // Adaptar datos: 1 fila por cada detalle
         const adaptados = res.data.flatMap((l) =>
           l.detalles.map((det) => {
             const d = new Date(l.fecha + "T00:00:00");
@@ -76,7 +74,7 @@ const Historial_labor = () => {
   const toggleExpandido = (index) =>
     setExpandido(expandido === index ? null : index);
 
-  // 📌 Filtros
+  // Filtros
   const toggleFiltro = (campo, e) => {
     const icono = e.currentTarget.getBoundingClientRect();
     setFiltroActivo(filtroActivo === campo ? null : campo);
@@ -217,8 +215,8 @@ const Historial_labor = () => {
       {/* Panel filtro dinámico */}
       {filtroActivo &&
         (filtroActivo === "fecha"
-          ? null // aquí dejas tu renderFiltroFecha original
-          : null // aquí dejas tu renderFiltroAvanzado original
+          ? null 
+          : null
         )}
     </LayoutMayordomo>
   );

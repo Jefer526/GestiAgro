@@ -2,6 +2,8 @@ from django.db import models
 from fincas.models import Finca
 from core.models import BaseAuditModel
 
+
+# Modelo para registrar trabajadores asociados a una finca
 class Trabajador(BaseAuditModel):
     ESTADOS = [
         ("activo", "Activo"),

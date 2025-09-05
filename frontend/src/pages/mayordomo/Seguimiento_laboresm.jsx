@@ -1,4 +1,3 @@
-// src/pages/mayordomo/Seguimiento_laboresm.jsx
 import React, { useState, useRef, useEffect } from "react";
 import {
   IconFilter,
@@ -11,7 +10,7 @@ import { programacionLaboresApi } from "../../services/apiClient";
 const Seguimiento_laboresm = () => {
   const filtroRef = useRef(null);
 
-  // 📌 Estados
+  // Estados
   const [labores, setLabores] = useState([]);
   const [filtroActivo, setFiltroActivo] = useState(null);
   const [filtroPosicion, setFiltroPosicion] = useState({ top: 0, left: 0 });
@@ -178,7 +177,7 @@ const Seguimiento_laboresm = () => {
             {laboresFiltradas.length === 0 && (
               <tr>
                 <td colSpan={5} className="p-6 text-gray-500 text-center">
-                  Sin registros
+                  Cargando ...
                 </td>
               </tr>
             )}

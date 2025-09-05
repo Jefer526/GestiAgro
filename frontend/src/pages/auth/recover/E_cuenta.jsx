@@ -1,8 +1,7 @@
-// src/pages/auth/recovery/E_cuenta.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import faviconBlanco from "../../../assets/favicon-blanco.png";
-import { checkEmail } from "../../../services/apiClient"; // 👈 usamos la función nueva
+import { checkEmail } from "../../../services/apiClient"; // función API
 
 const E_cuenta = () => {
   const [email, setEmail] = useState("");
@@ -20,10 +19,10 @@ const E_cuenta = () => {
 
       if (res.status === 200) {
         if (res.data.tiene_password) {
-          // ✅ Tiene contraseña → avanza
+          // Tiene contraseña → avanza
           navigate("/confirmar-correo", { state: { email } });
         } else {
-          // ❌ No tiene contraseña
+          // No tiene contraseña
           setError("Usted no tiene contraseña asignada.");
         }
       }

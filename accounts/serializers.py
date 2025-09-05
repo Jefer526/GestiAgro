@@ -1,13 +1,13 @@
-# accounts/serializers.py
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from fincas.models import Finca   # 👈 para acceder al nombre/id de la finca
+from fincas.models import Finca
 
 User = get_user_model()
 
 
+# Serializer para mostrar información de usuarios
 class UserSerializer(serializers.ModelSerializer):
     tiene_password = serializers.SerializerMethodField()
     finca_asignada = serializers.PrimaryKeyRelatedField(
@@ -35,7 +35,6 @@ class UserSerializer(serializers.ModelSerializer):
     def get_tiene_password(self, obj):
         return obj.has_usable_password()
 
-    # ⚡ Representar la finca como objeto {id, nombre}
     def to_representation(self, instance):
         rep = super().to_representation(instance)
         if instance.finca_asignada:
@@ -48,6 +47,7 @@ class UserSerializer(serializers.ModelSerializer):
         return rep
 
 
+# Serializer para registro de usuarios normales
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=8)
 
@@ -59,12 +59,12 @@ class RegisterSerializer(serializers.ModelSerializer):
         password = validated_data.pop("password")
         user = User(**validated_data)
         user.set_password(password)
-        user.is_demo = False  # Si se registra con contraseña, no es demo
+        user.is_demo = False
         user.save()
         return user
 
 
-# --- Alta de usuario DEMO (sin contraseña) ---
+# Serializer para registro de usuarios en modo demo
 class DemoSignupSerializer(serializers.Serializer):
     nombre = serializers.CharField(max_length=255)
     telefono = serializers.CharField(max_length=20, allow_blank=True, required=False)
@@ -88,7 +88,7 @@ class DemoSignupSerializer(serializers.Serializer):
         return user
 
 
-# --- Establecer contraseña desde link ---
+# Serializer para asignar contraseña a usuarios
 class SetPasswordSerializer(serializers.Serializer):
     uid = serializers.CharField()
     token = serializers.CharField()
@@ -111,11 +111,12 @@ class SetPasswordSerializer(serializers.Serializer):
         user = data["user"]
         user.set_password(data["new_password"])
         if user.is_demo:
-            user.is_demo = False  # Una vez que se asigna contraseña, deja de ser demo
+            user.is_demo = False
         user.save()
         return user
 
 
+# Serializer para actualizar datos de usuario
 class UserUpdateSerializer(serializers.ModelSerializer):
     tiene_password = serializers.SerializerMethodField()
     finca_asignada = serializers.PrimaryKeyRelatedField(
@@ -158,7 +159,8 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         return rep
 
 
+# Serializer para actualizar rol y finca asignada del usuario
 class UserRoleUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "rol", "finca_asignada"]  # 👈 permitir actualizar la finca
+        fields = ["id", "rol", "finca_asignada"]

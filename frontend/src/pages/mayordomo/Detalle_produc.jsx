@@ -1,10 +1,7 @@
-// src/pages/mayordomo/Detalle_produc.jsx
 import React, { useState, useRef, useEffect } from "react";
 import {
   IconChevronLeft,
   IconFilter,
-  IconSortAscending2,
-  IconSortDescending2,
 } from "@tabler/icons-react";
 import { useNavigate, useParams } from "react-router-dom";
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
@@ -28,7 +25,7 @@ const Detalle_produc = () => {
 
   const columnas = ["fecha", "finca", "lote", "tipo", "movimiento", "saldo", "unidad"];
 
-  // 🔹 Cargar datos
+  // Cargar datos
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -69,7 +66,7 @@ const Detalle_produc = () => {
     fetchData();
   }, [id, finca]);
 
-  // 🔹 Filtros
+  // Filtros
   const getValoresUnicos = (campo) => {
     if (campo === "fecha") return [];
     const search = (busquedas[campo] || "").toLowerCase();
@@ -118,7 +115,7 @@ const Detalle_produc = () => {
         : String(b[campo]).localeCompare(String(a[campo]));
     });
 
-  // 🔹 Cerrar filtro al hacer click fuera
+  // Cerrar filtro al hacer click fuera
   useEffect(() => {
     const clickFuera = (e) => {
       if (filtroRef.current && !filtroRef.current.contains(e.target)) setFiltroActivo(null);
@@ -136,8 +133,6 @@ const Detalle_produc = () => {
       >
         <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
       </button>
-
-      {/* Encabezado: título + finca al mismo nivel */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-green-700">Detalle del producto</h1>
         {fincaAsignada && (

@@ -1,6 +1,8 @@
 from django.db import models
 from core.models import BaseAuditModel
 
+
+# Modelo para registrar la información de las fincas
 class Finca(BaseAuditModel):
     nombre = models.CharField(max_length=100)
     municipio = models.CharField(max_length=100)
@@ -25,6 +27,7 @@ class Finca(BaseAuditModel):
         )
 
 
+# Modelo para registrar los lotes asociados a una finca
 class Lote(BaseAuditModel):
     finca = models.ForeignKey(Finca, related_name="lotes", on_delete=models.CASCADE)
     lote = models.CharField(max_length=50)
@@ -47,6 +50,7 @@ class Lote(BaseAuditModel):
         return f"Lote {self.lote} - {self.finca.nombre}"
 
 
+# Modelo para registrar árboles dentro de un lote
 class Arbol(BaseAuditModel):
     lote = models.ForeignKey(Lote, related_name="arboles", on_delete=models.CASCADE)
     variedad = models.CharField(max_length=100)

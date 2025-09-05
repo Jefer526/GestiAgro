@@ -1,12 +1,9 @@
-// src/pages/mayordomo/Cuaderno_campo.jsx
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   IconPlus,
   IconEye,
   IconFilter,
-  IconSortAscending2,
-  IconSortDescending2,
 } from "@tabler/icons-react";
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
 import { cuadernoCampoApi, getMe } from "../../services/apiClient";
@@ -15,7 +12,7 @@ const Cuadernocampom = () => {
   const navigate = useNavigate();
   const filtroRef = useRef(null);
 
-  // 📌 Datos desde API
+  // Datos desde API
   const [registros, setRegistros] = useState([]);
   const [loading, setLoading] = useState(true);
   const [fincaAsignada, setFincaAsignada] = useState(null);
@@ -30,7 +27,7 @@ const Cuadernocampom = () => {
   const [busquedas, setBusquedas] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
 
-  // 📌 Función para formatear fecha (dd/mm/yyyy)
+  // Función para formatear fecha (dd/mm/yyyy)
   const formatFecha = (isoDate) => {
     if (!isoDate) return "";
     const d = new Date(isoDate);
@@ -40,7 +37,7 @@ const Cuadernocampom = () => {
     return `${day}/${month}/${year}`;
   };
 
-  // 📌 Cargar finca asignada al usuario
+  // Cargar finca asignada al usuario
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -58,7 +55,7 @@ const Cuadernocampom = () => {
     fetchUser();
   }, []);
 
-  // 📌 Cargar registros de la finca asignada
+  // Cargar registros de la finca asignada
   useEffect(() => {
     const fetchRegistros = async () => {
       if (!fincaAsignada) {
@@ -152,7 +149,7 @@ const Cuadernocampom = () => {
 
   return (
     <LayoutMayordomo titulo="Cuaderno de Campo">
-      {/* ✅ Botón registro */}
+      {/* Botón registro */}
       <div className="mb-6 flex justify-end">
         <button
           onClick={() => navigate("/registro_campom")}
@@ -163,7 +160,7 @@ const Cuadernocampom = () => {
         </button>
       </div>
 
-      {/* ✅ Tabla con filtros */}
+      {/* Tabla con filtros */}
       <div className="bg-white border border-gray-200 rounded-xl overflow-auto relative">
         {loading ? (
           <p className="p-6 text-gray-500 text-center">Cargando registros...</p>

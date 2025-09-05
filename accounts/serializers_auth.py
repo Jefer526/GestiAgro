@@ -4,8 +4,10 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+
+# Serializer para autenticación mediante email y generación de token JWT
 class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
-    # Indicamos que el campo de login es 'email'
+
     username_field = "email"
 
     email = serializers.EmailField(write_only=True)
@@ -25,10 +27,8 @@ class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
         if not user.is_active:
             raise serializers.ValidationError({"detail": "Usuario inactivo."})
 
-        # Llamamos al padre para generar tokens
         data = super().validate({"username": user.username, "password": password})
 
-        # Agregamos datos del usuario en la respuesta
         data["user"] = {
             "id": user.id,
             "email": user.email,

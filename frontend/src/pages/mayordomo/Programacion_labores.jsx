@@ -1,10 +1,9 @@
-// src/pages/mayordomo/Programacion_labores.jsx
 import React, { useState, useEffect } from "react";
 import { IconTrash, IconPlus, IconCheck } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
 
-// ✅ APIs
+// APIs
 import { getMe, lotesApi, programacionLaboresApi } from "../../services/apiClient";
 
 const Programacion_labores = () => {

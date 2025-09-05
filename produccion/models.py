@@ -2,6 +2,8 @@ from django.db import models
 from fincas.models import Finca, Lote
 from core.models import BaseAuditModel
 
+
+# Modelo para registrar la producción agrícola de cada finca y lote
 class Produccion(BaseAuditModel):
     fecha = models.DateField()
     finca = models.ForeignKey(Finca, on_delete=models.CASCADE)

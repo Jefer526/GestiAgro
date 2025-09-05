@@ -22,7 +22,7 @@ const Produccion_agro = () => {
   // Estados de filtros
   const [finca, setFinca] = useState(""); // ID de la finca
   const [lote, setLote] = useState("");   // ID del lote
-  const [periodo, setPeriodo] = useState("Mes");
+  const [periodo, setPeriodo] = useState("mes"); // 👈 controlado en minúscula
 
   // Datos para selects
   const [fincas, setFincas] = useState([]);
@@ -69,7 +69,7 @@ const Produccion_agro = () => {
   useEffect(() => {
     const fetchProduccion = async () => {
       try {
-        const params = { periodo: periodo.toLowerCase() }; // mes o año
+        const params = { periodo }; // ya viene como "mes" o "año"
         if (finca) params.finca = finca;
         if (lote) params.lote = lote;
 
@@ -80,7 +80,7 @@ const Produccion_agro = () => {
         setLabels(
           data.map((item) => {
             if (periodo === "año") {
-              return item.periodo; 
+              return item.periodo; // ejemplo: "2025"
             } else {
               // item.periodo viene en formato "YYYY-MM"
               const [year, month] = item.periodo.split("-");
@@ -202,8 +202,8 @@ const Produccion_agro = () => {
           onChange={(e) => setPeriodo(e.target.value)}
           className="border border-gray-300 rounded px-4 py-1 w-60"
         >
-          <option>Mes</option>
-          <option>Año</option>
+          <option value="mes">Mes</option>
+          <option value="año">Año</option>
         </select>
       </div>
 

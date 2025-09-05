@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Finca, Lote, Arbol
 
 
+# Serializer para registrar y mostrar información de las fincas
 class FincaSerializer(serializers.ModelSerializer):
     numero_arboles = serializers.ReadOnlyField()
 
@@ -14,6 +15,7 @@ class FincaSerializer(serializers.ModelSerializer):
         read_only_fields = ["creado_por", "fecha_creacion"]
 
 
+# Serializer para registrar y mostrar árboles de un lote
 class ArbolSerializer(serializers.ModelSerializer):
     class Meta:
         model = Arbol
@@ -21,6 +23,7 @@ class ArbolSerializer(serializers.ModelSerializer):
         read_only_fields = ["creado_por", "fecha_creacion"]
 
 
+# Serializer para registrar y mostrar lotes de una finca
 class LoteSerializer(serializers.ModelSerializer):
     arboles = ArbolSerializer(many=True, required=False)
     numero_arboles = serializers.SerializerMethodField()

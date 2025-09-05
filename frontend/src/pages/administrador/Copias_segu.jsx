@@ -1,12 +1,9 @@
-// src/pages/administrador/Copias_segu.jsx
 import React, { useState, useRef, useEffect } from "react";
 import {
   IconFilter,
   IconPencil,
   IconTrash,
   IconDotsVertical,
-  IconSortAscending2,
-  IconSortDescending2,
   IconRefresh,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";

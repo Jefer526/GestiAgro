@@ -1,4 +1,3 @@
-// src/pages/mayordomo/Bodega_insu.jsx
 import React, { useState, useRef, useEffect } from "react";
 import {
   IconEye,
@@ -19,7 +18,7 @@ const Bodega_insu = () => {
   const [loading, setLoading] = useState(true);
   const [finca, setFinca] = useState(null);
 
-  // 🔹 Ahora agregamos "finca" como primera columna
+  // Ahora agregamos "finca" como primera columna
   const columnas = ["finca", "categoria", "producto", "ingrediente activo", "saldo", "unidad"];
   const [filtroActivo, setFiltroActivo] = useState(null);
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
@@ -27,7 +26,7 @@ const Bodega_insu = () => {
   const [busquedas, setBusquedas] = useState({});
   const [filtroPosicion, setFiltroPosicion] = useState({ top: 0, left: 0 });
 
-  /* 🔹 Obtener finca asignada */
+  /* Obtener finca asignada */
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -42,7 +41,7 @@ const Bodega_insu = () => {
     fetchUser();
   }, []);
 
-  /* 🔹 Cargar productos SOLO de la finca asignada */
+  /* Cargar productos SOLO de la finca asignada */
   useEffect(() => {
     if (!finca) return;
 
@@ -70,7 +69,7 @@ const Bodega_insu = () => {
 
                     return {
                       id: prod.id,
-                      finca: s.finca_nombre, // 👈 Nueva propiedad para la columna
+                      finca: s.finca_nombre, // Nueva propiedad para la columna
                       producto: prod.nombre,
                       categoria: prod.categoria,
                       ingrediente: prod.ingrediente,
@@ -97,7 +96,7 @@ const Bodega_insu = () => {
     fetchProductos();
   }, [finca]);
 
-  /* 🔹 Filtros */
+  /* Filtros */
   const getValoresUnicos = (campo) => {
     const search = (busquedas[campo] || "").toLowerCase();
     return [...new Set(registros.map((e) => e[campo]?.toString() || ""))].filter((v) =>
@@ -148,7 +147,7 @@ const Bodega_insu = () => {
 
   return (
     <LayoutMayordomo titulo="Bodega de insumos">
-       {/* 🔹 Botones acción */}
+       {/* Botones acción */}
         <div className="flex justify-end gap-4 p-4">
 
           <button
@@ -160,7 +159,7 @@ const Bodega_insu = () => {
           </button>
         </div>
 
-      {/* 🔹 Tabla con mismo estilo que Equipos_mayor */}
+      {/* Tabla con mismo estilo que Equipos_mayor */}
       <div className="overflow-x-auto rounded-lg shadow-lg">
         {loading ? (
           <p className="text-center py-6">Cargando insumos...</p>

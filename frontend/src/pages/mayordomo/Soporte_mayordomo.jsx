@@ -1,10 +1,9 @@
-// src/pages/mayordomo/Soporte_mayordomo.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
 import { soporteApi } from "../../services/apiClient";
 import TablaSoporte from "../../components/TablaSoporte";
-import { IconMessageChatbot } from "@tabler/icons-react"; // 👈 importar icono
+import { IconMessageChatbot } from "@tabler/icons-react"; // importar icono
 
 const Soporte_mayordomo = () => {
   const navigate = useNavigate();
@@ -26,7 +25,7 @@ const Soporte_mayordomo = () => {
     <LayoutMayordomo>
       <h1 className="text-3xl font-bold text-green-700 mb-4">Soporte</h1>
 
-      {/* 🔘 Botón debajo del título */}
+      {/* Botón debajo del título */}
       <div className="flex justify-start mb-6">
         <button
           onClick={() => navigate("/registrarticketm")}

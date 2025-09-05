@@ -1,4 +1,3 @@
-// src/pages/mayordomo/Registrar_novedadm.jsx
 import React, { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
@@ -35,6 +34,7 @@ const Registrar_novedadm = () => {
     fetchMaquinas();
   }, []);
 
+  // === Filtros ===
   const filtroRef = useRef(null);
   const [filtroActivo, setFiltroActivo] = useState(null);
   const [filtroPosicion, setFiltroPosicion] = useState({ top: 0, left: 0 });
@@ -74,8 +74,10 @@ const Registrar_novedadm = () => {
   const handleBusqueda = (campo, texto) =>
     setBusquedas({ ...busquedas, [campo]: texto });
 
+  // === Alerta guardar ===
   const [alertaVisible, setAlertaVisible] = useState(false);
 
+  // === Menú contextual ===
   const [menuIndex, setMenuIndex] = useState(null);
   const menuRef = useRef(null);
   const [menuPos, setMenuPos] = useState({ top: 0, left: 0 });
@@ -109,10 +111,11 @@ const Registrar_novedadm = () => {
     return () => document.removeEventListener("mousedown", manejarClickFuera);
   }, []);
 
-  const handleEstadoChange = async (index, marcarAveriado) => {
+  // === Cambiar a Averiado ===
+  const handleEstadoChange = async (index) => {
     try {
       const maquina = maquinas[index];
-      const nuevoEstado = marcarAveriado ? "Averiado" : "Óptimo";
+      const nuevoEstado = "Averiado";
 
       await equiposApi.update(maquina.id, { estado: nuevoEstado });
 
@@ -169,14 +172,14 @@ const Registrar_novedadm = () => {
 
   return (
     <LayoutMayordomo ocultarEncabezado>
-      {/* ✅ Alerta flotante */}
+      {/* Alerta flotante */}
       {alertaVisible && (
         <div className="fixed top-3 left-1/2 -translate-x-1/2 z-[1000] bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
           <IconCheck className="w-5 h-5" /> Estados actualizados exitosamente
         </div>
       )}
 
-      {/* 1️⃣ Solo botón Volver */}
+      {/* Volver */}
       <button
         onClick={() => navigate("/equipos_mayordomo")}
         className="flex items-center text-green-700 font-semibold mb-4 text-lg hover:underline"
@@ -184,7 +187,7 @@ const Registrar_novedadm = () => {
         <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
       </button>
 
-      {/* 2️⃣ Título y finca al mismo nivel */}
+      {/* Título */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-3xl font-bold text-green-700">
           Registrar novedad de máquina
@@ -192,7 +195,7 @@ const Registrar_novedadm = () => {
         <span className="text-2xl font-bold text-green-700">Las Palmas</span>
       </div>
 
-      {/* 3️⃣ Botón Guardar */}
+      {/* Botón Guardar */}
       <div className="flex justify-end mb-6">
         <button
           onClick={handleGuardar}
@@ -202,7 +205,7 @@ const Registrar_novedadm = () => {
         </button>
       </div>
 
-      {/* 4️⃣ Tabla */}
+      {/* Tabla */}
       <div className="overflow-x-auto rounded-lg shadow-lg relative bg-white">
         <table className="min-w-full text-base">
           <thead className="bg-green-600 text-white font-bold text-center">
@@ -240,6 +243,42 @@ const Registrar_novedadm = () => {
             ))}
           </tbody>
         </table>
+
+        {/* Menú contextual */}
+        {menuIndex !== null && (
+          <MenuOverlay>
+            <div
+              ref={menuRef}
+              className="fixed w-72 bg-white border border-gray-100 rounded-2xl shadow-2xl p-2 z-[1200]"
+              style={{ top: menuPos.top, left: menuPos.left }}
+            >
+              <div className="px-3 pt-2 pb-1 text-xs font-medium text-gray-500">
+                Selecciona una opción
+              </div>
+
+              {/* Solo Marcar como AVERIADO */}
+              {maquinas[menuIndex]?.estado !== "Averiado" && (
+                <button
+                  onClick={() => {
+                    handleEstadoChange(menuIndex);
+                    closeMenu();
+                  }}
+                  className="w-full flex items-center gap-3 px-3 py-3 rounded-xl transition text-left hover:bg-gray-100"
+                >
+                  <div className="shrink-0 inline-flex items-center justify-center w-8 h-8 rounded-lg border">
+                    <IconCircleCheck className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold">Marcar como averiado</div>
+                    <div className="text-xs text-gray-500">
+                      El equipo quedará en estado “Averiado”.
+                    </div>
+                  </div>
+                </button>
+              )}
+            </div>
+          </MenuOverlay>
+        )}
       </div>
     </LayoutMayordomo>
   );

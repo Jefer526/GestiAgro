@@ -1,4 +1,3 @@
-// src/pages/Login.jsx
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
@@ -17,7 +16,7 @@ const Login = () => {
   const [errorMsg, setErrorMsg] = useState("");
   const [capsOn, setCapsOn] = useState(false);
 
-  // 📌 Cargar correo guardado si existe y validar sesión previa
+  // Cargar correo guardado si existe y validar sesión previa
   useEffect(() => {
     const savedEmail = localStorage.getItem("rememberedEmail");
     if (savedEmail) {
@@ -87,7 +86,7 @@ const Login = () => {
 
       redirectByRole(user);
     } catch (err) {
-      console.log("DEBUG ERROR:", err);       // 👀 Para verificar en consola
+      console.log("DEBUG ERROR:", err);       // Para verificar en consola
       console.log("DEBUG RESPONSE:", err.response);
 
       if (err.response?.status === 401) {

@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import RegistroCampo
 
 
+# Serializer para registrar y mostrar datos del cuaderno de campo
 class RegistroCampoSerializer(serializers.ModelSerializer):
     finca_nombre = serializers.CharField(source="finca.nombre", read_only=True)
     lote_nombre = serializers.CharField(source="lote.lote", read_only=True)

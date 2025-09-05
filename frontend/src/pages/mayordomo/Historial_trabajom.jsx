@@ -1,4 +1,3 @@
-// src/pages/mayordomo/Historial_trabajom.jsx
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -13,7 +12,7 @@ import { equiposApi, laboresMaquinariaApi, getMe } from "../../services/apiClien
 
 const Historial_trabajom = () => {
   const navigate = useNavigate();
-  const { id } = useParams(); // 👈 id de la máquina
+  const { id } = useParams(); // id de la máquina
   const filtroRef = useRef(null);
 
   const [maquina, setMaquina] = useState(null);
@@ -23,11 +22,11 @@ const Historial_trabajom = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // 📌 Obtener la máquina actual
+        // Obtener la máquina actual
         const resMaquina = await equiposApi.get(id);
         setMaquina(resMaquina.data);
 
-        // 📌 Traer SOLO las labores de esta máquina
+        // Traer SOLO las labores de esta máquina
         const resLabores = await laboresMaquinariaApi.list({ maquina: id });
 
         const mapped = resLabores.data.map((l) => {
@@ -49,7 +48,7 @@ const Historial_trabajom = () => {
     fetchData();
   }, [id]);
 
-  // 📌 Obtener finca asignada
+  // Obtener finca asignada
   useEffect(() => {
     const fetchFinca = async () => {
       try {
@@ -143,7 +142,7 @@ const Historial_trabajom = () => {
         : String(b[campo]).localeCompare(String(a[campo]));
     });
 
-  // ✅ Formato DD/MM/YYYY
+  // Formato DD/MM/YYYY
   const formatFecha = (isoDate) => {
     if (!isoDate) return "—";
     const [y, m, d] = isoDate.split("-");
@@ -170,8 +169,7 @@ const Historial_trabajom = () => {
       >
         <IconChevronLeft className="w-6 h-6 mr-1" /> Volver
       </button>
-
-      {/* Título + finca en el mismo nivel */}
+      
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-green-700">Historial de trabajo</h1>
         {finca && (

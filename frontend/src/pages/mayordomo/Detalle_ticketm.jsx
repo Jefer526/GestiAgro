@@ -13,7 +13,6 @@ const Detalles_ticketm = () => {
     if (state?.ticket) {
       setTicket(state.ticket);
     } else {
-      // igual que en agrónomo, si recarga sin state se puede pedir con soporteApi.getTicket(id)
     }
   }, [state]);
 
