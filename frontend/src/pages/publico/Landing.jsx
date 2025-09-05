@@ -13,6 +13,7 @@ import {
   IconPhone,
   IconMail,
   IconMapPin,
+  IconPlant,
 } from "@tabler/icons-react";
 import faviconBlanco from "../../assets/favicon-blanco.png";
 import heroBg from "../../assets/Fondo_pantalla_principal.png";
@@ -119,7 +120,7 @@ const Landing = () => {
 
             <div className="mt-8 flex flex-wrap gap-4">
               <button
-                onClick={() => navigate("/demo")}
+                onClick={() => navigate("/crear-cuenta")}
                 className="rounded-xl bg-green-600 px-7 py-3.5 text-white text-lg font-semibold hover:bg-green-700 shadow-lg transition"
               >
                 Probar DEMO gratis
