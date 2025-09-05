@@ -1,4 +1,3 @@
-// src/pages/agronomo/Ajustes_agro.jsx
 import React, { useState, useEffect } from "react";
 import { IconLock, IconEye, IconEyeOff, IconX } from "@tabler/icons-react";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";

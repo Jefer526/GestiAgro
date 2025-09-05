@@ -1,19 +1,16 @@
-// src/pages/agronomo/Historial_trabajo_agro.jsx
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   IconChevronLeft,
   IconFilter,
   IconPlus,
-  IconSortAscending2,
-  IconSortDescending2,
 } from "@tabler/icons-react";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
 import { equiposApi, laboresMaquinariaApi } from "../../services/apiClient";
 
 const Historial_trabajo_agro = () => {
   const navigate = useNavigate();
-  const { id } = useParams(); // 👈 id de la máquina
+  const { id } = useParams(); // id de la máquina
   const filtroRef = useRef(null);
 
   const [maquina, setMaquina] = useState(null);
@@ -22,12 +19,11 @@ const Historial_trabajo_agro = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // 📌 Obtener la máquina actual
+        // Obtener la máquina actual
         const resMaquina = await equiposApi.get(id);
         setMaquina(resMaquina.data);
 
-        // 📌 Traer SOLO las labores de esta máquina
-        // 👇 CORREGIDO: ya no se anidan los params
+        // Trae solo las labores de esta máquina
         const resLabores = await laboresMaquinariaApi.list({ maquina: id });
 
         const mapped = resLabores.data.map((l) => {
@@ -130,14 +126,14 @@ const Historial_trabajo_agro = () => {
         : String(b[campo]).localeCompare(String(a[campo]));
     });
 
-  // ✅ Formato DD/MM/YYYY
+  // Formato DD/MM/YYYY
   const formatFecha = (isoDate) => {
     if (!isoDate) return "—";
     const [y, m, d] = isoDate.split("-");
     return `${d}/${m}/${y}`;
   };
 
-  // Cerrar al hacer click fuera
+  // Cerrar menú
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (filtroRef.current && !filtroRef.current.contains(e.target)) {
@@ -177,7 +173,7 @@ const Historial_trabajo_agro = () => {
       {/* Subtítulo */}
       <h2 className="text-3xl font-bold text-green-700 mb-2">Historial de labores</h2>
 
-      {/* Botón debajo del subtítulo */}
+      {/* Botón */}
       {maquina && (
         <div className="flex justify-end mb-4">
           <button

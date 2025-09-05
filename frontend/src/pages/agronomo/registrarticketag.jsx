@@ -1,9 +1,8 @@
-// src/pages/agronomo/Registrarticketag.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
 import { IconChevronLeft } from "@tabler/icons-react";
-import { soporteApi } from "../../services/apiClient";  // 👈 Usamos soporteApi
+import { soporteApi } from "../../services/apiClient";  // Usamos soporteApi
 
 const Registrarticketag = () => {
   const [asunto, setAsunto] = useState("");
@@ -21,7 +20,7 @@ const Registrarticketag = () => {
       setMostrarAlerta(true);
       setTimeout(() => {
         setMostrarAlerta(false);
-        navigate("/soporteagro"); // 👈 listado de tickets agrónomo
+        navigate("/soporteagro"); // listado de tickets agrónomo
       }, 2000);
     } catch (error) {
       console.error("Error al enviar ticket:", error);

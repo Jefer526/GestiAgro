@@ -1,4 +1,3 @@
-// src/pages/agronomo/Produccion_agro.jsx
 import React, { useState, useEffect } from "react";
 import { Bar } from "react-chartjs-2";
 import {
@@ -33,10 +32,10 @@ const Produccion_agro = () => {
   const [labels, setLabels] = useState([]);
   const [values, setValues] = useState([]);
 
-  // 🔹 Función para capitalizar
+  // Función para capitalizar
   const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
-  // 🔹 Cargar fincas al inicio
+  // Cargar fincas al inicio
   useEffect(() => {
     const fetchFincas = async () => {
       try {
@@ -49,7 +48,7 @@ const Produccion_agro = () => {
     fetchFincas();
   }, []);
 
-  // 🔹 Cargar lotes al elegir finca
+  // Cargar lotes al elegir finca
   useEffect(() => {
     const fetchLotes = async () => {
       if (finca) {
@@ -66,11 +65,11 @@ const Produccion_agro = () => {
     fetchLotes();
   }, [finca]);
 
-  // 🔹 Cargar producción cuando cambien filtros
+  // Cargar producción cuando cambien filtros
   useEffect(() => {
     const fetchProduccion = async () => {
       try {
-        const params = { periodo: periodo.toLowerCase() }; // 👈 mes o año
+        const params = { periodo: periodo.toLowerCase() }; // mes o año
         if (finca) params.finca = finca;
         if (lote) params.lote = lote;
 
@@ -81,9 +80,9 @@ const Produccion_agro = () => {
         setLabels(
           data.map((item) => {
             if (periodo === "año") {
-              return item.periodo; // ya viene como "2025"
+              return item.periodo; 
             } else {
-              // 👇 item.periodo viene en formato "YYYY-MM"
+              // item.periodo viene en formato "YYYY-MM"
               const [year, month] = item.periodo.split("-");
               const fechaNormalizada = new Date(parseInt(year), parseInt(month) - 1, 1);
 
@@ -105,7 +104,7 @@ const Produccion_agro = () => {
     fetchProduccion();
   }, [finca, lote, periodo]);
 
-  // 🔹 Configurar gráfica
+  // Configurar gráfica
   const data = {
     labels,
     datasets: [

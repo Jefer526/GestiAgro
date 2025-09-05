@@ -1,4 +1,3 @@
-// src/pages/agronomo/Registrar_empleado.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { IconChevronLeft, IconCheck } from "@tabler/icons-react";
@@ -12,7 +11,7 @@ const Registrar_empleado = () => {
   const [form, setForm] = useState({
     nombre: "",
     cargo: "",
-    estado: "activo", // 👈 valor en minúscula para coincidir con el modelo
+    estado: "activo", // valor en minúscula para coincidir con el modelo
     finca: null,
     telefono: "",
   });
@@ -52,14 +51,14 @@ const Registrar_empleado = () => {
 
   return (
     <LayoutAgronomo active="/manejopersonal">
-      {/* ✅ Alerta */}
+      {/* Alerta */}
       {alertaVisible && (
         <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
           <IconCheck className="w-5 h-5" /> Empleado registrado exitosamente
         </div>
       )}
 
-      {/* ✅ Botón volver */}
+      {/* Botón volver */}
       <button
         onClick={() => navigate("/manejopersonal")}
         className="flex items-center text-green-700 font-semibold mb-4 text-lg hover:underline"
@@ -67,7 +66,7 @@ const Registrar_empleado = () => {
         <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
       </button>
 
-      {/* ✅ Formulario */}
+      {/* Formulario */}
       <form
         onSubmit={manejarGuardar}
         className="bg-white border border-gray-200 rounded-xl shadow-md p-8 w-full max-w-2xl mx-auto space-y-6 text-black"
@@ -156,7 +155,7 @@ const Registrar_empleado = () => {
           />
         </div>
 
-        {/* ✅ Botones */}
+        {/* Botones */}
         <div className="flex justify-center space-x-6">
           <button
             type="submit"

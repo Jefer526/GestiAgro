@@ -1,4 +1,3 @@
-// src/pages/agronomo/Registrar_labor_maquinaria.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { IconChevronLeft, IconCheck, IconPlus, IconTrash } from "@tabler/icons-react";
@@ -27,7 +26,7 @@ const Registrar_labor_maquinaria = () => {
 
   const [labores, setLabores] = useState([]);
 
-  // 📌 Traer info de la máquina, finca y último horómetro
+  // Traer info de la máquina, finca y último horómetro
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -42,7 +41,7 @@ const Registrar_labor_maquinaria = () => {
           setLotes(lotesRes.data);
         }
 
-        // ✅ traer última labor de esta máquina
+        // traer última labor de esta máquina
         const laboresRes = await laboresMaquinariaApi.list({ maquina: id });
         if (laboresRes.data.length > 0) {
           const ultima = laboresRes.data[0]; // ordenadas por fecha desc desde backend
@@ -70,14 +69,14 @@ const Registrar_labor_maquinaria = () => {
     setFormData({ ...formData, [e.target.name]: value });
   };
 
-  // 📌 función para mostrar fecha en formato DD/MM/YYYY
+  // función para mostrar fecha en formato DD/MM/YYYY
   const formatFecha = (fecha) => {
     if (!fecha) return "";
     const [y, m, d] = fecha.split("-");
     return `${d}/${m}/${y}`;
   };
 
-  // ➡️ Añadir labor
+  // Añadir labor
   const añadirLabor = () => {
     const { fecha, labor, horometro_fin, lote } = formData;
 
@@ -101,7 +100,7 @@ const Registrar_labor_maquinaria = () => {
 
     const nuevaLabor = {
       ...formData,
-      horometro_inicio: horometro_inicio_actual, // ✅ ahora siempre correcto
+      horometro_inicio: horometro_inicio_actual,
       horometro_fin: Number(horometro_fin),
       loteId: Number(lote),
       loteNombre: loteObj ? `Lote ${loteObj.lote}` : "—",
@@ -121,7 +120,7 @@ const Registrar_labor_maquinaria = () => {
     }));
   };
 
-  // ➡️ Eliminar labor
+  // Eliminar labor
   const eliminarLabor = (idx) => {
     const nuevasLabores = labores.filter((_, i) => i !== idx);
     setLabores(nuevasLabores);
@@ -140,7 +139,7 @@ const Registrar_labor_maquinaria = () => {
     }
   };
 
-  // ➡️ Guardar todas las labores
+  // Guardar todas las labores
   const handleGuardar = async () => {
     if (labores.length === 0) return alert("No has añadido labores");
 

@@ -1,4 +1,3 @@
-// src/pages/agronomo/Gestion_lotes_agro.jsx
 import React, { useState, useRef, useEffect } from "react";
 import {
   IconFilter,
@@ -25,7 +24,7 @@ const Gestion_lotes_agro = () => {
   const [busquedas, setBusquedas] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
 
-  // === 📌 Obtener fincas y lotes desde API ===
+  // === Obtener fincas y lotes desde API ===
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -79,7 +78,7 @@ const Gestion_lotes_agro = () => {
     "detalles",
   ];
 
-  // === 🔎 Filtros ===
+  // === Filtros ===
   const getValoresUnicos = (campo) => {
     const search = (busquedas[campo] || "").toLowerCase();
 
@@ -129,7 +128,7 @@ const Gestion_lotes_agro = () => {
   const handleBusqueda = (campo, texto) =>
     setBusquedas({ ...busquedas, [campo]: texto });
 
-  // === 🔎 Filtrar y ordenar ===
+  // === Filtrar y ordenar ===
   const lotesFiltrados = lotes
     .filter((d) =>
       columnas.every((campo) => {
@@ -198,7 +197,7 @@ const Gestion_lotes_agro = () => {
     );
   }, 0);
 
-  // === Cerrar filtro al hacer click fuera ===
+  // === Cerrar filtro ===
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (filtroRef.current && !filtroRef.current.contains(e.target)) {

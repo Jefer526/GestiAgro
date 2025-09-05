@@ -1,4 +1,3 @@
-// src/pages/agronomo/Detalles_agrop.jsx
 import React, { useState, useRef, useEffect } from "react";
 import {
   IconChevronLeft,
@@ -15,7 +14,7 @@ const Detalles_agrop = () => {
   const { id, finca } = useParams();
   const filtroRef = useRef(null);
 
-  /* -------------------- 📌 ESTADOS -------------------- */
+  /* -------------------- ESTADOS -------------------- */
   const [filtroActivo, setFiltroActivo] = useState(null);
   const [filtroPosicion, setFiltroPosicion] = useState({ top: 0, left: 0 });
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
@@ -28,7 +27,7 @@ const Detalles_agrop = () => {
 
   const columnas = ["fecha", "finca", "lote", "tipo", "movimiento", "saldo", "unidad"];
 
-  /* -------------------- 📌 CARGA DE DATOS -------------------- */
+  /* -------------------- CARGA DE DATOS -------------------- */
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -69,7 +68,7 @@ const Detalles_agrop = () => {
     fetchData();
   }, [id, finca]);
 
-  /* -------------------- 📌 FILTROS -------------------- */
+  /* -------------------- FILTROS -------------------- */
   const getValoresUnicos = (campo) => {
     if (campo === "fecha") return [];
     const search = (busquedas[campo] || "").toLowerCase();
@@ -120,7 +119,7 @@ const Detalles_agrop = () => {
         : String(b[campo]).localeCompare(String(a[campo]));
     });
 
-  /* -------------------- 📌 CIERRE FILTRO FUERA -------------------- */
+  /* -------------------- CIERRE FILTRO -------------------- */
   useEffect(() => {
     const clickFuera = (e) => {
       if (filtroRef.current && !filtroRef.current.contains(e.target)) {
@@ -131,7 +130,7 @@ const Detalles_agrop = () => {
     return () => document.removeEventListener("mousedown", clickFuera);
   }, []);
 
-  /* -------------------- 📌 RENDER -------------------- */
+  /* -------------------- RENDER -------------------- */
   return (
     <LayoutAgronomo active="/Bodegaagro">
       <button
@@ -147,7 +146,7 @@ const Detalles_agrop = () => {
         <p className="text-center py-6">Cargando detalles...</p>
       ) : (
         <>
-          {/* 🔹 Card producto */}
+          {/* Card producto */}
           <div className="bg-white border border-gray-300 rounded-xl shadow-md mb-8 p-6 grid grid-cols-1 sm:grid-cols-2 gap-y-2 text-[17px] leading-relaxed max-w-3xl">
             <div><strong>Producto:</strong> {producto?.nombre}</div>
             <div><strong>Ingrediente activo:</strong> {producto?.ingrediente || "-"}</div>
@@ -164,7 +163,7 @@ const Detalles_agrop = () => {
 
           <h2 className="text-3xl font-bold text-green-700 mb-6">Movimientos del producto</h2>
 
-          {/* 🔹 Tabla movimientos */}
+          {/* Tabla movimientos */}
           <div className="bg-white border border-gray-300 rounded-xl shadow-md overflow-x-auto relative">
             <table className="w-full text-base text-center">
               <thead className="bg-green-600 text-white">

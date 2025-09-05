@@ -1,9 +1,8 @@
-// src/pages/agronomo/Registrar_maquina.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { IconChevronLeft, IconCheck } from "@tabler/icons-react";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
-import api, { equiposApi } from "../../services/apiClient"; // 👈 importar bien
+import api, { equiposApi } from "../../services/apiClient"; // importar bien
 
 const Registrar_maquina = () => {
   const navigate = useNavigate();
@@ -46,15 +45,15 @@ const handleSubmit = async (e) => {
   e.preventDefault();
   setCargando(true);
 
-  // 👀 Ver qué se está enviando
+  // Ver qué se está enviando
   const payload = {
     ...form,
-    ubicacion: form.ubicacion ? parseInt(form.ubicacion, 10) : null, // 👈 int o null
+    ubicacion: form.ubicacion ? parseInt(form.ubicacion, 10) : null, // int o null
   };
   console.log("Enviando datos al backend:", payload);
 
   try {
-    await equiposApi.create(payload); // 👈 llama API
+    await equiposApi.create(payload); // llama API
     setAlertaVisible(true);
     setTimeout(() => {
       setAlertaVisible(false);

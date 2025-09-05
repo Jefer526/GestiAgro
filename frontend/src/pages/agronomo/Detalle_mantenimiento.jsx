@@ -1,4 +1,3 @@
-// src/pages/agronomo/Detalle_mantenimiento.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { IconChevronLeft } from "@tabler/icons-react";
@@ -13,15 +12,15 @@ const Detalle_mantenimiento = () => {
   const [mantenimiento, setMantenimiento] = useState(null);
   const [maquina, setMaquina] = useState(null);
 
-  // 📌 Cargar mantenimiento + máquina asociada
+  // Cargar mantenimiento + máquina asociada
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // 🔹 Traer mantenimiento por ID
+        // Traer mantenimiento por ID
         const resMant = await mantenimientosApi.get(id);
         setMantenimiento(resMant.data);
 
-        // 🔹 Traer máquina asociada al mantenimiento
+        // Traer máquina asociada al mantenimiento
         if (resMant.data.maquina) {
           const resMaq = await equiposApi.get(resMant.data.maquina);
           setMaquina(resMaq.data);

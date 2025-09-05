@@ -1,4 +1,3 @@
-// src/pages/agronomo/Informes_agro.jsx
 import React, { useState } from "react";
 import { IconFileDownload } from "@tabler/icons-react";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";

@@ -1,10 +1,9 @@
-// src/pages/agronomo/Soporte_agro.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
 import { soporteApi } from "../../services/apiClient";
 import TablaSoporte from "../../components/TablaSoporte";
-import { IconMessageChatbot } from "@tabler/icons-react"; // 👈 importar icono
+import { IconMessageChatbot } from "@tabler/icons-react"; 
 
 const Soporte_agro = () => {
   const navigate = useNavigate();
@@ -26,7 +25,7 @@ const Soporte_agro = () => {
     <LayoutAgronomo>
       <h1 className="text-3xl font-bold text-green-700 mb-4">Soporte</h1>
 
-      {/* 🔘 Botón justo debajo del título */}
+      {/* Botón */}
       <div className="flex justify-start mb-6">
         <button
           onClick={() => navigate("/registrarticketag")}

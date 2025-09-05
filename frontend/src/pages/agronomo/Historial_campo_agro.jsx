@@ -1,4 +1,3 @@
-// src/pages/agronomo/Historial_campo_agro.jsx
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -15,7 +14,7 @@ const Historial_campo_agro = () => {
   const navigate = useNavigate();
   const filtroRef = useRef(null);
 
-  // 📌 Datos desde API
+  // Datos desde API
   const [registros, setRegistros] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -29,7 +28,7 @@ const Historial_campo_agro = () => {
   const [busquedas, setBusquedas] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
 
-  // 📌 Función para formatear fecha (dd/mm/yyyy)
+  // Función para formatear fecha (dd/mm/yyyy)
   const formatFecha = (isoDate) => {
     if (!isoDate) return "";
     const d = new Date(isoDate);
@@ -39,7 +38,7 @@ const Historial_campo_agro = () => {
     return `${day}/${month}/${year}`;
   };
 
-  // 📌 Cargar registros al montar
+  // Cargar registros 
   useEffect(() => {
     const fetchRegistros = async () => {
       try {
@@ -54,7 +53,7 @@ const Historial_campo_agro = () => {
     fetchRegistros();
   }, []);
 
-  // Cerrar popover si clic fuera
+  // Cerrar popover 
   useEffect(() => {
     const clickFuera = (e) => {
       if (filtroRef.current && !filtroRef.current.contains(e.target)) {
@@ -121,7 +120,7 @@ const Historial_campo_agro = () => {
         Cuaderno de Campo
       </h1>
 
-      {/* ✅ Botón registro */}
+      {/* Botón registro */}
       <div className="mb-6 flex justify-end">
         <button
           onClick={() => navigate("/cuadernocampo")}
@@ -133,7 +132,7 @@ const Historial_campo_agro = () => {
       </div>
      
 
-      {/* ✅ Tabla con filtros */}
+      {/* Tabla con filtros */}
       <div className="bg-white border border-gray-200 rounded-xl overflow-auto relative">
         {loading ? (
           <p className="p-6 text-gray-500 text-center">Cargando registros...</p>
@@ -170,7 +169,7 @@ const Historial_campo_agro = () => {
                   key={r.id}
                   className="border-b border-gray-200 text-center align-middle hover:bg-gray-50 transition"
                 >
-                  {/* 📌 Fecha formateada */}
+                  {/* Fecha formateada */}
                   <td className="px-4 py-2 border">{formatFecha(r.fecha)}</td>
                   <td className="px-4 py-2 border">{r.finca_nombre}</td>
                   <td className="px-4 py-2 border">{r.lote_nombre}</td>

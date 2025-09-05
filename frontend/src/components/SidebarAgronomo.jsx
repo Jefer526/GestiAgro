@@ -138,14 +138,14 @@ const SidebarAgronomo = () => {
           { icon: <IconCheckupList />, routes: ["/Laboresagro", "/historiallabores"] },
           { icon: <IconHistory />, routes: ["/Historialagro"] },
           { icon: <IconBook />, routes: ["/Historialcampo", "/detallecampo", "/cuadernocampo"] },
-          { icon: <IconPlant2 />, routes: ["/produccionagro"] },
+          { icon: <IconPlant2 />, routes: ["/Produccionagro", "/registrarproduccion"] },
           { icon: <IconChartBar />, routes: ["/Informesagro"] },
-          { icon: <IconBug />, routes: ["/manejofitosanitario"] },
+          { icon: <IconBug />, routes: ["/manejofitosanitario", "/registrarmonitoreo"] },
           { icon: <IconBox />, routes: ["/Bodegaagro", "/agregarproducto", "/detallesagrop", "/bodegaagro", "/registrarmovimiento"] },
           { icon: <IconCloudRain />, routes: ["/variablesclimaticas", "/Registrarclima"] },
           { icon: <IconTractor />, routes: ["/maquinariaequipos", "/registrarmaquina", "/registrarnovedad", "/hojadevida", "/historialtrabajo", "/detallemantenimiento", "/registrarlabormaquinaria"] },
           { icon: <IconUsersGroup />, routes: ["/manejopersonal", "/registrarempleado", "/editarempleado" , "/gestionmayordomo"] },
-          { icon: <IconPlant />, routes: ["/gestionfincas", "/crearfinca", "/editarfinca", "/Detallelote" ] },
+          { icon: <IconPlant />, routes: ["/gestionfincas", "/crearfinca", "/editarfinca", "/Detallelote", "/crearlote/4" ] },
         ].map(({ icon, routes }, i) => (
           <div key={i} className="relative">
             {isActive(routes) && (

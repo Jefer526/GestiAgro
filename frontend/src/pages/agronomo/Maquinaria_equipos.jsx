@@ -1,4 +1,3 @@
-// src/pages/agronomo/Maquinaria_equipos.jsx
 import React, { useState, useRef, useEffect } from "react";
 import {
   IconFilter,
@@ -25,11 +24,11 @@ const Maquinaria_equipos = () => {
     "codigo_equipo",
     "maquina",
     "referencia",
-    "ubicacion_nombre", // 👉 se mostrará como "FINCA"
+    "ubicacion_nombre", // se mostrará como "FINCA"
     "estado",
   ];
 
-  // 🔄 Cargar datos
+  // Cargar datos
   useEffect(() => {
     const fetchMaquinas = async () => {
       try {
@@ -100,7 +99,7 @@ const Maquinaria_equipos = () => {
         : String(valB).localeCompare(String(valA));
     });
 
-  // Cerrar filtros al hacer click fuera
+  // Cerrar filtros 
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (filtroRef.current && !filtroRef.current.contains(e.target)) {
@@ -113,12 +112,12 @@ const Maquinaria_equipos = () => {
 
   return (
     <LayoutAgronomo>
-      {/* 📌 Título */}
+      {/* Título */}
       <h1 className="text-3xl font-bold text-green-700 mb-4">
         Maquinaria y Equipos
       </h1>
 
-      {/* 📌 Botones en la parte derecha */}
+      {/* Botones */}
       <div className="flex justify-end gap-4 mb-6">
         <button
           onClick={() => navigate("/registrarmaquina")}
@@ -136,7 +135,7 @@ const Maquinaria_equipos = () => {
         </button>
       </div>
 
-      {/* 📌 Tabla */}
+      {/* Tabla */}
       <div className="overflow-x-auto rounded-lg shadow-lg">
         <table className="min-w-full text-center text-base bg-white">
           <thead className="bg-green-600 text-white font-bold">

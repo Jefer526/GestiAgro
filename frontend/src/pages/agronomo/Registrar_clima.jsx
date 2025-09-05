@@ -18,7 +18,7 @@ const Registrar_clima = () => {
     humedad: "",
   });
 
-  // 📌 Cargar fincas al iniciar
+  // Cargar fincas al iniciar
   useEffect(() => {
     const fetchFincas = async () => {
       try {
@@ -73,7 +73,7 @@ const Registrar_clima = () => {
           Registrar variables climáticas
         </h2>
 
-        {/* 📌 Selección de finca */}
+        {/* Selección de finca */}
         <div>
           <label className="block mb-1 font-semibold">Finca</label>
           <select

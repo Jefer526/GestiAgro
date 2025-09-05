@@ -1,4 +1,3 @@
-// src/pages/agronomo/Editar_finca.jsx
 import React, { useState, useRef, useEffect } from "react";
 import {
   IconChevronLeft,
@@ -26,7 +25,7 @@ const Editar_finca = () => {
   const [busquedas, setBusquedas] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
 
-  // 🔄 Cargar datos desde API
+  // Cargar datos desde API
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -158,7 +157,7 @@ const Editar_finca = () => {
     0
   );
 
-  // ✅ Total de variedades
+  // Total de variedades
   const seleccionadas = valoresSeleccionados["variedades"] || [];
   const totalVariedades = lotesFiltrados.reduce((acc, lote) => {
     const variedades = lote.variedades_detalle || [];
@@ -266,7 +265,7 @@ const Editar_finca = () => {
                 <td className="px-6 py-4 border">{item.lote}</td>
                 <td className="px-6 py-4 border">{item.cultivo}</td>
                 <td className="px-6 py-4 border">{item.numero_arboles}</td>
-                {/* ✅ Variedades con cantidad y filtro aplicado */}
+                {/* Variedades con cantidad y filtro aplicado */}
                 <td className="px-6 py-4 border">
                   {(() => {
                     const seleccionados =
@@ -330,7 +329,7 @@ const Editar_finca = () => {
         </table>
       </div>
 
-      {/* 📌 Filtro flotante */}
+      {/* Filtro flotante */}
       {filtroActivo && (
         <div
           ref={filtroRef}

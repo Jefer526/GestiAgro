@@ -1,4 +1,3 @@
-// src/pages/agronomo/Agregar_producto.jsx
 import React, { useState } from "react";
 import { IconChevronLeft, IconCheck } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
@@ -9,7 +8,7 @@ const Agregar_producto = () => {
   const navigate = useNavigate();
 
   /* ----------------------------------
-     📌 ESTADOS
+      ESTADOS
   ---------------------------------- */
   const [producto, setProducto] = useState({
     categoria: "",
@@ -23,7 +22,7 @@ const Agregar_producto = () => {
   const [loading, setLoading] = useState(false);
 
   /* ----------------------------------
-     📌 HANDLERS
+      HANDLERS
   ---------------------------------- */
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -38,7 +37,7 @@ const Agregar_producto = () => {
 
     try {
       setLoading(true);
-      // 📤 Enviar al backend
+      // Enviar al backend
       await productosApi.create({
         categoria: producto.categoria,
         nombre: producto.nombre,
@@ -46,7 +45,7 @@ const Agregar_producto = () => {
         unidad: producto.unidad,
       });
 
-      // ✅ Mostrar confirmación
+      // Mostrar confirmación
       setAlertaVisible(true);
       setTimeout(() => {
         setAlertaVisible(false);
@@ -61,7 +60,7 @@ const Agregar_producto = () => {
   };
 
   /* ----------------------------------
-     📌 RENDER
+      RENDER
   ---------------------------------- */
   return (
     <LayoutAgronomo>

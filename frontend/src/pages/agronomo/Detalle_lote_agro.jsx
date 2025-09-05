@@ -1,4 +1,3 @@
-// src/pages/agronomo/Detalle_lote_agro.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { IconChevronLeft, IconCheck, IconAlertTriangle } from "@tabler/icons-react";
@@ -7,7 +6,7 @@ import api from "../../services/apiClient";
 
 const Detalle_lote_agro = () => {
   const navigate = useNavigate();
-  const { fincaId, loteId } = useParams(); // 👈 necesitamos tanto la finca como el lote
+  const { fincaId, loteId } = useParams(); // necesitamos tanto la finca como el lote
 
   const [finca, setFinca] = useState(null);
   const [formData, setFormData] = useState({
@@ -23,7 +22,7 @@ const Detalle_lote_agro = () => {
   const [alertaVisible, setAlertaVisible] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  // 🔄 Obtener finca y lote desde API
+  // Obtener finca y lote desde API
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -68,7 +67,7 @@ const Detalle_lote_agro = () => {
     setErrorMsg("");
     try {
       const payload = { ...formData, arboles };
-      const res = await api.put(`/api/lotes/${loteId}/`, payload); // 👈 UPDATE
+      const res = await api.put(`/api/lotes/${loteId}/`, payload); // UPDATE
       console.log("✅ Lote actualizado:", res.data);
 
       setAlertaVisible(true);
@@ -84,7 +83,7 @@ const Detalle_lote_agro = () => {
 
   return (
     <LayoutAgronomo>
-      {/* ✅ Mensaje de confirmación */}
+      {/* Mensaje de confirmación */}
       {alertaVisible && (
         <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 
                         bg-green-600 text-white px-6 py-3 rounded-lg 
@@ -93,7 +92,7 @@ const Detalle_lote_agro = () => {
         </div>
       )}
 
-      {/* ❌ Mensaje de error */}
+      {/* Mensaje de error */}
       {errorMsg && (
         <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 
                         bg-red-600 text-white px-6 py-3 rounded-lg 
@@ -102,7 +101,7 @@ const Detalle_lote_agro = () => {
         </div>
       )}
 
-      {/* 🔙 Botón volver */}
+      {/* Botón volver */}
       <button
         onClick={() => navigate(`/editarfinca/${fincaId}`)}
         className="flex items-center text-green-700 font-semibold mb-4 text-lg hover:underline"
@@ -110,7 +109,7 @@ const Detalle_lote_agro = () => {
         <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
       </button>
 
-      {/* 📌 Formulario */}
+      {/* Formulario */}
       <form
         onSubmit={handleGuardar}
         className="max-w-4xl mx-auto bg-white border border-gray-200 

@@ -1,4 +1,3 @@
-// src/pages/agronomo/Manejo_personal_agro.jsx
 import React, { useState, useRef, useEffect } from "react";
 import {
   IconFilter,
@@ -50,7 +49,7 @@ const Manejo_personal_agro = () => {
   const capitalize = (text) =>
     text ? text.charAt(0).toUpperCase() + text.slice(1) : "";
 
-  // === 🔎 Filtros ===
+  // === Filtros ===
   const getValoresUnicos = (campo) => {
     const search = (busquedas[campo] || "").toLowerCase();
     return [...new Set(trabajadores.map((t) => String(t[campo] || "")))].filter(
@@ -89,7 +88,7 @@ const Manejo_personal_agro = () => {
   const handleBusqueda = (campo, texto) =>
     setBusquedas({ ...busquedas, [campo]: texto });
 
-  // === 🔎 Filtrar y ordenar ===
+  // === Filtrar y ordenar ===
   const trabajadoresFiltrados = trabajadores
     .filter((t) =>
       columnas.every((campo) => {
@@ -108,7 +107,7 @@ const Manejo_personal_agro = () => {
         : String(valB).localeCompare(String(valA));
     });
 
-  // === Cerrar filtro al hacer click fuera ===
+  // === Cerrar filtro ===
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (filtroRef.current && !filtroRef.current.contains(e.target)) {
@@ -124,7 +123,7 @@ const Manejo_personal_agro = () => {
       {/* Título */}
       <h1 className="text-3xl font-bold text-green-700 mb-4">Manejo Personal</h1>
 
-      {/* Botones debajo del título, alineados a la derecha */}
+      {/* Botones */}
       <div className="flex justify-end gap-4 mb-6">
         <button
           onClick={() => navigate("/registrarempleado")}

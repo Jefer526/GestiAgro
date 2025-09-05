@@ -1,4 +1,3 @@
-// src/pages/agronomo/Crear_lote_agro.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { IconChevronLeft, IconCheck, IconAlertTriangle } from "@tabler/icons-react";
@@ -7,11 +6,11 @@ import api from "../../services/apiClient";
 
 const Crear_lote_agro = () => {
   const navigate = useNavigate();
-  const { fincaId } = useParams(); // 👈 id de la finca desde la URL
+  const { fincaId } = useParams(); // id de la finca desde la URL
 
   const [finca, setFinca] = useState(null);
   const [formData, setFormData] = useState({
-    finca: fincaId, // 👈 ya fija
+    finca: fincaId, 
     lote: "",
     cultivo: "",
     area_bruta: "",
@@ -23,7 +22,7 @@ const Crear_lote_agro = () => {
   const [alertaVisible, setAlertaVisible] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  // 🔄 Obtener la finca desde API
+  // Obtener la finca desde API
   useEffect(() => {
     const fetchFinca = async () => {
       try {
@@ -77,7 +76,7 @@ const Crear_lote_agro = () => {
 
   return (
     <LayoutAgronomo>
-      {/* ✅ Mensaje de confirmación */}
+      {/* Mensaje de confirmación */}
       {alertaVisible && (
         <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 
                         bg-green-600 text-white px-6 py-3 rounded-lg 
@@ -86,7 +85,7 @@ const Crear_lote_agro = () => {
         </div>
       )}
 
-      {/* ❌ Mensaje de error */}
+      {/* Mensaje de error */}
       {errorMsg && (
         <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 
                         bg-red-600 text-white px-6 py-3 rounded-lg 
@@ -95,7 +94,7 @@ const Crear_lote_agro = () => {
         </div>
       )}
 
-      {/* 🔙 Botón volver */}
+      {/* Botón volver */}
 
       <button
         onClick={() => navigate(`/editarfinca/${fincaId}`)}
@@ -104,7 +103,7 @@ const Crear_lote_agro = () => {
         <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
       </button>
 
-      {/* 📌 Formulario */}
+      {/* Formulario */}
       <form
         onSubmit={handleGuardar}
         className="max-w-4xl mx-auto bg-white border border-gray-200 

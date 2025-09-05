@@ -1,4 +1,3 @@
-// src/pages/agronomo/Fitosanitario_agro.jsx
 import React, { useState, useEffect } from "react";
 import { Bar } from "react-chartjs-2";
 import {
@@ -21,7 +20,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend, ChartD
 const Fitosanitario_agro = () => {
   const navigate = useNavigate();
 
-  // 📌 Filtros
+  // Filtros
   const [fincasSel, setFincasSel] = useState([]); // múltiple
   const [lote, setLote] = useState("");           // único
   const [familia, setFamilia] = useState("");     // único
@@ -29,17 +28,17 @@ const Fitosanitario_agro = () => {
   const [anio, setAnio] = useState(new Date().getFullYear().toString());
   const [meses, setMeses] = useState([]);
 
-  // 📌 Datos backend
+  // Datos backend
   const [fincas, setFincas] = useState([]);
   const [lotes, setLotes] = useState([]);
   const [resumen, setResumen] = useState([]);
 
-  // 📌 Cargar fincas al inicio
+  // Cargar fincas al inicio
   useEffect(() => {
     fincasApi.list().then((res) => setFincas(res.data)).catch(console.error);
   }, []);
 
-  // 📌 Cargar lotes según finca
+  // Cargar lotes según finca
   useEffect(() => {
     if (fincasSel.length === 1) {
       // si hay solo una finca seleccionada, cargar sus lotes
@@ -52,7 +51,7 @@ const Fitosanitario_agro = () => {
     }
   }, [fincasSel]);
 
-  // 📌 Cargar resumen cuando cambien los filtros
+  // Cargar resumen cuando cambien los filtros
   useEffect(() => {
     const params = {};
     if (fincasSel.length > 0) params.finca = fincasSel.join(",");
@@ -67,10 +66,10 @@ const Fitosanitario_agro = () => {
       .catch((err) => console.error("Error cargando resumen:", err));
   }, [fincasSel, lote, familia, plaga, anio, meses]);
 
-  // 📌 Años disponibles
+  // Años disponibles
   const aniosDisponibles = [...new Set(resumen.map((r) => r.anio))].sort((a, b) => b - a);
 
-  // 📌 Meses disponibles (según año)
+  // Meses disponibles (según año)
   const mesesDisponibles = [
     ...new Set(resumen.filter((r) => r.anio === Number(anio)).map((r) => r.mes)),
   ].map((m) => {
@@ -80,13 +79,13 @@ const Fitosanitario_agro = () => {
     return { value: String(m), label: nombreMes };
   });
 
-  // 📌 Filtrado en memoria (para meses múltiple)
+  // Filtrado en memoria (para meses múltiple)
   const resumenFiltrado = resumen.filter((row) => {
     if (meses.length > 0 && !meses.includes(String(row.mes))) return false;
     return true;
   });
 
-  // 📌 Configuración gráfica
+  // Configuración gráfica
   let labels = [];
   let datasets = [];
 
@@ -263,7 +262,7 @@ const Fitosanitario_agro = () => {
         <Bar data={data} options={opcionesChart} />
       </div>
 
-      {/* Tabla resumen con botón en el header */}
+      {/* Tabla resumen */}
       <div className="bg-white p-4 rounded-xl shadow">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-green-700">Resumen filtrado</h2>

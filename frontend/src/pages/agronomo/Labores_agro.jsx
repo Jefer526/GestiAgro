@@ -1,4 +1,3 @@
-// src/pages/agronomo/Labores_agro.jsx
 import React, { useState, useRef, useEffect } from "react";
 import {
   IconFilter,
@@ -7,20 +6,20 @@ import {
 } from "@tabler/icons-react";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
 
-// ✅ API
+// API
 import { programacionLaboresApi } from "../../services/apiClient";
 
 const Labores_agro = () => {
   const filtroRef = useRef(null);
 
-  // 📌 Estados de filtros
+  // Estados de filtros
   const [filtroActivo, setFiltroActivo] = useState(null);
   const [filtroPosicion, setFiltroPosicion] = useState({ top: 0, left: 0 });
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
   const [busquedas, setBusquedas] = useState({});
 
-  // 📌 Datos desde backend
+  // Datos desde backend
   const [labores, setLabores] = useState([]);
 
   // === Cargar labores desde backend ===
@@ -95,7 +94,7 @@ const Labores_agro = () => {
         : String(valB).localeCompare(String(valA));
     });
 
-  // === Cerrar filtros al hacer click fuera ===
+  // === Cerrar filtro ===
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (filtroRef.current && !filtroRef.current.contains(e.target)) {
@@ -124,12 +123,12 @@ const Labores_agro = () => {
 
   return (
     <LayoutAgronomo>
-      {/* ✅ Título */}
+      {/* Título */}
       <h1 className="text-3xl font-bold text-green-700 mb-6">
         Seguimiento de Labores
       </h1>
 
-      {/* 📌 Tabla */}
+      {/* Tabla */}
       <div className="overflow-x-auto rounded-lg shadow-lg bg-white">
         <table className="min-w-full text-center text-base bg-white">
           <thead className="bg-green-600 text-white font-bold">
@@ -154,7 +153,7 @@ const Labores_agro = () => {
                 <td className="p-4 border">{l.labor}</td>
                 <td className="p-4 border">{l.lote_nombre}</td>
 
-                {/* ✅ Estado solo lectura con badge */}
+                {/* Estado solo lectura con badge */}
                 <td className="p-4 border">
                   <span
                     className={`px-3 py-1 rounded-full text-sm font-medium ${getEstadoClass(
@@ -177,7 +176,7 @@ const Labores_agro = () => {
         </table>
       </div>
 
-      {/* 📌 Filtro flotante */}
+      {/* Filtro flotante */}
       {filtroActivo && (
         <div
           ref={filtroRef}

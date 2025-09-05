@@ -1,4 +1,3 @@
-// src/pages/agronomo/Home_agro.jsx
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -20,7 +19,7 @@ import LayoutAgronomo from "../../layouts/LayoutAgronomo";
 const Home_agro = () => {
   const navigate = useNavigate();
 
-  // 🚫 Bloquear botón "Atrás"
+  // Bloquear botón "Atrás"
   useEffect(() => {
     const blockBack = () => {
       window.history.go(1); // fuerza siempre hacia adelante

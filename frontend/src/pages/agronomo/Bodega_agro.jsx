@@ -1,11 +1,8 @@
-// src/pages/agronomo/Bodega_agro.jsx
 import React, { useState, useRef, useEffect } from "react";
 import {
   IconEye,
   IconFilter,
-  IconSortAscending2,
-  IconSortDescending2,
-  IconPlus
+  IconPlus,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
@@ -25,13 +22,13 @@ const Bodega_agro = () => {
   const [busquedas, setBusquedas] = useState({});
   const [filtroPosicion, setFiltroPosicion] = useState({ top: 0, left: 0 });
 
-  /* 🔹 Cargar productos y saldos actuales */
+  /* Cargar productos y saldos actuales */
   useEffect(() => {
     const fetchProductos = async () => {
       try {
         const res = await productosApi.list();
 
-        // 🔹 Para cada producto y finca, calcular saldo desde movimientos
+        // Para cada producto y finca, calcular saldo desde movimientos
         const rows = await Promise.all(
           res.data.flatMap(async (prod) => {
             return await Promise.all(
@@ -85,7 +82,7 @@ const Bodega_agro = () => {
     fetchProductos();
   }, []);
 
-  /* 🔹 Filtros */
+  /* Filtros */
   const getValoresUnicos = (campo) => {
     const search = (busquedas[campo] || "").toLowerCase();
     return [...new Set(registros.map((e) => e[campo]?.toString() || ""))].filter((v) =>
@@ -139,7 +136,7 @@ const Bodega_agro = () => {
       <h1 className="text-3xl font-bold text-green-700 mb-6">Bodega de insumos</h1>
 
 
-       {/* 🔹 Botones acción */}
+       {/* Botones acción */}
         <div className="flex justify-end gap-4 p-4">
           <button
             onClick={() => navigate("/agregarproducto")}

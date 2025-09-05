@@ -1,4 +1,3 @@
-// src/pages/agronomo/Registrar_novedad_agro.jsx
 import React, { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
@@ -14,7 +13,7 @@ import {
 } from "@tabler/icons-react";
 
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
-import { equiposApi } from "../../services/apiClient"; // ✅ API equipos
+import { equiposApi } from "../../services/apiClient"; // API equipos
 
 const MENU_WIDTH_PX = 288;
 const MENU_MARGIN_PX = 8;
@@ -123,7 +122,7 @@ const Registrar_novedad_agro = () => {
   const handleEstadoChange = async (index) => {
     try {
       const maquina = maquinas[index];
-      const nuevoEstado = "Averiado"; // ✅ Solo se puede marcar averiado
+      const nuevoEstado = "Averiado"; // Solo se puede marcar averiado
 
       await equiposApi.update(maquina.id, { estado: nuevoEstado });
 
@@ -139,7 +138,7 @@ const Registrar_novedad_agro = () => {
     setAlertaVisible(true);
     setTimeout(() => {
       setAlertaVisible(false);
-      navigate("/maquinariaequipos"); // ✅ Ruta del Agrónomo
+      navigate("/maquinariaequipos"); // Ruta del Agrónomo
     }, 2000);
   };
 
@@ -199,7 +198,7 @@ const Registrar_novedad_agro = () => {
         Registrar novedad de máquina
       </h2>
 
-      {/* Botón Guardar debajo del título, alineado a la derecha */}
+      {/* Botón Guardar */}
       <div className="flex justify-end mb-4">
         <button
           onClick={handleGuardar}
@@ -321,7 +320,7 @@ const Registrar_novedad_agro = () => {
               Selecciona una opción
             </div>
 
-            {/* ✅ Solo Marcar como AVERIADO */}
+            {/* Solo Marcar como AVERIADO */}
             {maquinas[menuIndex]?.estado !== "Averiado" && (
               <button
                 onClick={() => {

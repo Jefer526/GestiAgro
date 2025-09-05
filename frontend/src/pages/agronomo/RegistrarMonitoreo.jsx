@@ -1,4 +1,3 @@
-// src/pages/agronomo/RegistrarMonitoreo.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
@@ -8,20 +7,20 @@ import { fincasApi, lotesApi, fitosanitarioApi } from "../../services/apiClient"
 const RegistrarMonitoreo = () => {
   const navigate = useNavigate();
 
-  // 📌 Encabezado del monitoreo
+  // Encabezado del monitoreo
   const [fecha, setFecha] = useState("");
   const [finca, setFinca] = useState("");
   const [lote, setLote] = useState("");
   const [observaciones, setObservaciones] = useState("");
 
-  // 📌 Listados desde backend
+  // Listados desde backend
   const [fincas, setFincas] = useState([]);
   const [lotes, setLotes] = useState([]);
 
-  // 📌 Registros de plagas dinámicos
+  // Registros de plagas dinámicos
   const [registros, setRegistros] = useState([{ familia: "", plaga: "", promedio: "" }]);
 
-  // 📌 Campos fijos
+  // Campos fijos
   const familias = ["Hemípteros", "Homópteros", "Curculiónidos", "Tisanópteros"];
   const plagas = {
     Hemípteros: ["Loxa sp.", "Antiteuchus"],
@@ -30,7 +29,7 @@ const RegistrarMonitoreo = () => {
     Tisanópteros: ["Trips"],
   };
 
-  // 📌 Cargar fincas al inicio
+  // Cargar fincas al inicio
   useEffect(() => {
     const fetchFincas = async () => {
       try {
@@ -43,7 +42,7 @@ const RegistrarMonitoreo = () => {
     fetchFincas();
   }, []);
 
-  // 📌 Cargar lotes cuando cambie la finca
+  // Cargar lotes cuando cambie la finca
   useEffect(() => {
     const fetchLotes = async () => {
       if (!finca) {
@@ -60,7 +59,7 @@ const RegistrarMonitoreo = () => {
     fetchLotes();
   }, [finca]);
 
-  // 📌 Funciones para manejar filas
+  // Funciones para manejar filas
   const addRegistro = () => {
     setRegistros([...registros, { familia: "", plaga: "", promedio: "" }]);
   };
@@ -78,7 +77,7 @@ const RegistrarMonitoreo = () => {
     setRegistros(nuevos);
   };
 
-  // 📌 Guardar monitoreo
+  // Guardar monitoreo
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -162,7 +161,7 @@ const RegistrarMonitoreo = () => {
                 <option value="">Seleccione...</option>
                 {lotes.map((l) => (
                   <option key={l.id} value={l.id}>
-                    {l.lote} {/* ✅ corregido */}
+                    {l.lote} 
                   </option>
                 ))}
               </select>

@@ -1,4 +1,3 @@
-// src/pages/agronomo/Hoja_vida_agro.jsx
 import React, { useState, useEffect, useRef } from "react";
 import {
   IconChevronLeft,
@@ -28,7 +27,7 @@ const Hoja_vida_agro = () => {
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
 
-  // === 📌 Obtener máquina y mantenimientos ===
+  // === Obtener máquina y mantenimientos ===
 useEffect(() => {
   const fetchData = async () => {
     try {
@@ -36,7 +35,7 @@ useEffect(() => {
       setMaquina(res.data);
       let data = res.data.mantenimientos || [];
 
-      // 🔹 Ordenar de más reciente a más antiguo
+      // Ordenar de más reciente a más antiguo
       data.sort((a, b) => b.fecha.localeCompare(a.fecha));
 
       setMantenimientos(data);
@@ -52,7 +51,7 @@ useEffect(() => {
 
   const columnas = ["fecha", "tipo", "descripcion", "realizado_por", "estado", "detalle"];
 
-  // === 🔎 Manejo de filtros ===
+  // === Manejo de filtros ===
   const toggleFiltro = (campo, event) => {
     const icono = event.currentTarget.getBoundingClientRect();
     setFiltroActivo(filtroActivo === campo ? null : campo);
@@ -94,7 +93,7 @@ useEffect(() => {
     );
   };
 
-  // === 🔎 Filtrado y ordenamiento ===
+  // === Filtrado y ordenamiento ===
   const mantenimientosFiltrados = mantenimientos
     .filter((d) =>
       columnas.every((campo) => {
@@ -115,7 +114,7 @@ useEffect(() => {
         : String(valB).localeCompare(String(valA));
     });
 
-  // === Cerrar filtro al hacer click fuera ===
+  // === Cerrar filtro ===
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (filtroRef.current && !filtroRef.current.contains(e.target)) {
@@ -169,7 +168,7 @@ useEffect(() => {
         Historial de mantenimiento
       </h2>
 
-      {/* Botón Registrar debajo del subtítulo, alineado a la derecha */}
+      {/* Botón */}
       <div className="flex justify-end mb-4">
         <button
           onClick={() => navigate(`/registrarnovedadhv/${id}`)}
@@ -207,7 +206,6 @@ useEffect(() => {
             {mantenimientosFiltrados.length > 0 ? (
               mantenimientosFiltrados.map((item, idx) => (
                 <tr key={idx} className="hover:bg-gray-100">
-                  {/* 🔹 Aquí está la corrección: no usamos new Date */}
                   <td className="p-4 border">
                     {item.fecha
                       ? item.fecha.split("-").reverse().join("/") // dd/mm/yyyy

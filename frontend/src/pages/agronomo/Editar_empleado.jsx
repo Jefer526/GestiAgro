@@ -1,4 +1,3 @@
-// src/pages/agronomo/Editar_empleado.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { IconChevronLeft, IconCheck } from "@tabler/icons-react";
@@ -22,7 +21,7 @@ const Editar_empleado = () => {
   const [fincas, setFincas] = useState([]);
   const [alertaVisible, setAlertaVisible] = useState(false);
 
-  // ✅ Cargar fincas y empleado
+  // Cargar fincas y empleado
   useEffect(() => {
     api.get("/api/fincas/")
       .then((res) => setFincas(res.data))
@@ -48,12 +47,12 @@ const Editar_empleado = () => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // ✅ Guardar cambios (PUT)
+  // Guardar cambios (PUT)
   const guardarCambios = (e) => {
     e.preventDefault();
 
     const { codigo, ...data } = form; // no enviamos codigo porque es read_only
-    data.estado = data.estado.toLowerCase(); // 👈 normalizar estado
+    data.estado = data.estado.toLowerCase(); // normalizar estado
 
     api.put(`/api/trabajadores/${id}/`, data)
       .then(() => {

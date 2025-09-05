@@ -1,4 +1,3 @@
-// src/pages/agronomo/Variables_climaticas.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IconPlus } from "@tabler/icons-react";
@@ -30,18 +29,18 @@ const Variables_climaticas = () => {
   const [hasta, setHasta] = useState("");
   const [climas, setClimas] = useState([]);
 
-  // 🔹 variable a graficar
+  // variable a graficar
   const [variableGrafica, setVariableGrafica] = useState("precipitacion");
 
-  // 🔹 configuración de etiquetas
+  // configuración de etiquetas
   const [decimales, setDecimales] = useState(1);
   const [colorEtiquetas, setColorEtiquetas] = useState("#000");
   const [mostrarEtiquetas, setMostrarEtiquetas] = useState(true);
 
-  // 🔹 modo de rango
+  // modo de rango
   const [modoRango, setModoRango] = useState("por_dia");
 
-  // 📌 Traer fincas y datos de clima
+  // Traer fincas y datos de clima
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -57,7 +56,7 @@ const Variables_climaticas = () => {
     fetchData();
   }, []);
 
-  // 📌 Filtrar datos base
+  // Filtrar datos base
   const datosFiltrados = climas.filter((c) => {
     if (
       fincasSeleccionadas.length > 0 &&
@@ -70,7 +69,7 @@ const Variables_climaticas = () => {
     return true;
   });
 
-  // 📌 Agrupación con prioridad en el rango
+  // Agrupación con prioridad en el rango
   const agrupados = {};
   datosFiltrados.forEach((d) => {
     let key;
@@ -91,7 +90,7 @@ const Variables_climaticas = () => {
     agrupados[key][d.finca_nombre] += Number(d[variableGrafica] || 0);
   });
 
-  // 📌 Formatear etiquetas
+  // Formatear etiquetas
   const formatearLabel = (key) => {
     if (key.includes(" a ")) {
       const [d1, d2] = key.split(" a ");
@@ -116,7 +115,7 @@ const Variables_climaticas = () => {
 
   const fincasUnicas = [...new Set(datosFiltrados.map((d) => d.finca_nombre))];
 
-  // 📌 Un dataset por finca
+  // Un dataset por finca
   const datasets = fincasUnicas.map((fincaNombre, i) => ({
     label: fincaNombre,
     data: labelsRaw.map((label) => agrupados[label][fincaNombre] || 0),
@@ -142,7 +141,7 @@ const Variables_climaticas = () => {
     scales: { y: { beginAtZero: true } },
   };
 
-  // 📌 Último registro
+  // Último registro
   const ultimo = datosFiltrados.sort((a, b) =>
     a.fecha < b.fecha ? 1 : -1
   )[0];
@@ -167,7 +166,7 @@ const Variables_climaticas = () => {
         )}
       </div>
 
-      {/* 🔹 Filtro por finca */}
+      {/* Filtro por finca */}
       <div className="mb-6 w-80">
         <label className="text-black font-semibold block mb-1">Fincas:</label>
         <Select
@@ -192,7 +191,7 @@ const Variables_climaticas = () => {
         />
       </div>
 
-      {/* 🔹 Filtros en una sola fila */}
+      {/* Filtros */}
       <div className="mb-6 flex flex-wrap items-center gap-6">
         <div className="flex items-center gap-2">
           <label className="text-black font-semibold">Filtrar por:</label>
@@ -239,7 +238,7 @@ const Variables_climaticas = () => {
         </div>
       </div>
 
-      {/* 🔹 Selector de variable + Botón Registrar en la misma fila */}
+      {/* Selector de variable */}
       <div className="mb-4 flex justify-between items-center">
         <select
           value={variableGrafica}
@@ -261,7 +260,7 @@ const Variables_climaticas = () => {
         </button>
       </div>
 
-      {/* 🔹 Panel configuración etiquetas */}
+      {/* Panel configuración etiquetas */}
       <div className="flex gap-6 mb-6 items-center">
         <label className="font-semibold text-sm text-gray-700">
           Decimales:
@@ -300,7 +299,7 @@ const Variables_climaticas = () => {
         </label>
       </div>
 
-      {/* 🔹 Gráfica */}
+      {/* Gráfica */}
       <div className="w-full h-[500px]">
         <Bar data={data} options={opcionesChart} />
       </div>

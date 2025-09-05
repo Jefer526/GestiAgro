@@ -11,7 +11,7 @@ const Historial_labor_agro = () => {
   const filtroRef = useRef(null);
   const [expandido, setExpandido] = useState(null);
 
-  // 📌 Estados
+  // Estados
   const [labores, setLabores] = useState([]);
   const [filtroActivo, setFiltroActivo] = useState(null);
   const [filtroPosicion, setFiltroPosicion] = useState({ top: 0, left: 0 });
@@ -30,7 +30,7 @@ const Historial_labor_agro = () => {
     "um",
   ];
 
-  // === 📌 Cargar datos desde backend ===
+  // === Cargar datos desde backend ===
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -67,7 +67,7 @@ const Historial_labor_agro = () => {
   const toggleExpandido = (index) =>
     setExpandido((prev) => (prev === index ? null : index));
 
-  // 📌 Filtros
+  // Filtros
   const toggleFiltro = (campo, event) => {
     const icono = event.currentTarget.getBoundingClientRect();
     const cardWidth = 260;
@@ -128,7 +128,7 @@ const Historial_labor_agro = () => {
         : b[campo].toString().localeCompare(a[campo].toString());
     });
 
-  // 📌 Totales
+  // Totales
   const totalJornales = datosFiltrados.reduce(
     (acc, d) => acc + (Number(d.jornal) || 0),
     0
@@ -138,7 +138,7 @@ const Historial_labor_agro = () => {
     0
   );
 
-  // 📌 Cerrar filtro al hacer click fuera
+  // Cerrar filtro 
   useEffect(() => {
     const clickOutside = (e) => {
       if (filtroRef.current && !filtroRef.current.contains(e.target)) {

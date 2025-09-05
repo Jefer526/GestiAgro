@@ -1,4 +1,3 @@
-// src/pages/agronomo/Cuaderno_campo_agro.jsx
 import React, { useState, useRef, useEffect } from "react";
 import { IconCamera, IconCheck, IconChevronLeft } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
@@ -23,7 +22,7 @@ const Cuaderno_campo_agro = () => {
   const [fincas, setFincas] = useState([]);
   const [lotes, setLotes] = useState([]);
 
-  // 📌 Cargar fincas al montar
+  // Cargar fincas al montar
   useEffect(() => {
     const fetchFincas = async () => {
       try {
@@ -36,7 +35,7 @@ const Cuaderno_campo_agro = () => {
     fetchFincas();
   }, []);
 
-  // 📌 Cargar lotes cuando cambia la finca seleccionada
+  // Cargar lotes cuando cambia la finca seleccionada
   useEffect(() => {
     if (filtros.finca) {
       const fetchLotes = async () => {
@@ -97,14 +96,14 @@ const Cuaderno_campo_agro = () => {
 
   return (
     <LayoutAgronomo>
-      {/* ✅ Alerta */}
+      {/* Alerta */}
       {alertaVisible && (
         <div className="fixed top-3 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
           <IconCheck className="w-5 h-5" /> Registro guardado exitosamente
         </div>
       )}
 
-      {/* ✅ Botón volver */}
+      {/* Botón volver */}
       <button
         onClick={() => navigate(-1)}
         className="flex items-center text-green-700 font-semibold mb-4 text-lg hover:underline"
@@ -112,7 +111,7 @@ const Cuaderno_campo_agro = () => {
         <IconChevronLeft className="w-5 h-5 mr-2" /> Volver
       </button>
 
-      {/* ✅ Formulario */}
+      {/* Formulario */}
       <div className="flex justify-center p-8 overflow-auto -mt-16">
         <form
           onSubmit={handleGuardar}
@@ -223,7 +222,7 @@ const Cuaderno_campo_agro = () => {
             )}
           </div>
 
-          {/* ✅ Botón Guardar centrado */}
+          {/* Botón Guardar centrado */}
           <div className="flex justify-center">
             <button
               type="submit"

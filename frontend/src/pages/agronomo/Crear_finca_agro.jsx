@@ -1,9 +1,8 @@
-// src/pages/agronomo/Crear_finca_agro.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IconChevronLeft, IconCheck } from "@tabler/icons-react";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
-import api from "../../services/apiClient"; // 👈 conexión con backend
+import api from "../../services/apiClient"; // conexión con backend
 
 const Crear_finca_agro = () => {
   const navigate = useNavigate();
@@ -24,12 +23,12 @@ const Crear_finca_agro = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post("/api/fincas/", formData); // 👈 crea finca en el backend
+      const res = await api.post("/api/fincas/", formData); // crea finca en el backend
       console.log("✅ Finca creada:", res.data);
       setAlertaVisible(true);
       setTimeout(() => {
         setAlertaVisible(false);
-        navigate("/gestionfincas"); // 👈 vuelve a la lista
+        navigate("/gestionfincas"); // vuelve a la lista
       }, 2000);
     } catch (err) {
       console.error("❌ Error al crear finca:", err.response?.data || err);
@@ -38,14 +37,14 @@ const Crear_finca_agro = () => {
 
   return (
     <LayoutAgronomo>
-      {/* ✅ Alerta */}
+      {/* Alerta */}
       {alertaVisible && (
         <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
           <IconCheck className="w-5 h-5" /> Finca registrada exitosamente
         </div>
       )}
 
-      {/* 🔙 Botón Volver */}
+      {/* Botón Volver */}
       <button
         onClick={() => navigate("/gestionfincas")}
         className="flex items-center text-green-700 font-semibold mb-4 text-lg hover:underline"
@@ -53,7 +52,7 @@ const Crear_finca_agro = () => {
         <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
       </button>
 
-      {/* 📌 Formulario */}
+      {/* Formulario */}
       <form
         onSubmit={handleSubmit}
         className="max-w-2xl mx-auto bg-white border border-gray-200 rounded-xl p-8 shadow-md space-y-6 text-black"
@@ -135,7 +134,7 @@ const Crear_finca_agro = () => {
           />
         </div>
 
-        {/* ✅ Botones acción */}
+        {/* Botones acción */}
         <div className="flex justify-center space-x-6">
           <button
             type="submit"

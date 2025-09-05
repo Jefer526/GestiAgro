@@ -1,4 +1,3 @@
-// src/pages/agronomo/Registrar_novedad_hv.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { IconChevronLeft, IconCheck } from "@tabler/icons-react";
@@ -19,7 +18,7 @@ const Registrar_novedad_hv = () => {
     estado: "",
   });
 
-  // 📌 Traer info de la máquina
+  // Traer info de la máquina
   useEffect(() => {
     const fetchMaquina = async () => {
       try {
@@ -42,7 +41,7 @@ const Registrar_novedad_hv = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // 🔹 Normalizar fecha para evitar desfase por zona horaria
+      // Normalizar fecha para evitar desfase por zona horaria
       const fechaLocal = formData.fecha
         ? new Date(formData.fecha).toISOString().split("T")[0]
         : null;
@@ -55,15 +54,15 @@ const Registrar_novedad_hv = () => {
 
       console.log("📤 Enviando mantenimiento:", payload);
 
-      // 1️⃣ Crear mantenimiento
+      // 1 Crear mantenimiento
       await mantenimientosApi.create(payload);
 
-      // 2️⃣ Actualizar estado de la máquina si fue cambiado
+      // 2 Actualizar estado de la máquina si fue cambiado
       if (formData.estado && formData.estado !== maquina.estado) {
         await equiposApi.update(id, { estado: formData.estado });
       }
 
-      // 3️⃣ Mostrar alerta y redirigir
+      // 3 Mostrar alerta y redirigir
       setAlertaVisible(true);
       setTimeout(() => {
         setAlertaVisible(false);

@@ -1,21 +1,20 @@
-// src/pages/agronomo/Detalle_campo_agro.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { IconChevronLeft } from "@tabler/icons-react";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
 import { cuadernoCampoApi } from "../../services/apiClient";
 
-const API = import.meta.env.VITE_API_URL || "http://localhost:8000"; // ✅ base URL
+const API = import.meta.env.VITE_API_URL || "http://localhost:8000"; // base URL
 
 const Detalle_campo_agro = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { id } = useParams(); // 👈 capturamos el id de la URL (si existe)
+  const { id } = useParams(); // capturamos el id de la URL (si existe)
 
   const [registro, setRegistro] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 📌 Función para formatear fecha (dd/mm/yyyy)
+  // Función para formatear fecha (dd/mm/yyyy)
   const formatFecha = (isoDate) => {
     if (!isoDate) return "";
     const d = new Date(isoDate);
@@ -25,7 +24,7 @@ const Detalle_campo_agro = () => {
     return `${day}/${month}/${year}`;
   };
 
-  // 📌 Fallback si no hay data
+  // Fallback si no hay data
   const fallback = {
     fecha: "2025-08-15",
     finca_nombre: "La Esmeralda",
@@ -35,13 +34,13 @@ Se detectaron algunos focos de insectos, se programará control fitosanitario.`,
     foto: "https://via.placeholder.com/400x250.png?text=Ejemplo+Foto+Campo",
   };
 
-  // 📌 Primero intentamos con state
+  // Primero intentamos con state
   useEffect(() => {
     if (location.state) {
       setRegistro(location.state);
       setLoading(false);
     } else if (id) {
-      // 📌 Si no hay state, buscamos en el backend por id
+      // Si no hay state, buscamos en el backend por id
       const fetchRegistro = async () => {
         try {
           const res = await cuadernoCampoApi.get(id);
@@ -70,7 +69,7 @@ Se detectaron algunos focos de insectos, se programará control fitosanitario.`,
 
   const data = registro || fallback;
 
-  // 📌 Armar URL completa de la foto
+  // Armar URL completa de la foto
   const fotoUrl = data.foto
     ? data.foto.startsWith("http")
       ? data.foto
@@ -110,7 +109,7 @@ Se detectaron algunos focos de insectos, se programará control fitosanitario.`,
             </p>
           </div>
 
-          {/* ✅ Foto */}
+          {/* Foto */}
           <div>
             <strong>Foto:</strong>
             <div className="mt-3">

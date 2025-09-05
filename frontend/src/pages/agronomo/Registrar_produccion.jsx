@@ -1,4 +1,3 @@
-// src/pages/agronomo/Registrar_produccion.jsx
 import React, { useState, useEffect } from "react";
 import { IconChevronLeft, IconCheck, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
@@ -22,7 +21,7 @@ const Registrar_produccion = () => {
 
   const [producciones, setProducciones] = useState([]);
 
-  /* 🔹 Cargar fincas al inicio */
+  /* Cargar fincas al inicio */
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -35,7 +34,7 @@ const Registrar_produccion = () => {
     fetchData();
   }, []);
 
-  /* 🔹 Cargar lotes según finca seleccionada */
+  /* Cargar lotes según finca seleccionada */
   useEffect(() => {
     const fetchLotes = async () => {
       if (formData.finca) {
@@ -52,7 +51,7 @@ const Registrar_produccion = () => {
     fetchLotes();
   }, [formData.finca]);
 
-  /* 🔹 Handlers */
+  /* Handlers */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });

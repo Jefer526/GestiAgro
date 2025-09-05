@@ -1,4 +1,3 @@
-// src/pages/agronomo/Registrar_movimiento.jsx
 import React, { useState, useEffect } from "react";
 import { IconChevronLeft, IconCheck, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
@@ -20,12 +19,12 @@ const Registrar_movimiento = () => {
     finca: "",
     lote: "",
     cantidad: "",
-    unidad: "Kg", // 👈 por defecto
+    unidad: "Kg", 
   });
 
   const [movimientos, setMovimientos] = useState([]);
 
-  /* 🔹 Cargar productos y fincas al inicio */
+  /* Cargar productos y fincas al inicio */
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -42,7 +41,7 @@ const Registrar_movimiento = () => {
     fetchData();
   }, []);
 
-  /* 🔹 Cargar lotes según finca seleccionada */
+  /* Cargar lotes según finca seleccionada */
   useEffect(() => {
     const fetchLotes = async () => {
       if (formData.finca) {
@@ -59,11 +58,11 @@ const Registrar_movimiento = () => {
     fetchLotes();
   }, [formData.finca]);
 
-  /* 🔹 Handlers */
+  /* Handlers */
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // 👇 cuando cambia producto, traer su unidad
+    // cuando cambia producto, traer su unidad
     if (name === "producto") {
       const productoObj = productos.find((p) => p.id === Number(value));
       setFormData({
@@ -128,7 +127,7 @@ const Registrar_movimiento = () => {
     }
   };
 
-  /* 🔹 Formatear fecha YYYY-MM-DD → DD-MM-YYYY */
+  /* Formatear fecha YYYY-MM-DD → DD-MM-YYYY */
   const formatFecha = (fecha) => {
     if (!fecha) return "";
     const [y, m, d] = fecha.split("-");
@@ -136,7 +135,7 @@ const Registrar_movimiento = () => {
   };
 
   /* ----------------------------------
-     📌 RENDER
+      RENDER
   ---------------------------------- */
   return (
     <LayoutAgronomo>
@@ -260,7 +259,7 @@ const Registrar_movimiento = () => {
                 value={formData.unidad}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded px-3 py-1.5 bg-gray-100"
-                disabled // 👈 bloqueado para que siempre siga la unidad del producto
+                disabled // bloqueado para que siempre siga la unidad del producto
               >
                 <option value="Kg">Kg</option>
                 <option value="Lt">Lt</option>

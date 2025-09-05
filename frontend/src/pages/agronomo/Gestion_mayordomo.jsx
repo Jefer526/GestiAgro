@@ -1,10 +1,7 @@
-// src/pages/agronomo/Gestion_mayordomos.jsx
 import React, { useState, useRef, useEffect } from "react";
 import {
   IconUserCog,
   IconFilter,
-  IconSortAscending2,
-  IconSortDescending2,
   IconCheck,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
@@ -18,7 +15,7 @@ const Gestion_mayordomos = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [fincas, setFincas] = useState([]);
   const [seleccionPendiente, setSeleccionPendiente] = useState({});
-  const [mensaje, setMensaje] = useState(null); // 👈 alerta de confirmación
+  const [mensaje, setMensaje] = useState(null); // alerta de confirmación
 
   // --- Filtros y orden ---
   const [filtroActivo, setFiltroActivo] = useState(null);
@@ -29,7 +26,7 @@ const Gestion_mayordomos = () => {
 
   const columnas = ["nombre", "rol", "estado", "fincaNombre", "telefono"];
 
-  // 👉 Traer usuarios y fincas
+  // Traer usuarios y fincas
   useEffect(() => {
     api
       .get("/api/accounts/users/")
@@ -62,7 +59,7 @@ const Gestion_mayordomos = () => {
     }
   };
 
-  // 👉 Confirmar asignación
+  // Confirmar asignación
   const handleAsignarFinca = (usuarioId) => {
     const fincaId = seleccionPendiente[usuarioId];
     if (!fincaId) return;
@@ -85,14 +82,14 @@ const Gestion_mayordomos = () => {
         );
         setSeleccionPendiente((prev) => ({ ...prev, [usuarioId]: "" }));
 
-        // ✅ Mensaje de éxito
+        // Mensaje de éxito
         setMensaje(`Finca asignada a ${res.data.nombre}`);
         setTimeout(() => setMensaje(null), 3000);
       })
       .catch((err) => console.error("❌ Error asignando finca:", err));
   };
 
-  // === 🔎 Filtros ===
+  // === Filtros ===
   const getValoresUnicos = (campo) => {
     const search = (busquedas[campo] || "").toLowerCase();
     return [...new Set(usuarios.map((u) => String(u[campo] || "")))].filter(
@@ -131,7 +128,7 @@ const Gestion_mayordomos = () => {
   const handleBusqueda = (campo, texto) =>
     setBusquedas({ ...busquedas, [campo]: texto });
 
-  // === 🔎 Filtrar y ordenar ===
+  // === Filtrar y ordenar ===
   const usuariosFiltrados = usuarios
     .filter((u) =>
       columnas.every((campo) => {
@@ -150,7 +147,7 @@ const Gestion_mayordomos = () => {
         : String(valB).localeCompare(String(valA));
     });
 
-  // === Cerrar filtro al hacer click fuera ===
+  // === Cerrar filtro ===
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (filtroRef.current && !filtroRef.current.contains(e.target)) {
@@ -170,7 +167,7 @@ const Gestion_mayordomos = () => {
         </h1>
       </div>
 
-      {/* Botón volver alineado a la derecha */}
+      {/* Botón volver */}
       <div className="flex justify-end mb-6">
         <button
           onClick={() => navigate("/manejopersonal")}
@@ -247,7 +244,7 @@ const Gestion_mayordomos = () => {
         </table>
       </div>
 
-      {/* ✅ Mensaje de confirmación */}
+      {/* Mensaje de confirmación */}
       {mensaje && (
         <div className="mt-4 p-3 text-green-800 bg-green-100 border border-green-300 rounded-lg shadow text-center font-medium">
           {mensaje}
