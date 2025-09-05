@@ -46,7 +46,7 @@ const Admin_usuarios = () => {
       .join(" ");
   };
 
-  // 🔄 Cargar usuarios
+  // Cargar usuarios
   useEffect(() => {
     (async () => {
       try {

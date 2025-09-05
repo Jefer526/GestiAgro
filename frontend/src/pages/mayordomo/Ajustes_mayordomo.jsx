@@ -1,4 +1,3 @@
-// src/pages/mayordomo/Ajustes_mayordomo.jsx
 import React, { useState, useEffect } from "react";
 import { IconLock, IconEye, IconEyeOff, IconX } from "@tabler/icons-react";
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";

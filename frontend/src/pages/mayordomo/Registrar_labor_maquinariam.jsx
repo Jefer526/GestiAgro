@@ -1,4 +1,3 @@
-// src/pages/mayordomo/Registrar_labor_maquinaria.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { IconChevronLeft, IconCheck, IconPlus, IconTrash } from "@tabler/icons-react";
@@ -27,7 +26,7 @@ const Registrar_labor_maquinariam = () => {
 
   const [labores, setLabores] = useState([]);
 
-  // 📌 Traer info de la máquina, finca y último horómetro
+  // Traer info de la máquina, finca y último horómetro
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -42,7 +41,7 @@ const Registrar_labor_maquinariam = () => {
           setLotes(lotesRes.data);
         }
 
-        // ✅ traer última labor de esta máquina
+        // traer última labor de esta máquina
         const laboresRes = await laboresMaquinariaApi.list({ maquina: id });
         if (laboresRes.data.length > 0) {
           const ultima = laboresRes.data[0]; // ordenadas por fecha desc desde backend
@@ -61,7 +60,7 @@ const Registrar_labor_maquinariam = () => {
     fetchData();
   }, [id]);
 
-  // 📌 Mantener horometro_inicio sincronizado con la última labor
+  // Mantener horometro_inicio sincronizado con la última labor
   useEffect(() => {
     if (labores.length > 0) {
       const ultima = labores[labores.length - 1];
@@ -86,14 +85,14 @@ const Registrar_labor_maquinariam = () => {
     setFormData({ ...formData, [e.target.name]: value });
   };
 
-  // 📌 función para mostrar fecha en formato DD/MM/YYYY
+  // función para mostrar fecha en formato DD/MM/YYYY
   const formatFecha = (fecha) => {
     if (!fecha) return "";
     const [y, m, d] = fecha.split("-");
     return `${d}/${m}/${y}`;
   };
 
-  // ➡️ Añadir labor
+  // Añadir labor
   const añadirLabor = () => {
     const { fecha, labor, horometro_inicio, horometro_fin, lote } = formData;
 
@@ -115,7 +114,7 @@ const Registrar_labor_maquinariam = () => {
 
     setLabores([...labores, nuevaLabor]);
 
-    // ⚡ limpiar otros campos (horometro_inicio lo maneja el useEffect)
+    // limpiar otros campos (horometro_inicio lo maneja el useEffect)
     setFormData((prev) => ({
       ...prev,
       labor: "",
@@ -125,13 +124,13 @@ const Registrar_labor_maquinariam = () => {
     }));
   };
 
-  // ➡️ Eliminar labor
+  // Eliminar labor
   const eliminarLabor = (idx) => {
     const nuevasLabores = labores.filter((_, i) => i !== idx);
     setLabores(nuevasLabores);
   };
 
-  // ➡️ Guardar todas las labores
+  // Guardar todas las labores
   const handleGuardar = async () => {
     if (labores.length === 0) return alert("No has añadido labores");
 
@@ -175,7 +174,7 @@ const Registrar_labor_maquinariam = () => {
         <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
       </button>
 
-      {/* Encabezado: finca afuera, título dentro de la card */}
+      {/*Encabezado*/}
       <div className="flex justify-between items-center mb-6">
         <div></div>
         {finca && (

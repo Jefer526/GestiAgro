@@ -1,4 +1,3 @@
-// src/pages/admin/Ajustes_adm.jsx
 import React, { useState, useEffect } from "react";
 import {
   IconLock,

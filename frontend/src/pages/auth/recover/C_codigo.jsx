@@ -1,8 +1,7 @@
-// src/pages/auth/recovery/C_codigo.jsx
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import faviconBlanco from "../../../assets/favicon-blanco.png";
-import { verifyCode } from "../../../services/apiClient"; // 👈 función API
+import { verifyCode } from "../../../services/apiClient"; // función API
 
 const C_codigo = () => {
   const [codigo, setCodigo] = useState("");
@@ -11,7 +10,7 @@ const C_codigo = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const email = location.state?.email || ""; // 👈 email viene desde C_correo
+  const email = location.state?.email || ""; // email viene desde C_correo
 
   const handleConfirm = async () => {
     if (!codigo) {
@@ -25,7 +24,7 @@ const C_codigo = () => {
     try {
       const res = await verifyCode(email, codigo);
       if (res.status === 200) {
-        // ✅ Código válido → avanza a nueva contraseña
+        // Código válido → avanza a nueva contraseña
         navigate("/nueva-contraseña", { state: { email } });
       }
     } catch (err) {

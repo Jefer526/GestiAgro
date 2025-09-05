@@ -19,7 +19,7 @@ const Registrar_vclima = () => {
     humedad: "",
   });
 
-  // 📌 Obtener finca del usuario logueado
+  // Obtener finca del usuario logueado
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -60,7 +60,7 @@ const Registrar_vclima = () => {
 
   return (
     <LayoutMayordomo ocultarEncabezado>
-      {/* ✅ Alerta de guardado exitoso */}
+      {/* Alerta de guardado exitoso */}
       {alertaVisible && (
         <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
           <IconCheck className="w-5 h-5" /> Variables registradas exitosamente

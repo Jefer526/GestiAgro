@@ -1,4 +1,3 @@
-// src/pages/mayordomo/Registrar_novedadm.jsx
 import React, { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
@@ -9,8 +8,6 @@ import {
   IconAlertTriangle,
   IconCircleCheck,
   IconFilter,
-  IconSortAscending2,
-  IconSortDescending2,
 } from "@tabler/icons-react";
 
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
@@ -175,7 +172,7 @@ const Registrar_novedadm = () => {
 
   return (
     <LayoutMayordomo ocultarEncabezado>
-      {/* ✅ Alerta flotante */}
+      {/* Alerta flotante */}
       {alertaVisible && (
         <div className="fixed top-3 left-1/2 -translate-x-1/2 z-[1000] bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
           <IconCheck className="w-5 h-5" /> Estados actualizados exitosamente
@@ -259,7 +256,7 @@ const Registrar_novedadm = () => {
                 Selecciona una opción
               </div>
 
-              {/* ✅ Solo Marcar como AVERIADO */}
+              {/* Solo Marcar como AVERIADO */}
               {maquinas[menuIndex]?.estado !== "Averiado" && (
                 <button
                   onClick={() => {

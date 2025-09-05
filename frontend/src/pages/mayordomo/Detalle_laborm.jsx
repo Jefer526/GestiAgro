@@ -1,4 +1,3 @@
-// src/pages/agronomo/Historial_labores.jsx
 import React, { useState, useRef, useEffect } from "react";
 import {
   IconChevronLeft,
@@ -121,7 +120,7 @@ const Detalle_laborm = () => {
       {/* Título */}
       <h1 className="text-3xl font-bold text-green-700 mb-6">Historial labores</h1>
 
-      {/* 📌 Datos cabecera */}
+      {/* Datos cabecera */}
       <div className="bg-white border border-gray-300 rounded-xl shadow-md mb-8 p-6 flex flex-wrap justify-between items-start gap-6">
         <div className="space-y-2 text-[17px] leading-relaxed">
           <p><strong>Finca:</strong> {datosCabecera.finca}</p>

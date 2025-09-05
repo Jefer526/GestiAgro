@@ -6,7 +6,7 @@ import TablaSoporte from "../../components/TablaSoporte";
 
 const Soporte_adm = () => {
   const navigate = useNavigate();
-  const [tickets, setTickets] = useState(null); // 👈 null = aún no cargado
+  const [tickets, setTickets] = useState(null); // null = aún no cargado
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,7 +30,6 @@ const Soporte_adm = () => {
         onDetalle={(ticket) =>
           navigate("/detallesticket", { state: { ticket } })
         }
-        // 👉 aquí no paso hiddenColumns para que se vea el rol
       />
     </LayoutAdmin>
   );

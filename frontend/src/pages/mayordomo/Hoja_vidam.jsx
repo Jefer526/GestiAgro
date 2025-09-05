@@ -1,4 +1,3 @@
-// src/pages/mayordomo/Hoja_vida_mayor.jsx
 import React, { useState, useEffect, useRef } from "react";
 import {
   IconChevronLeft,
@@ -22,7 +21,7 @@ const Hoja_vidam = () => {
   const [mantenimientos, setMantenimientos] = useState([]);
   const [finca, setFinca] = useState(null);
 
-  // === 📌 Obtener máquina y mantenimientos ===
+  // === Obtener máquina y mantenimientos ===
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -38,7 +37,7 @@ const Hoja_vidam = () => {
     fetchData();
   }, [id]);
 
-  // 📌 Obtener finca asignada
+  // Obtener finca asignada
   useEffect(() => {
     const fetchFinca = async () => {
       try {
@@ -53,7 +52,7 @@ const Hoja_vidam = () => {
 
   const columnas = ["fecha", "tipo", "descripcion", "realizado_por", "estado", "detalle"];
 
-  // === 🔎 Manejo de filtros ===
+  // === Manejo de filtros ===
   const [filtroActivo, setFiltroActivo] = useState(null);
   const [filtroPosicion, setFiltroPosicion] = useState({ top: 0, left: 0 });
   const [busquedas, setBusquedas] = useState({});
@@ -98,7 +97,7 @@ const Hoja_vidam = () => {
     );
   };
 
-  // === 🔎 Filtrado y ordenamiento ===
+  // === Filtrado y ordenamiento ===
   const mantenimientosFiltrados = mantenimientos
     .filter((d) =>
       columnas.every((campo) => {

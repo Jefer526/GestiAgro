@@ -1,9 +1,8 @@
-// src/pages/auth/recovery/N_contraseña.jsx
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import faviconBlanco from "../../../assets/favicon-blanco.png";
 import { resetPassword } from "../../../services/apiClient";
-import { IconEye, IconEyeOff } from "@tabler/icons-react"; // 👁️ íconos
+import { IconEye, IconEyeOff } from "@tabler/icons-react"; // íconos
 
 const N_contraseña = () => {
   const [password, setPassword] = useState("");
@@ -33,7 +32,7 @@ const N_contraseña = () => {
     try {
       await resetPassword(email, password);
 
-      // ✅ Mostrar mensaje de éxito
+      // Mostrar mensaje de éxito
       setExito("✅ Contraseña cambiada con éxito.");
       setTimeout(() => {
         navigate("/login");

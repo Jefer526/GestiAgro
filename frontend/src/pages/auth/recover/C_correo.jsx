@@ -1,8 +1,7 @@
-// src/pages/auth/recovery/C_correo.jsx
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import faviconBlanco from "../../../assets/favicon-blanco.png";
-import { sendCode } from "../../../services/apiClient"; // 👈 función API
+import { sendCode } from "../../../services/apiClient"; // función API
 
 const C_correo = () => {
   const navigate = useNavigate();
@@ -16,12 +15,12 @@ const C_correo = () => {
     setError("");
     setCargando(true);
     try {
-      await sendCode(email); // 👈 llama al backend para enviar el código
+      await sendCode(email); // llama al backend para enviar el código
       navigate("/confirmar-codigo", { state: { email } });
     } catch (err) {
       console.error("Error enviando código:", err);
 
-      // 👇 Captura el mensaje del backend si existe (ej: tiempo de espera)
+      // Captura el mensaje del backend si existe
       const backendMsg =
         err.response?.data?.detail || "No se pudo enviar el código. Intenta más tarde.";
 
@@ -68,7 +67,7 @@ const C_correo = () => {
           Enviar email a: <span className="underline">{email}</span>
         </p>
 
-        {/* ⚠️ Alerta de error */}
+        {/* Alerta de error */}
         {error && (
           <div className="bg-red-500/90 text-white px-4 py-2 rounded-md mb-4 text-sm shadow">
             {error}

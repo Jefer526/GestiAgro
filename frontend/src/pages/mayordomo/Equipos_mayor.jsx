@@ -1,4 +1,3 @@
-// src/pages/mayordomo/Equipos_mayor.jsx
 import React, { useState, useRef, useEffect } from "react";
 import {
   IconFilter,
@@ -25,11 +24,11 @@ const Equipos_mayor = () => {
     "codigo_equipo",
     "maquina",
     "referencia",
-    "ubicacion_nombre", // 👉 se mostrará como FINCA
+    "ubicacion_nombre", // se mostrará como FINCA
     "estado",
   ];
 
-  // 🔄 Cargar datos
+  // Cargar datos
   useEffect(() => {
     const fetchMaquinas = async () => {
       try {
@@ -113,7 +112,7 @@ const Equipos_mayor = () => {
 
   return (
     <LayoutMayordomo titulo="Maquinaria y Equipos">
-      {/* 📌 Botones en la parte derecha */}
+      {/* Botones en la parte derecha */}
       <div className="flex justify-end gap-4 mb-6">
         <button
           onClick={() => navigate("/registrar_novedadm")}
@@ -124,7 +123,7 @@ const Equipos_mayor = () => {
         </button>
       </div>
 
-      {/* 📌 Tabla */}
+      {/* Tabla */}
       <div className="overflow-x-auto rounded-lg shadow-lg">
         <table className="min-w-full text-center text-base bg-white">
           <thead className="bg-green-600 text-white font-bold">

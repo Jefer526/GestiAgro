@@ -1,10 +1,9 @@
-// src/pages/mayordomo/Regis_labores.jsx
 import React, { useState, useEffect } from "react";
 import { IconTrash, IconPlus, IconCheck } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
 
-// ✅ APIs
+// APIs
 import { getMe, lotesApi, trabajadoresApi, laboresApi } from "../../services/apiClient";
 
 const Regis_labores = () => {
@@ -38,13 +37,13 @@ const Regis_labores = () => {
       const fincaAsignada = res.data.finca_asignada;
       setFinca(fincaAsignada);
 
-      // 🔹 Lotes filtrados por finca asignada
+      // Lotes filtrados por finca asignada
       lotesApi.list().then((r) => {
         const filtrados = r.data.filter((l) => l.finca === fincaAsignada.id);
         setLotes(filtrados);
       });
 
-      // 🔹 Trabajadores activos, internos vs externos
+      // Trabajadores activos, internos vs externos
       trabajadoresApi.list().then((r) => {
         const internos = r.data.filter(
           (t) => t.finca === fincaAsignada.id && t.estado === "activo"

@@ -1,4 +1,3 @@
-// src/pages/mayordomo/Manejo_fitosanitariom.jsx
 import React, { useState, useEffect } from "react";
 import { Bar } from "react-chartjs-2";
 import {
@@ -21,7 +20,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend, ChartD
 const Manejo_fitosanitariom = () => {
   const navigate = useNavigate();
 
-  // 📌 Filtros
+  // Filtros
   const [finca, setFinca] = useState(null);   // solo la finca asignada
   const [lote, setLote] = useState("");       // único
   const [familia, setFamilia] = useState(""); // único
@@ -29,11 +28,11 @@ const Manejo_fitosanitariom = () => {
   const [anio, setAnio] = useState(new Date().getFullYear().toString());
   const [meses, setMeses] = useState([]);
 
-  // 📌 Datos backend
+  // Datos backend
   const [lotes, setLotes] = useState([]);
   const [resumen, setResumen] = useState([]);
 
-  // 🔹 Obtener finca asignada
+  // Obtener finca asignada
   useEffect(() => {
     const fetchFinca = async () => {
       try {
@@ -48,7 +47,7 @@ const Manejo_fitosanitariom = () => {
     fetchFinca();
   }, []);
 
-  // 🔹 Cargar lotes según finca
+  // Cargar lotes según finca
   useEffect(() => {
     if (finca) {
       lotesApi.listByFinca(finca.id)
@@ -57,7 +56,7 @@ const Manejo_fitosanitariom = () => {
     }
   }, [finca]);
 
-  // 🔹 Cargar resumen
+  // Cargar resumen
   useEffect(() => {
     if (!finca) return;
     const params = { finca: finca.id };
@@ -72,10 +71,10 @@ const Manejo_fitosanitariom = () => {
       .catch((err) => console.error("Error cargando resumen:", err));
   }, [finca, lote, familia, plaga, anio, meses]);
 
-  // 📌 Años disponibles
+  // Años disponibles
   const aniosDisponibles = [...new Set(resumen.map((r) => r.anio))].sort((a, b) => b - a);
 
-  // 📌 Meses disponibles (según año)
+  // Meses disponibles (según año)
   const mesesDisponibles = [
     ...new Set(resumen.filter((r) => r.anio === Number(anio)).map((r) => r.mes)),
   ].map((m) => {
@@ -85,13 +84,13 @@ const Manejo_fitosanitariom = () => {
     return { value: String(m), label: nombreMes };
   });
 
-  // 📌 Filtrado en memoria
+  // Filtrado en memoria
   const resumenFiltrado = resumen.filter((row) => {
     if (meses.length > 0 && !meses.includes(String(row.mes))) return false;
     return true;
   });
 
-  // 📊 Configuración de gráfica
+  // Configuración de gráfica
   let labels = [];
   let datasets = [];
 
@@ -167,7 +166,7 @@ const Manejo_fitosanitariom = () => {
     <LayoutMayordomo titulo = "Manejo Fitosanitario"> 
 
 
-      {/* 📌 Filtros */}
+      {/* Filtros */}
       <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {/* Finca fija */}
         <div>
@@ -258,12 +257,12 @@ const Manejo_fitosanitariom = () => {
         </div>
       </div>
 
-      {/* 📊 Gráfica */}
+      {/* Gráfica */}
       <div className="w-full h-[400px] bg-white p-4 rounded-xl shadow mb-8">
         <Bar data={data} options={opcionesChart} />
       </div>
 
-      {/* 📋 Tabla resumen */}
+      {/* Tabla resumen */}
       <div className="bg-white p-4 rounded-xl shadow">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-green-700">Resumen filtrado</h2>

@@ -1,4 +1,3 @@
-// src/pages/mayordomo/Registrar_produccionm.jsx
 import React, { useState, useEffect } from "react";
 import { IconChevronLeft, IconCheck, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
@@ -14,7 +13,7 @@ const Registrar_produccionm = () => {
 
   const [formData, setFormData] = useState({
     fecha: "",
-    finca: "", // 🔹 se llenará con la finca fija
+    finca: "", // se llenará con la finca fija
     lote: "",
     cantidad: "",
     unidad: "Kg",
@@ -22,7 +21,7 @@ const Registrar_produccionm = () => {
 
   const [producciones, setProducciones] = useState([]);
 
-  /* 🔹 Cargar finca fija al inicio */
+  /* Cargar finca fija al inicio */
   useEffect(() => {
     const fetchFincaAsignada = async () => {
       try {
@@ -38,7 +37,7 @@ const Registrar_produccionm = () => {
     fetchFincaAsignada();
   }, []);
 
-  /* 🔹 Cargar lotes según finca fija */
+  /* Cargar lotes según finca fija */
   useEffect(() => {
     const fetchLotes = async () => {
       if (formData.finca) {
@@ -70,8 +69,8 @@ const Registrar_produccionm = () => {
       ...producciones,
       {
         fecha,
-        finca: fincaAsignada.id, // 👈 id real de la finca
-        lote: Number(lote),      // 👈 id real del lote
+        finca: fincaAsignada.id, // id real de la finca
+        lote: Number(lote),      // id real del lote
         cantidad,
         unidad,
         fincaNombre: fincaAsignada.nombre,

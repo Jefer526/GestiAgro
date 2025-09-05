@@ -1,9 +1,8 @@
-// src/pages/mayordomo/Registrarticketm.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
 import { IconChevronLeft } from "@tabler/icons-react";
-import { soporteApi } from "../../services/apiClient"; // 👈 Usamos soporteApi
+import { soporteApi } from "../../services/apiClient"; // Usamos soporteApi
 
 const Registrarticketm = () => {
   const [asunto, setAsunto] = useState("");
@@ -21,7 +20,7 @@ const Registrarticketm = () => {
       setMostrarAlerta(true);
       setTimeout(() => {
         setMostrarAlerta(false);
-        navigate("/soportemayordomo"); // 👈 listado de tickets mayordomo
+        navigate("/soportemayordomo"); // listado de tickets mayordomo
       }, 2000);
     } catch (error) {
       console.error("Error al enviar ticket:", error);

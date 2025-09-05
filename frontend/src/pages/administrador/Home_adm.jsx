@@ -1,4 +1,3 @@
-// src/pages/administrador/Home_adm.jsx
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -12,7 +11,7 @@ import LayoutAdmin from "../../layouts/LayoutAdmin";
 const Home_adm = () => {
   const navigate = useNavigate();
 
-  // 🚫 Bloquear botón "Atrás" en Home_adm
+  // Bloquear botón "Atrás" en Home_adm
   useEffect(() => {
     const blockBack = () => {
       window.history.go(1); // fuerza siempre hacia adelante
@@ -74,7 +73,7 @@ const Home_adm = () => {
           ({ icon, label, desc, route, gradient, ring, iconBg, text }, i) => (
             <button
               key={i}
-              onClick={() => navigate(route, { replace: true })} // 👈 evitar duplicados en historial
+              onClick={() => navigate(route, { replace: true })} // evitar duplicados en historial
               className={`group relative overflow-hidden rounded-2xl border border-transparent
                 bg-white shadow-lg px-5 py-8 min-h-[160px] text-left transition-all
                 hover:-translate-y-0.5 hover:shadow-xl focus:outline-none focus:ring-2

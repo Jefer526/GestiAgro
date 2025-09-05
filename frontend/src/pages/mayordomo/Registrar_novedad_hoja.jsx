@@ -1,4 +1,3 @@
-// src/pages/mayordomo/Registrar_novedad_hoja.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { IconChevronLeft, IconCheck } from "@tabler/icons-react";
@@ -20,7 +19,7 @@ const Registrar_novedad_hoja = () => {
     estado: "",
   });
 
-  // 📌 Traer info de la máquina
+  // Traer info de la máquina
   useEffect(() => {
     const fetchMaquina = async () => {
       try {
@@ -33,7 +32,7 @@ const Registrar_novedad_hoja = () => {
     fetchMaquina();
   }, [id]);
 
-  // 📌 Traer finca asignada
+  // Traer finca asignada
   useEffect(() => {
     const fetchFinca = async () => {
       try {
@@ -58,15 +57,15 @@ const Registrar_novedad_hoja = () => {
     try {
       const payload = { maquina: id, ...formData };
 
-      // 1️⃣ Crear mantenimiento
+      // 1️ Crear mantenimiento
       await mantenimientosApi.create(payload);
 
-      // 2️⃣ Actualizar estado de la máquina si fue cambiado
+      // 2️ Actualizar estado de la máquina si fue cambiado
       if (formData.estado && formData.estado !== maquina.estado) {
         await equiposApi.update(id, { estado: formData.estado });
       }
 
-      // 3️⃣ Mostrar alerta y redirigir
+      // 3️ Mostrar alerta y redirigir
       setAlertaVisible(true);
       setTimeout(() => {
         setAlertaVisible(false);
@@ -96,7 +95,6 @@ const Registrar_novedad_hoja = () => {
 
       {/* Encabezado: finca afuera, título en la card */}
       <div className="flex justify-between items-center mb-6">
-        {/* La finca queda afuera, alineada a la derecha */}
         <div></div>
         {finca && (
           <span className="text-2xl font-bold text-green-700">{finca.nombre}</span>

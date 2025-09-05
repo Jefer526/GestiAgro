@@ -1,4 +1,3 @@
-// src/pages/mayordomo/Variables_climam.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {

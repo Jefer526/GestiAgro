@@ -1,4 +1,3 @@
-// src/pages/mayordomo/Informes_mayor.jsx
 import React, { useState, useEffect } from "react";
 import { IconFileDownload } from "@tabler/icons-react";
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
@@ -37,7 +36,7 @@ const Informes_mayor = () => {
     fechaInicio: "",
     fechaFin: "",
     meses: [],
-    finca: null, // 🔹 Solo 1 finca asignada
+    finca: null, // Solo 1 finca asignada
     lote: "",
     variables: ["precipitacion", "temp_min", "temp_max", "humedad"],
   });
@@ -45,7 +44,7 @@ const Informes_mayor = () => {
   const [lotes, setLotes] = useState([]);
   const [resultados, setResultados] = useState([]);
 
-  // 🔹 Obtener finca asignada al mayordomo
+  // Obtener finca asignada al mayordomo
   useEffect(() => {
     const fetchUserFinca = async () => {
       try {
@@ -62,7 +61,7 @@ const Informes_mayor = () => {
     fetchUserFinca();
   }, []);
 
-  // 🔹 Handlers
+  // Handlers
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFiltros({ ...filtros, [name]: value });
@@ -72,13 +71,13 @@ const Informes_mayor = () => {
     setFiltros({ ...filtros, meses: selected.map((m) => m.value) });
   };
 
-  // 🔹 Consultar informe
+  // Consultar informe
   const generarInforme = async () => {
     try {
       let params = {
         fecha_inicio: filtros.fechaInicio || null,
         fecha_fin: filtros.fechaFin || null,
-        fincas: [filtros.finca], // 🔹 siempre la finca asignada
+        fincas: [filtros.finca], // siempre la finca asignada
       };
 
       if (filtros.meses.length > 0) {
@@ -102,7 +101,7 @@ const Informes_mayor = () => {
     }
   };
 
-  // 🔹 Exportar Excel
+  // Exportar Excel
   const exportarExcel = () => {
     if (resultados.length === 0) return alert("No hay datos para exportar");
     const ws = XLSX.utils.json_to_sheet(resultados);
@@ -112,7 +111,7 @@ const Informes_mayor = () => {
     saveAs(new Blob([excelBuffer], { type: "application/octet-stream" }), "informe_mayordomo.xlsx");
   };
 
-  // 🔹 Exportar PDF
+  // Exportar PDF
   const exportarPDF = () => {
     if (resultados.length === 0) return alert("No hay datos para exportar");
 
