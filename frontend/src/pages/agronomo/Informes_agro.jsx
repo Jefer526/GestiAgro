@@ -1,4 +1,3 @@
-// src/pages/agronomo/Informes_agro.jsx
 import React, { useState, useEffect } from "react";
 import { IconFileDownload } from "@tabler/icons-react";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
@@ -46,7 +45,7 @@ const Informes_agro = () => {
   const [lotes, setLotes] = useState([]);
   const [resultados, setResultados] = useState([]);
 
-  // 🔹 Cargar todas las fincas
+  // Cargar todas las fincas
   useEffect(() => {
     const fetchFincas = async () => {
       try {
@@ -59,7 +58,7 @@ const Informes_agro = () => {
     fetchFincas();
   }, []);
 
-  // 🔹 Cargar lotes si hay solo una finca seleccionada
+  // Cargar lotes si hay solo una finca seleccionada
   useEffect(() => {
     if (filtros.fincas.length === 1) {
       const fetchLotes = async () => {
@@ -77,7 +76,7 @@ const Informes_agro = () => {
     }
   }, [filtros.fincas]);
 
-  // 🔹 Handlers
+  // Handlers
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFiltros({ ...filtros, [name]: value });
@@ -91,7 +90,7 @@ const Informes_agro = () => {
     setFiltros({ ...filtros, fincas: selected.map((f) => f.value) });
   };
 
-  // 🔹 Consultar informe
+  // Consultar informe
   const generarInforme = async () => {
     try {
       let params = {
@@ -128,7 +127,7 @@ const Informes_agro = () => {
     }
   };
 
-  // 🔹 Exportar Excel
+  // Exportar Excel
   const exportarExcel = () => {
     if (resultados.length === 0) return alert("No hay datos para exportar");
     const ws = XLSX.utils.json_to_sheet(resultados);
@@ -138,7 +137,7 @@ const Informes_agro = () => {
     saveAs(new Blob([excelBuffer], { type: "application/octet-stream" }), "informe.xlsx");
   };
 
-  // 🔹 Exportar PDF
+  // Exportar PDF
   const exportarPDF = () => {
     if (resultados.length === 0) return alert("No hay datos para exportar");
 
