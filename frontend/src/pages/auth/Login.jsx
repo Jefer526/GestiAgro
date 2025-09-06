@@ -1,3 +1,4 @@
+// src/pages/auth/Login.jsx
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import faviconBlanco from "../../assets/favicon-blanco.png";
@@ -16,28 +17,14 @@ const Login = () => {
   const [errorMsg, setErrorMsg] = useState("");
   const [capsOn, setCapsOn] = useState(false);
 
-  // Cargar correo guardado si existe y validar sesión previa
+  // Cargar correo guardado si existe (sin auto-redirect)
   useEffect(() => {
     const savedEmail = localStorage.getItem("rememberedEmail");
     if (savedEmail) {
       setEmail(savedEmail);
       setRememberEmail(true);
     }
-
-    const access = localStorage.getItem("access");
-    const user = localStorage.getItem("user");
-
-    if (access && user) {
-      try {
-        const parsed = JSON.parse(user);
-        if (parsed?.rol || parsed?.is_superuser) {
-          redirectByRole(parsed);
-        }
-      } catch {
-        localStorage.clear();
-      }
-    }
-  }, [navigate]);
+  }, []);
 
   const redirectByRole = (user) => {
     if (user.is_superuser) {
@@ -86,7 +73,7 @@ const Login = () => {
 
       redirectByRole(user);
     } catch (err) {
-      console.log("DEBUG ERROR:", err);       // Para verificar en consola
+      console.log("DEBUG ERROR:", err);
       console.log("DEBUG RESPONSE:", err.response);
 
       if (err.response?.status === 401) {
@@ -139,11 +126,7 @@ const Login = () => {
           </div>
         </div>
 
-        <form
-          className="space-y-6"
-          onSubmit={handleSubmit}
-          noValidate
-        >
+        <form className="space-y-6" onSubmit={handleSubmit} noValidate>
           <div>
             <label className="block mb-2 font-medium text-gray-800 text-base">
               Correo electrónico
@@ -185,9 +168,7 @@ const Login = () => {
               </button>
             </div>
             {capsOn && (
-              <p className="mt-1 text-xs text-amber-600">
-                Bloq Mayús activado.
-              </p>
+              <p className="mt-1 text-xs text-amber-600">Bloq Mayús activado.</p>
             )}
           </div>
 
@@ -226,9 +207,7 @@ const Login = () => {
             type="submit"
             disabled={loading}
             className={`w-full bg-green-600 text-white py-3 rounded-lg text-lg font-semibold shadow-md transition-all mt-4 ${
-              loading
-                ? "opacity-80 cursor-not-allowed"
-                : "hover:bg-green-700"
+              loading ? "opacity-80 cursor-not-allowed" : "hover:bg-green-700"
             }`}
           >
             {loading ? "Ingresando..." : "Iniciar sesión"}

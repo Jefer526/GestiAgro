@@ -105,7 +105,9 @@ export const login = (email, password) =>
 
 export const getMe = () => api.get(ENDPOINTS.me);
 
-export const logout = () => api.post(ENDPOINTS.logout);
+export const logout = () => {const refresh = localStorage.getItem("refresh");
+return api.post(ENDPOINTS.logout, { refresh });
+};
 
 export const checkEmail = (email) => api.post(ENDPOINTS.checkEmail, { email });
 

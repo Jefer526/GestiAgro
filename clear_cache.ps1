@@ -17,3 +17,24 @@ Write-Output "   ➤ Limpiando caché del framework..."
 python manage.py shell -c "from django.core.cache import cache; cache.clear(); print('   ✔ Caché de Django borrado')"
 
 Write-Output "✅ Limpieza completa"
+
+
+Write-Output "🧹 Limpiando caché del frontend (Vite + React)..."
+
+# 1. Eliminar node_modules/.vite
+Write-Output "   ➤ Eliminando caché de Vite..."
+Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "node_modules/.vite"
+
+# 2. Eliminar carpeta dist (build)
+Write-Output "   ➤ Eliminando carpeta dist..."
+Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "dist"
+
+# 3. Limpiar dependencias
+Write-Output "   ➤ Eliminando node_modules..."
+Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "node_modules"
+
+# 4. Reinstalar dependencias
+Write-Output "   ➤ Reinstalando dependencias..."
+npm install
+
+Write-Output "✅ Caché del frontend limpiado"

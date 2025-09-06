@@ -39,11 +39,13 @@ User = get_user_model()
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
+        effective_role = "admin" if self.user.is_superuser else getattr(self.user, "rol", "")
         data["user"] = {
             "id": self.user.id,
             "email": self.user.email,
             "nombre": getattr(self.user, "nombre", ""),
             "rol": getattr(self.user, "rol", ""),
+            "rol": effective_role,
             "is_superuser": self.user.is_superuser,
             "is_staff": self.user.is_staff,
             "is_active": self.user.is_active,
