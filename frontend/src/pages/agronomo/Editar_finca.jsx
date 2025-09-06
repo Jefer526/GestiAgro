@@ -4,8 +4,8 @@ import {
   IconFilter,
   IconSortAscending2,
   IconSortDescending2,
-  IconEye,
   IconPlus,
+  IconPencil,
 } from "@tabler/icons-react";
 import { useNavigate, useParams } from "react-router-dom";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
@@ -300,7 +300,7 @@ const Editar_finca = () => {
                     onClick={() => navigate(`/Detallelote/${id}/${item.id}`)}
                     className="flex items-center gap-1 bg-blue-100 text-blue-600 px-3 py-1 rounded-md text-sm font-medium hover:bg-blue-200 mx-auto"
                   >
-                    <IconEye className="w-4 h-4" /> Editar
+                    <IconPencil className="w-4 h-4" /> Editar
                   </button>
                   
                 </td>
