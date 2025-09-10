@@ -166,7 +166,7 @@ const Cuadernocampom = () => {
           <p className="p-6 text-gray-500 text-center">Cargando registros...</p>
         ) : registros.length === 0 ? (
           <p className="p-6 text-gray-500 text-center">
-            No hay registros para tu finca.
+            Cargando registros...
           </p>
         ) : (
           <table className="w-full text-base">

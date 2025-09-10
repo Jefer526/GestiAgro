@@ -218,7 +218,7 @@ const Historial_trabajo_agro = () => {
             {historialFiltrado.length === 0 && (
               <tr>
                 <td colSpan={columnas.length} className="p-4 border text-gray-500">
-                  No hay labores registradas.
+                  Cargando labores...
                 </td>
               </tr>
             )}
