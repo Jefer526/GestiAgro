@@ -1,3 +1,4 @@
+// src/pages/mayordomo/Bodega_insu.jsx
 import React, { useState, useRef, useEffect } from "react";
 import {
   IconEye,
@@ -18,8 +19,10 @@ const Bodega_insu = () => {
   const [loading, setLoading] = useState(true);
   const [finca, setFinca] = useState(null);
 
-  // Ahora agregamos "finca" como primera columna
-  const columnas = ["finca", "categoria", "producto", "ingrediente activo", "saldo", "unidad"];
+  // === Columnas de la tabla ===
+  const columnas = ["finca", "categoria", "producto", "ingrediente", "saldo", "unidad"];
+
+  // === Estados de filtros ===
   const [filtroActivo, setFiltroActivo] = useState(null);
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
@@ -69,7 +72,7 @@ const Bodega_insu = () => {
 
                     return {
                       id: prod.id,
-                      finca: s.finca_nombre, // Nueva propiedad para la columna
+                      finca: s.finca_nombre,
                       producto: prod.nombre,
                       categoria: prod.categoria,
                       ingrediente: prod.ingrediente,
@@ -96,7 +99,7 @@ const Bodega_insu = () => {
     fetchProductos();
   }, [finca]);
 
-  /* Filtros */
+  /* === Lógica de filtros === */
   const getValoresUnicos = (campo) => {
     const search = (busquedas[campo] || "").toLowerCase();
     return [...new Set(registros.map((e) => e[campo]?.toString() || ""))].filter((v) =>
@@ -126,6 +129,7 @@ const Bodega_insu = () => {
   };
 
   const ordenar = (campo, orden) => setOrdenCampo({ campo, orden });
+
   const handleBusqueda = (campo, texto) =>
     setBusquedas({ ...busquedas, [campo]: texto });
 
@@ -145,22 +149,32 @@ const Bodega_insu = () => {
         : b[campo]?.toString().localeCompare(a[campo]?.toString());
     });
 
+  // === Cerrar filtro si se hace click afuera ===
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (filtroRef.current && !filtroRef.current.contains(e.target)) {
+        setFiltroActivo(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
     <LayoutMayordomo titulo="Bodega de insumos">
-       {/* Botones acción */}
-        <div className="flex justify-end gap-4 p-4">
+      {/* Botón acción */}
+      <div className="flex justify-end gap-4 p-4">
+        <button
+          onClick={() => navigate("/registrarmovimientom")}
+          className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold"
+        >
+          <IconPlus className="w-5 h-5" />
+          Registrar movimiento
+        </button>
+      </div>
 
-          <button
-            onClick={() => navigate("/registrarmovimientom")}
-            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold"
-          >
-            <IconPlus className="w-5 h-5" />
-            Registrar movimiento
-          </button>
-        </div>
-
-      {/* Tabla con mismo estilo que Equipos_mayor */}
-      <div className="overflow-x-auto rounded-lg shadow-lg">
+      {/* Tabla */}
+      <div className="overflow-x-auto rounded-lg shadow-lg bg-white">
         {loading ? (
           <p className="text-center py-6">Cargando insumos...</p>
         ) : (
@@ -194,15 +208,15 @@ const Bodega_insu = () => {
                     <td className="p-4 border">{d.categoria}</td>
                     <td className="p-4 border">{d.producto}</td>
                     <td className="p-4 border">{d.ingrediente}</td>
-                    <td className="p-4 border">
-                      {d.saldo} {d.unidad}
-                    </td>
+                    <td className="p-4 border">{d.saldo}</td>
                     <td className="p-4 border">{d.unidad}</td>
                     <td className="p-4 border text-center">
                       <button
                         onClick={() =>
                           navigate(
-                            `/detalle_producto/${d.id}/${encodeURIComponent(finca.nombre || finca)}`
+                            `/detalle_producto/${d.id}/${encodeURIComponent(
+                              finca.nombre || finca
+                            )}`
                           )
                         }
                         className="bg-blue-100 text-blue-800 px-4 py-1 rounded-full text-sm font-medium flex items-center gap-1 justify-center mx-auto"
@@ -217,6 +231,67 @@ const Bodega_insu = () => {
           </table>
         )}
       </div>
+
+      {/* Filtro flotante */}
+      {filtroActivo && (
+        <div
+          ref={filtroRef}
+          className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60"
+          style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
+        >
+          <div className="font-semibold mb-2">
+            Filtrar por {filtroActivo.toUpperCase()}
+          </div>
+          <button
+            onClick={() => ordenar(filtroActivo, "asc")}
+            className="text-green-700 flex items-center gap-1 mb-1"
+          >
+            <IconSortAscending2 className="w-4 h-4" /> Ordenar A → Z
+          </button>
+          <button
+            onClick={() => ordenar(filtroActivo, "desc")}
+            className="text-green-700 flex items-center gap-1 mb-2"
+          >
+            <IconSortDescending2 className="w-4 h-4" /> Ordenar Z → A
+          </button>
+          <input
+            type="text"
+            placeholder="Buscar..."
+            className="w-full border border-gray-300 px-2 py-1 rounded mb-2 text-sm"
+            value={busquedas[filtroActivo] || ""}
+            onChange={(e) => handleBusqueda(filtroActivo, e.target.value)}
+          />
+          <div className="flex flex-col max-h-40 overflow-y-auto">
+            {getValoresUnicos(filtroActivo).map((val) => (
+              <label key={val} className="flex items-center gap-2 mb-1">
+                <input
+                  type="checkbox"
+                  checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
+                  onChange={() => toggleValor(filtroActivo, val)}
+                  className="accent-green-600"
+                />
+                {String(val)}
+              </label>
+            ))}
+          </div>
+
+          {/* Botones */}
+          <div className="flex justify-between mt-3">
+            <button
+              onClick={() => limpiarFiltro(filtroActivo)}
+              className="bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-xs font-medium hover:bg-gray-300 transition"
+            >
+              Borrar
+            </button>
+            <button
+              onClick={() => setFiltroActivo(null)}
+              className="bg-green-600 text-white px-3 py-1 rounded-md text-xs font-medium hover:bg-green-700 transition"
+            >
+              Aceptar
+            </button>
+          </div>
+        </div>
+      )}
     </LayoutMayordomo>
   );
 };

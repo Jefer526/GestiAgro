@@ -44,7 +44,6 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
             "id": self.user.id,
             "email": self.user.email,
             "nombre": getattr(self.user, "nombre", ""),
-            "rol": getattr(self.user, "rol", ""),
             "rol": effective_role,
             "is_superuser": self.user.is_superuser,
             "is_staff": self.user.is_staff,
@@ -180,7 +179,18 @@ class ChangePasswordAPIView(APIView):
 
         user.set_password(new_password)
         user.save()
-        return Response({"detail": "Contraseña cambiada correctamente."}, status=200)
+
+
+        try:
+            refresh = RefreshToken.for_user(user)
+            refresh.blacklist()
+        except Exception:
+            pass
+
+        return Response(
+            {"detail": "Contraseña cambiada correctamente. Debes volver a iniciar sesión."},
+            status=200,
+        )
 
 
 # Vista para listar usuarios
@@ -291,7 +301,16 @@ class UpdateUserRoleView(generics.UpdateAPIView):
         instance.rol = nuevo_rol
         instance.save()
 
-        return Response(UserSerializer(instance).data, status=200)
+        try:
+            refresh = RefreshToken.for_user(instance)
+            refresh.blacklist()
+        except Exception:
+            pass
+
+        return Response(
+            {"detail": "Rol actualizado correctamente. El usuario debe volver a iniciar sesión."},
+            status=200,
+        )
 
 
 # Vista para listar los roles disponibles

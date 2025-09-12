@@ -86,7 +86,7 @@ const Cuaderno_campo_agro = () => {
       setAlertaVisible(true);
       setTimeout(() => {
         setAlertaVisible(false);
-        navigate("/historialcampo");
+        navigate("/Historialcampo");
       }, 1500);
     } catch (err) {
       console.error("Error guardando registro:", err);

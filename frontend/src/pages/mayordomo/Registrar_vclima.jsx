@@ -59,7 +59,18 @@ const Registrar_vclima = () => {
   };
 
   return (
-    <LayoutMayordomo ocultarEncabezado>
+    <LayoutMayordomo
+      titulo="Registrar Variables Climáticas"
+      accionesTop={
+        <button
+          type="button"
+          onClick={() => navigate("/variables_climaticasm")}
+          className="flex items-center text-green-700 font-semibold text-lg hover:underline"
+        >
+          <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
+        </button>
+      }
+    >
       {/* Alerta de guardado exitoso */}
       {alertaVisible && (
         <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
@@ -67,32 +78,12 @@ const Registrar_vclima = () => {
         </div>
       )}
 
-      {/* Botón Volver */}
-      <button
-        type="button"
-        onClick={() => navigate("/variables_climaticasm")}
-        className="flex items-center text-green-700 font-semibold mb-4 text-lg hover:underline"
-      >
-        <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
-      </button>
-
-      {/* Encabezado: finca afuera, título dentro de la card */}
-      <div className="flex justify-between items-center mb-6">
-        <div></div>
-        {finca && (
-          <span className="text-2xl font-bold text-green-700">{finca.nombre}</span>
-        )}
-      </div>
-
       {/* Formulario */}
       <form
         onSubmit={handleSubmit}
         className="bg-white shadow-md border border-gray-200 p-8 rounded-xl w-full max-w-2xl mx-auto space-y-6 text-black"
       >
-        {/* Título dentro de la card */}
-        <h2 className="text-3xl font-bold text-green-700 mb-6">
-          Registrar variables climáticas
-        </h2>
+
 
         <div>
           <label className="block mb-1 font-semibold text-black">Fecha</label>

@@ -59,14 +59,21 @@ const Ajustes_mayordomo = () => {
     }
 
     try {
-      await api.post(ENDPOINTS.changePassword, {
+      const response = await api.post(ENDPOINTS.changePassword, {
         old_password: pwdActual,
         new_password: pwdNueva,
       });
-      setMsg("¡Contraseña cambiada correctamente!");
+      console.log("✅ Contraseña cambiada:", response.data);
+      setMsg("¡Contraseña cambiada correctamente! Serás redirigido al login...");
+
       setTimeout(() => {
-        setOpenPwd(false);
-        resetPwdForm();
+        // 🔴 Limpiar tokens del storage
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
+        localStorage.removeItem("user");
+
+        // 🔴 Redirigir al login
+        window.location.href = "/login";
       }, 1500);
     } catch (error) {
       console.error("Error al cambiar contraseña:", error);
@@ -83,7 +90,7 @@ const Ajustes_mayordomo = () => {
 
   return (
     <LayoutMayordomo active="ajustes" ocultarEncabezado>
-  <main className="p-8">
+      <main className="p-8">
         <h1 className="text-3xl font-bold text-green-700 mb-6">
           Perfil de la cuenta
         </h1>
@@ -114,7 +121,6 @@ const Ajustes_mayordomo = () => {
               <IconLock className="w-5 h-5" /> Cambiar contraseña
             </button>
           </div>
-
         </div>
       </main>
 

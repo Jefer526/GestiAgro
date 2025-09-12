@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { IconChevronLeft, IconCheck, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import LayoutMayordomo from "../../layouts/LayoutMayordomo";
-import { productosApi, fincasApi, lotesApi, movimientosApi, getMe } from "../../services/apiClient";
+import { productosApi, lotesApi, movimientosApi, getMe } from "../../services/apiClient";
 
 const Registrar_movimientom = () => {
   const navigate = useNavigate();
@@ -136,36 +136,26 @@ const Registrar_movimientom = () => {
   };
 
   return (
-    <LayoutMayordomo ocultarEncabezado>
+    <LayoutMayordomo
+      titulo="Registrar Movimientos del producto"
+      accionesTop={
+        <button
+          onClick={() => navigate("/Bodega_insumos")}
+          className="flex items-center text-green-700 font-semibold text-lg hover:underline"
+        >
+          <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
+        </button>
+      }
+    >
       {alertaVisible && (
         <div className="fixed top-6 left-1/2 -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
           <IconCheck className="w-5 h-5" /> Movimientos guardados exitosamente
         </div>
       )}
 
-      {/* Botón volver */}
-      <button
-        onClick={() => navigate("/Bodega_insumos")}
-        className="flex items-center text-green-700 font-semibold mb-4 text-lg hover:underline"
-      >
-        <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
-      </button>
-
-      {/* Encabezado: finca afuera */}
-      <div className="flex justify-between items-center mb-6">
-        <div></div>
-        {fincaAsignada && (
-          <span className="text-2xl font-bold text-green-700">
-            {fincaAsignada.nombre}
-          </span>
-        )}
-      </div>
-
       {/* Card principal con título */}
       <div className="bg-white border border-gray-200 rounded-xl shadow-md p-8 w-[1100px] mx-auto">
-        <h1 className="text-3xl font-bold text-green-700 mb-6">
-          Registrar movimientos del producto
-        </h1>
+
 
         {/* Formulario */}
         <div className="space-y-5 mb-6">

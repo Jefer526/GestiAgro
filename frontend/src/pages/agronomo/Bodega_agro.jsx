@@ -1,8 +1,11 @@
+// src/pages/agronomo/Bodega_agro.jsx
 import React, { useState, useRef, useEffect } from "react";
 import {
   IconEye,
   IconFilter,
   IconPlus,
+  IconSortAscending2,
+  IconSortDescending2,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import LayoutAgronomo from "../../layouts/LayoutAgronomo";
@@ -15,7 +18,10 @@ const Bodega_agro = () => {
   const [registros, setRegistros] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const columnas = ["finca", "categoria", "producto", "ingrediente activo", "saldo", "unidad"];
+  // === Columnas visibles en la tabla ===
+  const columnas = ["finca", "categoria", "producto", "ingrediente", "saldo", "unidad"];
+
+  // === Estados de filtros ===
   const [filtroActivo, setFiltroActivo] = useState(null);
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
@@ -82,7 +88,7 @@ const Bodega_agro = () => {
     fetchProductos();
   }, []);
 
-  /* Filtros */
+  /* === Lógica de filtros === */
   const getValoresUnicos = (campo) => {
     const search = (busquedas[campo] || "").toLowerCase();
     return [...new Set(registros.map((e) => e[campo]?.toString() || ""))].filter((v) =>
@@ -112,6 +118,7 @@ const Bodega_agro = () => {
   };
 
   const ordenar = (campo, orden) => setOrdenCampo({ campo, orden });
+
   const handleBusqueda = (campo, texto) =>
     setBusquedas({ ...busquedas, [campo]: texto });
 
@@ -131,30 +138,41 @@ const Bodega_agro = () => {
         : b[campo]?.toString().localeCompare(a[campo]?.toString());
     });
 
+  // === Cerrar filtro si se hace click afuera ===
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (filtroRef.current && !filtroRef.current.contains(e.target)) {
+        setFiltroActivo(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
     <LayoutAgronomo>
       <h1 className="text-3xl font-bold text-green-700 mb-6">Bodega de insumos</h1>
 
+      {/* Botones acción */}
+      <div className="flex justify-end gap-4 p-4">
+        <button
+          onClick={() => navigate("/agregarproducto")}
+          className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold"
+        >
+          <IconPlus className="w-5 h-5" />
+          Agregar producto
+        </button>
+        <button
+          onClick={() => navigate("/registrarmovimiento")}
+          className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold"
+        >
+          <IconPlus className="w-5 h-5" />
+          Registrar movimiento
+        </button>
+      </div>
 
-       {/* Botones acción */}
-        <div className="flex justify-end gap-4 p-4">
-          <button
-            onClick={() => navigate("/agregarproducto")}
-            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold"
-          >
-            <IconPlus className="w-5 h-5" />
-            Agregar producto
-          </button>
-          <button
-            onClick={() => navigate("/registrarmovimiento")}
-            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold"
-          >
-            <IconPlus className="w-5 h-5" />
-            Registrar movimiento
-          </button>
-        </div>
-
-      <div className="overflow-x-auto rounded-lg shadow-lg">
+      {/* Tabla */}
+      <div className="overflow-x-auto rounded-lg shadow-lg bg-white">
         {loading ? (
           <p className="text-center py-6">Cargando insumos...</p>
         ) : (
@@ -176,14 +194,12 @@ const Bodega_agro = () => {
             </thead>
             <tbody>
               {datosFiltrados.map((d, i) => (
-                <tr key={i} className="border-b border-gray-100">
+                <tr key={i} className="hover:bg-gray-100">
                   <td className="p-4 border">{d.finca}</td>
                   <td className="p-4 border">{d.categoria}</td>
                   <td className="p-4 border">{d.producto}</td>
-                  <td className="p-4 borderr">{d.ingrediente}</td>
-                  <td className="p-4 border">
-                    {d.saldo} {d.unidad}
-                  </td>
+                  <td className="p-4 border">{d.ingrediente}</td>
+                  <td className="p-4 border">{d.saldo}</td>
                   <td className="p-4 border">{d.unidad}</td>
                   <td className="p-4 border text-center">
                     <button
@@ -201,6 +217,67 @@ const Bodega_agro = () => {
           </table>
         )}
       </div>
+
+      {/* Filtro flotante */}
+      {filtroActivo && (
+        <div
+          ref={filtroRef}
+          className="fixed bg-white text-black shadow-md border rounded z-50 p-3 w-60"
+          style={{ top: filtroPosicion.top, left: filtroPosicion.left }}
+        >
+          <div className="font-semibold mb-2">
+            Filtrar por {filtroActivo.toUpperCase()}
+          </div>
+          <button
+            onClick={() => ordenar(filtroActivo, "asc")}
+            className="text-green-700 flex items-center gap-1 mb-1"
+          >
+            <IconSortAscending2 className="w-4 h-4" /> Ordenar A → Z
+          </button>
+          <button
+            onClick={() => ordenar(filtroActivo, "desc")}
+            className="text-green-700 flex items-center gap-1 mb-2"
+          >
+            <IconSortDescending2 className="w-4 h-4" /> Ordenar Z → A
+          </button>
+          <input
+            type="text"
+            placeholder="Buscar..."
+            className="w-full border border-gray-300 px-2 py-1 rounded mb-2 text-sm"
+            value={busquedas[filtroActivo] || ""}
+            onChange={(e) => handleBusqueda(filtroActivo, e.target.value)}
+          />
+          <div className="flex flex-col max-h-40 overflow-y-auto">
+            {getValoresUnicos(filtroActivo).map((val) => (
+              <label key={val} className="flex items-center gap-2 mb-1">
+                <input
+                  type="checkbox"
+                  checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
+                  onChange={() => toggleValor(filtroActivo, val)}
+                  className="accent-green-600"
+                />
+                {String(val)}
+              </label>
+            ))}
+          </div>
+
+          {/* Botones */}
+          <div className="flex justify-between mt-3">
+            <button
+              onClick={() => limpiarFiltro(filtroActivo)}
+              className="bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-xs font-medium hover:bg-gray-300 transition"
+            >
+              Borrar
+            </button>
+            <button
+              onClick={() => setFiltroActivo(null)}
+              className="bg-green-600 text-white px-3 py-1 rounded-md text-xs font-medium hover:bg-green-700 transition"
+            >
+              Aceptar
+            </button>
+          </div>
+        </div>
+      )}
     </LayoutAgronomo>
   );
 };

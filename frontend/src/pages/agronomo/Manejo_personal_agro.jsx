@@ -22,7 +22,15 @@ const Manejo_personal_agro = () => {
   const [valoresSeleccionados, setValoresSeleccionados] = useState({});
   const [ordenCampo, setOrdenCampo] = useState(null);
 
-  const columnas = ["codigo", "nombre completo", "cargo", "estado", "finca_nombre", "telefono"];
+  // === Columnas con key (backend) y label (UI) ===
+  const columnas = [
+    { key: "codigo", label: "CÓDIGO EMPLEADO" },
+    { key: "nombre", label: "NOMBRE COMPLETO" },
+    { key: "cargo", label: "CARGO" },
+    { key: "estado", label: "ESTADO" },
+    { key: "finca_nombre", label: "FINCA" },
+    { key: "telefono", label: "TELÉFONO" },
+  ];
 
   useEffect(() => {
     api
@@ -91,10 +99,10 @@ const Manejo_personal_agro = () => {
   // === Filtrar y ordenar ===
   const trabajadoresFiltrados = trabajadores
     .filter((t) =>
-      columnas.every((campo) => {
-        const seleccionados = valoresSeleccionados[campo] || [];
+      columnas.every((col) => {
+        const seleccionados = valoresSeleccionados[col.key] || [];
         if (seleccionados.length === 0) return true;
-        return seleccionados.includes(String(t[campo]));
+        return seleccionados.includes(String(t[col.key]));
       })
     )
     .sort((a, b) => {
@@ -121,7 +129,9 @@ const Manejo_personal_agro = () => {
   return (
     <LayoutAgronomo>
       {/* Título */}
-      <h1 className="text-3xl font-bold text-green-700 mb-4">Manejo Personal</h1>
+      <h1 className="text-3xl font-bold text-green-700 mb-4">
+        Manejo Personal
+      </h1>
 
       {/* Botones */}
       <div className="flex justify-end gap-4 mb-6">
@@ -146,15 +156,11 @@ const Manejo_personal_agro = () => {
         <table className="min-w-full text-center text-base bg-white">
           <thead className="bg-green-600 text-white font-bold">
             <tr>
-              {columnas.map((campo) => (
-                <th key={campo} className="p-4 border text-center">
+              {columnas.map((col) => (
+                <th key={col.key} className="p-4 border text-center">
                   <div className="flex items-center justify-center gap-2">
-                    {campo === "codigo"
-                      ? "CÓDIGO EMPLEADO"
-                      : campo === "finca_nombre"
-                      ? "FINCA"
-                      : campo.toUpperCase()}
-                    <button onClick={(e) => toggleFiltro(campo, e)}>
+                    {col.label}
+                    <button onClick={(e) => toggleFiltro(col.key, e)}>
                       <IconFilter className="w-4 h-4" />
                     </button>
                   </div>
@@ -166,16 +172,17 @@ const Manejo_personal_agro = () => {
           <tbody>
             {trabajadoresFiltrados.map((emp) => (
               <tr key={emp.id} className="hover:bg-gray-100">
-                <td className="p-4 border">{emp.codigo}</td>
-                <td className="p-4 border">{emp.nombre}</td>
-                <td className="p-4 border">{emp.cargo}</td>
-                <td className="p-4 border">
-                  <span className={getEstadoColor(emp.estado)}>
-                    {capitalize(emp.estado)}
-                  </span>
-                </td>
-                <td className="p-4 border">{emp.finca_nombre}</td>
-                <td className="p-4 border">{emp.telefono}</td>
+                {columnas.map((col) => (
+                  <td key={col.key} className="p-4 border">
+                    {col.key === "estado" ? (
+                      <span className={getEstadoColor(emp[col.key])}>
+                        {capitalize(emp[col.key])}
+                      </span>
+                    ) : (
+                      emp[col.key]
+                    )}
+                  </td>
+                ))}
                 <td className="p-4 border">
                   <div className="flex justify-center">
                     <button
@@ -226,7 +233,9 @@ const Manejo_personal_agro = () => {
               <label key={val} className="flex items-center gap-2 mb-1">
                 <input
                   type="checkbox"
-                  checked={(valoresSeleccionados[filtroActivo] || []).includes(val)}
+                  checked={(valoresSeleccionados[filtroActivo] || []).includes(
+                    val
+                  )}
                   onChange={() => toggleValor(filtroActivo, val)}
                   className="accent-green-600"
                 />

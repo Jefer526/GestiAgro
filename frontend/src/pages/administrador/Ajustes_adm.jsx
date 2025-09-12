@@ -72,11 +72,16 @@ const Ajustes_adm = () => {
       });
 
       console.log("✅ Contraseña cambiada:", response.data);
-      setMsg("¡Contraseña cambiada correctamente!");
+      setMsg("¡Contraseña cambiada correctamente! Serás redirigido al login...");
 
       setTimeout(() => {
-        setOpenPwd(false);
-        resetPwdForm();
+        // 🔴 Limpiar tokens del storage
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
+        localStorage.removeItem("user");
+
+        // 🔴 Redirigir al login
+        window.location.href = "/login";
       }, 1500);
     } catch (error) {
       console.error("❌ Error al cambiar la contraseña:", error);
@@ -129,8 +134,6 @@ const Ajustes_adm = () => {
               <IconLock className="w-5 h-5" /> Cambiar contraseña
             </button>
           </div>
-
-
         </div>
       </main>
 

@@ -258,12 +258,14 @@ const Gestion_lotes_agro = () => {
                 {columnas.map((campo) => (
                   <td key={campo} className="p-4 border text-center">
                     {campo === "detalles" ? (
-                      <button
-                        onClick={() => navigate(`/editarfinca/${lote.finca}`)}
-                        className="text-green-600 hover:text-green-800 flex items-center gap-1"
-                      >
-                        <IconEye className="w-5 h-5" /> Ver
-                      </button>
+                      <div className="flex justify-center">
+                        <button
+                          onClick={() => navigate(`/editarfinca/${lote.finca}`)}
+                          className="text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                        >
+                          <IconEye className="w-5 h-5" /> Ver
+                        </button>
+                      </div>
                     ) : campo === "estado" ? (
                       <span
                         className={`px-2 py-1 rounded text-sm font-medium ${

@@ -108,7 +108,7 @@ const Registrar_produccion = () => {
       setAlertaVisible(true);
       setTimeout(() => {
         setAlertaVisible(false);
-        navigate("/Produccionagro");
+        navigate("/produccionagro");
       }, 2000);
     } catch (err) {
       console.error("❌ Error guardando producción:", err);

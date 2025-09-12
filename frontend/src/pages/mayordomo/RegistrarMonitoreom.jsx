@@ -88,7 +88,7 @@ const RegistrarMonitoreom = () => {
     try {
       await fitosanitarioApi.create({
         fecha,
-        finca: fincaAsignada.id, // siempre la finca del mayordomo
+        finca: fincaAsignada.id,
         lote,
         observaciones,
         registros,
@@ -107,7 +107,17 @@ const RegistrarMonitoreom = () => {
   };
 
   return (
-    <LayoutMayordomo ocultarEncabezado>
+    <LayoutMayordomo
+      titulo="Registrar Monitoreo"
+      accionesTop={
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center text-green-700 font-semibold hover:underline text-lg"
+        >
+          <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
+        </button>
+      }
+    >
       {/* Popup de confirmación */}
       {alertaVisible && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold z-[10000]">
@@ -115,30 +125,8 @@ const RegistrarMonitoreom = () => {
         </div>
       )}
 
-      {/* Botón volver */}
-      <div className="flex items-center mb-6">
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center text-green-700 font-semibold hover:underline text-lg"
-        >
-          <IconChevronLeft className="w-5 h-5 mr-1" />
-          Volver
-        </button>
-      </div>
-
-      {/* Encabezado: finca afuera, título dentro de la card */}
-      <div className="flex justify-between items-center mb-6">
-        <div></div>
-        {fincaAsignada && (
-          <span className="text-2xl font-bold text-green-700">{fincaAsignada.nombre}</span>
-        )}
-      </div>
-
       {/* Card principal */}
       <div className="bg-white border border-gray-200 rounded-xl shadow-md p-8 w-[1050px] mx-auto">
-        {/* Título dentro de la card */}
-        <h1 className="text-3xl font-bold text-green-700 mb-6">Registrar Monitoreo</h1>
-
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Campos generales */}
           <div className="grid grid-cols-2 gap-5 mb-4">

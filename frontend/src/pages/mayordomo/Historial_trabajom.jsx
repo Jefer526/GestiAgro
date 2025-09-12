@@ -161,21 +161,17 @@ const Historial_trabajom = () => {
   }, []);
 
   return (
-    <LayoutMayordomo ocultarEncabezado>
-      {/* Volver */}
-      <button
-        onClick={() => navigate("/equipos_mayordomo")}
-        className="flex items-center text-green-700 font-semibold mb-4 text-lg hover:underline"
-      >
-        <IconChevronLeft className="w-6 h-6 mr-1" /> Volver
-      </button>
-      
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-green-700">Historial de trabajo</h1>
-        {finca && (
-          <span className="text-2xl font-bold text-green-700">{finca.nombre}</span>
-        )}
-      </div>
+    <LayoutMayordomo
+      titulo="Historial de trabajo"
+      accionesTop={
+        <button
+          onClick={() => navigate("/equipos_mayordomo")}
+          className="flex items-center text-green-700 font-semibold text-lg hover:underline"
+        >
+          <IconChevronLeft className="w-6 h-6 mr-1" /> Volver
+        </button>
+      }
+    >
 
       {/* Info general */}
       {maquina && (

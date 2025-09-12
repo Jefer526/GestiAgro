@@ -8,12 +8,12 @@ const Registrar_produccionm = () => {
   const navigate = useNavigate();
   const [alertaVisible, setAlertaVisible] = useState(false);
 
-  const [fincaAsignada, setFincaAsignada] = useState(null); // finca fija del mayordomo
+  const [fincaAsignada, setFincaAsignada] = useState(null);
   const [lotes, setLotes] = useState([]);
 
   const [formData, setFormData] = useState({
     fecha: "",
-    finca: "", // se llenará con la finca fija
+    finca: "",
     lote: "",
     cantidad: "",
     unidad: "Kg",
@@ -25,9 +25,9 @@ const Registrar_produccionm = () => {
   useEffect(() => {
     const fetchFincaAsignada = async () => {
       try {
-        const user = await getMe(); // endpoint devuelve info del usuario logueado
+        const user = await getMe();
         if (user.data.finca_asignada) {
-          setFincaAsignada(user.data.finca_asignada); // backend devuelve { id, nombre }
+          setFincaAsignada(user.data.finca_asignada);
           setFormData((prev) => ({ ...prev, finca: user.data.finca_asignada.id }));
         }
       } catch (err) {
@@ -69,8 +69,8 @@ const Registrar_produccionm = () => {
       ...producciones,
       {
         fecha,
-        finca: fincaAsignada.id, // id real de la finca
-        lote: Number(lote),      // id real del lote
+        finca: fincaAsignada.id,
+        lote: Number(lote),
         cantidad,
         unidad,
         fincaNombre: fincaAsignada.nombre,
@@ -79,7 +79,6 @@ const Registrar_produccionm = () => {
       },
     ]);
 
-    // reset form, manteniendo la finca fija
     setFormData({
       fecha: "",
       finca: fincaAsignada.id,
@@ -97,23 +96,22 @@ const Registrar_produccionm = () => {
     if (producciones.length === 0) return alert("No has añadido registros");
 
     try {
-      const results = await Promise.all(
+      await Promise.all(
         producciones.map((p) =>
           produccionApi.create({
             fecha: p.fecha,
-            finca: p.finca,   // ahora es id
-            lote: p.lote,     // ahora es id
+            finca: p.finca,
+            lote: p.lote,
             cantidad: p.cantidad,
             unidad: p.unidad,
           })
         )
       );
-      console.log("✅ Guardado en backend:", results);
 
       setAlertaVisible(true);
       setTimeout(() => {
         setAlertaVisible(false);
-        navigate("/Produccion_mayor");
+        navigate("/produccion_mayor");
       }, 2000);
     } catch (err) {
       console.error("❌ Error guardando producción:", err.response?.data || err);
@@ -128,33 +126,27 @@ const Registrar_produccionm = () => {
   };
 
   return (
-    <LayoutMayordomo ocultarEncabezado>
+    <LayoutMayordomo
+      titulo="Registrar Producción agricola"
+      accionesTop={
+        <button
+          onClick={() => navigate("/produccion_mayor")}
+          className="flex items-center text-green-700 font-semibold text-lg hover:underline"
+        >
+          <IconChevronLeft className="w-5 h-5 mr-2" /> Volver
+        </button>
+      }
+    >
       {alertaVisible && (
         <div className="fixed top-6 left-1/2 -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-base font-semibold">
           <IconCheck className="w-5 h-5" /> Producción guardada exitosamente
         </div>
       )}
 
-      {/* Botón volver */}
-      <button
-        onClick={() => navigate("/Produccion_mayor")}
-        className="flex items-center text-green-700 font-semibold mb-6 text-lg hover:underline"
-      >
-        <IconChevronLeft className="w-5 h-5 mr-1" /> Volver
-      </button>
-
-      {/* Encabezado: finca afuera, título dentro de la card */}
-      <div className="flex justify-between items-center mb-6">
-        <div></div>
-        {fincaAsignada && (
-          <span className="text-2xl font-bold text-green-700">{fincaAsignada.nombre}</span>
-        )}
-      </div>
-
       {/* Card principal */}
       <div className="bg-white border border-gray-200 rounded-xl shadow-md p-8 w-[1100px] mx-auto">
         {/* Título dentro de la card */}
-        <h1 className="text-3xl font-bold text-green-700 mb-6">Registrar producción agrícola</h1>
+
 
         <div className="space-y-5 mb-6">
           {/* Fecha */}

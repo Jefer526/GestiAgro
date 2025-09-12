@@ -13,7 +13,7 @@ export const ENDPOINTS = {
   sendCode: "/api/accounts/send-code/",
   verifyCode: "/api/accounts/verify-code/",
   resetPassword: "/api/accounts/reset-password/",
-  changePassword: "/api/accounts/password/change/"
+  changePassword: "/api/accounts/password/change/",
 };
 
 // ===== API Auth =====
@@ -48,6 +48,15 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    // Si recibimos un 401 y ya intentamos refrescar -> forzar logout
+    if (error.response?.status === 401 && originalRequest?._retry) {
+      localStorage.removeItem("access");
+      localStorage.removeItem("refresh");
+      localStorage.removeItem("user");
+      window.location.href = "/login";
+      return Promise.reject(error);
+    }
+
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
         return new Promise(function (resolve, reject) {
@@ -71,7 +80,7 @@ api.interceptors.response.use(
           localStorage.removeItem("access");
           localStorage.removeItem("refresh");
           localStorage.removeItem("user");
-
+          window.location.href = "/login"; // 🔴 redirigir al login
           return Promise.reject({
             response: { status: 401, data: { detail: "Unauthorized" } },
           });
@@ -90,6 +99,7 @@ api.interceptors.response.use(
         localStorage.removeItem("access");
         localStorage.removeItem("refresh");
         localStorage.removeItem("user");
+        window.location.href = "/login"; // 🔴 redirigir al login
         return Promise.reject(err);
       } finally {
         isRefreshing = false;
@@ -106,8 +116,9 @@ export const login = (email, password) =>
 
 export const getMe = () => api.get(ENDPOINTS.me);
 
-export const logout = () => {const refresh = localStorage.getItem("refresh");
-return api.post(ENDPOINTS.logout, { refresh });
+export const logout = () => {
+  const refresh = localStorage.getItem("refresh");
+  return api.post(ENDPOINTS.logout, { refresh });
 };
 
 export const checkEmail = (email) => api.post(ENDPOINTS.checkEmail, { email });
@@ -126,7 +137,8 @@ export const accountsApi = {
   getUser: (id) => api.get(`/api/accounts/users/${id}/`),
   updateUser: (id, data) => api.patch(`/api/accounts/users/${id}/`, data),
   toggleActive: (id) => api.patch(`/api/accounts/users/${id}/toggle-active/`),
-  updateRole: (id, data) => api.patch(`/api/accounts/update-role/${id}/`, data),
+  updateRole: (id, data) =>
+    api.patch(`/api/accounts/update-role/${id}/`, data),
   sendTempPassword: (id) =>
     api.post(`/api/accounts/users/${id}/send-temp-password/`),
 };
@@ -166,7 +178,8 @@ export const laboresMaquinariaApi = {
     const payload = Array.isArray(data) ? data : [data];
     return api.post("/api/equipos/labores-maquinaria/", payload);
   },
-  update: (id, data) => api.patch(`/api/equipos/labores-maquinaria/${id}/`, data),
+  update: (id, data) =>
+    api.patch(`/api/equipos/labores-maquinaria/${id}/`, data),
   delete: (id) => api.delete(`/api/equipos/labores-maquinaria/${id}/`),
 };
 
@@ -183,7 +196,8 @@ export const variablesClimaApi = {
   post: (data) => api.post("/api/clima/variablesclimaticas/", data),
   put: (id, data) => api.put(`/api/clima/variablesclimaticas/${id}/`, data),
   delete: (id) => api.delete(`/api/clima/variablesclimaticas/${id}/`),
-  resumen: (params = {}) => api.get("/api/clima/variablesclimaticas/resumen/", { params }),
+  resumen: (params = {}) =>
+    api.get("/api/clima/variablesclimaticas/resumen/", { params }),
 };
 
 // ===== API Fincas =====
@@ -245,26 +259,24 @@ export const produccionApi = {
   resumenMensual: (params = {}) =>
     api.get("/api/produccion/resumen_mensual/", { params }),
 
-  resumenFincaMensual: (params = {}) =>       // 👈 nuevo
+  resumenFincaMensual: (params = {}) =>
     api.get("/api/produccion/resumen_finca_mensual/", { params }),
 
   resumenFinca: (params = {}) =>
     api.get("/api/produccion/resumen_finca/", { params }),
 
-  // 🚨 Nuevo endpoint de depuración
   resumenDebug: (params = {}) =>
     api.get("/api/produccion/resumen_debug/", { params }),
-
-
-
 };
 
 // ===== API Fitosanitario =====
 export const fitosanitarioApi = {
-  list: (params = {}) => api.get("/api/fitosanitario/monitoreos/", { params }),
+  list: (params = {}) =>
+    api.get("/api/fitosanitario/monitoreos/", { params }),
   get: (id) => api.get(`/api/fitosanitario/monitoreos/${id}/`),
   create: (data) => api.post("/api/fitosanitario/monitoreos/", data),
-  update: (id, data) => api.patch(`/api/fitosanitario/monitoreos/${id}/`, data),
+  update: (id, data) =>
+    api.patch(`/api/fitosanitario/monitoreos/${id}/`, data),
   delete: (id) => api.delete(`/api/fitosanitario/monitoreos/${id}/`),
 
   resumen: (params = {}) =>
@@ -280,17 +292,11 @@ export const laboresApi = {
   delete: (id) => api.delete(`/api/labores/${id}/`),
 };
 
-
 // ===== API Trabajadores =====
 export const trabajadoresApi = {
-  // todos
   list: () => api.get("/api/trabajadores/"),
   get: (id) => api.get(`/api/trabajadores/${id}/`),
-
-  // trabajadores asignados a una finca
   internos: (fincaId) => api.get(`/api/trabajadores/?finca=${fincaId}`),
-
-  // trabajadores NO asignados a esa finca
   externos: (fincaId) => api.get(`/api/trabajadores/?externos_de=${fincaId}`),
 };
 

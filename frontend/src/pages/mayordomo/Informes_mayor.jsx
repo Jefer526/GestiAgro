@@ -149,9 +149,8 @@ const Informes_mayor = () => {
   };
 
   return (
-    <LayoutMayordomo>
+    <LayoutMayordomo  titulo = "Informes">
       <div className="bg-white border border-gray-200 shadow-md p-10 rounded-xl w-full max-w-4xl mx-auto space-y-6 text-black">
-        <h1 className="text-3xl font-bold text-green-700">Informes</h1>
 
         {/* Tipo de Informe */}
         <div>
