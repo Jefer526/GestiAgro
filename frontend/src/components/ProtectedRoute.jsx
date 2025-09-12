@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-import api from "../services/apiClient"; // ✅ Usamos api, no accountsApi
+import api from "../services/apiClient"; // ✅ Usamos api centralizado
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const [rol, setRol] = useState(null);
@@ -8,7 +8,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 
   useEffect(() => {
     api
-      .get("/api/auth/me/") // ✅ Llamada directa con token
+      .get("/api/accounts/me/") // ✅ ruta correcta
       .then((res) => {
         console.log("✅ Rol recibido desde backend:", res.data.rol);
         setRol(res.data.rol);
@@ -24,7 +24,6 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 
   console.log("🔍 Estado ProtectedRoute:", { rol, allowedRoles, loading });
 
-  // Mientras carga mostramos un mensaje o spinner
   if (loading) {
     return (
       <div style={{ textAlign: "center", marginTop: "2rem" }}>
@@ -33,12 +32,10 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     );
   }
 
-  // Si el rol está permitido, renderizamos el contenido
   if (rol && allowedRoles.includes(rol)) {
     return children;
   }
 
-  // Si no está permitido, redirigimos
   return <Navigate to="/no-autorizado" replace />;
 };
 

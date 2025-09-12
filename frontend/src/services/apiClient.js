@@ -13,6 +13,7 @@ export const ENDPOINTS = {
   sendCode: "/api/accounts/send-code/",
   verifyCode: "/api/accounts/verify-code/",
   resetPassword: "/api/accounts/reset-password/",
+  changePassword: "/api/accounts/password/change/"
 };
 
 // ===== API Auth =====
@@ -132,10 +133,10 @@ export const accountsApi = {
 
 // ===== API Soporte =====
 export const soporteApi = {
-  listTickets: () => api.get("/soporte/tickets/"),
-  getTicket: (id) => api.get(`/soporte/tickets/${id}/`),
-  createTicket: (data) => api.post("/soporte/tickets/", data),
-  updateTicket: (id, data) => api.patch(`/soporte/tickets/${id}/`, data),
+  listTickets: () => api.get("/api/soporte/tickets/"),
+  getTicket: (id) => api.get(`/api/soporte/tickets/${id}/`),
+  createTicket: (data) => api.post("/api/soporte/tickets/", data),
+  updateTicket: (id, data) => api.patch(`/api/soporte/tickets/${id}/`, data),
 };
 
 // ===== API Equipos =====
