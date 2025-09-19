@@ -26,7 +26,7 @@ const SidebarAgronomo = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 🔹 Estado para inicial dinámica
+  // Estado para inicial dinámica
   const [letraInicial, setLetraInicial] = useState("U");
   const [rolUsuario, setRolUsuario] = useState(null);
 
@@ -50,7 +50,6 @@ const SidebarAgronomo = () => {
 
   const scrollRef = useRef(null);
 
-  // 🔹 Detectar clic fuera
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (
@@ -71,7 +70,7 @@ const SidebarAgronomo = () => {
     };
   }, [mostrarTarjeta]);
 
-  // 🔹 Restaurar scroll guardado
+  // Restaurar scroll guardado
   useLayoutEffect(() => {
     const saved = sessionStorage.getItem("sidebarScrollAgro");
     if (saved && scrollRef.current) {
@@ -193,7 +192,7 @@ const SidebarAgronomo = () => {
               <IconSettings className="w-5 h-5 mr-2 text-green-600" /> Ajustes
             </button>
 
-            {/* 👇 Condicional según rol */}
+            {/* Condicional según rol */}
             {rolUsuario === "admin" ? (
               <button
                 onClick={() => {
