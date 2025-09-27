@@ -16,11 +16,6 @@ export const ENDPOINTS = {
   changePassword: "/api/accounts/password/change/",
 };
 
-// ===== API Auth =====
-export const authApi = {
-  me: () => api.get(ENDPOINTS.me),
-};
-
 // ===== Axios instance =====
 const api = axios.create({
   baseURL: API,
@@ -48,12 +43,16 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // Si recibimos un 401 y ya intentamos refrescar -> forzar logout
+
+    if (originalRequest?.url?.includes(ENDPOINTS.login)) {
+      return Promise.reject(error);
+    }
+
     if (error.response?.status === 401 && originalRequest?._retry) {
       localStorage.removeItem("access");
       localStorage.removeItem("refresh");
       localStorage.removeItem("user");
-      window.location.href = "/login";
+      window.location.href = "/login"; // aquí sí redirige
       return Promise.reject(error);
     }
 
@@ -80,7 +79,7 @@ api.interceptors.response.use(
           localStorage.removeItem("access");
           localStorage.removeItem("refresh");
           localStorage.removeItem("user");
-          window.location.href = "/login"; // 🔴 redirigir al login
+          window.location.href = "/login"; // sin refresh válido → login
           return Promise.reject({
             response: { status: 401, data: { detail: "Unauthorized" } },
           });
@@ -99,7 +98,7 @@ api.interceptors.response.use(
         localStorage.removeItem("access");
         localStorage.removeItem("refresh");
         localStorage.removeItem("user");
-        window.location.href = "/login"; // 🔴 redirigir al login
+        window.location.href = "/login"; // refresh fallido → login
         return Promise.reject(err);
       } finally {
         isRefreshing = false;
@@ -112,7 +111,7 @@ api.interceptors.response.use(
 
 // ===== Funciones de autenticación =====
 export const login = (email, password) =>
-  api.post(ENDPOINTS.login, { email, password });
+  api.post(ENDPOINTS.login, { email, password }); // 👈 usa "username" si backend no acepta "email"
 
 export const getMe = () => api.get(ENDPOINTS.me);
 
@@ -142,7 +141,6 @@ export const accountsApi = {
   sendTempPassword: (id) =>
     api.post(`/api/accounts/users/${id}/send-temp-password/`),
 };
-
 // ===== API Soporte =====
 export const soporteApi = {
   listTickets: () => api.get("/api/soporte/tickets/"),
