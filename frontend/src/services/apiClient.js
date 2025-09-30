@@ -16,6 +16,11 @@ export const ENDPOINTS = {
   changePassword: "/api/accounts/password/change/",
 };
 
+// ===== API Auth =====
+export const authApi = {
+  me: () => api.get(ENDPOINTS.me),
+};
+
 // ===== Axios instance =====
 const api = axios.create({
   baseURL: API,
@@ -43,12 +48,7 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // 🔴 Caso especial: error en login → NO redirigir, que lo maneje el componente
-    if (originalRequest.url.includes(ENDPOINTS.login)) {
-      return Promise.reject(error);
-    }
-
-    // Caso: token expirado y ya intentamos refrescar
+    // Si recibimos un 401 y ya intentamos refrescar -> forzar logout
     if (error.response?.status === 401 && originalRequest?._retry) {
       localStorage.removeItem("access");
       localStorage.removeItem("refresh");
@@ -57,7 +57,6 @@ api.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    // Caso: primer 401 → intentar refresh
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
         return new Promise(function (resolve, reject) {
@@ -78,8 +77,10 @@ api.interceptors.response.use(
 
         if (!refresh) {
           processQueue(null, null);
-          localStorage.clear();
-          window.location.href = "/login"; // 🔴 redirigir porque no hay refresh
+          localStorage.removeItem("access");
+          localStorage.removeItem("refresh");
+          localStorage.removeItem("user");
+          window.location.href = "/login"; // 🔴 redirigir al login
           return Promise.reject({
             response: { status: 401, data: { detail: "Unauthorized" } },
           });
@@ -95,8 +96,10 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (err) {
         processQueue(err, null);
-        localStorage.clear();
-        window.location.href = "/login"; // 🔴 redirigir porque falló el refresh
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
+        localStorage.removeItem("user");
+        window.location.href = "/login"; // 🔴 redirigir al login
         return Promise.reject(err);
       } finally {
         isRefreshing = false;
@@ -306,4 +309,3 @@ export const programacionLaboresApi = {
 
 // ===== Export principal =====
 export default api;
-
