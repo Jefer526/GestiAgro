@@ -14,7 +14,7 @@ services:
   - type: web
     name: gestiagro-frontend
     env: node
-    buildCommand: "npm install && npm run build --prefix frontend"
+    buildCommand: "npm install && npm run build "
     startCommand: "npx serve -s frontend/dist"
     envVars:
       - key: NODE_VERSION
