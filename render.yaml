@@ -14,10 +14,10 @@ services:
   - type: web
     name: gestiagro-frontend
     env: node
-    buildCommand: "npm install && npm run build --prefix frontend"
-    startCommand: "npx serve -s frontend/dist"
+    buildCommand: "npm install && npm run build"
+    startCommand: "npx serve -s frontend/build"
     envVars:
       - key: NODE_VERSION
         value: 18
       - key: REACT_APP_API_URL
-        value: https://gestiagro1.onrender.co
+        value: https://gestiagro1.onrender.com
