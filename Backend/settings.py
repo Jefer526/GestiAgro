@@ -175,7 +175,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",   # Vite
     "http://127.0.0.1:5173",
-    "https://gestiagro-front.onrender.com",
+    "https://gestiagro.onrender.com",
 ]
 
 # Configuración de email
