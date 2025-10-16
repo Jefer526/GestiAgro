@@ -28,7 +28,7 @@ import Ajustes_agro from "../pages/agronomo/Ajustes_agro";
 import Detalle_mantenimiento from "../pages/agronomo/Detalle_mantenimiento";
 import Produccion_agro from "../pages/agronomo/Produccion_agro";
 import Cuaderno_campo_agro from "../pages/agronomo/Cuaderno_campo_agro";
-import Registrarticketag from "../pages/agronomo/Registrarticketag"; 
+import Registrarticketag from "../pages/agronomo/registrarticketag"; 
 import Detalles_ticketa from "../pages/agronomo/Detalle_ticketa";
 import Gestion_fincas from "../pages/agronomo/Gestion_fincas";
 import Fitosanitario_agro from "../pages/agronomo/Manejo_fitosanitario";
