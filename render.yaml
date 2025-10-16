@@ -20,4 +20,4 @@ services:
       - key: NODE_VERSION
         value: 18
       - key: REACT_APP_API_URL
-        value: https://gestiagro1.onrender.com
+        value: https://gestiagro-backend.onrender.com
