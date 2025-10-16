@@ -9,3 +9,15 @@ services:
         value: Backend.settings
       - key: PYTHON_VERSION
         value: 3.10
+
+
+  - type: web
+    name: gestiagro-frontend
+    env: node
+    buildCommand: "npm install && npm run build"
+    startCommand: "npx serve -s frontend/build"
+    envVars:
+      - key: NODE_VERSION
+        value: 18
+      - key: REACT_APP_API_URL
+        value: https://gestiagro1.onrender.com
